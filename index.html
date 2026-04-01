@@ -154,18 +154,13 @@
             color: white;
         }
         
-        /* Музыкальные платформы */
         .yandex-btn { background: #ffcc00; color: #000; }
         .youtube-btn { background: #ff0000; }
         .spotify-btn { background: #1db954; }
         .apple-btn { background: #fa233b; }
-        
-        /* Социальные сети */
         .vk-btn { background: #0077ff; }
         .telegram-btn { background: #26a5e4; }
         .instagram-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        
-        /* Концерты */
         .concert-btn { background: #28a745; }
         .afisha-btn { background: #ff6b6b; }
         
@@ -284,7 +279,6 @@
         tg.ready();
         tg.expand();
         
-        // === УПРАВЛЕНИЕ ИЗБРАННЫМ ===
         let favorites = [];
         
         function loadFavorites() {
@@ -359,7 +353,6 @@
             }
         }
         
-        // === ПОИСК ИСПОЛНИТЕЛЯ ===
         function searchArtist() {
             const query = document.getElementById('artistInput').value.trim();
             if (!query) {
@@ -370,15 +363,18 @@
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем ссылки...</div>';
             
-            // === МУЗЫКАЛЬНЫЕ ПЛАТФОРМЫ (поиск по названию) ===
+            // === МУЗЫКАЛЬНЫЕ ПЛАТФОРМЫ ===
             const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
             const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
             const spotifyUrl = `https://open.spotify.com/search/${encodeURIComponent(query)}`;
             const appleUrl = `https://music.apple.com/ru/search?term=${encodeURIComponent(query)}`;
             
-            // === СОЦИАЛЬНЫЕ СЕТИ (поиск по названию) ===
-            const vkUrl = `https://vk.com/search?c[section]=communities&c[q]=${encodeURIComponent(query)}`;
-            const tgUrl = `https://t.me/s/${encodeURIComponent(query.replace(/\s/g, '_'))}`;
+            // === СОЦИАЛЬНЫЕ СЕТИ (ИСПРАВЛЕННЫЕ ССЫЛКИ) ===
+            // VK — используем старый формат q=, который точно работает
+            const vkUrl = `https://vk.com/search?q=${encodeURIComponent(query)}&c[section]=communities`;
+            // Telegram — поиск по каналам
+            const tgUrl = `https://t.me/search?q=${encodeURIComponent(query)}`;
+            // Instagram — поиск по хештегу (работает всегда)
             const instagramUrl = `https://www.instagram.com/explore/tags/${encodeURIComponent(query.replace(/\s/g, ''))}/`;
             
             // === КОНЦЕРТЫ ===
@@ -410,9 +406,9 @@
                         
                         <div class="section-title">🌐 СОЦИАЛЬНЫЕ СЕТИ</div>
                         <div class="platform-buttons">
-                            <button onclick="openLink('${vkUrl}')" class="platform-btn vk-btn">📱 ВКонтакте (группы)</button>
-                            <button onclick="openLink('${tgUrl}')" class="platform-btn telegram-btn">✈️ Telegram (каналы)</button>
-                            <button onclick="openLink('${instagramUrl}')" class="platform-btn instagram-btn">📷 Instagram (по тегу)</button>
+                            <button onclick="openLink('${vkUrl}')" class="platform-btn vk-btn">📱 ВКонтакте</button>
+                            <button onclick="openLink('${tgUrl}')" class="platform-btn telegram-btn">✈️ Telegram</button>
+                            <button onclick="openLink('${instagramUrl}')" class="platform-btn instagram-btn">📷 Instagram</button>
                         </div>
                         
                         <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
@@ -422,7 +418,7 @@
                         </div>
                         
                         <div class="info-text">
-                            💡 Нажми на любую кнопку — откроется поиск в выбранном сервисе
+                            💡 Нажми на любую кнопку — откроется поиск с уже введённым исполнителем
                         </div>
                     </div>
                 `;
