@@ -47,7 +47,6 @@
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 16px;
-            color: var(--tg-theme-text-color, #000);
         }
         
         .search-box {
@@ -73,7 +72,7 @@
         
         .search-btn {
             background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #fff);
+            color: white;
             border: none;
             padding: 14px 24px;
             border-radius: 14px;
@@ -109,10 +108,6 @@
         .album-item {
             padding: 12px 0;
             border-bottom: 1px solid var(--tg-theme-hint-color, #e9ecef);
-        }
-        
-        .album-item:last-child {
-            border-bottom: none;
         }
         
         .album-title {
@@ -152,7 +147,7 @@
         
         button {
             background: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #fff);
+            color: white;
             border: none;
             padding: 14px;
             border-radius: 14px;
@@ -256,6 +251,7 @@
             document.getElementById('userGreeting').innerHTML = '👋 Добро пожаловать!';
         }
         
+        // Функция поиска через Яндекс.Музыку с использованием CORS-прокси
         async function searchArtist() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) {
@@ -267,8 +263,10 @@
             resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем...</div>';
             
             try {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                // Используем corsproxy.io - более стабильный прокси
+                const proxyUrl = 'https://corsproxy.io/?';
                 const apiUrl = `https://music.yandex.ru/api/v2.1/handlers/music/search?text=${encodeURIComponent(query)}&type=artist&page=0`;
+                
                 const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
                 const data = await response.json();
                 
@@ -278,7 +276,8 @@
                     resultsDiv.innerHTML = '<div class="card error">❌ Исполнитель не найден</div>';
                 }
             } catch (error) {
-                resultsDiv.innerHTML = '<div class="card error">⚠️ Ошибка соединения</div>';
+                console.error('Ошибка:', error);
+                resultsDiv.innerHTML = '<div class="card error">⚠️ Ошибка соединения. Попробуйте позже.</div>';
             }
         }
         
@@ -300,18 +299,19 @@
             const welcomeScreen = document.getElementById('welcomeScreen');
             const artistContent = document.getElementById('artistContent');
             
-            artistContent.innerHTML = '<div class="loading"><div class="spinner"></div>📖 Загружаем...</div>';
+            artistContent.innerHTML = '<div class="loading"><div class="spinner"></div>📖 Загружаем информацию...</div>';
             welcomeScreen.classList.add('hidden');
             artistScreen.classList.remove('hidden');
             
             try {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const proxyUrl = 'https://corsproxy.io/?';
+                
                 const infoUrl = `https://music.yandex.ru/api/v2.1/artists/${artistId}`;
                 const infoResponse = await fetch(proxyUrl + encodeURIComponent(infoUrl));
                 const infoData = await infoResponse.json();
                 const artist = infoData.artist || {};
                 
-                const albumsUrl = `https://music.yandex.ru/api/v2.1/artists/${artistId}/albums?page=0&pageSize=15`;
+                const albumsUrl = `https://music.yandex.ru/api/v2.1/artists/${artistId}/albums?page=0&pageSize=15&sort=year&sortOrder=desc`;
                 const albumsResponse = await fetch(proxyUrl + encodeURIComponent(albumsUrl));
                 const albumsData = await albumsResponse.json();
                 const albums = albumsData.albums || [];
@@ -359,7 +359,8 @@
                     <button onclick="backToSearch()" style="background: var(--tg-theme-secondary-bg-color, #e9ecef); color: var(--tg-theme-text-color, #000);">← Назад</button>
                 `;
             } catch (error) {
-                artistContent.innerHTML = '<div class="card error">❌ Ошибка загрузки</div>';
+                console.error('Ошибка:', error);
+                artistContent.innerHTML = '<div class="card error">❌ Ошибка загрузки данных</div>';
             }
         }
         
