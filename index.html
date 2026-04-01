@@ -92,10 +92,13 @@
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        .artist-link {
-            display: inline-block;
+        .link-btn {
+            display: block;
             background: var(--tg-theme-button-color, #2481cc);
             color: white;
             text-decoration: none;
@@ -106,6 +109,13 @@
             font-weight: 500;
             width: 100%;
             box-sizing: border-box;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .concert-btn {
+            background: #28a745;
         }
         
         .info-text {
@@ -164,6 +174,12 @@
             padding: 20px;
         }
         
+        .link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
         @media (max-width: 480px) {
             body {
                 padding: 12px;
@@ -177,8 +193,8 @@
 <body>
     <div class="container">
         <div class="card">
-            <h1>🎵 Поиск исполнителя</h1>
-            <p>Введите имя исполнителя и получите ссылку на Яндекс.Музыку</p>
+            <h1>🎵 Музыкальный бот</h1>
+            <p>Найди исполнителя и получи ссылки на музыку и концерты</p>
             
             <div class="search-box">
                 <input type="text" id="artistInput" class="search-input" placeholder="Например: Big Baby Tape, Imagine Dragons, Кино..." autocomplete="off">
@@ -210,7 +226,7 @@
             document.getElementById('userName').textContent = 'Гость';
         }
         
-        // Функция поиска и создания ссылки
+        // Функция поиска и создания ссылок
         function searchArtist() {
             const query = document.getElementById('artistInput').value.trim();
             if (!query) {
@@ -219,21 +235,37 @@
             }
             
             const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем ссылку...</div>';
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем ссылки...</div>';
             
-            // Формируем ссылку на поиск в Яндекс.Музыке
-            const searchUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
+            // Формируем ссылки
+            const musicUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
+            const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
+            const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(query)}`;
             
-            // Показываем результат через 0.5 секунды (имитация поиска)
+            // Показываем результат через 0.3 секунды
             setTimeout(() => {
                 resultDiv.innerHTML = `
                     <div class="result-card">
-                        <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                        <a href="${searchUrl}" target="_blank" class="artist-link" onclick="openLink('${searchUrl}'); return false;">
-                            🎵 Открыть в Яндекс.Музыке
-                        </a>
+                        <div class="artist-name">
+                            🎤 ${escapeHtml(query)}
+                        </div>
+                        
+                        <div class="link-group">
+                            <button onclick="openLink('${musicUrl}')" class="link-btn">
+                                🎵 Слушать на Яндекс.Музыке
+                            </button>
+                            
+                            <button onclick="openLink('${concertsUrl}')" class="link-btn concert-btn">
+                                🎸 Концерты на Яндекс.Музыке
+                            </button>
+                            
+                            <button onclick="openLink('${afishaUrl}')" class="link-btn" style="background: #ff6b6b;">
+                                🎫 Билеты на Афише
+                            </button>
+                        </div>
+                        
                         <div class="info-text">
-                            🔍 Поисковый запрос: ${escapeHtml(query)}
+                            💡 Нажми на кнопку, чтобы открыть ссылку
                         </div>
                     </div>
                 `;
