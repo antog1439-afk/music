@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Bot - Mini App</title>
+    <title>Music Bot - Поиск исполнителя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -16,8 +16,8 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: var(--tg-theme-bg-color, #f8f9fa);
             color: var(--tg-theme-text-color, #000);
-            min-height: 100vh;
             padding: 20px;
+            min-height: 100vh;
         }
         
         .container {
@@ -40,19 +40,19 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         
         h2 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            color: var(--tg-theme-hint-color, #6c757d);
         }
         
         .search-box {
             display: flex;
             gap: 12px;
-            margin-top: 16px;
+            margin-top: 8px;
         }
         
         .search-input {
@@ -81,14 +81,11 @@
             cursor: pointer;
         }
         
-        .artist-card {
-            cursor: pointer;
-            transition: transform 0.2s;
-            border: 1px solid var(--tg-theme-hint-color, #e9ecef);
-        }
-        
-        .artist-card:hover {
-            transform: translateY(-2px);
+        .result-card {
+            background: var(--tg-theme-bg-color, #f0f2f5);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
         }
         
         .artist-name {
@@ -97,52 +94,35 @@
             margin-bottom: 8px;
         }
         
-        .artist-stats {
-            display: flex;
-            gap: 20px;
+        .artist-link {
+            display: inline-block;
+            background: var(--tg-theme-button-color, #2481cc);
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 14px;
             margin-top: 12px;
+            text-align: center;
+            font-weight: 500;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .info-text {
+            font-size: 14px;
+            color: var(--tg-theme-hint-color, #6c757d);
+            margin-top: 12px;
+            text-align: center;
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--tg-theme-hint-color, #e9ecef);
             font-size: 13px;
             color: var(--tg-theme-hint-color, #6c757d);
-        }
-        
-        .album-item {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--tg-theme-hint-color, #e9ecef);
-        }
-        
-        .album-title {
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-        
-        .album-year {
-            font-size: 12px;
-            color: var(--tg-theme-hint-color, #6c757d);
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-        }
-        
-        .info-item {
-            background: var(--tg-theme-bg-color, #f8f9fa);
-            padding: 12px;
-            border-radius: 12px;
-        }
-        
-        .info-label {
-            font-size: 12px;
-            color: var(--tg-theme-hint-color, #6c757d);
-            margin-bottom: 4px;
-        }
-        
-        .info-value {
-            font-size: 16px;
-            font-weight: 600;
         }
         
         button {
@@ -156,13 +136,6 @@
             width: 100%;
             cursor: pointer;
             margin-top: 12px;
-        }
-        
-        .back-btn {
-            background: none;
-            color: var(--tg-theme-button-color, #2481cc);
-            margin-bottom: 16px;
-            font-weight: 500;
         }
         
         .loading {
@@ -185,18 +158,10 @@
             to { transform: rotate(360deg); }
         }
         
-        .hidden {
-            display: none;
-        }
-        
         .error {
             color: #dc3545;
             text-align: center;
             padding: 20px;
-        }
-        
-        .user-card {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
         }
         
         @media (max-width: 480px) {
@@ -211,27 +176,24 @@
 </head>
 <body>
     <div class="container">
-        <div id="welcomeScreen">
-            <div class="card user-card">
-                <h1>🎵 Music Bot</h1>
-                <p id="userGreeting">Загрузка...</p>
+        <div class="card">
+            <h1>🎵 Поиск исполнителя</h1>
+            <p>Введите имя исполнителя и получите ссылку на Яндекс.Музыку</p>
+            
+            <div class="search-box">
+                <input type="text" id="artistInput" class="search-input" placeholder="Например: Big Baby Tape, Imagine Dragons, Кино..." autocomplete="off">
+                <button onclick="searchArtist()" class="search-btn">Найти</button>
             </div>
             
-            <div class="card">
-                <h2>🔍 Поиск исполнителя</h2>
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Big Baby Tape, Imagine Dragons, Кино..." autocomplete="off">
-                    <button onclick="searchArtist()" class="search-btn">Найти</button>
-                </div>
-            </div>
+            <div id="result"></div>
             
-            <div id="searchResults"></div>
+            <div class="user-info">
+                <span>👤 <span id="userName">Загрузка...</span></span>
+                <span>🆔 <span id="userId">—</span></span>
+            </div>
         </div>
         
-        <div id="artistScreen" class="hidden">
-            <button onclick="backToSearch()" class="back-btn">← Назад к поиску</button>
-            <div id="artistContent"></div>
-        </div>
+        <button onclick="closeApp()">❌ Закрыть</button>
     </div>
 
     <script>
@@ -239,142 +201,65 @@
         tg.ready();
         tg.expand();
         
+        // Показываем данные пользователя
         const user = tg.initDataUnsafe?.user;
         if (user) {
-            document.getElementById('userGreeting').innerHTML = `
-                👋 Привет, <strong>${user.first_name || 'гость'}</strong>!<br>
-                <span style="font-size: 14px; color: var(--tg-theme-hint-color);">
-                    🆔 ID: ${user.id}
-                </span>
-            `;
+            document.getElementById('userName').textContent = user.first_name || 'Гость';
+            document.getElementById('userId').textContent = user.id || '—';
         } else {
-            document.getElementById('userGreeting').innerHTML = '👋 Добро пожаловать!';
+            document.getElementById('userName').textContent = 'Гость';
         }
         
-        // Функция поиска через Яндекс.Музыку с использованием CORS-прокси
-        async function searchArtist() {
-            const query = document.getElementById('searchInput').value.trim();
+        // Функция поиска и создания ссылки
+        function searchArtist() {
+            const query = document.getElementById('artistInput').value.trim();
             if (!query) {
                 tg.showAlert('Введите имя исполнителя');
                 return;
             }
             
-            const resultsDiv = document.getElementById('searchResults');
-            resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем...</div>';
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем ссылку...</div>';
             
-            try {
-                // Используем corsproxy.io - более стабильный прокси
-                const proxyUrl = 'https://corsproxy.io/?';
-                const apiUrl = `https://music.yandex.ru/api/v2.1/handlers/music/search?text=${encodeURIComponent(query)}&type=artist&page=0`;
-                
-                const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
-                const data = await response.json();
-                
-                if (data && data.artists && data.artists.items && data.artists.items.length > 0) {
-                    displayArtists(data.artists.items);
-                } else {
-                    resultsDiv.innerHTML = '<div class="card error">❌ Исполнитель не найден</div>';
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                resultsDiv.innerHTML = '<div class="card error">⚠️ Ошибка соединения. Попробуйте позже.</div>';
-            }
-        }
-        
-        function displayArtists(artists) {
-            const resultsDiv = document.getElementById('searchResults');
-            resultsDiv.innerHTML = artists.slice(0, 10).map(artist => `
-                <div class="card artist-card" onclick="loadArtistInfo(${artist.id}, '${artist.name.replace(/'/g, "\\'")}')">
-                    <div class="artist-name">🎤 ${artist.name}</div>
-                    <div class="artist-stats">
-                        <span>📀 Альбомов: ${artist.albums?.count || '?'}</span>
-                        <span>👥 Слушателей: ${formatNumber(artist.listeners || 0)}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        async function loadArtistInfo(artistId, artistName) {
-            const artistScreen = document.getElementById('artistScreen');
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            const artistContent = document.getElementById('artistContent');
+            // Формируем ссылку на поиск в Яндекс.Музыке
+            const searchUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
             
-            artistContent.innerHTML = '<div class="loading"><div class="spinner"></div>📖 Загружаем информацию...</div>';
-            welcomeScreen.classList.add('hidden');
-            artistScreen.classList.remove('hidden');
-            
-            try {
-                const proxyUrl = 'https://corsproxy.io/?';
-                
-                const infoUrl = `https://music.yandex.ru/api/v2.1/artists/${artistId}`;
-                const infoResponse = await fetch(proxyUrl + encodeURIComponent(infoUrl));
-                const infoData = await infoResponse.json();
-                const artist = infoData.artist || {};
-                
-                const albumsUrl = `https://music.yandex.ru/api/v2.1/artists/${artistId}/albums?page=0&pageSize=15&sort=year&sortOrder=desc`;
-                const albumsResponse = await fetch(proxyUrl + encodeURIComponent(albumsUrl));
-                const albumsData = await albumsResponse.json();
-                const albums = albumsData.albums || [];
-                
-                let albumsHtml = '';
-                if (albums.length > 0) {
-                    albumsHtml = `
-                        <div class="card">
-                            <h2>📀 Альбомы</h2>
-                            ${albums.map(album => `
-                                <div class="album-item">
-                                    <div class="album-title">${album.title || 'Без названия'}</div>
-                                    <div class="album-year">${album.year || 'Год ?'} • ${album.trackCount || '?'} треков</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                artistContent.innerHTML = `
-                    <div class="card">
-                        <div style="font-size: 32px; margin-bottom: 8px;">🎤</div>
-                        <h2>${artist.name || artistName}</h2>
-                        <div class="artist-stats">👥 ${formatNumber(artist.listeners || 0)} слушателей</div>
-                    </div>
-                    <div class="card">
-                        <h2>📊 Информация</h2>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <div class="info-label">🎵 Жанры</div>
-                                <div class="info-value">${(artist.genres || []).slice(0, 3).join(', ') || '—'}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">🎭 Годы</div>
-                                <div class="info-value">${artist.years || '—'}</div>
-                            </div>
-                            <div class="info-item">
-                                <div class="info-label">💿 Альбомов</div>
-                                <div class="info-value">${albums.length}</div>
-                            </div>
+            // Показываем результат через 0.5 секунды (имитация поиска)
+            setTimeout(() => {
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <div class="artist-name">🎤 ${escapeHtml(query)}</div>
+                        <a href="${searchUrl}" target="_blank" class="artist-link" onclick="openLink('${searchUrl}'); return false;">
+                            🎵 Открыть в Яндекс.Музыке
+                        </a>
+                        <div class="info-text">
+                            🔍 Поисковый запрос: ${escapeHtml(query)}
                         </div>
                     </div>
-                    ${albumsHtml}
-                    <button onclick="tg.openLink('https://music.yandex.ru/artist/${artistId}')">🎵 Открыть в Яндекс.Музыке</button>
-                    <button onclick="backToSearch()" style="background: var(--tg-theme-secondary-bg-color, #e9ecef); color: var(--tg-theme-text-color, #000);">← Назад</button>
                 `;
-            } catch (error) {
-                console.error('Ошибка:', error);
-                artistContent.innerHTML = '<div class="card error">❌ Ошибка загрузки данных</div>';
+            }, 300);
+        }
+        
+        function openLink(url) {
+            tg.openLink(url);
+        }
+        
+        function closeApp() {
+            tg.close();
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Добавляем поддержку кнопки Enter
+        document.getElementById('artistInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchArtist();
             }
-        }
-        
-        function backToSearch() {
-            document.getElementById('welcomeScreen').classList.remove('hidden');
-            document.getElementById('artistScreen').classList.add('hidden');
-        }
-        
-        function formatNumber(num) {
-            if (!num) return '?';
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(0) + 'K';
-            return num.toString();
-        }
+        });
     </script>
 </body>
 </html>
