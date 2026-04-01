@@ -42,11 +42,26 @@
             -webkit-text-fill-color: transparent;
         }
         
-        h2 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--tg-theme-hint-color, #6c757d);
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: white;
         }
         
         .search-box {
@@ -88,13 +103,41 @@
             margin-top: 16px;
         }
         
-        .artist-name {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 8px;
+        .artist-item {
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            padding: 12px;
+            background: var(--tg-theme-bg-color, #f0f2f5);
+            border-radius: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .artist-name {
+            font-size: 18px;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            margin: 0;
+            width: auto;
+        }
+        
+        .favorite-btn.active {
+            color: #ffc107;
+        }
+        
+        .link-group {
+            display: flex;
+            flex-direction: column;
             gap: 8px;
+            margin-top: 12px;
         }
         
         .link-btn {
@@ -104,11 +147,8 @@
             text-decoration: none;
             padding: 12px 20px;
             border-radius: 14px;
-            margin-top: 12px;
             text-align: center;
             font-weight: 500;
-            width: 100%;
-            box-sizing: border-box;
             cursor: pointer;
             border: none;
             font-size: 16px;
@@ -168,16 +208,14 @@
             to { transform: rotate(360deg); }
         }
         
-        .error {
-            color: #dc3545;
+        .empty-favorites {
             text-align: center;
-            padding: 20px;
+            padding: 40px;
+            color: var(--tg-theme-hint-color, #6c757d);
         }
         
-        .link-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .hidden {
+            display: none;
         }
         
         @media (max-width: 480px) {
@@ -194,14 +232,26 @@
     <div class="container">
         <div class="card">
             <h1>🎵 Музыкальный бот</h1>
-            <p>Найди исполнителя и получи ссылки на музыку и концерты</p>
             
-            <div class="search-box">
-                <input type="text" id="artistInput" class="search-input" placeholder="Например: Big Baby Tape, Imagine Dragons, Кино..." autocomplete="off">
-                <button onclick="searchArtist()" class="search-btn">Найти</button>
+            <!-- Вкладки -->
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
+                <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
             </div>
             
-            <div id="result"></div>
+            <!-- Вкладка поиска -->
+            <div id="searchTab">
+                <div class="search-box">
+                    <input type="text" id="artistInput" class="search-input" placeholder="Например: Big Baby Tape, Imagine Dragons, Кино..." autocomplete="off">
+                    <button onclick="searchArtist()" class="search-btn">Найти</button>
+                </div>
+                <div id="result"></div>
+            </div>
+            
+            <!-- Вкладка избранного -->
+            <div id="favoritesTab" class="hidden">
+                <div id="favoritesList"></div>
+            </div>
             
             <div class="user-info">
                 <span>👤 <span id="userName">Загрузка...</span></span>
@@ -217,16 +267,68 @@
         tg.ready();
         tg.expand();
         
-        // Показываем данные пользователя
-        const user = tg.initDataUnsafe?.user;
-        if (user) {
-            document.getElementById('userName').textContent = user.first_name || 'Гость';
-            document.getElementById('userId').textContent = user.id || '—';
-        } else {
-            document.getElementById('userName').textContent = 'Гость';
+        // === УПРАВЛЕНИЕ ИЗБРАННЫМ ===
+        let favorites = [];
+        
+        // Загружаем избранное из localStorage
+        function loadFavorites() {
+            const saved = localStorage.getItem('music_bot_favorites');
+            if (saved) {
+                favorites = JSON.parse(saved);
+            }
+            updateFavoritesList();
         }
         
-        // Функция поиска и создания ссылок
+        // Сохраняем избранное в localStorage
+        function saveFavorites() {
+            localStorage.setItem('music_bot_favorites', JSON.stringify(favorites));
+            updateFavoritesList();
+        }
+        
+        // Добавляем в избранное
+        function addToFavorites(artistName) {
+            if (!favorites.includes(artistName)) {
+                favorites.push(artistName);
+                saveFavorites();
+                tg.showAlert(`⭐ ${artistName} добавлен в избранное`);
+            }
+        }
+        
+        // Удаляем из избранного
+        function removeFromFavorites(artistName) {
+            favorites = favorites.filter(a => a !== artistName);
+            saveFavorites();
+            tg.showAlert(`❌ ${artistName} удалён из избранного`);
+        }
+        
+        // Проверяем, в избранном ли исполнитель
+        function isFavorite(artistName) {
+            return favorites.includes(artistName);
+        }
+        
+        // Обновляем список избранного
+        function updateFavoritesList() {
+            const favoritesDiv = document.getElementById('favoritesList');
+            
+            if (favorites.length === 0) {
+                favoritesDiv.innerHTML = `
+                    <div class="empty-favorites">
+                        ⭐ Нет избранных исполнителей<br>
+                        Добавьте исполнителя через поиск
+                    </div>
+                `;
+                return;
+            }
+            
+            favoritesDiv.innerHTML = favorites.map(artist => `
+                <div class="artist-item">
+                    <div class="artist-name">🎤 ${escapeHtml(artist)}</div>
+                    <button class="favorite-btn" onclick="removeFromFavorites('${escapeHtml(artist).replace(/'/g, "\\'")}')" style="color: #ffc107;">★</button>
+                </div>
+            `).join('');
+        }
+        
+        // === ПОИСК ИСПОЛНИТЕЛЯ ===
         function searchArtist() {
             const query = document.getElementById('artistInput').value.trim();
             if (!query) {
@@ -242,7 +344,11 @@
             const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
             const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(query)}`;
             
-            // Показываем результат через 0.3 секунды
+            const isFav = isFavorite(query);
+            const favButtonHtml = isFav 
+                ? `<button class="link-btn" onclick="removeFromFavorites('${escapeHtml(query).replace(/'/g, "\\'")}')" style="background: #ffc107; color: #000;">★ Удалить из избранного</button>`
+                : `<button class="link-btn" onclick="addToFavorites('${escapeHtml(query).replace(/'/g, "\\'")}')" style="background: #6c757d;">☆ Добавить в избранное</button>`;
+            
             setTimeout(() => {
                 resultDiv.innerHTML = `
                     <div class="result-card">
@@ -251,14 +357,13 @@
                         </div>
                         
                         <div class="link-group">
+                            ${favButtonHtml}
                             <button onclick="openLink('${musicUrl}')" class="link-btn">
                                 🎵 Слушать на Яндекс.Музыке
                             </button>
-                            
                             <button onclick="openLink('${concertsUrl}')" class="link-btn concert-btn">
                                 🎸 Концерты на Яндекс.Музыке
                             </button>
-                            
                             <button onclick="openLink('${afishaUrl}')" class="link-btn" style="background: #ff6b6b;">
                                 🎫 Билеты на Афише
                             </button>
@@ -270,6 +375,26 @@
                     </div>
                 `;
             }, 300);
+        }
+        
+        // === ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ===
+        function switchTab(tab) {
+            const searchTab = document.getElementById('searchTab');
+            const favoritesTab = document.getElementById('favoritesTab');
+            const tabs = document.querySelectorAll('.tab');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            if (tab === 'search') {
+                searchTab.classList.remove('hidden');
+                favoritesTab.classList.add('hidden');
+                tabs[0].classList.add('active');
+            } else {
+                searchTab.classList.add('hidden');
+                favoritesTab.classList.remove('hidden');
+                tabs[1].classList.add('active');
+                updateFavoritesList();
+            }
         }
         
         function openLink(url) {
@@ -286,7 +411,19 @@
             return div.innerHTML;
         }
         
-        // Добавляем поддержку кнопки Enter
+        // Показываем данные пользователя
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            document.getElementById('userName').textContent = user.first_name || 'Гость';
+            document.getElementById('userId').textContent = user.id || '—';
+        } else {
+            document.getElementById('userName').textContent = 'Гость';
+        }
+        
+        // Загружаем избранное при старте
+        loadFavorites();
+        
+        // Поддержка Enter
         document.getElementById('artistInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchArtist();
