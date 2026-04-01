@@ -103,6 +103,15 @@
             margin-top: 16px;
         }
         
+        .artist-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
         .artist-item {
             display: flex;
             justify-content: space-between;
@@ -111,12 +120,6 @@
             background: var(--tg-theme-bg-color, #f0f2f5);
             border-radius: 14px;
             margin-bottom: 8px;
-        }
-        
-        .artist-name {
-            font-size: 18px;
-            font-weight: 600;
-            flex: 1;
         }
         
         .favorite-btn {
@@ -129,22 +132,18 @@
             width: auto;
         }
         
-        .favorite-btn.active {
-            color: #ffc107;
-        }
-        
-        .link-group {
+        .platform-buttons {
             display: flex;
             flex-direction: column;
             gap: 8px;
             margin-top: 12px;
         }
         
-        .link-btn {
-            display: block;
-            background: var(--tg-theme-button-color, #2481cc);
-            color: white;
-            text-decoration: none;
+        .platform-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             padding: 12px 20px;
             border-radius: 14px;
             text-align: center;
@@ -152,11 +151,23 @@
             cursor: pointer;
             border: none;
             font-size: 16px;
+            color: white;
         }
         
-        .concert-btn {
-            background: #28a745;
-        }
+        /* Музыкальные платформы */
+        .yandex-btn { background: #ffcc00; color: #000; }
+        .youtube-btn { background: #ff0000; }
+        .spotify-btn { background: #1db954; }
+        .apple-btn { background: #fa233b; }
+        
+        /* Социальные сети */
+        .vk-btn { background: #0077ff; }
+        .telegram-btn { background: #26a5e4; }
+        .instagram-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        
+        /* Концерты */
+        .concert-btn { background: #28a745; }
+        .afisha-btn { background: #ff6b6b; }
         
         .info-text {
             font-size: 14px;
@@ -218,6 +229,15 @@
             display: none;
         }
         
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin: 12px 0 8px 0;
+            color: var(--tg-theme-hint-color, #6c757d);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
         @media (max-width: 480px) {
             body {
                 padding: 12px;
@@ -233,22 +253,19 @@
         <div class="card">
             <h1>🎵 Музыкальный бот</h1>
             
-            <!-- Вкладки -->
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
                 <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
             </div>
             
-            <!-- Вкладка поиска -->
             <div id="searchTab">
                 <div class="search-box">
-                    <input type="text" id="artistInput" class="search-input" placeholder="Например: Big Baby Tape, Imagine Dragons, Кино..." autocomplete="off">
+                    <input type="text" id="artistInput" class="search-input" placeholder="Big Baby Tape, Imagine Dragons, Кино..." autocomplete="off">
                     <button onclick="searchArtist()" class="search-btn">Найти</button>
                 </div>
                 <div id="result"></div>
             </div>
             
-            <!-- Вкладка избранного -->
             <div id="favoritesTab" class="hidden">
                 <div id="favoritesList"></div>
             </div>
@@ -270,7 +287,6 @@
         // === УПРАВЛЕНИЕ ИЗБРАННЫМ ===
         let favorites = [];
         
-        // Загружаем избранное из localStorage
         function loadFavorites() {
             const saved = localStorage.getItem('music_bot_favorites');
             if (saved) {
@@ -279,34 +295,31 @@
             updateFavoritesList();
         }
         
-        // Сохраняем избранное в localStorage
         function saveFavorites() {
             localStorage.setItem('music_bot_favorites', JSON.stringify(favorites));
             updateFavoritesList();
         }
         
-        // Добавляем в избранное
         function addToFavorites(artistName) {
             if (!favorites.includes(artistName)) {
                 favorites.push(artistName);
                 saveFavorites();
                 tg.showAlert(`⭐ ${artistName} добавлен в избранное`);
+                updateSearchResultButtons(artistName);
             }
         }
         
-        // Удаляем из избранного
         function removeFromFavorites(artistName) {
             favorites = favorites.filter(a => a !== artistName);
             saveFavorites();
             tg.showAlert(`❌ ${artistName} удалён из избранного`);
+            updateSearchResultButtons(artistName);
         }
         
-        // Проверяем, в избранном ли исполнитель
         function isFavorite(artistName) {
             return favorites.includes(artistName);
         }
         
-        // Обновляем список избранного
         function updateFavoritesList() {
             const favoritesDiv = document.getElementById('favoritesList');
             
@@ -328,6 +341,24 @@
             `).join('');
         }
         
+        function updateSearchResultButtons(artistName) {
+            const favButton = document.getElementById('favorite-btn-dynamic');
+            if (favButton) {
+                const isFav = isFavorite(artistName);
+                if (isFav) {
+                    favButton.innerHTML = '★ Удалить из избранного';
+                    favButton.style.background = '#ffc107';
+                    favButton.style.color = '#000';
+                    favButton.onclick = () => removeFromFavorites(artistName);
+                } else {
+                    favButton.innerHTML = '☆ Добавить в избранное';
+                    favButton.style.background = '#6c757d';
+                    favButton.style.color = 'white';
+                    favButton.onclick = () => addToFavorites(artistName);
+                }
+            }
+        }
+        
         // === ПОИСК ИСПОЛНИТЕЛЯ ===
         function searchArtist() {
             const query = document.getElementById('artistInput').value.trim();
@@ -339,15 +370,22 @@
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем ссылки...</div>';
             
-            // Формируем ссылки
-            const musicUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
+            // === МУЗЫКАЛЬНЫЕ ПЛАТФОРМЫ (поиск по названию) ===
+            const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
+            const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
+            const spotifyUrl = `https://open.spotify.com/search/${encodeURIComponent(query)}`;
+            const appleUrl = `https://music.apple.com/ru/search?term=${encodeURIComponent(query)}`;
+            
+            // === СОЦИАЛЬНЫЕ СЕТИ (поиск по названию) ===
+            const vkUrl = `https://vk.com/search?c[section]=communities&c[q]=${encodeURIComponent(query)}`;
+            const tgUrl = `https://t.me/s/${encodeURIComponent(query.replace(/\s/g, '_'))}`;
+            const instagramUrl = `https://www.instagram.com/explore/tags/${encodeURIComponent(query.replace(/\s/g, ''))}/`;
+            
+            // === КОНЦЕРТЫ ===
             const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
             const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(query)}`;
             
             const isFav = isFavorite(query);
-            const favButtonHtml = isFav 
-                ? `<button class="link-btn" onclick="removeFromFavorites('${escapeHtml(query).replace(/'/g, "\\'")}')" style="background: #ffc107; color: #000;">★ Удалить из избранного</button>`
-                : `<button class="link-btn" onclick="addToFavorites('${escapeHtml(query).replace(/'/g, "\\'")}')" style="background: #6c757d;">☆ Добавить в избранное</button>`;
             
             setTimeout(() => {
                 resultDiv.innerHTML = `
@@ -356,28 +394,50 @@
                             🎤 ${escapeHtml(query)}
                         </div>
                         
-                        <div class="link-group">
-                            ${favButtonHtml}
-                            <button onclick="openLink('${musicUrl}')" class="link-btn">
-                                🎵 Слушать на Яндекс.Музыке
-                            </button>
-                            <button onclick="openLink('${concertsUrl}')" class="link-btn concert-btn">
-                                🎸 Концерты на Яндекс.Музыке
-                            </button>
-                            <button onclick="openLink('${afishaUrl}')" class="link-btn" style="background: #ff6b6b;">
-                                🎫 Билеты на Афише
+                        <div class="platform-buttons">
+                            <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
+                                ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
                             </button>
                         </div>
                         
+                        <div class="section-title">🎵 МУЗЫКА</div>
+                        <div class="platform-buttons">
+                            <button onclick="openLink('${yandexUrl}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                            <button onclick="openLink('${youtubeUrl}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                            <button onclick="openLink('${spotifyUrl}')" class="platform-btn spotify-btn">🟢 Spotify</button>
+                            <button onclick="openLink('${appleUrl}')" class="platform-btn apple-btn">🍎 Apple Music</button>
+                        </div>
+                        
+                        <div class="section-title">🌐 СОЦИАЛЬНЫЕ СЕТИ</div>
+                        <div class="platform-buttons">
+                            <button onclick="openLink('${vkUrl}')" class="platform-btn vk-btn">📱 ВКонтакте (группы)</button>
+                            <button onclick="openLink('${tgUrl}')" class="platform-btn telegram-btn">✈️ Telegram (каналы)</button>
+                            <button onclick="openLink('${instagramUrl}')" class="platform-btn instagram-btn">📷 Instagram (по тегу)</button>
+                        </div>
+                        
+                        <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
+                        <div class="platform-buttons">
+                            <button onclick="openLink('${concertsUrl}')" class="platform-btn concert-btn">🎸 Концерты (Яндекс)</button>
+                            <button onclick="openLink('${afishaUrl}')" class="platform-btn afisha-btn">🎫 Билеты (Афиша)</button>
+                        </div>
+                        
                         <div class="info-text">
-                            💡 Нажми на кнопку, чтобы открыть ссылку
+                            💡 Нажми на любую кнопку — откроется поиск в выбранном сервисе
                         </div>
                     </div>
                 `;
+                
+                const favBtn = document.getElementById('favorite-btn-dynamic');
+                if (favBtn) {
+                    if (isFav) {
+                        favBtn.onclick = () => removeFromFavorites(query);
+                    } else {
+                        favBtn.onclick = () => addToFavorites(query);
+                    }
+                }
             }, 300);
         }
         
-        // === ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ===
         function switchTab(tab) {
             const searchTab = document.getElementById('searchTab');
             const favoritesTab = document.getElementById('favoritesTab');
@@ -411,7 +471,6 @@
             return div.innerHTML;
         }
         
-        // Показываем данные пользователя
         const user = tg.initDataUnsafe?.user;
         if (user) {
             document.getElementById('userName').textContent = user.first_name || 'Гость';
@@ -420,10 +479,8 @@
             document.getElementById('userName').textContent = 'Гость';
         }
         
-        // Загружаем избранное при старте
         loadFavorites();
         
-        // Поддержка Enter
         document.getElementById('artistInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchArtist();
