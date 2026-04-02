@@ -120,6 +120,11 @@
             background: var(--tg-theme-bg-color, #f0f2f5);
             border-radius: 14px;
             margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .artist-item:hover {
+            background: var(--tg-theme-secondary-bg-color, #e0e0e0);
         }
         
         .favorite-btn {
@@ -156,10 +161,6 @@
         
         .yandex-btn { background: #ffcc00; color: #000; }
         .youtube-btn { background: #ff0000; }
-        .spotify-btn { background: #1db954; }
-        .apple-btn { background: #fa233b; }
-        .vk-btn { background: #0077ff; }
-        .instagram-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
         .concert-btn { background: #28a745; }
         .afisha-btn { background: #ff6b6b; }
         
@@ -232,6 +233,57 @@
             letter-spacing: 0.5px;
         }
         
+        .popular-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .popular-tag {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .popular-tag:hover {
+            opacity: 0.8;
+        }
+        
+        .history-list {
+            margin-top: 12px;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--tg-theme-bg-color, #f0f2f5);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .history-item:hover {
+            background: var(--tg-theme-secondary-bg-color, #e0e0e0);
+        }
+        
+        .delete-history {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 18px;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            padding: 0 8px;
+        }
+        
         @media (max-width: 480px) {
             body {
                 padding: 12px;
@@ -250,18 +302,32 @@
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
                 <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
+                <div class="tab" onclick="switchTab('history')">📜 История</div>
             </div>
             
+            <!-- Вкладка поиска -->
             <div id="searchTab">
                 <div class="search-box">
                     <input type="text" id="artistInput" class="search-input" placeholder="Big Baby Tape, Imagine Dragons, Кино..." autocomplete="off">
                     <button onclick="searchArtist()" class="search-btn">Найти</button>
                 </div>
+                
+                <!-- Популярные исполнители -->
+                <div class="section-title" style="margin-top: 20px;">🔥 ПОПУЛЯРНЫЕ</div>
+                <div class="popular-grid" id="popularArtists"></div>
+                
                 <div id="result"></div>
             </div>
             
+            <!-- Вкладка избранного -->
             <div id="favoritesTab" class="hidden">
                 <div id="favoritesList"></div>
+            </div>
+            
+            <!-- Вкладка истории -->
+            <div id="historyTab" class="hidden">
+                <div id="historyList"></div>
+                <button onclick="clearHistory()" style="background: #dc3545;">🗑️ Очистить историю</button>
             </div>
             
             <div class="user-info">
@@ -278,6 +344,72 @@
         tg.ready();
         tg.expand();
         
+        // === ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ ===
+        const popularArtistsList = [
+            "Big Baby Tape", "Imagine Dragons", "Кино", "Земфира", 
+            "Miyagi & Эндшпиль", "Моргенштерн", "Rauf & Faik", 
+            "Eminem", "Billie Eilish", "The Weeknd"
+        ];
+        
+        // === УПРАВЛЕНИЕ ИСТОРИЕЙ ===
+        let searchHistory = [];
+        
+        function loadHistory() {
+            const saved = localStorage.getItem('music_bot_history');
+            if (saved) {
+                searchHistory = JSON.parse(saved);
+            }
+            updateHistoryList();
+        }
+        
+        function saveHistory() {
+            localStorage.setItem('music_bot_history', JSON.stringify(searchHistory));
+            updateHistoryList();
+        }
+        
+        function addToHistory(artistName) {
+            // Удаляем если уже есть
+            searchHistory = searchHistory.filter(a => a !== artistName);
+            // Добавляем в начало
+            searchHistory.unshift(artistName);
+            // Оставляем только 15 последних
+            searchHistory = searchHistory.slice(0, 15);
+            saveHistory();
+        }
+        
+        function clearHistory() {
+            searchHistory = [];
+            saveHistory();
+            tg.showAlert('История очищена');
+        }
+        
+        function updateHistoryList() {
+            const historyDiv = document.getElementById('historyList');
+            
+            if (searchHistory.length === 0) {
+                historyDiv.innerHTML = `
+                    <div class="empty-favorites">
+                        📜 История пуста<br>
+                        Поищите исполнителей, они появятся здесь
+                    </div>
+                `;
+                return;
+            }
+            
+            historyDiv.innerHTML = searchHistory.map(artist => `
+                <div class="history-item" onclick="searchArtistByName('${escapeHtml(artist).replace(/'/g, "\\'")}')">
+                    <span>🎤 ${escapeHtml(artist)}</span>
+                    <button class="delete-history" onclick="event.stopPropagation(); removeFromHistory('${escapeHtml(artist).replace(/'/g, "\\'")}')">🗑️</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeFromHistory(artistName) {
+            searchHistory = searchHistory.filter(a => a !== artistName);
+            saveHistory();
+        }
+        
+        // === УПРАВЛЕНИЕ ИЗБРАННЫМ ===
         let favorites = [];
         
         function loadFavorites() {
@@ -327,9 +459,9 @@
             }
             
             favoritesDiv.innerHTML = favorites.map(artist => `
-                <div class="artist-item">
+                <div class="artist-item" onclick="searchArtistByName('${escapeHtml(artist).replace(/'/g, "\\'")}')">
                     <div class="artist-name">🎤 ${escapeHtml(artist)}</div>
-                    <button class="favorite-btn" onclick="removeFromFavorites('${escapeHtml(artist).replace(/'/g, "\\'")}')" style="color: #ffc107;">★</button>
+                    <button class="favorite-btn" onclick="event.stopPropagation(); removeFromFavorites('${escapeHtml(artist).replace(/'/g, "\\'")}')" style="color: #ffc107;">★</button>
                 </div>
             `).join('');
         }
@@ -352,6 +484,12 @@
             }
         }
         
+        // === ПОИСК ИСПОЛНИТЕЛЯ ===
+        function searchArtistByName(artistName) {
+            document.getElementById('artistInput').value = artistName;
+            searchArtist();
+        }
+        
         function searchArtist() {
             const query = document.getElementById('artistInput').value.trim();
             if (!query) {
@@ -359,24 +497,22 @@
                 return;
             }
             
+            // Добавляем в историю
+            addToHistory(query);
+            
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем ссылки...</div>';
             
             // === МУЗЫКАЛЬНЫЕ ПЛАТФОРМЫ ===
             const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
             const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
-            const spotifyUrl = `https://open.spotify.com/search/${encodeURIComponent(query)}`;
-            const appleUrl = `https://music.apple.com/ru/search?term=${encodeURIComponent(query)}`;
-            
-            // === СОЦИАЛЬНЫЕ СЕТИ (ПРЯМОЙ ПОИСК С ВВЕДЁННЫМ ИМЕНЕМ) ===
-            // ВКонтакте — открывает поиск с уже введённым именем
-            const vkUrl = `https://vk.com/search?q=${encodeURIComponent(query)}`;
-            // Instagram — открывает поиск по хештегу
-            const instagramUrl = `https://www.instagram.com/explore/tags/${encodeURIComponent(query.replace(/\s/g, ''))}/`;
             
             // === КОНЦЕРТЫ ===
             const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
             const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(query)}`;
+            
+            // === ТОП ТРЕКИ ===
+            const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' популярные треки')}`;
             
             const isFav = isFavorite(query);
             
@@ -397,14 +533,11 @@
                         <div class="platform-buttons">
                             <button onclick="openLink('${yandexUrl}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                             <button onclick="openLink('${youtubeUrl}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                            <button onclick="openLink('${spotifyUrl}')" class="platform-btn spotify-btn">🟢 Spotify</button>
-                            <button onclick="openLink('${appleUrl}')" class="platform-btn apple-btn">🍎 Apple Music</button>
                         </div>
                         
-                        <div class="section-title">🌐 СОЦИАЛЬНЫЕ СЕТИ</div>
+                        <div class="section-title">🎤 ПОПУЛЯРНЫЕ ТРЕКИ</div>
                         <div class="platform-buttons">
-                            <button onclick="openLink('${vkUrl}')" class="platform-btn vk-btn">📱 ВКонтакте</button>
-                            <button onclick="openLink('${instagramUrl}')" class="platform-btn instagram-btn">📷 Instagram</button>
+                            <button onclick="openLink('${topTracksUrl}')" class="platform-btn" style="background: #9b59b6;">🎵 Топ треки</button>
                         </div>
                         
                         <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
@@ -414,7 +547,7 @@
                         </div>
                         
                         <div class="info-text">
-                            💡 Нажми на ВКонтакте — откроется поиск с уже введённым именем
+                            💡 Нажми на любую кнопку — откроется поиск с уже введённым исполнителем
                         </div>
                     </div>
                 `;
@@ -430,9 +563,11 @@
             }, 300);
         }
         
+        // === ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ===
         function switchTab(tab) {
             const searchTab = document.getElementById('searchTab');
             const favoritesTab = document.getElementById('favoritesTab');
+            const historyTab = document.getElementById('historyTab');
             const tabs = document.querySelectorAll('.tab');
             
             tabs.forEach(t => t.classList.remove('active'));
@@ -440,13 +575,31 @@
             if (tab === 'search') {
                 searchTab.classList.remove('hidden');
                 favoritesTab.classList.add('hidden');
+                historyTab.classList.add('hidden');
                 tabs[0].classList.add('active');
-            } else {
+                loadPopularArtists();
+            } else if (tab === 'favorites') {
                 searchTab.classList.add('hidden');
                 favoritesTab.classList.remove('hidden');
+                historyTab.classList.add('hidden');
                 tabs[1].classList.add('active');
                 updateFavoritesList();
+            } else if (tab === 'history') {
+                searchTab.classList.add('hidden');
+                favoritesTab.classList.add('hidden');
+                historyTab.classList.remove('hidden');
+                tabs[2].classList.add('active');
+                updateHistoryList();
             }
+        }
+        
+        function loadPopularArtists() {
+            const popularDiv = document.getElementById('popularArtists');
+            popularDiv.innerHTML = popularArtistsList.map(artist => `
+                <span class="popular-tag" onclick="searchArtistByName('${escapeHtml(artist).replace(/'/g, "\\'")}')">
+                    🎤 ${artist}
+                </span>
+            `).join('');
         }
         
         function openLink(url) {
@@ -463,6 +616,7 @@
             return div.innerHTML;
         }
         
+        // Показываем данные пользователя
         const user = tg.initDataUnsafe?.user;
         if (user) {
             document.getElementById('userName').textContent = user.first_name || 'Гость';
@@ -471,8 +625,12 @@
             document.getElementById('userName').textContent = 'Гость';
         }
         
+        // Загружаем данные
         loadFavorites();
+        loadHistory();
+        loadPopularArtists();
         
+        // Поддержка Enter
         document.getElementById('artistInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchArtist();
