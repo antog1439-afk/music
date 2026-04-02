@@ -159,7 +159,6 @@
         .spotify-btn { background: #1db954; }
         .apple-btn { background: #fa233b; }
         .vk-btn { background: #0077ff; }
-        .telegram-btn { background: #26a5e4; }
         .instagram-btn { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
         .concert-btn { background: #28a745; }
         .afisha-btn { background: #ff6b6b; }
@@ -369,12 +368,10 @@
             const spotifyUrl = `https://open.spotify.com/search/${encodeURIComponent(query)}`;
             const appleUrl = `https://music.apple.com/ru/search?term=${encodeURIComponent(query)}`;
             
-            // === СОЦИАЛЬНЫЕ СЕТИ (ИСПРАВЛЕННЫЕ ССЫЛКИ) ===
-            // VK — используем старый формат q=, который точно работает
-            const vkUrl = `https://vk.com/search?q=${encodeURIComponent(query)}&c[section]=communities`;
-            // Telegram — поиск по каналам
-            const tgUrl = `https://t.me/search?q=${encodeURIComponent(query)}`;
-            // Instagram — поиск по хештегу (работает всегда)
+            // === СОЦИАЛЬНЫЕ СЕТИ (ПРЯМОЙ ПОИСК С ВВЕДЁННЫМ ИМЕНЕМ) ===
+            // ВКонтакте — открывает поиск с уже введённым именем
+            const vkUrl = `https://vk.com/search?q=${encodeURIComponent(query)}`;
+            // Instagram — открывает поиск по хештегу
             const instagramUrl = `https://www.instagram.com/explore/tags/${encodeURIComponent(query.replace(/\s/g, ''))}/`;
             
             // === КОНЦЕРТЫ ===
@@ -407,7 +404,6 @@
                         <div class="section-title">🌐 СОЦИАЛЬНЫЕ СЕТИ</div>
                         <div class="platform-buttons">
                             <button onclick="openLink('${vkUrl}')" class="platform-btn vk-btn">📱 ВКонтакте</button>
-                            <button onclick="openLink('${tgUrl}')" class="platform-btn telegram-btn">✈️ Telegram</button>
                             <button onclick="openLink('${instagramUrl}')" class="platform-btn instagram-btn">📷 Instagram</button>
                         </div>
                         
@@ -418,7 +414,7 @@
                         </div>
                         
                         <div class="info-text">
-                            💡 Нажми на любую кнопку — откроется поиск с уже введённым исполнителем
+                            💡 Нажми на ВКонтакте — откроется поиск с уже введённым именем
                         </div>
                     </div>
                 `;
