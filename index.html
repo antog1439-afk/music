@@ -284,6 +284,43 @@
             padding: 0 8px;
         }
         
+        /* Индикатор состояния */
+        .state-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .state-idle { background: #6c757d; }
+        .state-searching { background: #ffc107; animation: pulse 1s infinite; }
+        .state-results { background: #28a745; }
+        .state-error { background: #dc3545; }
+        .state-loading { background: #17a2b8; animation: pulse 1s infinite; }
+        
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+        
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 8px 12px;
+            background: var(--tg-theme-bg-color, #f0f2f5);
+            border-radius: 12px;
+            font-size: 13px;
+        }
+        
+        .current-state {
+            display: flex;
+            align-items: center;
+        }
+        
         @media (max-width: 480px) {
             body {
                 padding: 12px;
@@ -299,6 +336,15 @@
         <div class="card">
             <h1>🎵 Музыкальный бот</h1>
             
+            <!-- Индикатор состояния -->
+            <div class="status-bar">
+                <div class="current-state">
+                    <span class="state-indicator state-idle" id="stateIndicator"></span>
+                    <span id="stateText">Готов к работе</span>
+                </div>
+                <span>🔄</span>
+            </div>
+            
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
                 <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
@@ -312,7 +358,6 @@
                     <button onclick="searchArtist()" class="search-btn">Найти</button>
                 </div>
                 
-                <!-- Популярные исполнители -->
                 <div class="section-title" style="margin-top: 20px;">🔥 ПОПУЛЯРНЫЕ</div>
                 <div class="popular-grid" id="popularArtists"></div>
                 
@@ -344,14 +389,57 @@
         tg.ready();
         tg.expand();
         
-        // === ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ ===
+        // ========== МАШИНА СОСТОЯНИЙ ==========
+        const State = {
+            IDLE: 'idle',
+            SEARCHING: 'searching',
+            RESULTS: 'results',
+            ERROR: 'error',
+            LOADING_ARTIST: 'loading_artist'
+        };
+        
+        let currentState = State.IDLE;
+        
+        function setState(newState, optionalMessage = null) {
+            currentState = newState;
+            const indicator = document.getElementById('stateIndicator');
+            const stateText = document.getElementById('stateText');
+            
+            // Убираем все классы состояний
+            indicator.className = 'state-indicator';
+            
+            switch (newState) {
+                case State.IDLE:
+                    indicator.classList.add('state-idle');
+                    stateText.textContent = optionalMessage || '✅ Готов к работе';
+                    break;
+                case State.SEARCHING:
+                    indicator.classList.add('state-searching');
+                    stateText.textContent = optionalMessage || '🔍 Поиск...';
+                    break;
+                case State.RESULTS:
+                    indicator.classList.add('state-results');
+                    stateText.textContent = optionalMessage || '📋 Результаты готовы';
+                    break;
+                case State.ERROR:
+                    indicator.classList.add('state-error');
+                    stateText.textContent = optionalMessage || '❌ Ошибка';
+                    break;
+                case State.LOADING_ARTIST:
+                    indicator.classList.add('state-loading');
+                    stateText.textContent = optionalMessage || '📖 Загрузка информации...';
+                    break;
+            }
+        }
+        
+        // ========== ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ ==========
         const popularArtistsList = [
             "Big Baby Tape", "Imagine Dragons", "Кино", "Земфира", 
             "Miyagi & Эндшпиль", "Моргенштерн", "Rauf & Faik", 
             "Eminem", "Billie Eilish", "The Weeknd"
         ];
         
-        // === УПРАВЛЕНИЕ ИСТОРИЕЙ ===
+        // ========== УПРАВЛЕНИЕ ИСТОРИЕЙ ==========
         let searchHistory = [];
         
         function loadHistory() {
@@ -368,11 +456,8 @@
         }
         
         function addToHistory(artistName) {
-            // Удаляем если уже есть
             searchHistory = searchHistory.filter(a => a !== artistName);
-            // Добавляем в начало
             searchHistory.unshift(artistName);
-            // Оставляем только 15 последних
             searchHistory = searchHistory.slice(0, 15);
             saveHistory();
         }
@@ -387,12 +472,7 @@
             const historyDiv = document.getElementById('historyList');
             
             if (searchHistory.length === 0) {
-                historyDiv.innerHTML = `
-                    <div class="empty-favorites">
-                        📜 История пуста<br>
-                        Поищите исполнителей, они появятся здесь
-                    </div>
-                `;
+                historyDiv.innerHTML = `<div class="empty-favorites">📜 История пуста<br>Поищите исполнителей, они появятся здесь</div>`;
                 return;
             }
             
@@ -409,7 +489,7 @@
             saveHistory();
         }
         
-        // === УПРАВЛЕНИЕ ИЗБРАННЫМ ===
+        // ========== УПРАВЛЕНИЕ ИЗБРАННЫМ ==========
         let favorites = [];
         
         function loadFavorites() {
@@ -449,12 +529,7 @@
             const favoritesDiv = document.getElementById('favoritesList');
             
             if (favorites.length === 0) {
-                favoritesDiv.innerHTML = `
-                    <div class="empty-favorites">
-                        ⭐ Нет избранных исполнителей<br>
-                        Добавьте исполнителя через поиск
-                    </div>
-                `;
+                favoritesDiv.innerHTML = `<div class="empty-favorites">⭐ Нет избранных исполнителей<br>Добавьте исполнителя через поиск</div>`;
                 return;
             }
             
@@ -484,18 +559,21 @@
             }
         }
         
-        // === ПОИСК ИСПОЛНИТЕЛЯ ===
+        // ========== ПОИСК ИСПОЛНИТЕЛЯ ==========
         function searchArtistByName(artistName) {
             document.getElementById('artistInput').value = artistName;
             searchArtist();
         }
         
-        function searchArtist() {
+        async function searchArtist() {
             const query = document.getElementById('artistInput').value.trim();
             if (!query) {
                 tg.showAlert('Введите имя исполнителя');
                 return;
             }
+            
+            // Меняем состояние на "поиск"
+            setState(State.SEARCHING, `🔍 Ищем "${query}"...`);
             
             // Добавляем в историю
             addToHistory(query);
@@ -503,54 +581,45 @@
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем ссылки...</div>';
             
-            // === МУЗЫКАЛЬНЫЕ ПЛАТФОРМЫ ===
-            const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
-            const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
-            
-            // === КОНЦЕРТЫ ===
-            const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
-            const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(query)}`;
-            
-            // === ТОП ТРЕКИ ===
-            const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' популярные треки')}`;
-            
-            const isFav = isFavorite(query);
-            
+            // Имитация загрузки (реальный запрос)
             setTimeout(() => {
+                // Формируем ссылки
+                const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
+                const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
+                const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
+                const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(query)}`;
+                const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' популярные треки')}`;
+                
+                const isFav = isFavorite(query);
+                
                 resultDiv.innerHTML = `
                     <div class="result-card">
-                        <div class="artist-name">
-                            🎤 ${escapeHtml(query)}
-                        </div>
-                        
+                        <div class="artist-name">🎤 ${escapeHtml(query)}</div>
                         <div class="platform-buttons">
                             <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
                                 ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
                             </button>
                         </div>
-                        
                         <div class="section-title">🎵 МУЗЫКА</div>
                         <div class="platform-buttons">
                             <button onclick="openLink('${yandexUrl}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                             <button onclick="openLink('${youtubeUrl}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                         </div>
-                        
                         <div class="section-title">🎤 ПОПУЛЯРНЫЕ ТРЕКИ</div>
                         <div class="platform-buttons">
                             <button onclick="openLink('${topTracksUrl}')" class="platform-btn" style="background: #9b59b6;">🎵 Топ треки</button>
                         </div>
-                        
                         <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
                         <div class="platform-buttons">
                             <button onclick="openLink('${concertsUrl}')" class="platform-btn concert-btn">🎸 Концерты (Яндекс)</button>
                             <button onclick="openLink('${afishaUrl}')" class="platform-btn afisha-btn">🎫 Билеты (Афиша)</button>
                         </div>
-                        
-                        <div class="info-text">
-                            💡 Нажми на любую кнопку — откроется поиск с уже введённым исполнителем
-                        </div>
+                        <div class="info-text">💡 Нажми на любую кнопку — откроется поиск с уже введённым исполнителем</div>
                     </div>
                 `;
+                
+                // Меняем состояние на "результаты"
+                setState(State.RESULTS, `📋 Результаты для "${query}"`);
                 
                 const favBtn = document.getElementById('favorite-btn-dynamic');
                 if (favBtn) {
@@ -560,10 +629,10 @@
                         favBtn.onclick = () => addToFavorites(query);
                     }
                 }
-            }, 300);
+            }, 500);
         }
         
-        // === ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ===
+        // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
         function switchTab(tab) {
             const searchTab = document.getElementById('searchTab');
             const favoritesTab = document.getElementById('favoritesTab');
@@ -578,18 +647,21 @@
                 historyTab.classList.add('hidden');
                 tabs[0].classList.add('active');
                 loadPopularArtists();
+                setState(State.IDLE, 'Готов к поиску');
             } else if (tab === 'favorites') {
                 searchTab.classList.add('hidden');
                 favoritesTab.classList.remove('hidden');
                 historyTab.classList.add('hidden');
                 tabs[1].classList.add('active');
                 updateFavoritesList();
+                setState(State.IDLE, 'Просмотр избранного');
             } else if (tab === 'history') {
                 searchTab.classList.add('hidden');
                 favoritesTab.classList.add('hidden');
                 historyTab.classList.remove('hidden');
                 tabs[2].classList.add('active');
                 updateHistoryList();
+                setState(State.IDLE, 'Просмотр истории');
             }
         }
         
@@ -603,7 +675,11 @@
         }
         
         function openLink(url) {
+            setState(State.LOADING_ARTIST, 'Открытие ссылки...');
             tg.openLink(url);
+            setTimeout(() => {
+                setState(State.IDLE, 'Готов к работе');
+            }, 1000);
         }
         
         function closeApp() {
@@ -629,6 +705,9 @@
         loadFavorites();
         loadHistory();
         loadPopularArtists();
+        
+        // Устанавливаем начальное состояние
+        setState(State.IDLE, 'Готов к работе');
         
         // Поддержка Enter
         document.getElementById('artistInput').addEventListener('keypress', function(e) {
