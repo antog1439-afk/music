@@ -46,6 +46,7 @@
             display: flex;
             gap: 8px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
         .tab {
@@ -62,6 +63,10 @@
         .tab.active {
             background: var(--tg-theme-button-color, #2481cc);
             color: white;
+        }
+        
+        .tab.hidden {
+            display: none;
         }
         
         .search-box {
@@ -340,18 +345,19 @@
             background: #dc3545;
         }
         
-        .admin-btn.warning {
-            background: #ffc107;
-            color: #000;
+        .user-list {
+            max-height: 300px;
+            overflow-y: auto;
         }
         
-        .password-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--tg-theme-hint-color, #ddd);
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--tg-theme-secondary-bg-color, #fff);
             border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 16px;
+            margin-bottom: 8px;
         }
         
         @media (max-width: 480px) {
@@ -373,11 +379,11 @@
                 <span>🎤</span>
             </div>
             
-            <div class="tabs">
+            <div class="tabs" id="tabsContainer">
                 <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
                 <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
                 <div class="tab" onclick="switchTab('history')">📜 История</div>
-                <div class="tab" onclick="switchTab('admin')">👑 Админ</div>
+                <div class="tab" id="adminTabBtn" style="display: none;" onclick="switchTab('admin')">👑 Админ</div>
             </div>
             
             <!-- Вкладка поиска -->
@@ -404,7 +410,7 @@
                 <button onclick="clearHistory()" style="background: #dc3545;">🗑️ Очистить историю</button>
             </div>
             
-            <!-- Вкладка админки -->
+            <!-- Вкладка админки (только для админа) -->
             <div id="adminTab" class="hidden">
                 <div id="adminContent"></div>
             </div>
@@ -423,9 +429,18 @@
         tg.ready();
         tg.expand();
         
-        // ========== ПАРОЛЬ АДМИНКИ ==========
-        const ADMIN_PASSWORD = 'admin123';  // 🔑 Смени пароль!
-        let isAdmin = false;
+        // ========== ТВОЙ TELEGRAM ID ==========
+        const ADMIN_ID = 1044143048;  // ← твой ID
+        
+        // ========== ПОЛУЧАЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ==========
+        const user = tg.initDataUnsafe?.user;
+        const currentUserId = user?.id || null;
+        const isAdmin = (currentUserId === ADMIN_ID);
+        
+        // Показываем админку только админу
+        if (isAdmin) {
+            document.getElementById('adminTabBtn').style.display = 'block';
+        }
         
         // ========== ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ ==========
         const popularArtistsList = [
@@ -438,8 +453,9 @@
         let globalStats = {
             totalSearches: 0,
             totalFavorites: 0,
-            activeUsers: new Set(),
-            popularSearches: {}
+            activeUsers: {},  // { userId: { name, lastSeen, searches, favorites } }
+            popularSearches: {},
+            userActivities: []  // список последних действий
         };
         
         // Загрузка глобальной статистики
@@ -450,7 +466,8 @@
                 globalStats.totalSearches = data.totalSearches || 0;
                 globalStats.totalFavorites = data.totalFavorites || 0;
                 globalStats.popularSearches = data.popularSearches || {};
-                if (data.activeUsers) globalStats.activeUsers = new Set(data.activeUsers);
+                globalStats.activeUsers = data.activeUsers || {};
+                globalStats.userActivities = data.userActivities || [];
             }
         }
         
@@ -459,31 +476,80 @@
                 totalSearches: globalStats.totalSearches,
                 totalFavorites: globalStats.totalFavorites,
                 popularSearches: globalStats.popularSearches,
-                activeUsers: Array.from(globalStats.activeUsers)
+                activeUsers: globalStats.activeUsers,
+                userActivities: globalStats.userActivities.slice(0, 50)  // храним последние 50 действий
             };
             localStorage.setItem('music_bot_global_stats', JSON.stringify(toSave));
         }
         
+        // Добавление действия в ленту активности
+        function addActivity(userId, userName, action, details) {
+            const activity = {
+                userId: userId,
+                userName: userName,
+                action: action,
+                details: details,
+                timestamp: Date.now(),
+                date: new Date().toLocaleString()
+            };
+            globalStats.userActivities.unshift(activity);
+            if (globalStats.userActivities.length > 50) globalStats.userActivities.pop();
+            saveGlobalStats();
+        }
+        
         // Регистрация активности пользователя
         function registerActivity() {
-            const userId = user?.id || 'anonymous';
-            if (!globalStats.activeUsers.has(userId)) {
-                globalStats.activeUsers.add(userId);
-                saveGlobalStats();
+            if (!currentUserId) return;
+            
+            const userName = user?.first_name || user?.username || 'Аноним';
+            
+            if (!globalStats.activeUsers[currentUserId]) {
+                globalStats.activeUsers[currentUserId] = {
+                    name: userName,
+                    firstSeen: Date.now(),
+                    lastSeen: Date.now(),
+                    searches: 0,
+                    favorites: 0
+                };
+                addActivity(currentUserId, userName, '👋 Первое посещение', 'Пользователь зашел в приложение');
+            } else {
+                globalStats.activeUsers[currentUserId].lastSeen = Date.now();
+                globalStats.activeUsers[currentUserId].name = userName;
             }
+            saveGlobalStats();
         }
         
         // Регистрация поиска
         function registerSearch(query) {
+            if (!currentUserId) return;
+            
             globalStats.totalSearches++;
             globalStats.popularSearches[query] = (globalStats.popularSearches[query] || 0) + 1;
+            
+            if (globalStats.activeUsers[currentUserId]) {
+                globalStats.activeUsers[currentUserId].searches++;
+            }
+            
+            const userName = user?.first_name || user?.username || 'Аноним';
+            addActivity(currentUserId, userName, '🔍 Поиск', `Искал: "${query}"`);
+            
             saveGlobalStats();
             registerActivity();
         }
         
         // Регистрация добавления в избранное
-        function registerFavorite() {
+        function registerFavorite(artistName) {
+            if (!currentUserId) return;
+            
             globalStats.totalFavorites++;
+            
+            if (globalStats.activeUsers[currentUserId]) {
+                globalStats.activeUsers[currentUserId].favorites++;
+            }
+            
+            const userName = user?.first_name || user?.username || 'Аноним';
+            addActivity(currentUserId, userName, '⭐ Избранное', `Добавил: ${artistName}`);
+            
             saveGlobalStats();
         }
         
@@ -516,7 +582,7 @@
             if (!favorites.includes(artistName)) {
                 favorites.push(artistName);
                 saveFavorites();
-                registerFavorite();
+                registerFavorite(artistName);
                 tg.showAlert(`⭐ ${artistName} добавлен в избранное`);
                 updateSearchResultButtons(artistName);
             }
@@ -673,29 +739,31 @@
             }, 300);
         }
         
-        // ========== АДМИНКА ==========
+        // ========== АДМИНКА (только для админа) ==========
         function showAdminPanel() {
-            const adminContent = document.getElementById('adminContent');
+            if (!isAdmin) return;
             
-            if (!isAdmin) {
-                adminContent.innerHTML = `
-                    <div class="admin-panel">
-                        <div class="admin-title">🔐 Вход в админ-панель</div>
-                        <input type="password" id="adminPassword" class="password-input" placeholder="Введите пароль">
-                        <button onclick="checkAdminPassword()" class="admin-btn">Войти</button>
-                    </div>
-                `;
-                return;
-            }
+            const adminContent = document.getElementById('adminContent');
             
             // Сортируем популярные поиски
             const sortedSearches = Object.entries(globalStats.popularSearches)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 10);
             
+            // Сортируем пользователей по активности
+            const sortedUsers = Object.entries(globalStats.activeUsers)
+                .sort((a, b) => b[1].lastSeen - a[1].lastSeen);
+            
+            // Форматируем время
+            function formatTime(timestamp) {
+                if (!timestamp) return 'никогда';
+                const date = new Date(timestamp);
+                return date.toLocaleString();
+            }
+            
             adminContent.innerHTML = `
                 <div class="admin-panel">
-                    <div class="admin-title">📊 СТАТИСТИКА</div>
+                    <div class="admin-title">📊 ОБЩАЯ СТАТИСТИКА</div>
                     <div class="admin-stats">
                         <div class="admin-stat">
                             <div class="admin-stat-value">${globalStats.totalSearches}</div>
@@ -706,8 +774,8 @@
                             <div class="admin-stat-label">Добавлений в избранное</div>
                         </div>
                         <div class="admin-stat">
-                            <div class="admin-stat-value">${globalStats.activeUsers.size}</div>
-                            <div class="admin-stat-label">Активных пользователей</div>
+                            <div class="admin-stat-value">${Object.keys(globalStats.activeUsers).length}</div>
+                            <div class="admin-stat-label">Уникальных пользователей</div>
                         </div>
                         <div class="admin-stat">
                             <div class="admin-stat-value">${favorites.length}</div>
@@ -716,29 +784,49 @@
                     </div>
                     
                     <div class="admin-title">🔥 ПОПУЛЯРНЫЕ ЗАПРОСЫ</div>
-                    ${sortedSearches.map(([query, count]) => `
+                    ${sortedSearches.length > 0 ? sortedSearches.map(([query, count]) => `
                         <div class="history-item" style="justify-content: space-between;">
                             <span>🎤 ${escapeHtml(query)}</span>
                             <span style="color: var(--tg-theme-button-color);">${count} раз</span>
                         </div>
-                    `).join('')}
+                    `).join('') : '<div class="info-text">Пока нет данных</div>'}
+                    
+                    <div class="admin-title">👥 ПОЛЬЗОВАТЕЛИ (${sortedUsers.length})</div>
+                    <div class="user-list">
+                        ${sortedUsers.map(([id, data]) => `
+                            <div class="user-item">
+                                <div>
+                                    <div><strong>${escapeHtml(data.name || 'Аноним')}</strong></div>
+                                    <div style="font-size: 11px; color: var(--tg-theme-hint-color);">ID: ${id}</div>
+                                </div>
+                                <div style="text-align: right; font-size: 12px;">
+                                    <div>🔍 ${data.searches || 0}</div>
+                                    <div>⭐ ${data.favorites || 0}</div>
+                                    <div style="font-size: 10px;">${formatTime(data.lastSeen)}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="admin-title">📋 ЛЕНТА АКТИВНОСТИ</div>
+                    <div class="user-list" style="max-height: 300px;">
+                        ${globalStats.userActivities.length > 0 ? globalStats.userActivities.map(activity => `
+                            <div class="user-item" style="flex-direction: column; align-items: flex-start;">
+                                <div style="display: flex; justify-content: space-between; width: 100%;">
+                                    <span><strong>${escapeHtml(activity.userName || 'Аноним')}</strong></span>
+                                    <span style="font-size: 11px; color: var(--tg-theme-hint-color);">${activity.date}</span>
+                                </div>
+                                <div style="font-size: 13px; margin-top: 5px;">
+                                    ${activity.action} ${activity.details ? `— ${escapeHtml(activity.details)}` : ''}
+                                </div>
+                            </div>
+                        `).join('') : '<div class="info-text">Пока нет активности</div>'}
+                    </div>
                     
                     <div class="admin-title">⚙️ ДЕЙСТВИЯ</div>
                     <button onclick="clearAllStats()" class="admin-btn danger">🗑️ Сбросить всю статистику</button>
-                    <button onclick="sendNotificationToAll()" class="admin-btn warning">📢 Отправить уведомление</button>
                 </div>
             `;
-        }
-        
-        function checkAdminPassword() {
-            const password = document.getElementById('adminPassword').value;
-            if (password === ADMIN_PASSWORD) {
-                isAdmin = true;
-                tg.showAlert('✅ Добро пожаловать в админ-панель!');
-                showAdminPanel();
-            } else {
-                tg.showAlert('❌ Неверный пароль!');
-            }
         }
         
         function clearAllStats() {
@@ -746,17 +834,14 @@
                 globalStats = {
                     totalSearches: 0,
                     totalFavorites: 0,
-                    activeUsers: new Set(),
-                    popularSearches: {}
+                    activeUsers: {},
+                    popularSearches: {},
+                    userActivities: []
                 };
                 saveGlobalStats();
                 showAdminPanel();
                 tg.showAlert('✅ Статистика сброшена');
             }
-        }
-        
-        function sendNotificationToAll() {
-            tg.showAlert('📢 Функция отправки уведомлений требует бэкенд-сервер.\nПока что это демо-режим.');
         }
         
         function loadPopularArtists() {
@@ -783,7 +868,7 @@
                 favoritesTab.classList.add('hidden');
                 historyTab.classList.add('hidden');
                 adminTab.classList.add('hidden');
-                tabs[0].classList.add('active');
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
                 loadPopularArtists();
                 setState('idle', 'Готов к поиску');
             } else if (tab === 'favorites') {
@@ -791,7 +876,7 @@
                 favoritesTab.classList.remove('hidden');
                 historyTab.classList.add('hidden');
                 adminTab.classList.add('hidden');
-                tabs[1].classList.add('active');
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
                 updateFavoritesList();
                 setState('idle', 'Просмотр избранного');
             } else if (tab === 'history') {
@@ -799,15 +884,15 @@
                 favoritesTab.classList.add('hidden');
                 historyTab.classList.remove('hidden');
                 adminTab.classList.add('hidden');
-                tabs[2].classList.add('active');
+                document.querySelector('.tab:nth-child(3)').classList.add('active');
                 updateHistoryList();
                 setState('idle', 'Просмотр истории');
-            } else if (tab === 'admin') {
+            } else if (tab === 'admin' && isAdmin) {
                 searchTab.classList.add('hidden');
                 favoritesTab.classList.add('hidden');
                 historyTab.classList.add('hidden');
                 adminTab.classList.remove('hidden');
-                tabs[3].classList.add('active');
+                document.getElementById('adminTabBtn').classList.add('active');
                 showAdminPanel();
                 setState('idle', 'Админ-панель');
             }
@@ -821,11 +906,13 @@
             return div.innerHTML;
         }
         
-        const user = tg.initDataUnsafe?.user;
+        // Показываем данные пользователя
         if (user) {
             document.getElementById('userName').textContent = user.first_name || 'Гость';
             document.getElementById('userId').textContent = user.id || '—';
             registerActivity();
+        } else {
+            document.getElementById('userName').textContent = 'Гость';
         }
         
         loadGlobalStats();
