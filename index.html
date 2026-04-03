@@ -106,7 +106,7 @@
         
         .found-artist {
             text-align: center;
-            padding: 8px;
+            padding: 12px;
             background: var(--tg-theme-secondary-bg-color, #e9ecef);
             border-radius: 12px;
             margin-bottom: 16px;
@@ -118,28 +118,9 @@
         }
         
         .found-artist-name {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             margin-top: 4px;
-        }
-        
-        .artist-name {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .favorite-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 8px;
-            margin: 0;
-            width: auto;
         }
         
         .platform-buttons {
@@ -219,66 +200,22 @@
             to { transform: rotate(360deg); }
         }
         
-        .empty-favorites {
-            text-align: center;
-            padding: 40px;
-            color: var(--tg-theme-hint-color, #6c757d);
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .section-title {
-            font-size: 13px;
-            font-weight: 600;
-            margin: 12px 0 8px 0;
-            color: var(--tg-theme-hint-color, #6c757d);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .popular-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 12px;
-        }
-        
-        .popular-tag {
-            background: var(--tg-theme-button-color, #2481cc);
+        .favorite-btn {
+            background: #6c757d;
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        
-        .popular-tag:hover {
-            opacity: 0.8;
-        }
-        
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: var(--tg-theme-bg-color, #f0f2f5);
-            border-radius: 12px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-        
-        .delete-history {
-            background: none;
             border: none;
-            color: #dc3545;
-            font-size: 18px;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
-            width: auto;
-            margin: 0;
-            padding: 0 8px;
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        .favorite-btn.active {
+            background: #ffc107;
+            color: #000;
         }
         
         .state-indicator {
@@ -292,6 +229,7 @@
         .state-idle { background: #6c757d; }
         .state-searching { background: #ffc107; animation: pulse 1s infinite; }
         .state-results { background: #28a745; }
+        .state-error { background: #dc3545; }
         
         @keyframes pulse {
             0% { opacity: 0.4; }
@@ -316,12 +254,8 @@
         }
         
         @media (max-width: 480px) {
-            body {
-                padding: 12px;
-            }
-            .card {
-                padding: 18px;
-            }
+            body { padding: 12px; }
+            .card { padding: 18px; }
         }
     </style>
 </head>
@@ -330,7 +264,6 @@
         <div class="card">
             <h1>🎵 Музыкальный бот</h1>
             
-            <!-- Индикатор состояния -->
             <div class="status-bar">
                 <div class="current-state">
                     <span class="state-indicator state-idle" id="stateIndicator"></span>
@@ -339,7 +272,6 @@
                 <span>🎤</span>
             </div>
             
-            <!-- Тип поиска -->
             <div class="search-type">
                 <button class="type-btn active" onclick="setSearchType('artist')">🎤 Исполнитель</button>
                 <button class="type-btn" onclick="setSearchType('track')">🎵 Трек</button>
@@ -347,7 +279,7 @@
             </div>
             
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" id="searchInput" placeholder="Например: Imagine Dragons, Believer, Night Visions..." autocomplete="off">
+                <input type="text" id="searchInput" class="search-input" placeholder="Например: Imagine Dragons, Believer, Night Visions..." autocomplete="off">
                 <button onclick="search()" class="search-btn">Найти</button>
             </div>
             
@@ -367,185 +299,43 @@
         tg.ready();
         tg.expand();
         
-        // ========== БАЗА ДАННЫХ ИСПОЛНИТЕЛЕЙ ДЛЯ ТРЕКОВ И АЛЬБОМОВ ==========
-        const artistDatabase = {
-            // Популярные треки и их исполнители
-            tracks: {
-                "believer": "Imagine Dragons",
-                "thunder": "Imagine Dragons", 
-                "radioactive": "Imagine Dragons",
-                "demons": "Imagine Dragons",
-                "whatever it takes": "Imagine Dragons",
-                "enemy": "Imagine Dragons",
-                "bones": "Imagine Dragons",
-                "sharks": "Imagine Dragons",
-                
-                "группа крови": "Кино",
-                "звезда по имени солнце": "Кино",
-                "пачка сигарет": "Кино",
-                "спокойная ночь": "Кино",
-                "кукушка": "Кино",
-                "восьмиклассница": "Кино",
-                
-                "traplife": "Big Baby Tape",
-                "dope game": "Big Baby Tape",
-                "bandana": "Big Baby Tape",
-                "1000": "Big Baby Tape",
-                "gimme the loot": "Big Baby Tape",
-                "hussle": "Big Baby Tape",
-                
-                "искала": "Земфира",
-                "прости меня моя любовь": "Земфира",
-                "хочешь": "Земфира",
-                "бесконечность": "Земфира",
-                "мачо": "Земфира",
-                
-                "после тебя": "Rauf & Faik",
-                "детство": "Rauf & Faik",
-                "я люблю тебя": "Rauf & Faik",
-                "колыбельная": "Rauf & Faik",
-                
-                "mockingbird": "Eminem",
-                "lose yourself": "Eminem",
-                "stan": "Eminem",
-                "without me": "Eminem",
-                "rap god": "Eminem",
-                "the real slim shady": "Eminem",
-                
-                "bad guy": "Billie Eilish",
-                "when the party's over": "Billie Eilish",
-                "ocean eyes": "Billie Eilish",
-                "lovely": "Billie Eilish",
-                "bury a friend": "Billie Eilish",
-                
-                "blinding lights": "The Weeknd",
-                "save your tears": "The Weeknd",
-                "starboy": "The Weeknd",
-                "the hills": "The Weeknd",
-                "can't feel my face": "The Weeknd"
-            },
-            
-            // Популярные альбомы и их исполнители
-            albums: {
-                "night visions": "Imagine Dragons",
-                "evolve": "Imagine Dragons",
-                "origins": "Imagine Dragons",
-                "mercury act 1": "Imagine Dragons",
-                "smoke mirrors": "Imagine Dragons",
-                
-                "черный альбом": "Кино",
-                "звезда по имени солнце": "Кино",
-                "группа крови": "Кино",
-                "ночь": "Кино",
-                "45": "Кино",
-                
-                "hussle": "Big Baby Tape",
-                "bandana": "Big Baby Tape",
-                "1000": "Big Baby Tape",
-                "argyll": "Big Baby Tape",
-                
-                "земфира": "Земфира",
-                "прости меня моя любовь": "Земфира",
-                "вендетта": "Земфира",
-                "жить в твоей голове": "Земфира",
-                
-                "я люблю тебя": "Rauf & Faik",
-                "с детства": "Rauf & Faik",
-                "как люди": "Rauf & Faik",
-                
-                "the eminem show": "Eminem",
-                "marshall mathers lp": "Eminem",
-                "kamikaze": "Eminem",
-                "music to be murdered by": "Eminem",
-                
-                "when we all fall asleep where do we go": "Billie Eilish",
-                "happier than ever": "Billie Eilish",
-                "dont smile at me": "Billie Eilish",
-                
-                "after hours": "The Weeknd",
-                "starboy": "The Weeknd",
-                "beauty behind the madness": "The Weeknd",
-                "dawn fm": "The Weeknd"
-            }
-        };
+        // Прокси для обхода CORS
+        const PROXY = 'https://cors-anywhere.herokuapp.com/';
+        const YANDEX_API = 'https://music.yandex.ru/api/v2.1/';
         
         let currentSearchType = 'artist';
-        let currentState = 'idle';
-        let searchHistory = [];
         let favorites = [];
+        let searchHistory = [];
         
-        // ========== МАШИНА СОСТОЯНИЙ ==========
+        // ========== СОСТОЯНИЯ ==========
         function setState(newState, message) {
-            currentState = newState;
             const indicator = document.getElementById('stateIndicator');
             const stateText = document.getElementById('stateText');
-            
             indicator.className = 'state-indicator';
             
-            switch(newState) {
-                case 'idle':
-                    indicator.classList.add('state-idle');
-                    stateText.textContent = message || '✅ Готов к работе';
-                    break;
-                case 'searching':
-                    indicator.classList.add('state-searching');
-                    stateText.textContent = message || '🔍 Поиск...';
-                    break;
-                case 'results':
-                    indicator.classList.add('state-results');
-                    stateText.textContent = message || '📋 Результаты готовы';
-                    break;
-            }
+            if (newState === 'idle') indicator.classList.add('state-idle');
+            else if (newState === 'searching') indicator.classList.add('state-searching');
+            else if (newState === 'results') indicator.classList.add('state-results');
+            else if (newState === 'error') indicator.classList.add('state-error');
+            
+            stateText.textContent = message;
         }
         
-        // ========== ТИП ПОИСКА ==========
         function setSearchType(type) {
             currentSearchType = type;
             const btns = document.querySelectorAll('.type-btn');
             btns.forEach(btn => btn.classList.remove('active'));
-            
             if (type === 'artist') btns[0].classList.add('active');
             else if (type === 'track') btns[1].classList.add('active');
             else if (type === 'album') btns[2].classList.add('active');
             
-            const placeholder = type === 'artist' ? 'Например: Imagine Dragons' :
-                               type === 'track' ? 'Например: Believer' : 'Например: Night Visions';
+            const placeholder = type === 'artist' ? 'Например: Imagine Dragons, Асия...' :
+                               type === 'track' ? 'Например: Believer, Искала...' : 'Например: Night Visions, После тебя...';
             document.getElementById('searchInput').placeholder = placeholder;
         }
         
-        // ========== ПОИСК ИСПОЛНИТЕЛЯ ==========
-        function findArtistByTrackOrAlbum(query, type) {
-            const lowerQuery = query.toLowerCase().trim();
-            
-            if (type === 'track' && artistDatabase.tracks[lowerQuery]) {
-                return artistDatabase.tracks[lowerQuery];
-            }
-            
-            if (type === 'album' && artistDatabase.albums[lowerQuery]) {
-                return artistDatabase.albums[lowerQuery];
-            }
-            
-            // Если точного совпадения нет, ищем частичное
-            if (type === 'track') {
-                for (const [track, artist] of Object.entries(artistDatabase.tracks)) {
-                    if (track.includes(lowerQuery) || lowerQuery.includes(track)) {
-                        return artist;
-                    }
-                }
-            }
-            
-            if (type === 'album') {
-                for (const [album, artist] of Object.entries(artistDatabase.albums)) {
-                    if (album.includes(lowerQuery) || lowerQuery.includes(album)) {
-                        return artist;
-                    }
-                }
-            }
-            
-            return null;
-        }
-        
-        function search() {
+        // ========== ПОИСК В ЯНДЕКС.МУЗЫКЕ ==========
+        async function search() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) {
                 tg.showAlert('Введите название');
@@ -553,159 +343,154 @@
             }
             
             setState('searching', `🔍 Ищем "${query}"...`);
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Поиск...</div>';
             
-            let artistName = null;
-            let searchTypeText = '';
-            
-            if (currentSearchType === 'artist') {
-                artistName = query;
-                searchTypeText = 'исполнителя';
-            } else if (currentSearchType === 'track') {
-                artistName = findArtistByTrackOrAlbum(query, 'track');
-                searchTypeText = 'трек';
-            } else if (currentSearchType === 'album') {
-                artistName = findArtistByTrackOrAlbum(query, 'album');
-                searchTypeText = 'альбом';
-            }
-            
-            setTimeout(() => {
-                const resultDiv = document.getElementById('result');
+            try {
+                let artistName = null;
                 
-                if (!artistName) {
-                    resultDiv.innerHTML = `
-                        <div class="result-card">
-                            <div class="found-artist" style="background: #dc354520;">
-                                <div class="found-artist-label">❌ НЕ НАЙДЕН</div>
-                                <div class="found-artist-name">"${escapeHtml(query)}"</div>
-                            </div>
-                            <div class="info-text">
-                                Не удалось найти исполнителя по ${searchTypeText} "${escapeHtml(query)}"<br>
-                                Попробуйте ввести название иначе или найдите через "Исполнитель"
-                            </div>
-                        </div>
-                    `;
-                    setState('results', `❌ "${query}" не найден`);
-                    return;
+                if (currentSearchType === 'artist') {
+                    // Прямой поиск исполнителя
+                    artistName = query;
+                    showResults(query, `🔍 По запросу: "${query}" (исполнитель)`);
+                    
+                } else if (currentSearchType === 'track') {
+                    // Поиск трека, чтобы узнать исполнителя
+                    const searchUrl = `${YANDEX_API}handlers/music/search?text=${encodeURIComponent(query)}&type=track&page=0`;
+                    const response = await fetch(PROXY + searchUrl);
+                    const data = await response.json();
+                    
+                    if (data && data.tracks && data.tracks.items && data.tracks.items.length > 0) {
+                        const track = data.tracks.items[0];
+                        if (track.artists && track.artists.length > 0) {
+                            artistName = track.artists[0].name;
+                            showResults(artistName, `🎵 Трек: "${query}" → Исполнитель: ${artistName}`);
+                        } else {
+                            throw new Error('Исполнитель не найден');
+                        }
+                    } else {
+                        throw new Error('Трек не найден');
+                    }
+                    
+                } else if (currentSearchType === 'album') {
+                    // Поиск альбома, чтобы узнать исполнителя
+                    const searchUrl = `${YANDEX_API}handlers/music/search?text=${encodeURIComponent(query)}&type=album&page=0`;
+                    const response = await fetch(PROXY + searchUrl);
+                    const data = await response.json();
+                    
+                    if (data && data.albums && data.albums.items && data.albums.items.length > 0) {
+                        const album = data.albums.items[0];
+                        if (album.artists && album.artists.length > 0) {
+                            artistName = album.artists[0].name;
+                            showResults(artistName, `💿 Альбом: "${query}" → Исполнитель: ${artistName}`);
+                        } else {
+                            throw new Error('Исполнитель не найден');
+                        }
+                    } else {
+                        throw new Error('Альбом не найден');
+                    }
                 }
-                
-                addToHistory(query, artistName, currentSearchType);
-                
-                const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`;
-                const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`;
-                const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' концерт')}`;
-                const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(artistName)}`;
-                const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' популярные треки')}`;
-                
-                const isFav = favorites.includes(artistName);
-                
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <div class="found-artist">
-                            <div class="found-artist-label">🎯 НАЙДЕН ИСПОЛНИТЕЛЬ</div>
-                            <div class="found-artist-name">${escapeHtml(artistName)}</div>
-                            <div class="info-text" style="margin-top: 8px;">
-                                🔍 По запросу: "${escapeHtml(query)}" (${searchTypeText})
-                            </div>
-                        </div>
-                        
-                        <div class="platform-buttons">
-                            <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
-                                ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
-                            </button>
-                        </div>
-                        
-                        <div class="section-title">🎵 МУЗЫКА</div>
-                        <div class="platform-buttons">
-                            <button onclick="openLink('${yandexUrl}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                            <button onclick="openLink('${youtubeUrl}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                        </div>
-                        
-                        <div class="section-title">🎤 ПОПУЛЯРНЫЕ ТРЕКИ</div>
-                        <div class="platform-buttons">
-                            <button onclick="openLink('${topTracksUrl}')" class="platform-btn" style="background: #9b59b6;">🎵 Топ треки</button>
-                        </div>
-                        
-                        <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
-                        <div class="platform-buttons">
-                            <button onclick="openLink('${concertsUrl}')" class="platform-btn concert-btn">🎸 Концерты (Яндекс)</button>
-                            <button onclick="openLink('${afishaUrl}')" class="platform-btn afisha-btn">🎫 Билеты (Афиша)</button>
-                        </div>
-                        
-                        <div class="info-text">
-                            💡 Нажми на любую кнопку — откроется поиск с исполнителем "${artistName}"
-                        </div>
-                    </div>
-                `;
                 
                 setState('results', `🎤 Найден: ${artistName}`);
                 
-                const favBtn = document.getElementById('favorite-btn-dynamic');
-                if (favBtn) {
-                    if (isFav) {
-                        favBtn.onclick = () => removeFromFavorites(artistName);
-                    } else {
-                        favBtn.onclick = () => addToFavorites(artistName);
-                    }
-                }
-            }, 500);
+            } catch (error) {
+                console.error('Ошибка:', error);
+                setState('error', '❌ Ошибка поиска');
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <div class="found-artist" style="background: #dc354520;">
+                            <div class="found-artist-label">❌ НЕ НАЙДЕН</div>
+                            <div class="found-artist-name">"${escapeHtml(query)}"</div>
+                        </div>
+                        <div class="info-text">
+                            Не удалось найти. Проверьте правильность написания.<br>
+                            Для поиска треков и альбомов нужно активировать прокси:<br>
+                            <a href="#" onclick="activateProxy()" style="color: var(--tg-theme-button-color);">Нажмите для активации</a>
+                        </div>
+                    </div>
+                `;
+            }
         }
         
-        // ========== УПРАВЛЕНИЕ ИСТОРИЕЙ ==========
-        function addToHistory(query, artist, type) {
-            const historyItem = {
-                query: query,
-                artist: artist,
-                type: type,
-                timestamp: Date.now()
-            };
-            searchHistory.unshift(historyItem);
-            searchHistory = searchHistory.slice(0, 20);
-            localStorage.setItem('music_bot_history', JSON.stringify(searchHistory));
+        function showResults(artistName, searchInfo) {
+            const resultDiv = document.getElementById('result');
+            
+            const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`;
+            const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`;
+            const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' концерт')}`;
+            const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(artistName)}`;
+            const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' популярные треки')}`;
+            
+            const isFav = favorites.includes(artistName);
+            
+            resultDiv.innerHTML = `
+                <div class="result-card">
+                    <div class="found-artist">
+                        <div class="found-artist-label">🎯 НАЙДЕН ИСПОЛНИТЕЛЬ</div>
+                        <div class="found-artist-name">${escapeHtml(artistName)}</div>
+                        <div class="info-text" style="margin-top: 8px;">${escapeHtml(searchInfo)}</div>
+                    </div>
+                    
+                    <button class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${escapeHtml(artistName).replace(/'/g, "\\'")}')">
+                        ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
+                    </button>
+                    
+                    <div class="section-title" style="margin-top: 16px;">🎵 МУЗЫКА</div>
+                    <div class="platform-buttons">
+                        <button onclick="openLink('${yandexUrl}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                        <button onclick="openLink('${youtubeUrl}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                    </div>
+                    
+                    <div class="section-title">🎤 ПОПУЛЯРНЫЕ ТРЕКИ</div>
+                    <div class="platform-buttons">
+                        <button onclick="openLink('${topTracksUrl}')" class="platform-btn" style="background: #9b59b6;">🎵 Топ треки</button>
+                    </div>
+                    
+                    <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
+                    <div class="platform-buttons">
+                        <button onclick="openLink('${concertsUrl}')" class="platform-btn concert-btn">🎸 Концерты (Яндекс)</button>
+                        <button onclick="openLink('${afishaUrl}')" class="platform-btn afisha-btn">🎫 Билеты (Афиша)</button>
+                    </div>
+                    
+                    <div class="info-text">💡 Нажми на любую кнопку — откроется поиск</div>
+                </div>
+            `;
+            
+            addToHistory(artistName);
         }
         
-        // ========== УПРАВЛЕНИЕ ИЗБРАННЫМ ==========
+        function activateProxy() {
+            tg.openLink('https://cors-anywhere.herokuapp.com/');
+            tg.showAlert('Откройте ссылку и нажмите "Request temporary access"');
+        }
+        
+        // ========== ИЗБРАННОЕ ==========
         function loadFavorites() {
             const saved = localStorage.getItem('music_bot_favorites');
-            if (saved) {
-                favorites = JSON.parse(saved);
-            }
+            if (saved) favorites = JSON.parse(saved);
         }
         
         function saveFavorites() {
             localStorage.setItem('music_bot_favorites', JSON.stringify(favorites));
         }
         
-        function addToFavorites(artistName) {
-            if (!favorites.includes(artistName)) {
+        function toggleFavorite(artistName) {
+            if (favorites.includes(artistName)) {
+                favorites = favorites.filter(a => a !== artistName);
+                tg.showAlert(`❌ ${artistName} удалён из избранного`);
+            } else {
                 favorites.push(artistName);
-                saveFavorites();
                 tg.showAlert(`⭐ ${artistName} добавлен в избранное`);
-                updateSearchResultButtons(artistName);
             }
-        }
-        
-        function removeFromFavorites(artistName) {
-            favorites = favorites.filter(a => a !== artistName);
             saveFavorites();
-            tg.showAlert(`❌ ${artistName} удалён из избранного`);
-            updateSearchResultButtons(artistName);
+            search();
         }
         
-        function updateSearchResultButtons(artistName) {
-            const favButton = document.getElementById('favorite-btn-dynamic');
-            if (favButton) {
-                const isFav = favorites.includes(artistName);
-                if (isFav) {
-                    favButton.innerHTML = '★ Удалить из избранного';
-                    favButton.style.background = '#ffc107';
-                    favButton.style.color = '#000';
-                    favButton.onclick = () => removeFromFavorites(artistName);
-                } else {
-                    favButton.innerHTML = '☆ Добавить в избранное';
-                    favButton.style.background = '#6c757d';
-                    favButton.style.color = 'white';
-                    favButton.onclick = () => addToFavorites(artistName);
-                }
+        function addToHistory(artistName) {
+            if (!searchHistory.includes(artistName)) {
+                searchHistory.unshift(artistName);
+                searchHistory = searchHistory.slice(0, 10);
+                localStorage.setItem('music_bot_history', JSON.stringify(searchHistory));
             }
         }
         
@@ -723,21 +508,18 @@
             return div.innerHTML;
         }
         
+        // Данные пользователя
         const user = tg.initDataUnsafe?.user;
         if (user) {
             document.getElementById('userName').textContent = user.first_name || 'Гость';
             document.getElementById('userId').textContent = user.id || '—';
-        } else {
-            document.getElementById('userName').textContent = 'Гость';
         }
         
         loadFavorites();
         setState('idle', 'Готов к работе');
         
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                search();
-            }
+            if (e.key === 'Enter') search();
         });
     </script>
 </body>
