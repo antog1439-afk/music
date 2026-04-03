@@ -46,6 +46,7 @@
             display: flex;
             gap: 8px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
         .tab {
@@ -284,41 +285,47 @@
             padding: 0 8px;
         }
         
-        /* Индикатор состояния */
-        .state-indicator {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 8px;
+        /* Админ-панель */
+        .admin-only {
+            border: 2px solid #ffc107;
         }
         
-        .state-idle { background: #6c757d; }
-        .state-searching { background: #ffc107; animation: pulse 1s infinite; }
-        .state-results { background: #28a745; }
-        .state-error { background: #dc3545; }
-        .state-loading { background: #17a2b8; animation: pulse 1s infinite; }
-        
-        @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
-        }
-        
-        .status-bar {
+        .user-stats {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
-            padding: 8px 12px;
+            align-items: center;
+            padding: 12px;
             background: var(--tg-theme-bg-color, #f0f2f5);
             border-radius: 12px;
-            font-size: 13px;
+            margin-bottom: 8px;
         }
         
-        .current-state {
-            display: flex;
-            align-items: center;
+        .user-stats:hover {
+            background: var(--tg-theme-secondary-bg-color, #e0e0e0);
+        }
+        
+        .user-name {
+            font-weight: 600;
+        }
+        
+        .user-id {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #6c757d);
+        }
+        
+        .user-time {
+            font-size: 11px;
+            color: var(--tg-theme-hint-color, #6c757d);
+        }
+        
+        .admin-badge {
+            background: #ffc107;
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
         }
         
         @media (max-width: 480px) {
@@ -328,6 +335,13 @@
             .card {
                 padding: 18px;
             }
+            .tabs {
+                gap: 4px;
+            }
+            .tab {
+                padding: 8px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -336,19 +350,11 @@
         <div class="card">
             <h1>🎵 Музыкальный бот</h1>
             
-            <!-- Индикатор состояния -->
-            <div class="status-bar">
-                <div class="current-state">
-                    <span class="state-indicator state-idle" id="stateIndicator"></span>
-                    <span id="stateText">Готов к работе</span>
-                </div>
-                <span>🔄</span>
-            </div>
-            
             <div class="tabs">
                 <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
                 <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
                 <div class="tab" onclick="switchTab('history')">📜 История</div>
+                <div class="tab admin-tab hidden" id="adminTabBtn" onclick="switchTab('admin')">👑 Админ</div>
             </div>
             
             <!-- Вкладка поиска -->
@@ -375,6 +381,16 @@
                 <button onclick="clearHistory()" style="background: #dc3545;">🗑️ Очистить историю</button>
             </div>
             
+            <!-- Вкладка админа (только для тебя) -->
+            <div id="adminTab" class="hidden">
+                <div class="section-title">👥 ПОСЕТИТЕЛИ MINI APP</div>
+                <div id="visitorsList"></div>
+                <button onclick="clearVisitors()" style="background: #dc3545;">🗑️ Очистить список</button>
+                <div class="info-text" style="margin-top: 12px;">
+                    📊 Всего посетителей: <span id="totalVisitors">0</span>
+                </div>
+            </div>
+            
             <div class="user-info">
                 <span>👤 <span id="userName">Загрузка...</span></span>
                 <span>🆔 <span id="userId">—</span></span>
@@ -389,46 +405,88 @@
         tg.ready();
         tg.expand();
         
-        // ========== МАШИНА СОСТОЯНИЙ ==========
-        const State = {
-            IDLE: 'idle',
-            SEARCHING: 'searching',
-            RESULTS: 'results',
-            ERROR: 'error',
-            LOADING_ARTIST: 'loading_artist'
-        };
+        // ========== ТВОЙ TELEGRAM ID (АДМИН) ==========
+        // ЗАМЕНИ ЭТОТ ID НА СВОЙ!
+        const ADMIN_ID = 1044143048;  // ← Твой ID из Telegram
         
-        let currentState = State.IDLE;
+        // ========== УПРАВЛЕНИЕ ПОСЕТИТЕЛЯМИ ==========
+        let visitors = [];
         
-        function setState(newState, optionalMessage = null) {
-            currentState = newState;
-            const indicator = document.getElementById('stateIndicator');
-            const stateText = document.getElementById('stateText');
+        function loadVisitors() {
+            const saved = localStorage.getItem('music_bot_visitors');
+            if (saved) {
+                visitors = JSON.parse(saved);
+            }
+            updateVisitorsList();
+        }
+        
+        function saveVisitors() {
+            localStorage.setItem('music_bot_visitors', JSON.stringify(visitors));
+            updateVisitorsList();
+        }
+        
+        function addVisitor(userId, userName, username) {
+            // Проверяем, был ли уже этот пользователь сегодня
+            const today = new Date().toDateString();
+            const existingIndex = visitors.findIndex(v => v.userId === userId && v.date === today);
             
-            // Убираем все классы состояний
-            indicator.className = 'state-indicator';
+            if (existingIndex !== -1) {
+                // Обновляем время последнего визита
+                visitors[existingIndex].lastVisit = new Date().toLocaleTimeString();
+                visitors[existingIndex].visitCount++;
+            } else {
+                // Добавляем нового посетителя
+                visitors.unshift({
+                    userId: userId,
+                    userName: userName || 'Без имени',
+                    username: username || '',
+                    firstVisit: new Date().toLocaleString(),
+                    lastVisit: new Date().toLocaleTimeString(),
+                    date: today,
+                    visitCount: 1
+                });
+            }
             
-            switch (newState) {
-                case State.IDLE:
-                    indicator.classList.add('state-idle');
-                    stateText.textContent = optionalMessage || '✅ Готов к работе';
-                    break;
-                case State.SEARCHING:
-                    indicator.classList.add('state-searching');
-                    stateText.textContent = optionalMessage || '🔍 Поиск...';
-                    break;
-                case State.RESULTS:
-                    indicator.classList.add('state-results');
-                    stateText.textContent = optionalMessage || '📋 Результаты готовы';
-                    break;
-                case State.ERROR:
-                    indicator.classList.add('state-error');
-                    stateText.textContent = optionalMessage || '❌ Ошибка';
-                    break;
-                case State.LOADING_ARTIST:
-                    indicator.classList.add('state-loading');
-                    stateText.textContent = optionalMessage || '📖 Загрузка информации...';
-                    break;
+            // Оставляем только последних 100 посетителей
+            visitors = visitors.slice(0, 100);
+            saveVisitors();
+        }
+        
+        function updateVisitorsList() {
+            const visitorsDiv = document.getElementById('visitorsList');
+            const totalSpan = document.getElementById('totalVisitors');
+            
+            if (!visitorsDiv) return;
+            
+            totalSpan.textContent = visitors.length;
+            
+            if (visitors.length === 0) {
+                visitorsDiv.innerHTML = `<div class="empty-favorites">👥 Нет посетителей</div>`;
+                return;
+            }
+            
+            visitorsDiv.innerHTML = visitors.map(v => `
+                <div class="user-stats">
+                    <div>
+                        <div class="user-name">
+                            👤 ${escapeHtml(v.userName)}
+                            ${v.username ? ` @${escapeHtml(v.username)}` : ''}
+                            ${v.userId == ADMIN_ID ? '<span class="admin-badge">👑 Админ</span>' : ''}
+                        </div>
+                        <div class="user-id">🆔 ID: ${v.userId}</div>
+                        <div class="user-time">📅 Первый визит: ${v.firstVisit}</div>
+                        <div class="user-time">🕐 Последний визит: ${v.lastVisit}</div>
+                        <div class="user-time">🔁 Визитов: ${v.visitCount}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function clearVisitors() {
+            if (confirm('Очистить список посетителей?')) {
+                visitors = [];
+                saveVisitors();
+                tg.showAlert('Список посетителей очищен');
             }
         }
         
@@ -470,6 +528,8 @@
         
         function updateHistoryList() {
             const historyDiv = document.getElementById('historyList');
+            
+            if (!historyDiv) return;
             
             if (searchHistory.length === 0) {
                 historyDiv.innerHTML = `<div class="empty-favorites">📜 История пуста<br>Поищите исполнителей, они появятся здесь</div>`;
@@ -528,6 +588,8 @@
         function updateFavoritesList() {
             const favoritesDiv = document.getElementById('favoritesList');
             
+            if (!favoritesDiv) return;
+            
             if (favorites.length === 0) {
                 favoritesDiv.innerHTML = `<div class="empty-favorites">⭐ Нет избранных исполнителей<br>Добавьте исполнителя через поиск</div>`;
                 return;
@@ -565,25 +627,19 @@
             searchArtist();
         }
         
-        async function searchArtist() {
+        function searchArtist() {
             const query = document.getElementById('artistInput').value.trim();
             if (!query) {
                 tg.showAlert('Введите имя исполнителя');
                 return;
             }
             
-            // Меняем состояние на "поиск"
-            setState(State.SEARCHING, `🔍 Ищем "${query}"...`);
-            
-            // Добавляем в историю
             addToHistory(query);
             
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем ссылки...</div>';
             
-            // Имитация загрузки (реальный запрос)
             setTimeout(() => {
-                // Формируем ссылки
                 const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
                 const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
                 const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
@@ -618,9 +674,6 @@
                     </div>
                 `;
                 
-                // Меняем состояние на "результаты"
-                setState(State.RESULTS, `📋 Результаты для "${query}"`);
-                
                 const favBtn = document.getElementById('favorite-btn-dynamic');
                 if (favBtn) {
                     if (isFav) {
@@ -629,7 +682,7 @@
                         favBtn.onclick = () => addToFavorites(query);
                     }
                 }
-            }, 500);
+            }, 300);
         }
         
         // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
@@ -637,6 +690,7 @@
             const searchTab = document.getElementById('searchTab');
             const favoritesTab = document.getElementById('favoritesTab');
             const historyTab = document.getElementById('historyTab');
+            const adminTab = document.getElementById('adminTab');
             const tabs = document.querySelectorAll('.tab');
             
             tabs.forEach(t => t.classList.remove('active'));
@@ -645,23 +699,30 @@
                 searchTab.classList.remove('hidden');
                 favoritesTab.classList.add('hidden');
                 historyTab.classList.add('hidden');
+                if (adminTab) adminTab.classList.add('hidden');
                 tabs[0].classList.add('active');
                 loadPopularArtists();
-                setState(State.IDLE, 'Готов к поиску');
             } else if (tab === 'favorites') {
                 searchTab.classList.add('hidden');
                 favoritesTab.classList.remove('hidden');
                 historyTab.classList.add('hidden');
+                if (adminTab) adminTab.classList.add('hidden');
                 tabs[1].classList.add('active');
                 updateFavoritesList();
-                setState(State.IDLE, 'Просмотр избранного');
             } else if (tab === 'history') {
                 searchTab.classList.add('hidden');
                 favoritesTab.classList.add('hidden');
                 historyTab.classList.remove('hidden');
+                if (adminTab) adminTab.classList.add('hidden');
                 tabs[2].classList.add('active');
                 updateHistoryList();
-                setState(State.IDLE, 'Просмотр истории');
+            } else if (tab === 'admin') {
+                searchTab.classList.add('hidden');
+                favoritesTab.classList.add('hidden');
+                historyTab.classList.add('hidden');
+                if (adminTab) adminTab.classList.remove('hidden');
+                tabs[3].classList.add('active');
+                updateVisitorsList();
             }
         }
         
@@ -675,11 +736,7 @@
         }
         
         function openLink(url) {
-            setState(State.LOADING_ARTIST, 'Открытие ссылки...');
             tg.openLink(url);
-            setTimeout(() => {
-                setState(State.IDLE, 'Готов к работе');
-            }, 1000);
         }
         
         function closeApp() {
@@ -692,22 +749,37 @@
             return div.innerHTML;
         }
         
-        // Показываем данные пользователя
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
         const user = tg.initDataUnsafe?.user;
+        const currentUserId = user?.id;
+        const isAdmin = (currentUserId == ADMIN_ID);
+        
+        // Показываем данные пользователя
         if (user) {
             document.getElementById('userName').textContent = user.first_name || 'Гость';
             document.getElementById('userId').textContent = user.id || '—';
+            
+            // Добавляем посетителя в список
+            addVisitor(user.id, user.first_name, user.username);
+            
+            // Если админ - показываем админ-вкладку
+            if (isAdmin) {
+                const adminTabBtn = document.getElementById('adminTabBtn');
+                if (adminTabBtn) {
+                    adminTabBtn.classList.remove('hidden');
+                }
+                console.log('👑 Админ-режим активирован');
+            }
         } else {
             document.getElementById('userName').textContent = 'Гость';
+            document.getElementById('userId').textContent = '—';
         }
         
         // Загружаем данные
         loadFavorites();
         loadHistory();
         loadPopularArtists();
-        
-        // Устанавливаем начальное состояние
-        setState(State.IDLE, 'Готов к работе');
+        loadVisitors();
         
         // Поддержка Enter
         document.getElementById('artistInput').addEventListener('keypress', function(e) {
