@@ -345,10 +345,6 @@
             background: #dc3545;
         }
         
-        .admin-btn.success {
-            background: #28a745;
-        }
-        
         .user-list {
             max-height: 300px;
             overflow-y: auto;
@@ -434,13 +430,14 @@
         tg.expand();
         
         // ========== ТВОЙ TELEGRAM ID ==========
-        const ADMIN_ID = 1044143048;
+        const ADMIN_ID = 1044143048;  // ← твой ID
         
         // ========== ПОЛУЧАЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ==========
         const user = tg.initDataUnsafe?.user;
         const currentUserId = user?.id || null;
         const isAdmin = (currentUserId === ADMIN_ID);
         
+        // Показываем админку только админу
         if (isAdmin) {
             document.getElementById('adminTabBtn').style.display = 'block';
         }
@@ -456,11 +453,12 @@
         let globalStats = {
             totalSearches: 0,
             totalFavorites: 0,
-            activeUsers: {},
+            activeUsers: {},  // { userId: { name, lastSeen, searches, favorites } }
             popularSearches: {},
-            userActivities: []
+            userActivities: []  // список последних действий
         };
         
+        // Загрузка глобальной статистики
         function loadGlobalStats() {
             const saved = localStorage.getItem('music_bot_global_stats');
             if (saved) {
@@ -479,11 +477,12 @@
                 totalFavorites: globalStats.totalFavorites,
                 popularSearches: globalStats.popularSearches,
                 activeUsers: globalStats.activeUsers,
-                userActivities: globalStats.userActivities.slice(0, 50)
+                userActivities: globalStats.userActivities.slice(0, 50)  // храним последние 50 действий
             };
             localStorage.setItem('music_bot_global_stats', JSON.stringify(toSave));
         }
         
+        // Добавление действия в ленту активности
         function addActivity(userId, userName, action, details) {
             const activity = {
                 userId: userId,
@@ -498,9 +497,12 @@
             saveGlobalStats();
         }
         
+        // Регистрация активности пользователя
         function registerActivity() {
             if (!currentUserId) return;
+            
             const userName = user?.first_name || user?.username || 'Аноним';
+            
             if (!globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId] = {
                     name: userName,
@@ -517,30 +519,41 @@
             saveGlobalStats();
         }
         
+        // Регистрация поиска
         function registerSearch(query) {
             if (!currentUserId) return;
+            
             globalStats.totalSearches++;
             globalStats.popularSearches[query] = (globalStats.popularSearches[query] || 0) + 1;
+            
             if (globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId].searches++;
             }
+            
             const userName = user?.first_name || user?.username || 'Аноним';
             addActivity(currentUserId, userName, '🔍 Поиск', `Искал: "${query}"`);
+            
             saveGlobalStats();
             registerActivity();
         }
         
+        // Регистрация добавления в избранное
         function registerFavorite(artistName) {
             if (!currentUserId) return;
+            
             globalStats.totalFavorites++;
+            
             if (globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId].favorites++;
             }
+            
             const userName = user?.first_name || user?.username || 'Аноним';
             addActivity(currentUserId, userName, '⭐ Избранное', `Добавил: ${artistName}`);
+            
             saveGlobalStats();
         }
         
+        // ========== СОСТОЯНИЯ ==========
         function setState(newState, message) {
             const indicator = document.getElementById('stateIndicator');
             const stateText = document.getElementById('stateText');
@@ -726,19 +739,22 @@
             }, 300);
         }
         
-        // ========== АДМИНКА ==========
+        // ========== АДМИНКА (только для админа) ==========
         function showAdminPanel() {
             if (!isAdmin) return;
             
             const adminContent = document.getElementById('adminContent');
             
+            // Сортируем популярные поиски
             const sortedSearches = Object.entries(globalStats.popularSearches)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 10);
             
+            // Сортируем пользователей по активности
             const sortedUsers = Object.entries(globalStats.activeUsers)
                 .sort((a, b) => b[1].lastSeen - a[1].lastSeen);
             
+            // Форматируем время
             function formatTime(timestamp) {
                 if (!timestamp) return 'никогда';
                 const date = new Date(timestamp);
@@ -837,6 +853,7 @@
             `).join('');
         }
         
+        // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
         function switchTab(tab) {
             const searchTab = document.getElementById('searchTab');
             const favoritesTab = document.getElementById('favoritesTab');
@@ -883,13 +900,13 @@
         
         function openLink(url) { tg.openLink(url); }
         function closeApp() { tg.close(); }
-        
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
+        // Показываем данные пользователя
         if (user) {
             document.getElementById('userName').textContent = user.first_name || 'Гость';
             document.getElementById('userId').textContent = user.id || '—';
