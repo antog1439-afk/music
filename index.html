@@ -65,6 +65,10 @@
             color: white;
         }
         
+        .tab.hidden {
+            display: none;
+        }
+        
         .search-box {
             display: flex;
             gap: 12px;
@@ -111,7 +115,16 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
+        }
+        
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+            margin: 0;
+            width: auto;
         }
         
         .platform-buttons {
@@ -134,18 +147,12 @@
             border: none;
             font-size: 16px;
             color: white;
-            transition: opacity 0.2s;
-        }
-        
-        .platform-btn:active {
-            opacity: 0.8;
         }
         
         .yandex-btn { background: #ffcc00; color: #000; }
         .youtube-btn { background: #ff0000; }
         .concert-btn { background: #28a745; }
         .afisha-btn { background: #ff6b6b; }
-        .bot-concert-btn { background: #fd79a8; }
         
         .info-text {
             font-size: 14px;
@@ -231,10 +238,6 @@
             font-size: 14px;
             cursor: pointer;
             transition: opacity 0.2s;
-        }
-        
-        .popular-tag:active {
-            opacity: 0.8;
         }
         
         .history-item {
@@ -386,7 +389,7 @@
             <!-- Вкладка поиска -->
             <div id="searchTab">
                 <div class="search-box">
-                    <input type="text" id="artistInput" class="search-input" placeholder="Название трека, альбома или исполнителя..." autocomplete="off">
+                    <input type="text" id="artistInput" class="search-input" placeholder="Big Baby Tape, Imagine Dragons, Асия, Кино..." autocomplete="off">
                     <button onclick="searchArtist()" class="search-btn">Найти</button>
                 </div>
                 
@@ -407,7 +410,7 @@
                 <button onclick="clearHistory()" style="background: #dc3545;">🗑️ Очистить историю</button>
             </div>
             
-            <!-- Вкладка админки -->
+            <!-- Вкладка админки (только для админа) -->
             <div id="adminTab" class="hidden">
                 <div id="adminContent"></div>
             </div>
@@ -427,13 +430,14 @@
         tg.expand();
         
         // ========== ТВОЙ TELEGRAM ID ==========
-        const ADMIN_ID = 1044143048;
+        const ADMIN_ID = 1044143048;  // ← твой ID
         
         // ========== ПОЛУЧАЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ==========
         const user = tg.initDataUnsafe?.user;
         const currentUserId = user?.id || null;
         const isAdmin = (currentUserId === ADMIN_ID);
         
+        // Показываем админку только админу
         if (isAdmin) {
             document.getElementById('adminTabBtn').style.display = 'block';
         }
@@ -449,11 +453,12 @@
         let globalStats = {
             totalSearches: 0,
             totalFavorites: 0,
-            activeUsers: {},
+            activeUsers: {},  // { userId: { name, lastSeen, searches, favorites } }
             popularSearches: {},
-            userActivities: []
+            userActivities: []  // список последних действий
         };
         
+        // Загрузка глобальной статистики
         function loadGlobalStats() {
             const saved = localStorage.getItem('music_bot_global_stats');
             if (saved) {
@@ -472,11 +477,12 @@
                 totalFavorites: globalStats.totalFavorites,
                 popularSearches: globalStats.popularSearches,
                 activeUsers: globalStats.activeUsers,
-                userActivities: globalStats.userActivities.slice(0, 50)
+                userActivities: globalStats.userActivities.slice(0, 50)  // храним последние 50 действий
             };
             localStorage.setItem('music_bot_global_stats', JSON.stringify(toSave));
         }
         
+        // Добавление действия в ленту активности
         function addActivity(userId, userName, action, details) {
             const activity = {
                 userId: userId,
@@ -491,9 +497,12 @@
             saveGlobalStats();
         }
         
+        // Регистрация активности пользователя
         function registerActivity() {
             if (!currentUserId) return;
+            
             const userName = user?.first_name || user?.username || 'Аноним';
+            
             if (!globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId] = {
                     name: userName,
@@ -510,44 +519,38 @@
             saveGlobalStats();
         }
         
+        // Регистрация поиска
         function registerSearch(query) {
             if (!currentUserId) return;
+            
             globalStats.totalSearches++;
             globalStats.popularSearches[query] = (globalStats.popularSearches[query] || 0) + 1;
+            
             if (globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId].searches++;
             }
+            
             const userName = user?.first_name || user?.username || 'Аноним';
             addActivity(currentUserId, userName, '🔍 Поиск', `Искал: "${query}"`);
+            
             saveGlobalStats();
             registerActivity();
         }
         
+        // Регистрация добавления в избранное
         function registerFavorite(artistName) {
             if (!currentUserId) return;
+            
             globalStats.totalFavorites++;
+            
             if (globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId].favorites++;
             }
+            
             const userName = user?.first_name || user?.username || 'Аноним';
             addActivity(currentUserId, userName, '⭐ Избранное', `Добавил: ${artistName}`);
+            
             saveGlobalStats();
-        }
-        
-        // ========== ОТПРАВКА ЗАПРОСОВ В БОТА ==========
-        function getConcertsFromBot(artistName) {
-            tg.sendData(JSON.stringify({
-                action: 'get_concerts',
-                artist: artistName
-            }));
-            tg.showAlert(`🔍 Запрос отправлен! Бот найдёт концерты ${artistName} и напишет сюда.`);
-        }
-        
-        function searchArtistInBot(artistName) {
-            tg.sendData(JSON.stringify({
-                action: 'search_artist',
-                artist: artistName
-            }));
         }
         
         // ========== СОСТОЯНИЯ ==========
@@ -683,7 +686,7 @@
         function searchArtist() {
             const query = document.getElementById('artistInput').value.trim();
             if (!query) {
-                tg.showAlert('Введите название трека, альбома или исполнителя');
+                tg.showAlert('Введите имя исполнителя');
                 return;
             }
             
@@ -705,40 +708,29 @@
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                        
                         <div class="platform-buttons">
                             <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
                                 ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
                             </button>
                         </div>
-                        
                         <div class="section-title">🎵 МУЗЫКА</div>
                         <div class="platform-buttons">
                             <button onclick="openLink('${yandexUrl}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                             <button onclick="openLink('${youtubeUrl}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                         </div>
-                        
                         <div class="section-title">🎤 ПОПУЛЯРНЫЕ ТРЕКИ</div>
                         <div class="platform-buttons">
                             <button onclick="openLink('${topTracksUrl}')" class="platform-btn" style="background: #9b59b6;">🎵 Топ треки</button>
                         </div>
-                        
                         <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
                         <div class="platform-buttons">
-                            <button onclick="getConcertsFromBot('${escapeHtml(query).replace(/'/g, "\\'")}')" class="platform-btn bot-concert-btn">
-                                🎸 НАЙТИ КОНЦЕРТЫ (через бота)
-                            </button>
                             <button onclick="openLink('${concertsUrl}')" class="platform-btn concert-btn">🎸 Концерты (Яндекс)</button>
                             <button onclick="openLink('${afishaUrl}')" class="platform-btn afisha-btn">🎫 Билеты (Афиша)</button>
                         </div>
-                        
-                        <div class="info-text">
-                            💡 Нажмите на кнопку — бот найдёт всё сам!
-                        </div>
+                        <div class="info-text">💡 Нажми на любую кнопку — откроется поиск с уже введённым исполнителем</div>
                     </div>
                 `;
                 setState('results', `🎤 Найден: ${query}`);
-                
                 const favBtn = document.getElementById('favorite-btn-dynamic');
                 if (favBtn) {
                     if (isFav) favBtn.onclick = () => removeFromFavorites(query);
@@ -747,17 +739,22 @@
             }, 300);
         }
         
-        // ========== АДМИНКА ==========
+        // ========== АДМИНКА (только для админа) ==========
         function showAdminPanel() {
             if (!isAdmin) return;
             
             const adminContent = document.getElementById('adminContent');
+            
+            // Сортируем популярные поиски
             const sortedSearches = Object.entries(globalStats.popularSearches)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 10);
+            
+            // Сортируем пользователей по активности
             const sortedUsers = Object.entries(globalStats.activeUsers)
                 .sort((a, b) => b[1].lastSeen - a[1].lastSeen);
             
+            // Форматируем время
             function formatTime(timestamp) {
                 if (!timestamp) return 'никогда';
                 const date = new Date(timestamp);
@@ -901,21 +898,15 @@
             }
         }
         
-        function openLink(url) { 
-            tg.openLink(url); 
-        }
-        
-        function closeApp() { 
-            tg.close(); 
-        }
-        
+        function openLink(url) { tg.openLink(url); }
+        function closeApp() { tg.close(); }
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
         
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        // Показываем данные пользователя
         if (user) {
             document.getElementById('userName').textContent = user.first_name || 'Гость';
             document.getElementById('userId').textContent = user.id || '—';
