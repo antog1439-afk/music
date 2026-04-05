@@ -65,10 +65,6 @@
             color: white;
         }
         
-        .tab.hidden {
-            display: none;
-        }
-        
         .search-box {
             display: flex;
             gap: 12px;
@@ -115,6 +111,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
         
         .platform-buttons {
@@ -149,6 +146,7 @@
         .concert-btn { background: #28a745; }
         .afisha-btn { background: #ff6b6b; }
         .bot-concert-btn { background: #fd79a8; }
+        .wiki-btn { background: #3498db; }
         
         .info-text {
             font-size: 14px;
@@ -296,6 +294,33 @@
             align-items: center;
         }
         
+        /* Биография */
+        .bio-content {
+            background: var(--tg-theme-bg-color, #f0f2f5);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .bio-text {
+            font-size: 15px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+        
+        .bio-text p {
+            margin-bottom: 12px;
+        }
+        
+        .bio-source {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #6c757d);
+            margin-top: 16px;
+            text-align: right;
+        }
+        
         /* Админ-панель */
         .admin-panel {
             margin-top: 20px;
@@ -397,6 +422,7 @@
                 <div class="popular-grid" id="popularArtists"></div>
                 
                 <div id="result"></div>
+                <div id="bioResult"></div>
             </div>
             
             <!-- Вкладка избранного -->
@@ -447,6 +473,9 @@
             "Miyagi & Эндшпиль", "Моргенштерн", "Rauf & Faik", 
             "Асия", "Eminem", "Billie Eilish", "The Weeknd"
         ];
+        
+        // ========== КЭШ БИОГРАФИЙ ==========
+        let bioCache = {};
         
         // ========== ГЛОБАЛЬНАЯ СТАТИСТИКА ==========
         let globalStats = {
@@ -535,6 +564,159 @@
             const userName = user?.first_name || user?.username || 'Аноним';
             addActivity(currentUserId, userName, '⭐ Избранное', `Добавил: ${artistName}`);
             saveGlobalStats();
+        }
+        
+        // ========== ПОЛУЧЕНИЕ БИОГРАФИИ ИЗ ВИКИПЕДИИ ==========
+        async function getWikipediaBio(artistName) {
+            // Проверяем кэш
+            if (bioCache[artistName]) {
+                console.log('📦 Берём биографию из кэша');
+                return bioCache[artistName];
+            }
+            
+            const bioDiv = document.getElementById('bioResult');
+            bioDiv.innerHTML = '<div class="loading"><div class="spinner"></div>📖 Загружаем биографию из Википедии...</div>';
+            
+            try {
+                // Ищем статью на русской Википедии
+                const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
+                
+                if (searchData.query.search.length === 0) {
+                    throw new Error('Статья не найдена');
+                }
+                
+                // Берём первый результат
+                const pageTitle = searchData.query.search[0].title;
+                
+                // Получаем содержимое статьи
+                const contentUrl = `https://ru.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=true&explaintext=true&titles=${encodeURIComponent(pageTitle)}&format=json&origin=*`;
+                const contentResponse = await fetch(contentUrl);
+                const contentData = await contentResponse.json();
+                
+                const pages = contentData.query.pages;
+                const pageId = Object.keys(pages)[0];
+                const extract = pages[pageId].extract || '';
+                
+                if (!extract) {
+                    throw new Error('Нет содержимого');
+                }
+                
+                // Обрабатываем текст
+                let bioText = extract;
+                // Убираем слишком длинные куски
+                if (bioText.length > 3000) {
+                    bioText = bioText.substring(0, 3000) + '...';
+                }
+                // Форматируем абзацы
+                bioText = bioText.replace(/\n/g, '<br><br>');
+                
+                const wikiUrl = `https://ru.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`;
+                
+                const result = {
+                    success: true,
+                    text: bioText,
+                    title: pageTitle,
+                    url: wikiUrl
+                };
+                
+                // Сохраняем в кэш
+                bioCache[artistName] = result;
+                
+                return result;
+                
+            } catch (error) {
+                console.error('Ошибка загрузки Википедии:', error);
+                
+                // Пробуем английскую Википедию
+                try {
+                    const enSearchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
+                    const enSearchResponse = await fetch(enSearchUrl);
+                    const enSearchData = await enSearchResponse.json();
+                    
+                    if (enSearchData.query.search.length === 0) {
+                        throw new Error('Статья не найдена');
+                    }
+                    
+                    const pageTitle = enSearchData.query.search[0].title;
+                    const contentUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=true&explaintext=true&titles=${encodeURIComponent(pageTitle)}&format=json&origin=*`;
+                    const contentResponse = await fetch(contentUrl);
+                    const contentData = await contentResponse.json();
+                    
+                    const pages = contentData.query.pages;
+                    const pageId = Object.keys(pages)[0];
+                    let extract = pages[pageId].extract || '';
+                    
+                    if (!extract) {
+                        throw new Error('Нет содержимого');
+                    }
+                    
+                    if (extract.length > 3000) {
+                        extract = extract.substring(0, 3000) + '...';
+                    }
+                    extract = extract.replace(/\n/g, '<br><br>');
+                    
+                    const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`;
+                    
+                    const result = {
+                        success: true,
+                        text: extract,
+                        title: pageTitle,
+                        url: wikiUrl,
+                        lang: 'en'
+                    };
+                    
+                    bioCache[artistName] = result;
+                    return result;
+                    
+                } catch (enError) {
+                    console.error('Ошибка английской Википедии:', enError);
+                    return {
+                        success: false,
+                        error: 'Не удалось найти биографию'
+                    };
+                }
+            }
+        }
+        
+        async function showBio(artistName) {
+            const bioDiv = document.getElementById('bioResult');
+            const result = await getWikipediaBio(artistName);
+            
+            if (result.success) {
+                const langText = result.lang === 'en' ? ' (англ.)' : '';
+                bioDiv.innerHTML = `
+                    <div class="bio-content">
+                        <div class="bio-text">${result.text}</div>
+                        <div class="bio-source">
+                            📖 Источник: <a href="${result.url}" target="_blank">Википедия${langText}</a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Если Википедия не помогла, отправляем запрос в бота
+                bioDiv.innerHTML = `
+                    <div class="bio-content">
+                        <div class="bio-text">
+                            ❌ Не удалось найти биографию "${artistName}" в Википедии.
+                        </div>
+                        <div class="platform-buttons" style="margin-top: 12px;">
+                            <button onclick="getBioFromBot('${escapeHtml(artistName).replace(/'/g, "\\'")}')" class="platform-btn" style="background: #9b59b6;">
+                                📖 Запросить биографию у бота
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function getBioFromBot(artistName) {
+            tg.sendData(JSON.stringify({
+                action: 'get_bio',
+                artist: artistName
+            }));
+            tg.showAlert(`🔍 Запрос отправлен! Бот найдёт биографию ${artistName} и напишет сюда.`);
         }
         
         // ========== ОТПРАВКА ЗАПРОСОВ В БОТА ==========
@@ -695,7 +877,9 @@
             setState('searching', `🔍 Ищем "${query}"...`);
             
             const resultDiv = document.getElementById('result');
+            const bioDiv = document.getElementById('bioResult');
             resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем...</div>';
+            bioDiv.innerHTML = '';
             
             setTimeout(() => {
                 const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
@@ -712,6 +896,13 @@
                         <div class="platform-buttons">
                             <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
                                 ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
+                            </button>
+                        </div>
+                        
+                        <div class="section-title">📖 БИОГРАФИЯ</div>
+                        <div class="platform-buttons">
+                            <button onclick="showBio('${escapeHtml(query).replace(/'/g, "\\'")}')" class="platform-btn wiki-btn">
+                                📖 Биография из Википедии
                             </button>
                         </div>
                         
@@ -736,7 +927,7 @@
                         </div>
                         
                         <div class="info-text">
-                            💡 <b>НОВИНКА!</b> Нажми «НАЙТИ КОНЦЕРТЫ (через бота)» — бот пришлёт реальные концерты из Яндекс.Музыки
+                            💡 <b>НОВИНКА!</b> Нажми «Биография из Википедии» — получите полную биографию исполнителя
                         </div>
                     </div>
                 `;
