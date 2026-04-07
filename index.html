@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Music Bot - Поиск исполнителя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- PWA / Иконка на экран домой -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    <meta name="theme-color" content="#2481cc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <style>
         * {
             margin: 0;
@@ -65,10 +73,6 @@
             color: white;
         }
         
-        .tab.hidden {
-            display: none;
-        }
-        
         .search-box {
             display: flex;
             gap: 12px;
@@ -115,16 +119,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-        
-        .favorite-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 8px;
-            margin: 0;
-            width: auto;
         }
         
         .platform-buttons {
@@ -296,7 +290,6 @@
             align-items: center;
         }
         
-        /* Админ-панель */
         .admin-panel {
             margin-top: 20px;
             padding: 16px;
@@ -336,11 +329,6 @@
             color: var(--tg-theme-hint-color, #6c757d);
         }
         
-        .admin-btn {
-            background: #6c757d;
-            margin-top: 8px;
-        }
-        
         .admin-btn.danger {
             background: #dc3545;
         }
@@ -358,6 +346,14 @@
             background: var(--tg-theme-secondary-bg-color, #fff);
             border-radius: 12px;
             margin-bottom: 8px;
+        }
+        
+        .release-card {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border: 1px solid var(--tg-theme-button-color, #667eea);
+            margin: 16px 0;
+            border-radius: 16px;
+            padding: 16px;
         }
         
         @media (max-width: 480px) {
@@ -386,7 +382,6 @@
                 <div class="tab" id="adminTabBtn" style="display: none;" onclick="switchTab('admin')">👑 Админ</div>
             </div>
             
-            <!-- Вкладка поиска -->
             <div id="searchTab">
                 <div class="search-box">
                     <input type="text" id="artistInput" class="search-input" placeholder="Big Baby Tape, Imagine Dragons, Асия, Кино..." autocomplete="off">
@@ -399,18 +394,15 @@
                 <div id="result"></div>
             </div>
             
-            <!-- Вкладка избранного -->
             <div id="favoritesTab" class="hidden">
                 <div id="favoritesList"></div>
             </div>
             
-            <!-- Вкладка истории -->
             <div id="historyTab" class="hidden">
                 <div id="historyList"></div>
                 <button onclick="clearHistory()" style="background: #dc3545;">🗑️ Очистить историю</button>
             </div>
             
-            <!-- Вкладка админки (только для админа) -->
             <div id="adminTab" class="hidden">
                 <div id="adminContent"></div>
             </div>
@@ -429,36 +421,42 @@
         tg.ready();
         tg.expand();
         
-        // ========== ТВОЙ TELEGRAM ID ==========
-        const ADMIN_ID = 1044143048;  // ← твой ID
+        const ADMIN_ID = 1044143048;
         
-        // ========== ПОЛУЧАЕМ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ==========
-        const user = tg.initDataUnsafe?.user;
-        const currentUserId = user?.id || null;
-        const isAdmin = (currentUserId === ADMIN_ID);
+        // Определяем админа (работает и в Telegram, и в Safari)
+        let currentUserId = null;
+        let isAdmin = false;
         
-        // Показываем админку только админу
+        if (tg.initDataUnsafe?.user) {
+            currentUserId = tg.initDataUnsafe.user.id;
+            isAdmin = (currentUserId === ADMIN_ID);
+            localStorage.setItem('music_bot_user_id', currentUserId);
+        } else {
+            const savedId = localStorage.getItem('music_bot_user_id');
+            if (savedId) {
+                currentUserId = parseInt(savedId);
+                isAdmin = (currentUserId === ADMIN_ID);
+            }
+        }
+        
         if (isAdmin) {
             document.getElementById('adminTabBtn').style.display = 'block';
         }
         
-        // ========== ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ ==========
         const popularArtistsList = [
             "Big Baby Tape", "Imagine Dragons", "Кино", "Земфира", 
             "Miyagi & Эндшпиль", "Моргенштерн", "Rauf & Faik", 
             "Асия", "Eminem", "Billie Eilish", "The Weeknd"
         ];
         
-        // ========== ГЛОБАЛЬНАЯ СТАТИСТИКА ==========
         let globalStats = {
             totalSearches: 0,
             totalFavorites: 0,
-            activeUsers: {},  // { userId: { name, lastSeen, searches, favorites } }
+            activeUsers: {},
             popularSearches: {},
-            userActivities: []  // список последних действий
+            userActivities: []
         };
         
-        // Загрузка глобальной статистики
         function loadGlobalStats() {
             const saved = localStorage.getItem('music_bot_global_stats');
             if (saved) {
@@ -477,12 +475,11 @@
                 totalFavorites: globalStats.totalFavorites,
                 popularSearches: globalStats.popularSearches,
                 activeUsers: globalStats.activeUsers,
-                userActivities: globalStats.userActivities.slice(0, 50)  // храним последние 50 действий
+                userActivities: globalStats.userActivities.slice(0, 50)
             };
             localStorage.setItem('music_bot_global_stats', JSON.stringify(toSave));
         }
         
-        // Добавление действия в ленту активности
         function addActivity(userId, userName, action, details) {
             const activity = {
                 userId: userId,
@@ -497,12 +494,9 @@
             saveGlobalStats();
         }
         
-        // Регистрация активности пользователя
         function registerActivity() {
             if (!currentUserId) return;
-            
             const userName = user?.first_name || user?.username || 'Аноним';
-            
             if (!globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId] = {
                     name: userName,
@@ -519,41 +513,30 @@
             saveGlobalStats();
         }
         
-        // Регистрация поиска
         function registerSearch(query) {
             if (!currentUserId) return;
-            
             globalStats.totalSearches++;
             globalStats.popularSearches[query] = (globalStats.popularSearches[query] || 0) + 1;
-            
             if (globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId].searches++;
             }
-            
             const userName = user?.first_name || user?.username || 'Аноним';
             addActivity(currentUserId, userName, '🔍 Поиск', `Искал: "${query}"`);
-            
             saveGlobalStats();
             registerActivity();
         }
         
-        // Регистрация добавления в избранное
         function registerFavorite(artistName) {
             if (!currentUserId) return;
-            
             globalStats.totalFavorites++;
-            
             if (globalStats.activeUsers[currentUserId]) {
                 globalStats.activeUsers[currentUserId].favorites++;
             }
-            
             const userName = user?.first_name || user?.username || 'Аноним';
             addActivity(currentUserId, userName, '⭐ Избранное', `Добавил: ${artistName}`);
-            
             saveGlobalStats();
         }
         
-        // ========== СОСТОЯНИЯ ==========
         function setState(newState, message) {
             const indicator = document.getElementById('stateIndicator');
             const stateText = document.getElementById('stateText');
@@ -564,7 +547,6 @@
             stateText.textContent = message;
         }
         
-        // ========== ИЗБРАННОЕ ==========
         let favorites = [];
         
         function loadFavorites() {
@@ -631,7 +613,6 @@
             }
         }
         
-        // ========== ИСТОРИЯ ==========
         let searchHistory = [];
         
         function loadHistory() {
@@ -677,10 +658,35 @@
             saveHistory();
         }
         
-        // ========== ПОИСК ==========
         function searchArtistByName(artistName) {
             document.getElementById('artistInput').value = artistName;
             searchArtist();
+        }
+        
+        const upcomingReleases = {
+            "The Weeknd": { album: "Hurry Up Tomorrow", date: "2025-01-24", type: "Студийный альбом" },
+            "Imagine Dragons": { album: "Reflections", date: "2025-03-21", type: "Сборник" },
+            "Billie Eilish": { album: null, single: "Новый сингл в 2025" }
+        };
+        
+        function getUpcomingRelease(artistName) {
+            for (const [key, release] of Object.entries(upcomingReleases)) {
+                if (artistName.toLowerCase().includes(key.toLowerCase())) {
+                    return { ...release, found: true, artist: key };
+                }
+            }
+            return { found: false };
+        }
+        
+        function formatReleaseDate(dateStr) {
+            if (!dateStr) return null;
+            const date = new Date(dateStr);
+            const today = new Date();
+            const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
+            const formattedDate = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            if (diffDays < 0) return { text: `✅ Вышел ${formattedDate}`, isPast: true };
+            if (diffDays === 0) return { text: `🚀 СЕГОДНЯ! ${formattedDate}`, isPast: false };
+            return { text: `📅 ${formattedDate} (через ${diffDays} дней)`, isPast: false };
         }
         
         function searchArtist() {
@@ -698,6 +704,7 @@
             resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем...</div>';
             
             setTimeout(() => {
+                const release = getUpcomingRelease(query);
                 const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
                 const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
                 const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
@@ -705,9 +712,30 @@
                 const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' популярные треки')}`;
                 const isFav = isFavorite(query);
                 
+                let releaseHTML = '';
+                if (release.found && (release.album || release.single)) {
+                    const dateInfo = release.date ? formatReleaseDate(release.date) : null;
+                    releaseHTML = `
+                        <div class="release-card">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                <span style="font-size: 28px;">🚀</span>
+                                <div>
+                                    <div style="font-size: 12px; color: var(--tg-theme-hint-color);">ПРЕДСТОЯЩИЙ РЕЛИЗ</div>
+                                    <div style="font-weight: 700; font-size: 18px;">${release.album || 'Новый релиз'}</div>
+                                </div>
+                            </div>
+                            ${release.type ? `<div style="margin-bottom: 8px;">📀 Тип: ${release.type}</div>` : ''}
+                            ${dateInfo ? `<div style="margin-bottom: 8px;">⏰ ${dateInfo.text}</div>` : ''}
+                            ${release.single ? `<div style="margin-bottom: 8px;">🎤 ${release.single}</div>` : ''}
+                            <button onclick="setReleaseReminder('${escapeHtml(query)}', '${escapeHtml(release.album || 'релиз')}')" style="margin-top: 12px; padding: 8px;">🔔 Напомнить</button>
+                        </div>
+                    `;
+                }
+                
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎤 ${escapeHtml(query)}</div>
+                        ${releaseHTML}
                         <div class="platform-buttons">
                             <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
                                 ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
@@ -727,117 +755,47 @@
                             <button onclick="openLink('${concertsUrl}')" class="platform-btn concert-btn">🎸 Концерты (Яндекс)</button>
                             <button onclick="openLink('${afishaUrl}')" class="platform-btn afisha-btn">🎫 Билеты (Афиша)</button>
                         </div>
-                        <div class="info-text">💡 Нажми на любую кнопку — откроется поиск с уже введённым исполнителем</div>
                     </div>
                 `;
                 setState('results', `🎤 Найден: ${query}`);
-                const favBtn = document.getElementById('favorite-btn-dynamic');
-                if (favBtn) {
-                    if (isFav) favBtn.onclick = () => removeFromFavorites(query);
-                    else favBtn.onclick = () => addToFavorites(query);
-                }
+                updateSearchResultButtons(query);
             }, 300);
         }
         
-        // ========== АДМИНКА (только для админа) ==========
+        function setReleaseReminder(artistName, releaseName) {
+            tg.showAlert(`🔔 Напомню о выходе "${releaseName}" ${artistName} в день релиза!`);
+            let reminders = JSON.parse(localStorage.getItem('release_reminders') || '[]');
+            reminders.push({ artist: artistName, release: releaseName, setAt: Date.now() });
+            localStorage.setItem('release_reminders', JSON.stringify(reminders));
+        }
+        
         function showAdminPanel() {
             if (!isAdmin) return;
-            
             const adminContent = document.getElementById('adminContent');
-            
-            // Сортируем популярные поиски
-            const sortedSearches = Object.entries(globalStats.popularSearches)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 10);
-            
-            // Сортируем пользователей по активности
-            const sortedUsers = Object.entries(globalStats.activeUsers)
-                .sort((a, b) => b[1].lastSeen - a[1].lastSeen);
-            
-            // Форматируем время
-            function formatTime(timestamp) {
-                if (!timestamp) return 'никогда';
-                const date = new Date(timestamp);
-                return date.toLocaleString();
-            }
+            const sortedSearches = Object.entries(globalStats.popularSearches).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            const sortedUsers = Object.entries(globalStats.activeUsers).sort((a, b) => b[1].lastSeen - a[1].lastSeen);
             
             adminContent.innerHTML = `
                 <div class="admin-panel">
                     <div class="admin-title">📊 ОБЩАЯ СТАТИСТИКА</div>
                     <div class="admin-stats">
-                        <div class="admin-stat">
-                            <div class="admin-stat-value">${globalStats.totalSearches}</div>
-                            <div class="admin-stat-label">Всего поисков</div>
-                        </div>
-                        <div class="admin-stat">
-                            <div class="admin-stat-value">${globalStats.totalFavorites}</div>
-                            <div class="admin-stat-label">Добавлений в избранное</div>
-                        </div>
-                        <div class="admin-stat">
-                            <div class="admin-stat-value">${Object.keys(globalStats.activeUsers).length}</div>
-                            <div class="admin-stat-label">Уникальных пользователей</div>
-                        </div>
-                        <div class="admin-stat">
-                            <div class="admin-stat-value">${favorites.length}</div>
-                            <div class="admin-stat-label">Ваших избранных</div>
-                        </div>
+                        <div class="admin-stat"><div class="admin-stat-value">${globalStats.totalSearches}</div><div class="admin-stat-label">Всего поисков</div></div>
+                        <div class="admin-stat"><div class="admin-stat-value">${globalStats.totalFavorites}</div><div class="admin-stat-label">В избранное</div></div>
+                        <div class="admin-stat"><div class="admin-stat-value">${Object.keys(globalStats.activeUsers).length}</div><div class="admin-stat-label">Пользователей</div></div>
+                        <div class="admin-stat"><div class="admin-stat-value">${favorites.length}</div><div class="admin-stat-label">Ваших избранных</div></div>
                     </div>
-                    
                     <div class="admin-title">🔥 ПОПУЛЯРНЫЕ ЗАПРОСЫ</div>
-                    ${sortedSearches.length > 0 ? sortedSearches.map(([query, count]) => `
-                        <div class="history-item" style="justify-content: space-between;">
-                            <span>🎤 ${escapeHtml(query)}</span>
-                            <span style="color: var(--tg-theme-button-color);">${count} раз</span>
-                        </div>
-                    `).join('') : '<div class="info-text">Пока нет данных</div>'}
-                    
-                    <div class="admin-title">👥 ПОЛЬЗОВАТЕЛИ (${sortedUsers.length})</div>
-                    <div class="user-list">
-                        ${sortedUsers.map(([id, data]) => `
-                            <div class="user-item">
-                                <div>
-                                    <div><strong>${escapeHtml(data.name || 'Аноним')}</strong></div>
-                                    <div style="font-size: 11px; color: var(--tg-theme-hint-color);">ID: ${id}</div>
-                                </div>
-                                <div style="text-align: right; font-size: 12px;">
-                                    <div>🔍 ${data.searches || 0}</div>
-                                    <div>⭐ ${data.favorites || 0}</div>
-                                    <div style="font-size: 10px;">${formatTime(data.lastSeen)}</div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="admin-title">📋 ЛЕНТА АКТИВНОСТИ</div>
-                    <div class="user-list" style="max-height: 300px;">
-                        ${globalStats.userActivities.length > 0 ? globalStats.userActivities.map(activity => `
-                            <div class="user-item" style="flex-direction: column; align-items: flex-start;">
-                                <div style="display: flex; justify-content: space-between; width: 100%;">
-                                    <span><strong>${escapeHtml(activity.userName || 'Аноним')}</strong></span>
-                                    <span style="font-size: 11px; color: var(--tg-theme-hint-color);">${activity.date}</span>
-                                </div>
-                                <div style="font-size: 13px; margin-top: 5px;">
-                                    ${activity.action} ${activity.details ? `— ${escapeHtml(activity.details)}` : ''}
-                                </div>
-                            </div>
-                        `).join('') : '<div class="info-text">Пока нет активности</div>'}
-                    </div>
-                    
-                    <div class="admin-title">⚙️ ДЕЙСТВИЯ</div>
-                    <button onclick="clearAllStats()" class="admin-btn danger">🗑️ Сбросить всю статистику</button>
+                    ${sortedSearches.map(([q, c]) => `<div class="history-item"><span>🎤 ${escapeHtml(q)}</span><span>${c} раз</span></div>`).join('') || '<div class="info-text">Нет данных</div>'}
+                    <div class="admin-title">👥 ПОЛЬЗОВАТЕЛИ</div>
+                    ${sortedUsers.map(([id, data]) => `<div class="user-item"><div><strong>${escapeHtml(data.name)}</strong><div style="font-size:11px;">ID: ${id}</div></div><div>🔍 ${data.searches || 0} ⭐ ${data.favorites || 0}</div></div>`).join('')}
+                    <button onclick="clearAllStats()" class="admin-btn danger">🗑️ Сбросить статистику</button>
                 </div>
             `;
         }
         
         function clearAllStats() {
-            if (confirm('Вы уверены? Вся статистика будет удалена безвозвратно!')) {
-                globalStats = {
-                    totalSearches: 0,
-                    totalFavorites: 0,
-                    activeUsers: {},
-                    popularSearches: {},
-                    userActivities: []
-                };
+            if (confirm('Сбросить всю статистику?')) {
+                globalStats = { totalSearches: 0, totalFavorites: 0, activeUsers: {}, popularSearches: {}, userActivities: [] };
                 saveGlobalStats();
                 showAdminPanel();
                 tg.showAlert('✅ Статистика сброшена');
@@ -853,48 +811,30 @@
             `).join('');
         }
         
-        // ========== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ==========
         function switchTab(tab) {
-            const searchTab = document.getElementById('searchTab');
-            const favoritesTab = document.getElementById('favoritesTab');
-            const historyTab = document.getElementById('historyTab');
-            const adminTab = document.getElementById('adminTab');
-            const tabs = document.querySelectorAll('.tab');
-            
-            tabs.forEach(t => t.classList.remove('active'));
+            document.getElementById('searchTab').classList.add('hidden');
+            document.getElementById('favoritesTab').classList.add('hidden');
+            document.getElementById('historyTab').classList.add('hidden');
+            document.getElementById('adminTab').classList.add('hidden');
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             
             if (tab === 'search') {
-                searchTab.classList.remove('hidden');
-                favoritesTab.classList.add('hidden');
-                historyTab.classList.add('hidden');
-                adminTab.classList.add('hidden');
+                document.getElementById('searchTab').classList.remove('hidden');
                 document.querySelector('.tab:nth-child(1)').classList.add('active');
                 loadPopularArtists();
                 setState('idle', 'Готов к поиску');
             } else if (tab === 'favorites') {
-                searchTab.classList.add('hidden');
-                favoritesTab.classList.remove('hidden');
-                historyTab.classList.add('hidden');
-                adminTab.classList.add('hidden');
+                document.getElementById('favoritesTab').classList.remove('hidden');
                 document.querySelector('.tab:nth-child(2)').classList.add('active');
                 updateFavoritesList();
-                setState('idle', 'Просмотр избранного');
             } else if (tab === 'history') {
-                searchTab.classList.add('hidden');
-                favoritesTab.classList.add('hidden');
-                historyTab.classList.remove('hidden');
-                adminTab.classList.add('hidden');
+                document.getElementById('historyTab').classList.remove('hidden');
                 document.querySelector('.tab:nth-child(3)').classList.add('active');
                 updateHistoryList();
-                setState('idle', 'Просмотр истории');
             } else if (tab === 'admin' && isAdmin) {
-                searchTab.classList.add('hidden');
-                favoritesTab.classList.add('hidden');
-                historyTab.classList.add('hidden');
-                adminTab.classList.remove('hidden');
+                document.getElementById('adminTab').classList.remove('hidden');
                 document.getElementById('adminTabBtn').classList.add('active');
                 showAdminPanel();
-                setState('idle', 'Админ-панель');
             }
         }
         
@@ -906,13 +846,14 @@
             return div.innerHTML;
         }
         
-        // Показываем данные пользователя
+        const user = tg.initDataUnsafe?.user;
         if (user) {
             document.getElementById('userName').textContent = user.first_name || 'Гость';
             document.getElementById('userId').textContent = user.id || '—';
             registerActivity();
         } else {
             document.getElementById('userName').textContent = 'Гость';
+            document.getElementById('userId').textContent = '—';
         }
         
         loadGlobalStats();
