@@ -6,9 +6,9 @@
     <title>Music Bot - Поиск исполнителя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- PWA / Иконка на экран домой -->
+    <!-- PWA / Иконка на экран домой (исправлено) -->
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-512.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="theme-color" content="#2481cc">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -423,7 +423,6 @@
         
         const ADMIN_ID = 1044143048;
         
-        // Определяем админа (работает и в Telegram, и в Safari)
         let currentUserId = null;
         let isAdmin = false;
         
