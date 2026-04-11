@@ -461,6 +461,47 @@
             margin: 8px 0;
         }
         
+        /* Админ-статистика новая */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: var(--tg-theme-secondary-bg-color, #fff);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--tg-theme-button-color, #2481cc);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--tg-theme-hint-color, #6c757d);
+            margin-top: 4px;
+        }
+        
+        .activity-item {
+            padding: 12px;
+            background: var(--tg-theme-secondary-bg-color, #fff);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .activity-time {
+            font-size: 10px;
+            color: var(--tg-theme-hint-color, #6c757d);
+            margin-bottom: 4px;
+        }
+        
         @media (max-width: 480px) {
             body { padding: 12px; }
             .card { padding: 18px; }
@@ -485,6 +526,7 @@
                 <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
                 <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
                 <div class="tab" onclick="switchTab('history')">📜 История</div>
+                <div class="tab" onclick="switchTab('game')">🎮 Игра</div>
                 <div class="tab" id="adminTabBtn" style="display: none;" onclick="switchTab('admin')">👑 Админ</div>
             </div>
             
@@ -498,9 +540,19 @@
                 <div class="popular-grid" id="popularArtists"></div>
                 
                 <div id="result"></div>
-                
-                <!-- ========== ИГРА "УГАДАЙ ТРЕК" ========== -->
-                <div class="game-container" id="gameContainer">
+            </div>
+            
+            <div id="favoritesTab" class="hidden">
+                <div id="favoritesList"></div>
+            </div>
+            
+            <div id="historyTab" class="hidden">
+                <div id="historyList"></div>
+                <button onclick="clearHistory()" style="background: #dc3545;">🗑️ Очистить историю</button>
+            </div>
+            
+            <div id="gameTab" class="hidden">
+                <div class="game-container" style="margin-top: 0;">
                     <div class="game-header">
                         <span class="game-title">🎮 Угадай трек</span>
                         <button class="start-game-btn" id="startGameBtn" onclick="startGame()">▶ Начать игру</button>
@@ -511,15 +563,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div id="favoritesTab" class="hidden">
-                <div id="favoritesList"></div>
-            </div>
-            
-            <div id="historyTab" class="hidden">
-                <div id="historyList"></div>
-                <button onclick="clearHistory()" style="background: #dc3545;">🗑️ Очистить историю</button>
             </div>
             
             <div id="adminTab" class="hidden">
@@ -893,29 +936,104 @@
             const sortedSearches = Object.entries(globalStats.popularSearches).sort((a, b) => b[1] - a[1]).slice(0, 10);
             const sortedUsers = Object.entries(globalStats.activeUsers).sort((a, b) => b[1].lastSeen - a[1].lastSeen);
             
+            // Общая статистика
+            const totalGameStats = gameStats.gamesPlayed || 0;
+            const avgScore = totalGameStats > 0 ? Math.round(gameStats.totalScore / totalGameStats) : 0;
+            
             adminContent.innerHTML = `
                 <div class="admin-panel">
                     <div class="admin-title">📊 ОБЩАЯ СТАТИСТИКА</div>
-                    <div class="admin-stats">
-                        <div class="admin-stat"><div class="admin-stat-value">${globalStats.totalSearches}</div><div class="admin-stat-label">Всего поисков</div></div>
-                        <div class="admin-stat"><div class="admin-stat-value">${globalStats.totalFavorites}</div><div class="admin-stat-label">В избранное</div></div>
-                        <div class="admin-stat"><div class="admin-stat-value">${Object.keys(globalStats.activeUsers).length}</div><div class="admin-stat-label">Пользователей</div></div>
-                        <div class="admin-stat"><div class="admin-stat-value">${favorites.length}</div><div class="admin-stat-label">Ваших избранных</div></div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">${globalStats.totalSearches}</div>
+                            <div class="stat-label">Всего поисков</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${globalStats.totalFavorites}</div>
+                            <div class="stat-label">В избранное</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${Object.keys(globalStats.activeUsers).length}</div>
+                            <div class="stat-label">Пользователей</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${favorites.length}</div>
+                            <div class="stat-label">Ваших избранных</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${totalGameStats}</div>
+                            <div class="stat-label">Сыграно игр</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${gameStats.bestScore || 0}</div>
+                            <div class="stat-label">Лучший счёт</div>
+                        </div>
                     </div>
+                    
                     <div class="admin-title">🔥 ПОПУЛЯРНЫЕ ЗАПРОСЫ</div>
                     ${sortedSearches.map(([q, c]) => `<div class="history-item"><span>🎤 ${escapeHtml(q)}</span><span>${c} раз</span></div>`).join('') || '<div class="info-text">Нет данных</div>'}
+                    
                     <div class="admin-title">👥 ПОЛЬЗОВАТЕЛИ</div>
-                    ${sortedUsers.map(([id, data]) => `<div class="user-item"><div><strong>${escapeHtml(data.name)}</strong><div style="font-size:11px;">ID: ${id}</div></div><div>🔍 ${data.searches || 0} ⭐ ${data.favorites || 0}</div></div>`).join('')}
+                    <div class="user-list">
+                        ${sortedUsers.map(([id, data]) => `<div class="user-item"><div><strong>${escapeHtml(data.name)}</strong><div style="font-size:11px;">ID: ${id}</div></div><div>🔍 ${data.searches || 0} ⭐ ${data.favorites || 0}</div></div>`).join('')}
+                    </div>
+                    
+                    <div class="admin-title">📋 ПОСЛЕДНИЕ АКТИВНОСТИ</div>
+                    <div class="user-list">
+                        ${globalStats.userActivities.slice(0, 20).map(act => `
+                            <div class="activity-item">
+                                <div class="activity-time">${act.date}</div>
+                                <div><strong>${escapeHtml(act.userName)}</strong> ${act.action}</div>
+                                <div style="font-size: 11px;">${act.details}</div>
+                            </div>
+                        `).join('') || '<div class="info-text">Нет активностей</div>'}
+                    </div>
+                    
+                    <div class="admin-title">⚙️ УПРАВЛЕНИЕ</div>
+                    <button onclick="exportStats()" style="background: #28a745; margin-bottom: 8px;">📤 Экспорт статистики</button>
                     <button onclick="clearAllStats()" class="admin-btn danger">🗑️ Сбросить статистику</button>
+                    <button onclick="resetAllData()" class="admin-btn danger" style="background: #dc3545; margin-top: 8px;">⚠️ Полный сброс</button>
                 </div>
             `;
         }
         
+        function exportStats() {
+            const exportData = {
+                globalStats: globalStats,
+                gameStats: gameStats,
+                favorites: favorites,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            tg.openLink(url);
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+            tg.showAlert('✅ Статистика экспортирована');
+        }
+        
+        function resetAllData() {
+            if (confirm('⚠️ ВНИМАНИЕ! Это удалит ВСЕ данные: статистику, избранное, историю, настройки игры. Продолжить?')) {
+                localStorage.clear();
+                globalStats = { totalSearches: 0, totalFavorites: 0, activeUsers: {}, popularSearches: {}, userActivities: [] };
+                favorites = [];
+                searchHistory = [];
+                gameStats = { gamesPlayed: 0, totalScore: 0, bestScore: 0 };
+                loadFavorites();
+                loadHistory();
+                saveGameStats();
+                tg.showAlert('✅ Все данные сброшены');
+                if (isAdmin) showAdminPanel();
+                updateFavoritesList();
+                updateHistoryList();
+            }
+        }
+        
         function clearAllStats() {
-            if (confirm('Сбросить всю статистику?')) {
+            if (confirm('Сбросить статистику (оставить избранное и историю)?')) {
                 globalStats = { totalSearches: 0, totalFavorites: 0, activeUsers: {}, popularSearches: {}, userActivities: [] };
                 saveGlobalStats();
-                showAdminPanel();
+                if (isAdmin) showAdminPanel();
                 tg.showAlert('✅ Статистика сброшена');
             }
         }
@@ -933,6 +1051,7 @@
             document.getElementById('searchTab').classList.add('hidden');
             document.getElementById('favoritesTab').classList.add('hidden');
             document.getElementById('historyTab').classList.add('hidden');
+            document.getElementById('gameTab').classList.add('hidden');
             document.getElementById('adminTab').classList.add('hidden');
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             
@@ -949,6 +1068,9 @@
                 document.getElementById('historyTab').classList.remove('hidden');
                 document.querySelector('.tab:nth-child(3)').classList.add('active');
                 updateHistoryList();
+            } else if (tab === 'game') {
+                document.getElementById('gameTab').classList.remove('hidden');
+                document.querySelector('.tab:nth-child(4)').classList.add('active');
             } else if (tab === 'admin' && isAdmin) {
                 document.getElementById('adminTab').classList.remove('hidden');
                 document.getElementById('adminTabBtn').classList.add('active');
@@ -964,8 +1086,7 @@
             return div.innerHTML;
         }
         
-        // ========== ИГРА "УГАДАЙ ТРЕК" (ТВОИ ИСПОЛНИТЕЛИ) ==========
-        // Все твои исполнители из первого кода
+        // ========== ИГРА "УГАДАЙ ТРЕК" ==========
         const allArtists = [
             "Асия", "Мари Краймбрери", "INSTASAMKA", "Мэйби Бэйби", "Дора",
             "NЮ", "M.Hustler", "Баста", "Anna Asti", "Король и Шут",
@@ -973,12 +1094,9 @@
             "Платина", "Yanix", "ЛСП", "T-Fest", "FEDUK"
         ];
         
-        // Твои треки из второго HTML
         const tracksDatabase = [
-            // Асия
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
-            // Мари Краймбрери
             { track: "Случилась осень", artist: "Мари Краймбрери" },
             { track: "Она опять разденется", artist: "Мари Краймбрери" },
             { track: "Иначе всё это зря", artist: "Мари Краймбрери" },
@@ -986,14 +1104,11 @@
             { track: "Пряталась в ванной", artist: "Мари Краймбрери" },
             { track: "Мне так хорошо", artist: "Мари Краймбрери" },
             { track: "По городам", artist: "Мари Краймбрери" },
-            // INSTASAMKA
             { track: "За деньги да", artist: "INSTASAMKA" },
             { track: "Волосы назад", artist: "INSTASAMKA" },
             { track: "Отключаю телефон", artist: "INSTASAMKA" },
-            // Мэйби Бэйби
             { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
             { track: "Неблагополучная семья", artist: "Мэйби Бэйби" },
-            // Дора
             { track: "Втюрилась", artist: "Дора" },
             { track: "Дора дура", artist: "Дора" },
             { track: "Барбисайз", artist: "Дора" },
@@ -1004,19 +1119,16 @@
             { track: "Пошлю его на...", artist: "Дора" },
             { track: "Нет тебя", artist: "Дора" },
             { track: "Loverboy", artist: "Дора" },
-            // NЮ
             { track: "Там, за облаками", artist: "NЮ" },
             { track: "Никто", artist: "NЮ" },
             { track: "Некуда бежать", artist: "NЮ" },
             { track: "Я тебя обидел", artist: "NЮ" },
             { track: "Если сгорим", artist: "NЮ" },
             { track: "Вороны", artist: "NЮ" },
-            // M.Hustler
             { track: "Успей вернуться", artist: "M.Hustler" },
             { track: "На каблучках", artist: "M.Hustler" },
             { track: "Он тоже любит дым", artist: "M.Hustler" },
             { track: "Fly Away", artist: "M.Hustler" },
-            // Другие
             { track: "Кукла колдуна", artist: "Король и Шут" },
             { track: "Шелк", artist: "Ваня Дмитриенко" },
             { track: "10", artist: "Эндшпиль" },
@@ -1179,6 +1291,7 @@
                         <div style="font-size: 24px; font-weight: 700; margin: 16px 0;">${gameScore} / ${total} (${percent}%)</div>
                         <div>⭐ Лучший результат: ${gameStats.bestScore} / ${total}</div>
                         <div>🎮 Сыграно игр: ${gameStats.gamesPlayed}</div>
+                        <div>📊 Средний счёт: ${gameStats.gamesPlayed > 0 ? Math.round(gameStats.totalScore / gameStats.gamesPlayed) : 0}</div>
                     </div>
                 </div>
             `;
