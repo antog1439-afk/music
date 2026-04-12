@@ -71,6 +71,21 @@
             color: white;
         }
         
+        .random-track-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            margin: 16px 0;
+            padding: 14px;
+            font-size: 16px;
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .random-track-btn:active { opacity: 0.8; }
+        
         .tabs {
             display: flex;
             gap: 8px;
@@ -536,6 +551,8 @@
                 <div class="search-type-btn" onclick="setSearchType('track')">🎵 Поиск трека</div>
             </div>
             
+            <button class="random-track-btn" onclick="getRandomTrack()">🎲 СЛУЧАЙНЫЙ ТРЕК</button>
+            
             <div class="tabs" id="tabsContainer">
                 <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
                 <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
@@ -601,7 +618,7 @@
         
         let currentUserId = null;
         let isAdmin = false;
-        let currentSearchType = 'artist'; // 'artist' or 'track'
+        let currentSearchType = 'artist';
         
         if (tg.initDataUnsafe?.user) {
             currentUserId = tg.initDataUnsafe.user.id;
@@ -619,10 +636,24 @@
             document.getElementById('adminTabBtn').style.display = 'block';
         }
         
-        // === БАЗА ДАННЫХ ТРЕКОВ ===
+        // === ОБНОВЛЁННАЯ БАЗА ДАННЫХ ТРЕКОВ ===
         const tracksDatabase = [
+            // === АСИЯ ===
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
+            { track: "Обочины", artist: "Асия" },
+            { track: "Сильно так", artist: "Асия" },
+            { track: "Детство", artist: "Асия" },
+            { track: "Амур", artist: "Асия" },
+            { track: "Помнишь", artist: "Асия feat. NЮ" },
+            { track: "Красное платье", artist: "Асия" },
+            { track: "Спасибо", artist: "Асия" },
+            { track: "Лети", artist: "Асия feat. Zvonkiy" },
+            { track: "Фонари", artist: "Асия feat. Zvonkiy" },
+            { track: "Дом", artist: "Асия" },
+            { track: "Шекспир", artist: "Асия" },
+            
+            // === МАРИ КРАЙМБРЕРИ ===
             { track: "Случилась осень", artist: "Мари Краймбрери" },
             { track: "Она опять разденется", artist: "Мари Краймбрери" },
             { track: "Иначе всё это зря", artist: "Мари Краймбрери" },
@@ -630,11 +661,17 @@
             { track: "Пряталась в ванной", artist: "Мари Краймбрери" },
             { track: "Мне так хорошо", artist: "Мари Краймбрери" },
             { track: "По городам", artist: "Мари Краймбрери" },
+            
+            // === INSTASAMKA ===
             { track: "За деньги да", artist: "INSTASAMKA" },
             { track: "Волосы назад", artist: "INSTASAMKA" },
             { track: "Отключаю телефон", artist: "INSTASAMKA" },
+            
+            // === МЭЙБИ БЭЙБИ ===
             { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
             { track: "Неблагополучная семья", artist: "Мэйби Бэйби" },
+            
+            // === ДОРА ===
             { track: "Втюрилась", artist: "Дора" },
             { track: "Дора дура", artist: "Дора" },
             { track: "Барбисайз", artist: "Дора" },
@@ -644,21 +681,42 @@
             { track: "Пошлю его на...", artist: "Дора" },
             { track: "Нет тебя", artist: "Дора" },
             { track: "Loverboy", artist: "Дора" },
+            
+            // === NЮ ===
             { track: "Там, за облаками", artist: "NЮ" },
             { track: "Никто", artist: "NЮ" },
             { track: "Некуда бежать", artist: "NЮ" },
             { track: "Я тебя обидел", artist: "NЮ" },
             { track: "Если сгорим", artist: "NЮ" },
             { track: "Вороны", artist: "NЮ" },
-            { track: "Успей вернуться", artist: "M.Hustler" },
-            { track: "На каблучках", artist: "M.Hustler" },
-            { track: "Он тоже любит дым", artist: "M.Hustler" },
-            { track: "Fly Away", artist: "M.Hustler" },
+            
+            // === BIG BABY TAPE ===
+            { track: "Gimme The Loot", artist: "Big Baby Tape" },
+            { track: "Trap Luv", artist: "Big Baby Tape" },
+            { track: "Hoodrich", artist: "Big Baby Tape" },
+            { track: "Bandana", artist: "Big Baby Tape" },
+            { track: "Sweater", artist: "Big Baby Tape" },
+            { track: "Patek", artist: "Big Baby Tape" },
+            { track: "Freestyle", artist: "Big Baby Tape" },
+            { track: "Hello", artist: "Big Baby Tape" },
+            { track: "Drip", artist: "Big Baby Tape" },
+            { track: "Money Dance", artist: "Big Baby Tape" },
+            
+            // === МОРГЕНШТЕРН ===
+            { track: "Cadillac", artist: "Моргенштерн" },
+            { track: "El Problema", artist: "Моргенштерн" },
+            { track: "Watafuk", artist: "Моргенштерн" },
+            { track: "ICE", artist: "Моргенштерн" },
+            { track: "Cristal & Моёт", artist: "Моргенштерн" },
+            { track: "Новый Мерин", artist: "Моргенштерн" },
+            { track: "Пушка", artist: "Моргенштерн" },
+            { track: "Малышка", artist: "Моргенштерн" },
+            { track: "12", artist: "Моргенштерн" },
+            { track: "Домой", artist: "Моргенштерн" },
+            
+            // === ОСТАЛЬНЫЕ ===
             { track: "Кукла колдуна", artist: "Король и Шут" },
             { track: "Шелк", artist: "Ваня Дмитриенко" },
-            { track: "10", artist: "Эндшпиль" },
-            { track: "Ножевой", artist: "A.V.G" },
-            { track: "Где прошла ты", artist: "Кравц" },
             { track: "Believer", artist: "Imagine Dragons" },
             { track: "Radioactive", artist: "Imagine Dragons" },
             { track: "Thunder", artist: "Imagine Dragons" },
@@ -675,9 +733,8 @@
         ];
         
         const popularArtistsList = [
-            "Big Baby Tape", "Imagine Dragons", "Кино", "Земфира", 
-            "Miyagi & Эндшпиль", "Моргенштерн", "Rauf & Faik", 
-            "Асия", "Eminem", "Billie Eilish", "The Weeknd", "Дора"
+            "Асия", "Big Baby Tape", "Моргенштерн", "Мари Краймбрери",
+            "INSTASAMKA", "Дора", "NЮ", "Imagine Dragons", "Кино", "Земфира"
         ];
         
         let globalStats = {
@@ -889,6 +946,15 @@
             }
         }
         
+        function getRandomTrack() {
+            const randomIndex = Math.floor(Math.random() * tracksDatabase.length);
+            const randomTrack = tracksDatabase[randomIndex];
+            setSearchType('track');
+            document.getElementById('searchInput').value = randomTrack.track;
+            performSearch();
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+        
         function getPlatformLinks(query, type) {
             const searchQuery = encodeURIComponent(query);
             if (type === 'artist') {
@@ -950,17 +1016,22 @@
         function showArtistResults(artistName) {
             const links = getPlatformLinks(artistName, 'artist');
             const isFav = isFavorite(artistName);
-            const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' популярные треки')}`;
             
             // Находим треки этого исполнителя
-            const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
+            let artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
+            // Перемешиваем и берём 5 случайных
+            for (let i = artistTracks.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [artistTracks[i], artistTracks[j]] = [artistTracks[j], artistTracks[i]];
+            }
+            artistTracks = artistTracks.slice(0, 5);
             
             let tracksHtml = '';
             if (artistTracks.length > 0) {
                 tracksHtml = `
                     <div class="section-title">🎵 ПОПУЛЯРНЫЕ ТРЕКИ</div>
                     <div class="platform-buttons">
-                        ${artistTracks.slice(0, 5).map(track => `
+                        ${artistTracks.map(track => `
                             <button onclick="searchTrackByName('${escapeHtml(track.track).replace(/'/g, "\\'")}')" class="platform-btn" style="background: #9b59b6;">
                                 🎤 ${escapeHtml(track.track)}
                             </button>
@@ -1016,7 +1087,6 @@
             const links = getPlatformLinks(trackName, 'track');
             
             if (foundTracks.length > 0) {
-                // Трек найден
                 const track = foundTracks[0];
                 const artistLinks = getPlatformLinks(track.artist, 'artist');
                 const isFav = isFavorite(track.artist);
@@ -1057,7 +1127,6 @@
                 
                 setState('results', `🎵 Найден трек: ${track.track} - ${track.artist}`);
             } else {
-                // Трек не найден, показываем поиск по платформам
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎵 "${escapeHtml(trackName)}"</div>
