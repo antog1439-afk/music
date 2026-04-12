@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Bot - Поиск исполнителя</title>
+    <title>Music Bot - Поиск треков и исполнителей</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- PWA / Иконка на экран домой -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="theme-color" content="#2481cc">
@@ -48,6 +47,28 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        
+        .search-type {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .search-type-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .search-type-btn.active {
+            background: var(--tg-theme-button-color, #2481cc);
+            color: white;
         }
         
         .tabs {
@@ -112,6 +133,26 @@
             margin-top: 16px;
         }
         
+        .track-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #ddd);
+            cursor: pointer;
+        }
+        
+        .track-item:last-child {
+            border-bottom: none;
+        }
+        
+        .track-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .track-artist {
+            font-size: 13px;
+            color: var(--tg-theme-hint-color, #6c757d);
+        }
+        
         .artist-name {
             font-size: 20px;
             font-weight: 600;
@@ -145,6 +186,8 @@
         
         .yandex-btn { background: #ffcc00; color: #000; }
         .youtube-btn { background: #ff0000; }
+        .vk-btn { background: #0077ff; }
+        .spotify-btn { background: #1db954; }
         .concert-btn { background: #28a745; }
         .afisha-btn { background: #ff6b6b; }
         
@@ -356,7 +399,6 @@
             padding: 16px;
         }
         
-        /* ========== СТИЛИ ДЛЯ ИГРЫ ========== */
         .game-container {
             background: var(--tg-theme-secondary-bg-color, #ffffff);
             border-radius: 20px;
@@ -419,10 +461,6 @@
             text-align: center;
         }
         
-        .game-option:active {
-            transform: scale(0.98);
-        }
-        
         .game-option.correct {
             background: #28a745;
             color: white;
@@ -433,35 +471,6 @@
             color: white;
         }
         
-        .game-option.disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        
-        .game-score {
-            text-align: center;
-            font-size: 14px;
-            color: var(--tg-theme-hint-color, #6c757d);
-            margin-top: 12px;
-        }
-        
-        .game-result {
-            text-align: center;
-            padding: 20px;
-        }
-        
-        .result-stats {
-            background: var(--tg-theme-bg-color, #f0f2f5);
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        
-        .result-stats div {
-            margin: 8px 0;
-        }
-        
-        /* Админ-статистика новая */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -522,6 +531,11 @@
                 <span>🎤</span>
             </div>
             
+            <div class="search-type" id="searchTypeContainer">
+                <div class="search-type-btn active" onclick="setSearchType('artist')">🎤 Поиск исполнителя</div>
+                <div class="search-type-btn" onclick="setSearchType('track')">🎵 Поиск трека</div>
+            </div>
+            
             <div class="tabs" id="tabsContainer">
                 <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
                 <div class="tab" onclick="switchTab('favorites')">⭐ Избранное</div>
@@ -532,11 +546,11 @@
             
             <div id="searchTab">
                 <div class="search-box">
-                    <input type="text" id="artistInput" class="search-input" placeholder="Big Baby Tape, Imagine Dragons, Асия, Кино..." autocomplete="off">
-                    <button onclick="searchArtist()" class="search-btn">Найти</button>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Big Baby Tape, Imagine Dragons, Асия, или название трека..." autocomplete="off">
+                    <button onclick="performSearch()" class="search-btn">Найти</button>
                 </div>
                 
-                <div class="section-title" style="margin-top: 20px;">🔥 ПОПУЛЯРНЫЕ</div>
+                <div class="section-title" style="margin-top: 20px;">🔥 ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ</div>
                 <div class="popular-grid" id="popularArtists"></div>
                 
                 <div id="result"></div>
@@ -587,6 +601,7 @@
         
         let currentUserId = null;
         let isAdmin = false;
+        let currentSearchType = 'artist'; // 'artist' or 'track'
         
         if (tg.initDataUnsafe?.user) {
             currentUserId = tg.initDataUnsafe.user.id;
@@ -604,10 +619,65 @@
             document.getElementById('adminTabBtn').style.display = 'block';
         }
         
+        // === БАЗА ДАННЫХ ТРЕКОВ ===
+        const tracksDatabase = [
+            { track: "Останься", artist: "Асия" },
+            { track: "Твой поцелуй", artist: "Асия" },
+            { track: "Случилась осень", artist: "Мари Краймбрери" },
+            { track: "Она опять разденется", artist: "Мари Краймбрери" },
+            { track: "Иначе всё это зря", artist: "Мари Краймбрери" },
+            { track: "Океан", artist: "Мари Краймбрери" },
+            { track: "Пряталась в ванной", artist: "Мари Краймбрери" },
+            { track: "Мне так хорошо", artist: "Мари Краймбрери" },
+            { track: "По городам", artist: "Мари Краймбрери" },
+            { track: "За деньги да", artist: "INSTASAMKA" },
+            { track: "Волосы назад", artist: "INSTASAMKA" },
+            { track: "Отключаю телефон", artist: "INSTASAMKA" },
+            { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
+            { track: "Неблагополучная семья", artist: "Мэйби Бэйби" },
+            { track: "Втюрилась", artist: "Дора" },
+            { track: "Дора дура", artist: "Дора" },
+            { track: "Барбисайз", artist: "Дора" },
+            { track: "Младшая сестра", artist: "Дора" },
+            { track: "Трезво", artist: "Дора" },
+            { track: "Капли", artist: "Дора" },
+            { track: "Пошлю его на...", artist: "Дора" },
+            { track: "Нет тебя", artist: "Дора" },
+            { track: "Loverboy", artist: "Дора" },
+            { track: "Там, за облаками", artist: "NЮ" },
+            { track: "Никто", artist: "NЮ" },
+            { track: "Некуда бежать", artist: "NЮ" },
+            { track: "Я тебя обидел", artist: "NЮ" },
+            { track: "Если сгорим", artist: "NЮ" },
+            { track: "Вороны", artist: "NЮ" },
+            { track: "Успей вернуться", artist: "M.Hustler" },
+            { track: "На каблучках", artist: "M.Hustler" },
+            { track: "Он тоже любит дым", artist: "M.Hustler" },
+            { track: "Fly Away", artist: "M.Hustler" },
+            { track: "Кукла колдуна", artist: "Король и Шут" },
+            { track: "Шелк", artist: "Ваня Дмитриенко" },
+            { track: "10", artist: "Эндшпиль" },
+            { track: "Ножевой", artist: "A.V.G" },
+            { track: "Где прошла ты", artist: "Кравц" },
+            { track: "Believer", artist: "Imagine Dragons" },
+            { track: "Radioactive", artist: "Imagine Dragons" },
+            { track: "Thunder", artist: "Imagine Dragons" },
+            { track: "Demons", artist: "Imagine Dragons" },
+            { track: "Natural", artist: "Imagine Dragons" },
+            { track: "Bad Guy", artist: "Billie Eilish" },
+            { track: "Lovely", artist: "Billie Eilish" },
+            { track: "Blinding Lights", artist: "The Weeknd" },
+            { track: "Save Your Tears", artist: "The Weeknd" },
+            { track: "Группа крови", artist: "Кино" },
+            { track: "Звезда по имени Солнце", artist: "Кино" },
+            { track: "Искала", artist: "Земфира" },
+            { track: "Хочешь", artist: "Земфира" }
+        ];
+        
         const popularArtistsList = [
             "Big Baby Tape", "Imagine Dragons", "Кино", "Земфира", 
             "Miyagi & Эндшпиль", "Моргенштерн", "Rauf & Faik", 
-            "Асия", "Eminem", "Billie Eilish", "The Weeknd"
+            "Асия", "Eminem", "Billie Eilish", "The Weeknd", "Дора"
         ];
         
         let globalStats = {
@@ -674,7 +744,7 @@
             saveGlobalStats();
         }
         
-        function registerSearch(query) {
+        function registerSearch(query, type) {
             if (!currentUserId) return;
             globalStats.totalSearches++;
             globalStats.popularSearches[query] = (globalStats.popularSearches[query] || 0) + 1;
@@ -682,7 +752,7 @@
                 globalStats.activeUsers[currentUserId].searches++;
             }
             const userName = user?.first_name || user?.username || 'Аноним';
-            addActivity(currentUserId, userName, '🔍 Поиск', `Искал: "${query}"`);
+            addActivity(currentUserId, userName, `🔍 Поиск ${type === 'artist' ? 'исполнителя' : 'трека'}`, `"${query}"`);
             saveGlobalStats();
             registerActivity();
         }
@@ -727,7 +797,6 @@
                 saveFavorites();
                 registerFavorite(artistName);
                 tg.showAlert(`⭐ ${artistName} добавлен в избранное`);
-                updateSearchResultButtons(artistName);
             }
         }
         
@@ -735,7 +804,6 @@
             favorites = favorites.filter(a => a !== artistName);
             saveFavorites();
             tg.showAlert(`❌ ${artistName} удалён из избранного`);
-            updateSearchResultButtons(artistName);
         }
         
         function isFavorite(artistName) {
@@ -756,24 +824,6 @@
             `).join('');
         }
         
-        function updateSearchResultButtons(artistName) {
-            const favButton = document.getElementById('favorite-btn-dynamic');
-            if (favButton) {
-                const isFav = isFavorite(artistName);
-                if (isFav) {
-                    favButton.innerHTML = '★ Удалить из избранного';
-                    favButton.style.background = '#ffc107';
-                    favButton.style.color = '#000';
-                    favButton.onclick = () => removeFromFavorites(artistName);
-                } else {
-                    favButton.innerHTML = '☆ Добавить в избранное';
-                    favButton.style.background = '#6c757d';
-                    favButton.style.color = 'white';
-                    favButton.onclick = () => addToFavorites(artistName);
-                }
-            }
-        }
-        
         let searchHistory = [];
         
         function loadHistory() {
@@ -787,9 +837,10 @@
             updateHistoryList();
         }
         
-        function addToHistory(artistName) {
-            searchHistory = searchHistory.filter(a => a !== artistName);
-            searchHistory.unshift(artistName);
+        function addToHistory(query, type) {
+            const item = { query: query, type: type, timestamp: Date.now() };
+            searchHistory = searchHistory.filter(h => h.query !== query);
+            searchHistory.unshift(item);
             searchHistory = searchHistory.slice(0, 15);
             saveHistory();
         }
@@ -803,238 +854,224 @@
         function updateHistoryList() {
             const historyDiv = document.getElementById('historyList');
             if (searchHistory.length === 0) {
-                historyDiv.innerHTML = `<div class="empty-favorites">📜 История пуста<br>Поищите исполнителей, они появятся здесь</div>`;
+                historyDiv.innerHTML = `<div class="empty-favorites">📜 История пуста<br>Поищите треки или исполнителей</div>`;
                 return;
             }
-            historyDiv.innerHTML = searchHistory.map(artist => `
-                <div class="history-item" onclick="searchArtistByName('${escapeHtml(artist).replace(/'/g, "\\'")}')">
-                    <span>🎤 ${escapeHtml(artist)}</span>
-                    <button class="delete-history" onclick="event.stopPropagation(); removeFromHistory('${escapeHtml(artist).replace(/'/g, "\\'")}')">🗑️</button>
+            historyDiv.innerHTML = searchHistory.map(item => `
+                <div class="history-item" onclick="searchQueryFromHistory('${escapeHtml(item.query).replace(/'/g, "\\'")}', '${item.type}')">
+                    <span>${item.type === 'artist' ? '🎤' : '🎵'} ${escapeHtml(item.query)}</span>
+                    <button class="delete-history" onclick="event.stopPropagation(); removeFromHistory('${escapeHtml(item.query).replace(/'/g, "\\'")}')">🗑️</button>
                 </div>
             `).join('');
         }
         
-        function removeFromHistory(artistName) {
-            searchHistory = searchHistory.filter(a => a !== artistName);
+        function removeFromHistory(query) {
+            searchHistory = searchHistory.filter(h => h.query !== query);
             saveHistory();
         }
         
-        function searchArtistByName(artistName) {
-            document.getElementById('artistInput').value = artistName;
-            searchArtist();
+        function searchQueryFromHistory(query, type) {
+            setSearchType(type);
+            document.getElementById('searchInput').value = query;
+            performSearch();
         }
         
-        const upcomingReleases = {
-            "The Weeknd": { album: "Hurry Up Tomorrow", date: "2025-01-24", type: "Студийный альбом" },
-            "Imagine Dragons": { album: "Reflections", date: "2025-03-21", type: "Сборник" },
-            "Billie Eilish": { album: null, single: "Новый сингл в 2025" }
-        };
-        
-        function getUpcomingRelease(artistName) {
-            for (const [key, release] of Object.entries(upcomingReleases)) {
-                if (artistName.toLowerCase().includes(key.toLowerCase())) {
-                    return { ...release, found: true, artist: key };
-                }
+        function setSearchType(type) {
+            currentSearchType = type;
+            const btns = document.querySelectorAll('.search-type-btn');
+            btns.forEach(btn => btn.classList.remove('active'));
+            if (type === 'artist') {
+                btns[0].classList.add('active');
+                document.getElementById('searchInput').placeholder = "Big Baby Tape, Imagine Dragons, Асия, Кино...";
+            } else {
+                btns[1].classList.add('active');
+                document.getElementById('searchInput').placeholder = "Останься, Believer, Группа крови, Втюрилась...";
             }
-            return { found: false };
         }
         
-        function formatReleaseDate(dateStr) {
-            if (!dateStr) return null;
-            const date = new Date(dateStr);
-            const today = new Date();
-            const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
-            const formattedDate = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-            if (diffDays < 0) return { text: `✅ Вышел ${formattedDate}`, isPast: true };
-            if (diffDays === 0) return { text: `🚀 СЕГОДНЯ! ${formattedDate}`, isPast: false };
-            return { text: `📅 ${formattedDate} (через ${diffDays} дней)`, isPast: false };
+        function getPlatformLinks(query, type) {
+            const searchQuery = encodeURIComponent(query);
+            if (type === 'artist') {
+                return {
+                    yandex: `https://music.yandex.ru/search?text=${searchQuery}`,
+                    youtube: `https://music.youtube.com/search?q=${searchQuery}`,
+                    vk: `https://vk.com/search?c%5Bq%5D=${searchQuery}&c%5Bsection%5D=audio`,
+                    spotify: `https://open.spotify.com/search/${searchQuery}`,
+                    concerts: `https://music.yandex.ru/search?text=${searchQuery}+концерт`,
+                    afisha: `https://www.afisha.ru/search/?q=${searchQuery}`
+                };
+            } else {
+                return {
+                    yandex: `https://music.yandex.ru/search?text=${searchQuery}`,
+                    youtube: `https://music.youtube.com/search?q=${searchQuery}`,
+                    vk: `https://vk.com/search?c%5Bq%5D=${searchQuery}&c%5Bsection%5D=audio`,
+                    spotify: `https://open.spotify.com/search/${searchQuery}`,
+                    concerts: `https://music.yandex.ru/search?text=${searchQuery}+исполнитель`,
+                    afisha: `https://www.afisha.ru/search/?q=${searchQuery}`
+                };
+            }
         }
         
-        function searchArtist() {
-            const query = document.getElementById('artistInput').value.trim();
+        function searchArtistByName(artistName) {
+            setSearchType('artist');
+            document.getElementById('searchInput').value = artistName;
+            performSearch();
+        }
+        
+        function searchTrackByName(trackName) {
+            setSearchType('track');
+            document.getElementById('searchInput').value = trackName;
+            performSearch();
+        }
+        
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
             if (!query) {
-                tg.showAlert('Введите имя исполнителя');
+                tg.showAlert('Введите запрос');
                 return;
             }
             
-            registerSearch(query);
-            addToHistory(query);
+            registerSearch(query, currentSearchType);
+            addToHistory(query, currentSearchType);
             setState('searching', `🔍 Ищем "${query}"...`);
             
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div>🔍 Ищем...</div>';
             
             setTimeout(() => {
-                const release = getUpcomingRelease(query);
-                const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
-                const youtubeUrl = `https://music.youtube.com/search?q=${encodeURIComponent(query)}`;
-                const concertsUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' концерт')}`;
-                const afishaUrl = `https://www.afisha.ru/search/?q=${encodeURIComponent(query)}`;
-                const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(query + ' популярные треки')}`;
-                const isFav = isFavorite(query);
-                
-                let releaseHTML = '';
-                if (release.found && (release.album || release.single)) {
-                    const dateInfo = release.date ? formatReleaseDate(release.date) : null;
-                    releaseHTML = `
-                        <div class="release-card">
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                                <span style="font-size: 28px;">🚀</span>
-                                <div>
-                                    <div style="font-size: 12px; color: var(--tg-theme-hint-color);">ПРЕДСТОЯЩИЙ РЕЛИЗ</div>
-                                    <div style="font-weight: 700; font-size: 18px;">${release.album || 'Новый релиз'}</div>
-                                </div>
-                            </div>
-                            ${release.type ? `<div style="margin-bottom: 8px;">📀 Тип: ${release.type}</div>` : ''}
-                            ${dateInfo ? `<div style="margin-bottom: 8px;">⏰ ${dateInfo.text}</div>` : ''}
-                            ${release.single ? `<div style="margin-bottom: 8px;">🎤 ${release.single}</div>` : ''}
-                            <button onclick="setReleaseReminder('${escapeHtml(query)}', '${escapeHtml(release.album || 'релиз')}')" style="margin-top: 12px; padding: 8px;">🔔 Напомнить</button>
-                        </div>
-                    `;
+                if (currentSearchType === 'artist') {
+                    showArtistResults(query);
+                } else {
+                    showTrackResults(query);
                 }
-                
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                        ${releaseHTML}
-                        <div class="platform-buttons">
-                            <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
-                                ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
-                            </button>
-                        </div>
-                        <div class="section-title">🎵 МУЗЫКА</div>
-                        <div class="platform-buttons">
-                            <button onclick="openLink('${yandexUrl}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                            <button onclick="openLink('${youtubeUrl}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                        </div>
-                        <div class="section-title">🎤 ПОПУЛЯРНЫЕ ТРЕКИ</div>
-                        <div class="platform-buttons">
-                            <button onclick="openLink('${topTracksUrl}')" class="platform-btn" style="background: #9b59b6;">🎵 Топ треки</button>
-                        </div>
-                        <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
-                        <div class="platform-buttons">
-                            <button onclick="openLink('${concertsUrl}')" class="platform-btn concert-btn">🎸 Концерты (Яндекс)</button>
-                            <button onclick="openLink('${afishaUrl}')" class="platform-btn afisha-btn">🎫 Билеты (Афиша)</button>
-                        </div>
-                    </div>
-                `;
-                setState('results', `🎤 Найден: ${query}`);
-                updateSearchResultButtons(query);
             }, 300);
         }
         
-        function setReleaseReminder(artistName, releaseName) {
-            tg.showAlert(`🔔 Напомню о выходе "${releaseName}" ${artistName} в день релиза!`);
-            let reminders = JSON.parse(localStorage.getItem('release_reminders') || '[]');
-            reminders.push({ artist: artistName, release: releaseName, setAt: Date.now() });
-            localStorage.setItem('release_reminders', JSON.stringify(reminders));
-        }
-        
-        function showAdminPanel() {
-            if (!isAdmin) return;
-            const adminContent = document.getElementById('adminContent');
-            const sortedSearches = Object.entries(globalStats.popularSearches).sort((a, b) => b[1] - a[1]).slice(0, 10);
-            const sortedUsers = Object.entries(globalStats.activeUsers).sort((a, b) => b[1].lastSeen - a[1].lastSeen);
+        function showArtistResults(artistName) {
+            const links = getPlatformLinks(artistName, 'artist');
+            const isFav = isFavorite(artistName);
+            const topTracksUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' популярные треки')}`;
             
-            // Общая статистика
-            const totalGameStats = gameStats.gamesPlayed || 0;
-            const avgScore = totalGameStats > 0 ? Math.round(gameStats.totalScore / totalGameStats) : 0;
+            // Находим треки этого исполнителя
+            const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
             
-            adminContent.innerHTML = `
-                <div class="admin-panel">
-                    <div class="admin-title">📊 ОБЩАЯ СТАТИСТИКА</div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number">${globalStats.totalSearches}</div>
-                            <div class="stat-label">Всего поисков</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">${globalStats.totalFavorites}</div>
-                            <div class="stat-label">В избранное</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">${Object.keys(globalStats.activeUsers).length}</div>
-                            <div class="stat-label">Пользователей</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">${favorites.length}</div>
-                            <div class="stat-label">Ваших избранных</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">${totalGameStats}</div>
-                            <div class="stat-label">Сыграно игр</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">${gameStats.bestScore || 0}</div>
-                            <div class="stat-label">Лучший счёт</div>
-                        </div>
+            let tracksHtml = '';
+            if (artistTracks.length > 0) {
+                tracksHtml = `
+                    <div class="section-title">🎵 ПОПУЛЯРНЫЕ ТРЕКИ</div>
+                    <div class="platform-buttons">
+                        ${artistTracks.slice(0, 5).map(track => `
+                            <button onclick="searchTrackByName('${escapeHtml(track.track).replace(/'/g, "\\'")}')" class="platform-btn" style="background: #9b59b6;">
+                                🎤 ${escapeHtml(track.track)}
+                            </button>
+                        `).join('')}
                     </div>
-                    
-                    <div class="admin-title">🔥 ПОПУЛЯРНЫЕ ЗАПРОСЫ</div>
-                    ${sortedSearches.map(([q, c]) => `<div class="history-item"><span>🎤 ${escapeHtml(q)}</span><span>${c} раз</span></div>`).join('') || '<div class="info-text">Нет данных</div>'}
-                    
-                    <div class="admin-title">👥 ПОЛЬЗОВАТЕЛИ</div>
-                    <div class="user-list">
-                        ${sortedUsers.map(([id, data]) => `<div class="user-item"><div><strong>${escapeHtml(data.name)}</strong><div style="font-size:11px;">ID: ${id}</div></div><div>🔍 ${data.searches || 0} ⭐ ${data.favorites || 0}</div></div>`).join('')}
+                `;
+            }
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div class="result-card">
+                    <div class="artist-name">🎤 ${escapeHtml(artistName)}</div>
+                    <div class="platform-buttons">
+                        <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
+                            ${isFav ? '★ Удалить из избранного' : '☆ Добавить в избранное'}
+                        </button>
                     </div>
-                    
-                    <div class="admin-title">📋 ПОСЛЕДНИЕ АКТИВНОСТИ</div>
-                    <div class="user-list">
-                        ${globalStats.userActivities.slice(0, 20).map(act => `
-                            <div class="activity-item">
-                                <div class="activity-time">${act.date}</div>
-                                <div><strong>${escapeHtml(act.userName)}</strong> ${act.action}</div>
-                                <div style="font-size: 11px;">${act.details}</div>
-                            </div>
-                        `).join('') || '<div class="info-text">Нет активностей</div>'}
+                    <div class="section-title">🎵 МУЗЫКА</div>
+                    <div class="platform-buttons">
+                        <button onclick="openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                        <button onclick="openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                        <button onclick="openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                        <button onclick="openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                     </div>
-                    
-                    <div class="admin-title">⚙️ УПРАВЛЕНИЕ</div>
-                    <button onclick="exportStats()" style="background: #28a745; margin-bottom: 8px;">📤 Экспорт статистики</button>
-                    <button onclick="clearAllStats()" class="admin-btn danger">🗑️ Сбросить статистику</button>
-                    <button onclick="resetAllData()" class="admin-btn danger" style="background: #dc3545; margin-top: 8px;">⚠️ Полный сброс</button>
+                    ${tracksHtml}
+                    <div class="section-title">🎫 КОНЦЕРТЫ И БИЛЕТЫ</div>
+                    <div class="platform-buttons">
+                        <button onclick="openLink('${links.concerts}')" class="platform-btn concert-btn">🎸 Концерты (Яндекс)</button>
+                        <button onclick="openLink('${links.afisha}')" class="platform-btn afisha-btn">🎫 Билеты (Афиша)</button>
+                    </div>
                 </div>
             `;
-        }
-        
-        function exportStats() {
-            const exportData = {
-                globalStats: globalStats,
-                gameStats: gameStats,
-                favorites: favorites,
-                exportDate: new Date().toISOString()
-            };
-            const dataStr = JSON.stringify(exportData, null, 2);
-            const blob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            tg.openLink(url);
-            setTimeout(() => URL.revokeObjectURL(url), 100);
-            tg.showAlert('✅ Статистика экспортирована');
-        }
-        
-        function resetAllData() {
-            if (confirm('⚠️ ВНИМАНИЕ! Это удалит ВСЕ данные: статистику, избранное, историю, настройки игры. Продолжить?')) {
-                localStorage.clear();
-                globalStats = { totalSearches: 0, totalFavorites: 0, activeUsers: {}, popularSearches: {}, userActivities: [] };
-                favorites = [];
-                searchHistory = [];
-                gameStats = { gamesPlayed: 0, totalScore: 0, bestScore: 0 };
-                loadFavorites();
-                loadHistory();
-                saveGameStats();
-                tg.showAlert('✅ Все данные сброшены');
-                if (isAdmin) showAdminPanel();
-                updateFavoritesList();
-                updateHistoryList();
+            
+            const favButton = document.getElementById('favorite-btn-dynamic');
+            if (favButton) {
+                if (isFav) {
+                    favButton.onclick = () => removeFromFavorites(artistName);
+                } else {
+                    favButton.onclick = () => addToFavorites(artistName);
+                }
             }
+            
+            setState('results', `🎤 Найден исполнитель: ${artistName}`);
         }
         
-        function clearAllStats() {
-            if (confirm('Сбросить статистику (оставить избранное и историю)?')) {
-                globalStats = { totalSearches: 0, totalFavorites: 0, activeUsers: {}, popularSearches: {}, userActivities: [] };
-                saveGlobalStats();
-                if (isAdmin) showAdminPanel();
-                tg.showAlert('✅ Статистика сброшена');
+        function showTrackResults(trackName) {
+            // Ищем трек в базе
+            const foundTracks = tracksDatabase.filter(t => 
+                t.track.toLowerCase().includes(trackName.toLowerCase()) ||
+                trackName.toLowerCase().includes(t.track.toLowerCase())
+            );
+            
+            const links = getPlatformLinks(trackName, 'track');
+            
+            if (foundTracks.length > 0) {
+                // Трек найден
+                const track = foundTracks[0];
+                const artistLinks = getPlatformLinks(track.artist, 'artist');
+                const isFav = isFavorite(track.artist);
+                
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <div class="artist-name">🎵 "${escapeHtml(track.track)}"</div>
+                        <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong onclick="searchArtistByName('${escapeHtml(track.artist).replace(/'/g, "\\'")}')" style="cursor: pointer; color: var(--tg-theme-button-color);">${escapeHtml(track.artist)}</strong></div>
+                        <div class="platform-buttons">
+                            <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
+                                ${isFav ? '★ Удалить из избранного' : '☆ Добавить исполнителя в избранное'}
+                            </button>
+                        </div>
+                        <div class="section-title">🎧 СЛУШАТЬ ТРЕК</div>
+                        <div class="platform-buttons">
+                            <button onclick="openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                            <button onclick="openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                            <button onclick="openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                            <button onclick="openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
+                        </div>
+                        <div class="section-title">🎤 ИСПОЛНИТЕЛЬ</div>
+                        <div class="platform-buttons">
+                            <button onclick="openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Страница исполнителя</button>
+                            <button onclick="searchArtistByName('${escapeHtml(track.artist).replace(/'/g, "\\'")}')" class="platform-btn" style="background: #9b59b6;">🔍 Найти исполнителя</button>
+                        </div>
+                    </div>
+                `;
+                
+                const favButton = document.getElementById('favorite-btn-dynamic');
+                if (favButton) {
+                    if (isFav) {
+                        favButton.onclick = () => removeFromFavorites(track.artist);
+                    } else {
+                        favButton.onclick = () => addToFavorites(track.artist);
+                    }
+                }
+                
+                setState('results', `🎵 Найден трек: ${track.track} - ${track.artist}`);
+            } else {
+                // Трек не найден, показываем поиск по платформам
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <div class="artist-name">🎵 "${escapeHtml(trackName)}"</div>
+                        <div class="info-text">Точное совпадение не найдено в базе</div>
+                        <div class="section-title">🔍 ПОИСК НА ПЛАТФОРМАХ</div>
+                        <div class="platform-buttons">
+                            <button onclick="openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                            <button onclick="openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                            <button onclick="openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                            <button onclick="openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
+                        </div>
+                    </div>
+                `;
+                setState('results', `🎵 Поиск трека: ${trackName}`);
             }
         }
         
@@ -1078,6 +1115,39 @@
             }
         }
         
+        function showAdminPanel() {
+            if (!isAdmin) return;
+            const adminContent = document.getElementById('adminContent');
+            const sortedSearches = Object.entries(globalStats.popularSearches).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            const sortedUsers = Object.entries(globalStats.activeUsers).sort((a, b) => b[1].lastSeen - a[1].lastSeen);
+            
+            adminContent.innerHTML = `
+                <div class="admin-panel">
+                    <div class="admin-title">📊 СТАТИСТИКА</div>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-number">${globalStats.totalSearches}</div><div class="stat-label">Всего поисков</div></div>
+                        <div class="stat-card"><div class="stat-number">${globalStats.totalFavorites}</div><div class="stat-label">В избранное</div></div>
+                        <div class="stat-card"><div class="stat-number">${Object.keys(globalStats.activeUsers).length}</div><div class="stat-label">Пользователей</div></div>
+                        <div class="stat-card"><div class="stat-number">${favorites.length}</div><div class="stat-label">Ваших избранных</div></div>
+                    </div>
+                    <div class="admin-title">🔥 ПОПУЛЯРНЫЕ ЗАПРОСЫ</div>
+                    ${sortedSearches.map(([q, c]) => `<div class="history-item"><span>🔍 ${escapeHtml(q)}</span><span>${c} раз</span></div>`).join('') || '<div class="info-text">Нет данных</div>'}
+                    <div class="admin-title">👥 ПОЛЬЗОВАТЕЛИ</div>
+                    ${sortedUsers.map(([id, data]) => `<div class="user-item"><div><strong>${escapeHtml(data.name)}</strong><div style="font-size:11px;">ID: ${id}</div></div><div>🔍 ${data.searches || 0} ⭐ ${data.favorites || 0}</div></div>`).join('')}
+                    <button onclick="clearAllStats()" class="admin-btn danger">🗑️ Сбросить статистику</button>
+                </div>
+            `;
+        }
+        
+        function clearAllStats() {
+            if (confirm('Сбросить статистику?')) {
+                globalStats = { totalSearches: 0, totalFavorites: 0, activeUsers: {}, popularSearches: {}, userActivities: [] };
+                saveGlobalStats();
+                showAdminPanel();
+                tg.showAlert('✅ Статистика сброшена');
+            }
+        }
+        
         function openLink(url) { tg.openLink(url); }
         function closeApp() { tg.close(); }
         function escapeHtml(text) {
@@ -1086,71 +1156,18 @@
             return div.innerHTML;
         }
         
-        // ========== ИГРА "УГАДАЙ ТРЕК" ==========
-        const allArtists = [
-            "Асия", "Мари Краймбрери", "INSTASAMKA", "Мэйби Бэйби", "Дора",
-            "NЮ", "M.Hustler", "Баста", "Anna Asti", "Король и Шут",
-            "Ваня Дмитриенко", "Эндшпиль", "МАСАN", "Aarne", "OG Buda",
-            "Платина", "Yanix", "ЛСП", "T-Fest", "FEDUK"
-        ];
-        
-        const tracksDatabase = [
-            { track: "Останься", artist: "Асия" },
-            { track: "Твой поцелуй", artist: "Асия" },
-            { track: "Случилась осень", artist: "Мари Краймбрери" },
-            { track: "Она опять разденется", artist: "Мари Краймбрери" },
-            { track: "Иначе всё это зря", artist: "Мари Краймбрери" },
-            { track: "Океан", artist: "Мари Краймбрери" },
-            { track: "Пряталась в ванной", artist: "Мари Краймбрери" },
-            { track: "Мне так хорошо", artist: "Мари Краймбрери" },
-            { track: "По городам", artist: "Мари Краймбрери" },
-            { track: "За деньги да", artist: "INSTASAMKA" },
-            { track: "Волосы назад", artist: "INSTASAMKA" },
-            { track: "Отключаю телефон", artist: "INSTASAMKA" },
-            { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
-            { track: "Неблагополучная семья", artist: "Мэйби Бэйби" },
-            { track: "Втюрилась", artist: "Дора" },
-            { track: "Дора дура", artist: "Дора" },
-            { track: "Барбисайз", artist: "Дора" },
-            { track: "Младшая сестра", artist: "Дора" },
-            { track: "Дорадура", artist: "Дора" },
-            { track: "Трезво", artist: "Дора" },
-            { track: "Капли", artist: "Дора" },
-            { track: "Пошлю его на...", artist: "Дора" },
-            { track: "Нет тебя", artist: "Дора" },
-            { track: "Loverboy", artist: "Дора" },
-            { track: "Там, за облаками", artist: "NЮ" },
-            { track: "Никто", artist: "NЮ" },
-            { track: "Некуда бежать", artist: "NЮ" },
-            { track: "Я тебя обидел", artist: "NЮ" },
-            { track: "Если сгорим", artist: "NЮ" },
-            { track: "Вороны", artist: "NЮ" },
-            { track: "Успей вернуться", artist: "M.Hustler" },
-            { track: "На каблучках", artist: "M.Hustler" },
-            { track: "Он тоже любит дым", artist: "M.Hustler" },
-            { track: "Fly Away", artist: "M.Hustler" },
-            { track: "Кукла колдуна", artist: "Король и Шут" },
-            { track: "Шелк", artist: "Ваня Дмитриенко" },
-            { track: "10", artist: "Эндшпиль" },
-            { track: "Ножевой", artist: "A.V.G" },
-            { track: "Где прошла ты", artist: "Кравц" }
-        ];
+        // ========== ИГРА ==========
+        const allArtists = [...new Set(tracksDatabase.map(t => t.artist))];
         
         let gameQuestions = [];
         let currentQuestionIndex = 0;
         let gameScore = 0;
         let gameActive = false;
-        let gameStats = {
-            gamesPlayed: 0,
-            totalScore: 0,
-            bestScore: 0
-        };
+        let gameStats = { gamesPlayed: 0, totalScore: 0, bestScore: 0 };
         
         function loadGameStats() {
             const saved = localStorage.getItem('music_bot_game_stats');
-            if (saved) {
-                gameStats = JSON.parse(saved);
-            }
+            if (saved) gameStats = JSON.parse(saved);
         }
         
         function saveGameStats() {
@@ -1169,119 +1186,75 @@
             }
             const wrongOptions = otherArtists.slice(0, 3);
             const allOptions = [correctArtist, ...wrongOptions];
-            
             for (let i = allOptions.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [allOptions[i], allOptions[j]] = [allOptions[j], allOptions[i]];
             }
-            
-            return {
-                track: correctTrack.track,
-                correct: correctArtist,
-                options: allOptions
-            };
+            return { track: correctTrack.track, correct: correctArtist, options: allOptions };
         }
         
         function startGame() {
             gameQuestions = [];
-            for (let i = 0; i < 10; i++) {
-                gameQuestions.push(generateRandomQuestion());
-            }
-            
+            for (let i = 0; i < 10; i++) gameQuestions.push(generateRandomQuestion());
             currentQuestionIndex = 0;
             gameScore = 0;
             gameActive = true;
-            
             const startBtn = document.getElementById('startGameBtn');
             startBtn.textContent = '🎮 Игра идёт...';
             startBtn.style.background = '#28a745';
-            
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            
             showGameQuestion();
         }
         
         function showGameQuestion() {
             const gameContent = document.getElementById('gameContent');
-            
-            if (currentQuestionIndex >= gameQuestions.length) {
-                endGame();
-                return;
-            }
-            
+            if (currentQuestionIndex >= gameQuestions.length) { endGame(); return; }
             const question = gameQuestions[currentQuestionIndex];
             const percent = Math.round((gameScore / gameQuestions.length) * 100);
-            
             let optionsHtml = '';
             for (let i = 0; i < question.options.length; i++) {
                 optionsHtml += `<div class="game-option" onclick="checkGameAnswer('${escapeHtml(question.options[i])}', '${escapeHtml(question.correct)}')">${escapeHtml(question.options[i])}</div>`;
             }
-            
             gameContent.innerHTML = `
                 <div class="game-question">
-                    <div style="font-size: 13px; color: var(--tg-theme-hint-color);">🎵 Вопрос ${currentQuestionIndex + 1}/${gameQuestions.length}</div>
+                    <div style="font-size: 13px;">🎵 Вопрос ${currentQuestionIndex + 1}/${gameQuestions.length}</div>
                     <div class="track-name">"${escapeHtml(question.track)}"</div>
-                    <div style="font-size: 13px; color: var(--tg-theme-hint-color);">Кто исполнитель?</div>
+                    <div style="font-size: 13px;">Кто исполнитель?</div>
                 </div>
-                <div class="game-options" id="gameOptions">
-                    ${optionsHtml}
-                </div>
+                <div class="game-options" id="gameOptions">${optionsHtml}</div>
                 <div class="game-score">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div>
             `;
         }
         
         function checkGameAnswer(selected, correct) {
             if (!gameActive) return;
-            
             const optionsDiv = document.getElementById('gameOptions');
             if (!optionsDiv) return;
-            
             const options = optionsDiv.querySelectorAll('.game-option');
             gameActive = false;
-            
             for (let option of options) {
-                if (option.textContent === correct) {
-                    option.classList.add('correct');
-                }
-                if (option.textContent === selected && selected !== correct) {
-                    option.classList.add('wrong');
-                }
+                if (option.textContent === correct) option.classList.add('correct');
+                if (option.textContent === selected && selected !== correct) option.classList.add('wrong');
                 option.style.pointerEvents = 'none';
             }
-            
             if (selected === correct) {
                 gameScore++;
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
-            
-            setTimeout(() => {
-                currentQuestionIndex++;
-                gameActive = true;
-                showGameQuestion();
-            }, 1000);
+            setTimeout(() => { currentQuestionIndex++; gameActive = true; showGameQuestion(); }, 1000);
         }
         
         function endGame() {
             gameActive = false;
-            
             const total = gameQuestions.length;
             const percent = Math.round((gameScore / total) * 100);
-            
             gameStats.gamesPlayed++;
             gameStats.totalScore += gameScore;
-            if (gameScore > gameStats.bestScore) {
-                gameStats.bestScore = gameScore;
-            }
+            if (gameScore > gameStats.bestScore) gameStats.bestScore = gameScore;
             saveGameStats();
-            
-            let message = '';
-            if (percent === 100) message = '🏆 ИДЕАЛЬНО! Ты настоящий меломан! 🏆';
-            else if (percent >= 80) message = '🎵 Отлично! Ты хорошо знаешь музыку! 🎵';
-            else if (percent >= 60) message = '👍 Неплохо! Но есть куда расти! 👍';
-            else message = '🎧 Слушай больше музыки и возвращайся! 🎧';
-            
+            let message = percent === 100 ? '🏆 ИДЕАЛЬНО!' : percent >= 80 ? '🎵 Отлично!' : percent >= 60 ? '👍 Неплохо!' : '🎧 Слушай больше музыки!';
             const gameContent = document.getElementById('gameContent');
             gameContent.innerHTML = `
                 <div class="game-result">
@@ -1291,15 +1264,12 @@
                         <div style="font-size: 24px; font-weight: 700; margin: 16px 0;">${gameScore} / ${total} (${percent}%)</div>
                         <div>⭐ Лучший результат: ${gameStats.bestScore} / ${total}</div>
                         <div>🎮 Сыграно игр: ${gameStats.gamesPlayed}</div>
-                        <div>📊 Средний счёт: ${gameStats.gamesPlayed > 0 ? Math.round(gameStats.totalScore / gameStats.gamesPlayed) : 0}</div>
                     </div>
                 </div>
             `;
-            
             const startBtn = document.getElementById('startGameBtn');
             startBtn.textContent = '🔄 Сыграть снова';
             startBtn.style.background = '#9b59b6';
-            
             if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
         }
         
@@ -1320,8 +1290,8 @@
         loadGameStats();
         setState('idle', 'Готов к работе');
         
-        document.getElementById('artistInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') searchArtist();
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearch();
         });
     </script>
 </body>
