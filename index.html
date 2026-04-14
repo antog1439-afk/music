@@ -21,11 +21,9 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--tg-theme-bg-color, #f8f9fa);
-            color: var(--tg-theme-text-color, #000);
+            transition: all 0.3s ease;
             padding: 20px;
             min-height: 100vh;
-            transition: background-image 0.3s ease;
         }
         
         /* Градиентный фон по умолчанию */
@@ -33,7 +31,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
-        /* Затемнение для лучшей читаемости текста при фоновом изображении */
+        /* Затемнение для фонового изображения */
         body.has-bg::before {
             content: '';
             position: fixed;
@@ -41,7 +39,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
         
@@ -60,30 +58,47 @@
         }
         
         .card {
-            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.95));
+            background: var(--card-bg, rgba(255, 255, 255, 0.95));
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 24px;
             margin-bottom: 16px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
         
         /* Тёмная тема для карточки */
-        @media (prefers-color-scheme: dark) {
-            .card {
-                background: rgba(30, 30, 35, 0.95);
-            }
+        body.dark-theme .card {
+            background: rgba(30, 30, 35, 0.95);
+            color: #fff;
         }
         
-        /* Кнопка выбора фона */
-        .bg-settings {
+        /* ПАНЕЛЬ НАСТРОЕК ВНЕШНЕГО ВИДА */
+        .appearance-panel {
+            background: var(--card-bg, rgba(255, 255, 255, 0.95));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .appearance-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
             display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .appearance-grid {
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 16px;
-            flex-wrap: wrap;
         }
         
-        .bg-btn {
+        .appearance-btn {
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(5px);
             padding: 8px 16px;
@@ -96,8 +111,51 @@
             margin: 0;
         }
         
-        .bg-btn:hover {
+        .appearance-btn:hover {
             background: rgba(0,0,0,0.8);
+        }
+        
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .gradient-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        .slider-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: #ddd;
+        }
+        
+        input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
         }
         
         .file-input-wrapper {
@@ -124,7 +182,12 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* Остальные стили остаются без изменений */
+        body.dark-theme h1 {
+            background: linear-gradient(135deg, #a8c0ff 0%, #c4a2ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
         .search-type {
             display: flex;
             gap: 10px;
@@ -143,7 +206,7 @@
         }
         
         .search-type-btn.active {
-            background: var(--tg-theme-button-color, #2481cc);
+            background: var(--button-color, #2481cc);
             color: white;
         }
         
@@ -181,7 +244,7 @@
         }
         
         .tab.active {
-            background: var(--tg-theme-button-color, #2481cc);
+            background: var(--button-color, #2481cc);
             color: white;
         }
         
@@ -203,11 +266,11 @@
         }
         
         .search-input:focus {
-            border-color: var(--tg-theme-button-color, #2481cc);
+            border-color: var(--button-color, #2481cc);
         }
         
         .search-btn {
-            background: var(--tg-theme-button-color, #2481cc);
+            background: var(--button-color, #2481cc);
             color: white;
             border: none;
             padding: 14px 24px;
@@ -223,26 +286,6 @@
             border-radius: 16px;
             padding: 16px;
             margin-top: 16px;
-        }
-        
-        .track-item {
-            padding: 12px;
-            border-bottom: 1px solid var(--tg-theme-hint-color, #ddd);
-            cursor: pointer;
-        }
-        
-        .track-item:last-child {
-            border-bottom: none;
-        }
-        
-        .track-title {
-            font-weight: 600;
-            font-size: 16px;
-        }
-        
-        .track-artist {
-            font-size: 13px;
-            color: var(--tg-theme-hint-color, #6c757d);
         }
         
         .artist-name {
@@ -301,7 +344,7 @@
         }
         
         button {
-            background: var(--tg-theme-button-color, #2481cc);
+            background: var(--button-color, #2481cc);
             color: white;
             border: none;
             padding: 14px;
@@ -324,7 +367,7 @@
             height: 40px;
             margin: 0 auto 12px;
             border: 3px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
-            border-top-color: var(--tg-theme-button-color, #2481cc);
+            border-top-color: var(--button-color, #2481cc);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -360,7 +403,7 @@
         }
         
         .popular-tag {
-            background: var(--tg-theme-button-color, #2481cc);
+            background: var(--button-color, #2481cc);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
@@ -483,14 +526,6 @@
             margin-bottom: 8px;
         }
         
-        .release-card {
-            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
-            border: 1px solid var(--tg-theme-button-color, #667eea);
-            margin: 16px 0;
-            border-radius: 16px;
-            padding: 16px;
-        }
-        
         .game-container {
             background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.95));
             border-radius: 20px;
@@ -580,37 +615,13 @@
         .stat-number {
             font-size: 32px;
             font-weight: 700;
-            color: var(--tg-theme-button-color, #2481cc);
+            color: var(--button-color, #2481cc);
         }
         
         .stat-label {
             font-size: 12px;
             color: var(--tg-theme-hint-color, #6c757d);
             margin-top: 4px;
-        }
-        
-        .activity-item {
-            padding: 12px;
-            background: var(--tg-theme-secondary-bg-color, #fff);
-            border-radius: 12px;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-        
-        .activity-time {
-            font-size: 10px;
-            color: var(--tg-theme-hint-color, #6c757d);
-            margin-bottom: 4px;
-        }
-        
-        /* Превью фона */
-        .bg-preview {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            cursor: pointer;
-            border: 2px solid white;
         }
         
         @media (max-width: 480px) {
@@ -622,17 +633,57 @@
 </head>
 <body class="default-bg">
     <div class="container">
-        <div class="card">
-            <h1>🎵 Музыкальный бот</h1>
+        <!-- ПАНЕЛЬ НАСТРОЕК ВНЕШНЕГО ВИДА -->
+        <div class="appearance-panel">
+            <div class="appearance-title">
+                🎨 НАСТРОЙКИ ВНЕШНЕГО ВИДА
+            </div>
             
-            <!-- КНОПКИ НАСТРОЙКИ ФОНА -->
-            <div class="bg-settings">
-                <button class="bg-btn" onclick="resetBackground()">🎨 Сбросить фон</button>
-                <div class="file-input-wrapper bg-btn">
+            <div class="appearance-grid">
+                <button class="appearance-btn" onclick="resetBackground()">🎨 Сбросить фон</button>
+                <div class="file-input-wrapper appearance-btn">
                     📸 Своё фото
                     <input type="file" id="bgImageInput" accept="image/*" onchange="loadCustomBackground(this)">
                 </div>
+                <button class="appearance-btn" onclick="openColorPicker()">🎨 Выбрать цвет фона</button>
+                <button class="appearance-btn" onclick="toggleDarkTheme()">🌙 Тёмная тема</button>
             </div>
+            
+            <div class="appearance-grid">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 13px;">🎨 Цвет кнопок:</span>
+                    <input type="color" id="buttonColorPicker" value="#2481cc" onchange="changeButtonColor(this.value)">
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 13px;">🔘 Прозрачность:</span>
+                    <input type="range" id="opacitySlider" min="0.5" max="1" step="0.01" value="0.95" onchange="changeCardOpacity(this.value)">
+                </div>
+            </div>
+            
+            <div class="appearance-grid">
+                <div onclick="setGradient('linear-gradient(135deg, #667eea 0%, #764ba2 100%)')" style="cursor: pointer;">
+                    <div class="gradient-preview" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                </div>
+                <div onclick="setGradient('linear-gradient(135deg, #f093fb 0%, #f5576c 100%)')" style="cursor: pointer;">
+                    <div class="gradient-preview" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                </div>
+                <div onclick="setGradient('linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)')" style="cursor: pointer;">
+                    <div class="gradient-preview" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                </div>
+                <div onclick="setGradient('linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)')" style="cursor: pointer;">
+                    <div class="gradient-preview" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div>
+                </div>
+                <div onclick="setGradient('linear-gradient(135deg, #fa709a 0%, #fee140 100%)')" style="cursor: pointer;">
+                    <div class="gradient-preview" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div>
+                </div>
+                <div onclick="setGradient('linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)')" style="cursor: pointer;">
+                    <div class="gradient-preview" style="background: linear-gradient(135deg, #a8edea, #fed6e3);"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h1>🎵 Музыкальный бот</h1>
             
             <div class="status-bar">
                 <div class="current-state">
@@ -710,12 +761,14 @@
         tg.ready();
         tg.expand();
         
-        // ========== УПРАВЛЕНИЕ ФОНОМ ==========
-        function loadSavedBackground() {
+        // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
+        function loadSavedAppearance() {
+            // Загружаем фон
             const savedBg = localStorage.getItem('music_bot_background');
-            if (savedBg) {
-                if (savedBg === 'default') {
-                    resetBackground();
+            if (savedBg && savedBg !== 'default') {
+                if (savedBg.startsWith('linear-gradient')) {
+                    document.body.style.background = savedBg;
+                    document.body.classList.remove('default-bg', 'has-bg');
                 } else {
                     document.body.style.backgroundImage = `url(${savedBg})`;
                     document.body.style.backgroundSize = 'cover';
@@ -725,12 +778,32 @@
                     document.body.classList.add('has-bg');
                 }
             } else {
-                // Фон по умолчанию
                 resetBackground();
+            }
+            
+            // Загружаем цвет кнопок
+            const savedButtonColor = localStorage.getItem('music_bot_button_color');
+            if (savedButtonColor) {
+                document.documentElement.style.setProperty('--button-color', savedButtonColor);
+                document.getElementById('buttonColorPicker').value = savedButtonColor;
+            }
+            
+            // Загружаем прозрачность
+            const savedOpacity = localStorage.getItem('music_bot_card_opacity');
+            if (savedOpacity) {
+                document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${savedOpacity})`);
+                document.getElementById('opacitySlider').value = savedOpacity;
+            }
+            
+            // Загружаем тему
+            const savedTheme = localStorage.getItem('music_bot_theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
             }
         }
         
         function resetBackground() {
+            document.body.style.background = '';
             document.body.style.backgroundImage = '';
             document.body.classList.remove('has-bg');
             document.body.classList.add('default-bg');
@@ -756,6 +829,48 @@
                 };
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+        
+        function openColorPicker() {
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.onchange = function(e) {
+                const color = e.target.value;
+                document.body.style.background = color;
+                document.body.style.backgroundImage = '';
+                document.body.classList.remove('default-bg', 'has-bg');
+                localStorage.setItem('music_bot_background', color);
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            };
+            colorInput.click();
+        }
+        
+        function setGradient(gradient) {
+            document.body.style.background = gradient;
+            document.body.style.backgroundImage = '';
+            document.body.classList.remove('default-bg', 'has-bg');
+            localStorage.setItem('music_bot_background', gradient);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            tg.showAlert('✅ Градиент применён');
+        }
+        
+        function changeButtonColor(color) {
+            document.documentElement.style.setProperty('--button-color', color);
+            localStorage.setItem('music_bot_button_color', color);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+        
+        function changeCardOpacity(opacity) {
+            document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${opacity})`);
+            localStorage.setItem('music_bot_card_opacity', opacity);
+        }
+        
+        function toggleDarkTheme() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('music_bot_theme', isDark ? 'dark' : 'light');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            tg.showAlert(isDark ? '🌙 Тёмная тема включена' : '☀️ Светлая тема включена');
         }
         
         const ADMIN_ID = 1044143048;
@@ -1174,7 +1289,7 @@
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎵 "${escapeHtml(track.track)}"</div>
-                        <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong onclick="searchArtistByName('${escapeHtml(track.artist).replace(/'/g, "\\'")}')" style="cursor: pointer; color: var(--tg-theme-button-color);">${escapeHtml(track.artist)}</strong></div>
+                        <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong onclick="searchArtistByName('${escapeHtml(track.artist).replace(/'/g, "\\'")}')" style="cursor: pointer; color: var(--button-color, #2481cc);">${escapeHtml(track.artist)}</strong></div>
                         <div class="platform-buttons">
                             <button id="favorite-btn-dynamic" class="platform-btn" style="${isFav ? 'background: #ffc107; color: #000;' : 'background: #6c757d;'}">
                                 ${isFav ? '★ Удалить из избранного' : '☆ Добавить исполнителя в избранное'}
@@ -1431,7 +1546,7 @@
             document.getElementById('userId').textContent = '—';
         }
         
-        loadSavedBackground();
+        loadSavedAppearance();
         loadGlobalStats();
         loadFavorites();
         loadHistory();
