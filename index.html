@@ -25,19 +25,94 @@
             color: var(--tg-theme-text-color, #000);
             padding: 20px;
             min-height: 100vh;
+            transition: background-image 0.3s ease;
+        }
+        
+        /* Градиентный фон по умолчанию */
+        body.default-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        /* Затемнение для лучшей читаемости текста при фоновом изображении */
+        body.has-bg::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+        
+        body.has-bg {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
         
         .container {
             max-width: 600px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         
         .card {
-            background: var(--tg-theme-secondary-bg-color, #ffffff);
+            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.95));
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 24px;
             margin-bottom: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        /* Тёмная тема для карточки */
+        @media (prefers-color-scheme: dark) {
+            .card {
+                background: rgba(30, 30, 35, 0.95);
+            }
+        }
+        
+        /* Кнопка выбора фона */
+        .bg-settings {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .bg-btn {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            width: auto;
+            margin: 0;
+        }
+        
+        .bg-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0;
+            right: 0;
+            top: 0;
+            cursor: pointer;
         }
         
         h1 {
@@ -49,6 +124,7 @@
             -webkit-text-fill-color: transparent;
         }
         
+        /* Остальные стили остаются без изменений */
         .search-type {
             display: flex;
             gap: 10px;
@@ -59,7 +135,7 @@
             flex: 1;
             padding: 10px;
             border-radius: 12px;
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            background: var(--tg-theme-secondary-bg-color, rgba(240, 240, 240, 0.9));
             cursor: pointer;
             text-align: center;
             font-weight: 500;
@@ -97,7 +173,7 @@
             flex: 1;
             text-align: center;
             padding: 12px;
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            background: var(--tg-theme-secondary-bg-color, rgba(240, 240, 240, 0.9));
             border-radius: 14px;
             cursor: pointer;
             font-weight: 500;
@@ -121,7 +197,7 @@
             border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
             border-radius: 14px;
             font-size: 16px;
-            background: var(--tg-theme-bg-color, #fff);
+            background: var(--tg-theme-bg-color, rgba(255, 255, 255, 0.9));
             color: var(--tg-theme-text-color, #000);
             outline: none;
         }
@@ -142,7 +218,8 @@
         }
         
         .result-card {
-            background: var(--tg-theme-bg-color, #f0f2f5);
+            background: var(--tg-theme-bg-color, rgba(240, 242, 245, 0.9));
+            backdrop-filter: blur(5px);
             border-radius: 16px;
             padding: 16px;
             margin-top: 16px;
@@ -297,7 +374,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
-            background: var(--tg-theme-bg-color, #f0f2f5);
+            background: var(--tg-theme-bg-color, rgba(240, 242, 245, 0.9));
             border-radius: 12px;
             margin-bottom: 8px;
             cursor: pointer;
@@ -338,7 +415,7 @@
             justify-content: space-between;
             margin-bottom: 16px;
             padding: 8px 12px;
-            background: var(--tg-theme-bg-color, #f0f2f5);
+            background: var(--tg-theme-bg-color, rgba(240, 242, 245, 0.9));
             border-radius: 12px;
             font-size: 13px;
         }
@@ -351,7 +428,7 @@
         .admin-panel {
             margin-top: 20px;
             padding: 16px;
-            background: var(--tg-theme-bg-color, #f0f2f5);
+            background: var(--tg-theme-bg-color, rgba(240, 242, 245, 0.9));
             border-radius: 16px;
             border: 1px solid var(--tg-theme-hint-color, #ddd);
         }
@@ -415,7 +492,7 @@
         }
         
         .game-container {
-            background: var(--tg-theme-secondary-bg-color, #ffffff);
+            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.95));
             border-radius: 20px;
             padding: 20px;
             margin-top: 20px;
@@ -526,6 +603,16 @@
             margin-bottom: 4px;
         }
         
+        /* Превью фона */
+        .bg-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            cursor: pointer;
+            border: 2px solid white;
+        }
+        
         @media (max-width: 480px) {
             body { padding: 12px; }
             .card { padding: 18px; }
@@ -533,10 +620,19 @@
         }
     </style>
 </head>
-<body>
+<body class="default-bg">
     <div class="container">
         <div class="card">
             <h1>🎵 Музыкальный бот</h1>
+            
+            <!-- КНОПКИ НАСТРОЙКИ ФОНА -->
+            <div class="bg-settings">
+                <button class="bg-btn" onclick="resetBackground()">🎨 Сбросить фон</button>
+                <div class="file-input-wrapper bg-btn">
+                    📸 Своё фото
+                    <input type="file" id="bgImageInput" accept="image/*" onchange="loadCustomBackground(this)">
+                </div>
+            </div>
             
             <div class="status-bar">
                 <div class="current-state">
@@ -614,6 +710,54 @@
         tg.ready();
         tg.expand();
         
+        // ========== УПРАВЛЕНИЕ ФОНОМ ==========
+        function loadSavedBackground() {
+            const savedBg = localStorage.getItem('music_bot_background');
+            if (savedBg) {
+                if (savedBg === 'default') {
+                    resetBackground();
+                } else {
+                    document.body.style.backgroundImage = `url(${savedBg})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    document.body.classList.remove('default-bg');
+                    document.body.classList.add('has-bg');
+                }
+            } else {
+                // Фон по умолчанию
+                resetBackground();
+            }
+        }
+        
+        function resetBackground() {
+            document.body.style.backgroundImage = '';
+            document.body.classList.remove('has-bg');
+            document.body.classList.add('default-bg');
+            localStorage.setItem('music_bot_background', 'default');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            tg.showAlert('🎨 Фон сброшен на градиентный');
+        }
+        
+        function loadCustomBackground(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgUrl = e.target.result;
+                    document.body.style.backgroundImage = `url(${imgUrl})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    document.body.classList.remove('default-bg');
+                    document.body.classList.add('has-bg');
+                    localStorage.setItem('music_bot_background', imgUrl);
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert('✅ Фон обновлён!');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
         const ADMIN_ID = 1044143048;
         
         let currentUserId = null;
@@ -636,100 +780,38 @@
             document.getElementById('adminTabBtn').style.display = 'block';
         }
         
-        // === ОБНОВЛЁННАЯ БАЗА ДАННЫХ ТРЕКОВ ===
+        // === БАЗА ДАННЫХ ТРЕКОВ ===
         const tracksDatabase = [
-            // === АСИЯ ===
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
             { track: "Обочины", artist: "Асия" },
             { track: "Сильно так", artist: "Асия" },
             { track: "Детство", artist: "Асия" },
             { track: "Амур", artist: "Асия" },
-            { track: "Помнишь", artist: "Асия feat. NЮ" },
-            { track: "Красное платье", artist: "Асия" },
-            { track: "Спасибо", artist: "Асия" },
-            { track: "Лети", artist: "Асия feat. Zvonkiy" },
-            { track: "Фонари", artist: "Асия feat. Zvonkiy" },
-            { track: "Дом", artist: "Асия" },
-            { track: "Шекспир", artist: "Асия" },
-            
-            // === МАРИ КРАЙМБРЕРИ ===
             { track: "Случилась осень", artist: "Мари Краймбрери" },
             { track: "Она опять разденется", artist: "Мари Краймбрери" },
             { track: "Иначе всё это зря", artist: "Мари Краймбрери" },
             { track: "Океан", artist: "Мари Краймбрери" },
-            { track: "Пряталась в ванной", artist: "Мари Краймбрери" },
-            { track: "Мне так хорошо", artist: "Мари Краймбрери" },
-            { track: "По городам", artist: "Мари Краймбрери" },
-            
-            // === INSTASAMKA ===
             { track: "За деньги да", artist: "INSTASAMKA" },
             { track: "Волосы назад", artist: "INSTASAMKA" },
-            { track: "Отключаю телефон", artist: "INSTASAMKA" },
-            
-            // === МЭЙБИ БЭЙБИ ===
             { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
-            { track: "Неблагополучная семья", artist: "Мэйби Бэйби" },
-            
-            // === ДОРА ===
             { track: "Втюрилась", artist: "Дора" },
             { track: "Дора дура", artist: "Дора" },
             { track: "Барбисайз", artist: "Дора" },
-            { track: "Младшая сестра", artist: "Дора" },
-            { track: "Трезво", artist: "Дора" },
-            { track: "Капли", artist: "Дора" },
-            { track: "Пошлю его на...", artist: "Дора" },
-            { track: "Нет тебя", artist: "Дора" },
-            { track: "Loverboy", artist: "Дора" },
-            
-            // === NЮ ===
             { track: "Там, за облаками", artist: "NЮ" },
             { track: "Никто", artist: "NЮ" },
-            { track: "Некуда бежать", artist: "NЮ" },
-            { track: "Я тебя обидел", artist: "NЮ" },
-            { track: "Если сгорим", artist: "NЮ" },
-            { track: "Вороны", artist: "NЮ" },
-            
-            // === BIG BABY TAPE ===
             { track: "Gimme The Loot", artist: "Big Baby Tape" },
             { track: "Trap Luv", artist: "Big Baby Tape" },
-            { track: "Hoodrich", artist: "Big Baby Tape" },
-            { track: "Bandana", artist: "Big Baby Tape" },
-            { track: "Sweater", artist: "Big Baby Tape" },
-            { track: "Patek", artist: "Big Baby Tape" },
-            { track: "Freestyle", artist: "Big Baby Tape" },
-            { track: "Hello", artist: "Big Baby Tape" },
-            { track: "Drip", artist: "Big Baby Tape" },
-            { track: "Money Dance", artist: "Big Baby Tape" },
-            
-            // === МОРГЕНШТЕРН ===
             { track: "Cadillac", artist: "Моргенштерн" },
             { track: "El Problema", artist: "Моргенштерн" },
-            { track: "Watafuk", artist: "Моргенштерн" },
-            { track: "ICE", artist: "Моргенштерн" },
-            { track: "Cristal & Моёт", artist: "Моргенштерн" },
-            { track: "Новый Мерин", artist: "Моргенштерн" },
-            { track: "Пушка", artist: "Моргенштерн" },
-            { track: "Малышка", artist: "Моргенштерн" },
-            { track: "12", artist: "Моргенштерн" },
-            { track: "Домой", artist: "Моргенштерн" },
-            
-            // === ОСТАЛЬНЫЕ ===
             { track: "Кукла колдуна", artist: "Король и Шут" },
             { track: "Шелк", artist: "Ваня Дмитриенко" },
             { track: "Believer", artist: "Imagine Dragons" },
             { track: "Radioactive", artist: "Imagine Dragons" },
-            { track: "Thunder", artist: "Imagine Dragons" },
-            { track: "Demons", artist: "Imagine Dragons" },
-            { track: "Natural", artist: "Imagine Dragons" },
             { track: "Bad Guy", artist: "Billie Eilish" },
-            { track: "Lovely", artist: "Billie Eilish" },
             { track: "Blinding Lights", artist: "The Weeknd" },
-            { track: "Save Your Tears", artist: "The Weeknd" },
             { track: "Группа крови", artist: "Кино" },
-            { track: "Звезда по имени Солнце", artist: "Кино" },
-            { track: "Искала", artist: "Земфира" },
-            { track: "Хочешь", artist: "Земфира" }
+            { track: "Искала", artist: "Земфира" }
         ];
         
         const popularArtistsList = [
@@ -1017,9 +1099,7 @@
             const links = getPlatformLinks(artistName, 'artist');
             const isFav = isFavorite(artistName);
             
-            // Находим треки этого исполнителя
             let artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
-            // Перемешиваем и берём 5 случайных
             for (let i = artistTracks.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [artistTracks[i], artistTracks[j]] = [artistTracks[j], artistTracks[i]];
@@ -1078,7 +1158,6 @@
         }
         
         function showTrackResults(trackName) {
-            // Ищем трек в базе
             const foundTracks = tracksDatabase.filter(t => 
                 t.track.toLowerCase().includes(trackName.toLowerCase()) ||
                 trackName.toLowerCase().includes(t.track.toLowerCase())
@@ -1352,6 +1431,7 @@
             document.getElementById('userId').textContent = '—';
         }
         
+        loadSavedBackground();
         loadGlobalStats();
         loadFavorites();
         loadHistory();
