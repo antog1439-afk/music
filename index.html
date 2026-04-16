@@ -74,70 +74,95 @@
             color: #fff;
         }
         
-        /* ПРИВЕТСТВЕННОЕ ОКНО */
+        /* ПРИВЕТСТВЕННОЕ ОКНО - БЕЗ РАМКИ, ТОЛЬКО ИЕРОГЛИФЫ */
         .welcome-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 300;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.6s ease;
         }
         
         .welcome-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 56px;
-            padding: 40px 32px;
             text-align: center;
-            max-width: 320px;
+            max-width: 340px;
             width: 85%;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            backdrop-filter: none;
         }
         
         .welcome-emoji {
-            font-size: 72px;
+            font-size: 88px;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* КРАСИВЫЕ ИЕРОГЛИФЫ (японские/китайские символы) */
+        .welcome-kanji {
+            font-size: 56px;
+            font-weight: 400;
+            letter-spacing: 12px;
             margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            font-family: "KaiTi", "Noto Serif SC", "Yu Gothic", "Hiragino Kaku Gothic Pro", serif;
         }
         
-        .welcome-text {
+        .welcome-kanji small {
             font-size: 28px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 12px;
-            letter-spacing: -0.3px;
+            letter-spacing: 4px;
         }
         
-        .welcome-text-small {
-            font-size: 20px;
+        .welcome-text-en {
+            font-size: 22px;
             font-weight: 500;
             color: rgba(255,255,255,0.9);
-            margin-bottom: 28px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .welcome-text-fr {
+            font-size: 18px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 32px;
+            font-style: italic;
         }
         
         .welcome-btn {
-            background: rgba(255,255,255,0.25);
-            border: 1px solid rgba(255,255,255,0.4);
-            padding: 14px 28px;
-            border-radius: 60px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 14px 32px;
+            border-radius: 80px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 500;
             color: white;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s;
             width: 100%;
+            letter-spacing: 1px;
         }
         
         .welcome-btn:active {
             transform: scale(0.96);
-            background: rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.22);
         }
         
         /* КНОПКА НАСТРОЕК */
@@ -148,7 +173,7 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
@@ -481,14 +506,16 @@
             .menu-btn { width: 220px; padding: 12px 20px; }
             .menu-icon { font-size: 32px; }
             .menu-title { font-size: 20px; }
-            .welcome-text { font-size: 24px; }
-            .welcome-text-small { font-size: 18px; }
+            .welcome-kanji { font-size: 42px; letter-spacing: 8px; }
+            .welcome-kanji small { font-size: 22px; }
+            .welcome-text-en { font-size: 18px; }
+            .welcome-text-fr { font-size: 15px; }
         }
     </style>
 </head>
 <body class="default-bg">
     <div class="container">
-        <!-- ЭКРАН МЕНЮ (2 КНОПКИ ПОСЕРЕДИНЕ) -->
+        <!-- ЭКРАН МЕНЮ -->
         <div id="menuScreen" class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <span class="menu-icon">🎵</span>
@@ -589,7 +616,7 @@
         tg.ready();
         tg.expand();
 
-        // ========== ПРИВЕТСТВИЕ ==========
+        // ========== ПРИВЕТСТВИЕ БЕЗ РАМКИ, С ИЕРОГЛИФАМИ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
             if (!welcomeShown) {
@@ -597,10 +624,13 @@
                 overlay.className = 'welcome-overlay';
                 overlay.innerHTML = `
                     <div class="welcome-card">
-                        <div class="welcome-emoji">🎧✨</div>
-                        <div class="welcome-text">Hello, dear listener</div>
-                        <div class="welcome-text-small">Bonjour, auditeur natif</div>
-                        <button class="welcome-btn" id="closeWelcomeBtn">🎵 Начать</button>
+                        <div class="welcome-emoji">🎵✨</div>
+                        <div class="welcome-kanji">
+                            聴 <small>·</small> 音 <small>·</small> 心
+                        </div>
+                        <div class="welcome-text-en">Hello, dear listener</div>
+                        <div class="welcome-text-fr">Bonjour, auditeur natif</div>
+                        <button class="welcome-btn" id="closeWelcomeBtn">🎧 Войти в музыку</button>
                     </div>
                 `;
                 document.body.appendChild(overlay);
@@ -1026,7 +1056,7 @@
         loadSavedAppearance();
         loadPopularArtists();
         
-        // ПОКАЗЫВАЕМ ПРИВЕТСТВИЕ ПРИ ЗАГРУЗКЕ
+        // ПОКАЗЫВАЕМ ПРИВЕТСТВИЕ
         showWelcome();
     </script>
 </body>
