@@ -74,7 +74,7 @@
             color: #fff;
         }
         
-        /* ПРИВЕТСТВЕННОЕ ОКНО - БЕЗ РАМКИ, ТОЛЬКО ИЕРОГЛИФЫ */
+        /* ПРИВЕТСТВЕННОЕ ОКНО */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -97,7 +97,6 @@
             background: transparent;
             box-shadow: none;
             border: none;
-            backdrop-filter: none;
         }
         
         .welcome-emoji {
@@ -113,7 +112,6 @@
             100% { transform: translateY(0px); }
         }
         
-        /* КРАСИВЫЕ ИЕРОГЛИФЫ (японские/китайские символы) */
         .welcome-kanji {
             font-size: 56px;
             font-weight: 400;
@@ -124,17 +122,11 @@
             font-family: "KaiTi", "Noto Serif SC", "Yu Gothic", "Hiragino Kaku Gothic Pro", serif;
         }
         
-        .welcome-kanji small {
-            font-size: 28px;
-            letter-spacing: 4px;
-        }
-        
         .welcome-text-en {
             font-size: 22px;
             font-weight: 500;
             color: rgba(255,255,255,0.9);
             margin-bottom: 8px;
-            letter-spacing: 1px;
         }
         
         .welcome-text-fr {
@@ -157,12 +149,147 @@
             cursor: pointer;
             transition: all 0.25s;
             width: 100%;
-            letter-spacing: 1px;
         }
         
         .welcome-btn:active {
             transform: scale(0.96);
             background: rgba(255,255,255,0.22);
+        }
+        
+        /* БЛОК ПРЕДСТОЯЩЕГО РЕЛИЗА */
+        .release-alert {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 193, 7, 0.1));
+            border-left: 4px solid #ff6b6b;
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .release-alert:active {
+            transform: scale(0.98);
+            background: rgba(255, 107, 107, 0.25);
+        }
+        
+        .release-icon {
+            font-size: 28px;
+        }
+        
+        .release-content {
+            flex: 1;
+        }
+        
+        .release-title {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+        
+        .release-date {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        /* БАЗА ДАННЫХ РЕЛИЗОВ (ИСПОЛНИТЕЛЬ -> ссылка на анонс) */
+        const upcomingReleases = {
+            "Асия": {
+                title: "🎤 Асия — новый альбом «Дыхание»",
+                date: "Предзаказ уже открыт",
+                link: "https://music.yandex.ru/artist/1234567/album/8901234",
+                icon: "💿"
+            },
+            "Big Baby Tape": {
+                title: "🔥 Big Baby Tape — EP «BANDANA II»",
+                date: "Релиз 15 июня 2026",
+                link: "https://music.yandex.ru/artist/4567890",
+                icon: "🔥"
+            },
+            "Моргенштерн": {
+                title: "⭐ Моргенштерн — новый сингл",
+                date: "Скоро на всех площадках",
+                link: "https://music.yandex.ru/artist/7890123",
+                icon: "⭐"
+            },
+            "Imagine Dragons": {
+                title: "🎸 Imagine Dragons — анонс тура 2026",
+                date: "Билеты уже в продаже",
+                link: "https://music.yandex.ru/artist/11223344",
+                icon: "🎸"
+            },
+            "INSTASAMKA": {
+                title: "💎 INSTASAMKA — клип «POPSTAR»",
+                date: "Премьера на этой неделе",
+                link: "https://music.yandex.ru/artist/55667788",
+                icon: "💎"
+            },
+            "Дора": {
+                title: "🌸 Дора — альбом «MISS»",
+                date: "Выход 20 мая",
+                link: "https://music.yandex.ru/artist/99887766",
+                icon: "🌸"
+            },
+            "Король и Шут": {
+                title: "🎭 Король и Шут — концерт памяти",
+                date: "Билеты в продаже",
+                link: "https://music.yandex.ru/artist/44332211",
+                icon: "🎭"
+            },
+            "The Weeknd": {
+                title: "🌟 The Weeknd — новый сингл «Wake Me Up»",
+                date: "Скоро на Spotify",
+                link: "https://music.yandex.ru/artist/1234509876",
+                icon: "🌟"
+            },
+            "Billie Eilish": {
+                title: "🎤 Billie Eilish — анонс 3-го альбома",
+                date: "Информация скоро",
+                link: "https://music.yandex.ru/artist/654321",
+                icon: "🎤"
+            },
+            "Кино": {
+                title: "🎸 Кино — ремастеринг альбомов",
+                date: "Уже на Яндекс.Музыке",
+                link: "https://music.yandex.ru/artist/111222",
+                icon: "🎸"
+            }
+        };
+        
+        // Функция получения релиза по имени исполнителя
+        function getReleaseByArtist(artistName) {
+            // Прямое совпадение
+            if (upcomingReleases[artistName]) {
+                return upcomingReleases[artistName];
+            }
+            // Частичное совпадение (игнорируем регистр)
+            for (let key in upcomingReleases) {
+                if (artistName.toLowerCase().includes(key.toLowerCase()) || 
+                    key.toLowerCase().includes(artistName.toLowerCase())) {
+                    return upcomingReleases[key];
+                }
+            }
+            return null;
+        }
+        
+        // Функция для вставки блока релиза в результат
+        function addReleaseBlock(artistName) {
+            const release = getReleaseByArtist(artistName);
+            if (release) {
+                return `
+                    <div class="release-alert" onclick="openLink('${release.link}')">
+                        <div class="release-icon">${release.icon || '🚀'}</div>
+                        <div class="release-content">
+                            <div class="release-title">${release.title}</div>
+                            <div class="release-date">📅 ${release.date}</div>
+                        </div>
+                        <div style="font-size: 18px;">➡️</div>
+                    </div>
+                `;
+            }
+            return '';
         }
         
         /* КНОПКА НАСТРОЕК */
@@ -507,9 +634,7 @@
             .menu-icon { font-size: 32px; }
             .menu-title { font-size: 20px; }
             .welcome-kanji { font-size: 42px; letter-spacing: 8px; }
-            .welcome-kanji small { font-size: 22px; }
-            .welcome-text-en { font-size: 18px; }
-            .welcome-text-fr { font-size: 15px; }
+            .release-title { font-size: 13px; }
         }
     </style>
 </head>
@@ -616,7 +741,7 @@
         tg.ready();
         tg.expand();
 
-        // ========== ПРИВЕТСТВИЕ БЕЗ РАМКИ, С ИЕРОГЛИФАМИ ==========
+        // ========== ПРИВЕТСТВИЕ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
             if (!welcomeShown) {
@@ -852,9 +977,13 @@
             const resultDiv = document.getElementById('musicResult');
             
             if (currentSearchMode === 'artist') {
+                // ДОБАВЛЯЕМ БЛОК РЕЛИЗА (если есть для этого исполнителя)
+                const releaseBlock = addReleaseBlock(query);
+                
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎤 ${escapeHtml(query)}</div>
+                        ${releaseBlock}
                         <div class="section-title">Слушать</div>
                         <div class="platform-buttons">
                             <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -873,10 +1002,14 @@
                         vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(foundTrack.artist)}&c%5Bsection%5D=audio`,
                         spotify: `https://open.spotify.com/search/${encodeURIComponent(foundTrack.artist)}`
                     };
+                    // Для трека тоже показываем релиз исполнителя
+                    const releaseBlock = addReleaseBlock(foundTrack.artist);
+                    
                     resultDiv.innerHTML = `
                         <div class="result-card">
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
-                            <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: var(--button-color);">${escapeHtml(foundTrack.artist)}</strong></div>
+                            <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: var(--button-color); cursor:pointer;" onclick="searchArtist('${escapeHtml(foundTrack.artist).replace(/'/g, "\\'")}')">${escapeHtml(foundTrack.artist)}</strong></div>
+                            ${releaseBlock}
                             <div class="section-title">Слушать трек</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -1047,6 +1180,10 @@
                 if(m === '>') return '&gt;';
                 return m;
             });
+        }
+        
+        function openLink(url) {
+            tg.openLink(url);
         }
 
         // Telegram user
