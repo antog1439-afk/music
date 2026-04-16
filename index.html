@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Game Hub</title>
+    <title>Music Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -18,487 +18,776 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            transition: all 0.3s ease;
             padding: 20px;
+            min-height: 100vh;
         }
-
+        
+        body.default-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        body.has-bg::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+        
+        body.has-bg {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
         .container {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            position: relative;
+            z-index: 1;
         }
-
-        /* Главное меню (2 кнопки) */
+        
+        .card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.95));
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-theme .card {
+            background: rgba(30, 30, 35, 0.95);
+            color: #fff;
+        }
+        
+        /* ПАНЕЛЬ НАСТРОЕК */
+        .appearance-panel {
+            background: var(--card-bg, rgba(255, 255, 255, 0.95));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+        
+        .appearance-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .appearance-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .appearance-btn {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            width: auto;
+            margin: 0;
+        }
+        
+        .gradient-preview {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: #ddd;
+        }
+        
+        input[type="color"] {
+            width: 45px;
+            height: 35px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0;
+            right: 0;
+            top: 0;
+            cursor: pointer;
+        }
+        
+        /* ГЛАВНОЕ МЕНЮ (2 КНОПКИ) */
         .menu-screen {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
             animation: fadeIn 0.4s ease;
         }
-
+        
         .menu-btn {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 60px;
-            padding: 32px 20px;
+            border-radius: 50px;
+            padding: 18px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.25s;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
-
+        
         .menu-btn:active {
             transform: scale(0.97);
             background: rgba(255, 255, 255, 0.25);
         }
-
+        
         .menu-icon {
-            font-size: 64px;
+            font-size: 48px;
             display: block;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
-
+        
         .menu-title {
-            font-size: 32px;
+            font-size: 26px;
             font-weight: 700;
             color: white;
             letter-spacing: -0.5px;
         }
-
+        
         .menu-desc {
-            font-size: 15px;
+            font-size: 13px;
             color: rgba(255,255,255,0.8);
-            margin-top: 8px;
+            margin-top: 6px;
         }
-
-        /* Экран музыки (полноценный плеер/поиск) */
-        .music-screen, .game-screen {
-            animation: fadeIn 0.3s ease;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 36px;
-            padding: 24px;
-            margin-bottom: 16px;
-            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
-        }
-
+        
+        /* ОБЩИЕ СТИЛИ */
         .back-btn {
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
             border: none;
-            padding: 12px 20px;
-            border-radius: 40px;
+            padding: 8px 16px;
+            border-radius: 30px;
             color: white;
-            font-weight: 600;
-            font-size: 16px;
+            font-weight: 500;
+            font-size: 14px;
             width: auto;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
-
-        h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
+        
         .search-box {
             display: flex;
-            gap: 12px;
-            margin: 16px 0;
+            gap: 10px;
+            margin: 12px 0;
         }
+        
         .search-input {
             flex: 1;
-            padding: 14px 16px;
+            padding: 12px 16px;
             border-radius: 30px;
             border: 1px solid #ddd;
-            font-size: 16px;
+            font-size: 15px;
             background: white;
         }
+        
         .search-btn {
-            background: #2481cc;
+            background: var(--button-color, #2481cc);
             border: none;
-            padding: 0 24px;
+            padding: 0 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .random-track-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            margin: 12px 0;
+            padding: 10px;
+            font-size: 14px;
+            border: none;
             border-radius: 40px;
             color: white;
             font-weight: 600;
             cursor: pointer;
+            width: 100%;
         }
-
+        
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin: 12px 0 6px 0;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+        
+        .popular-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .popular-tag {
+            background: var(--button-color, #2481cc);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
         .result-card {
-            background: #f0f2f5;
-            border-radius: 24px;
-            padding: 16px;
+            background: rgba(240, 242, 245, 0.9);
+            border-radius: 20px;
+            padding: 14px;
             margin-top: 16px;
         }
+        
         .artist-name {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
+        
         .platform-buttons {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-top: 12px;
+            margin-top: 10px;
         }
+        
         .platform-btn {
-            padding: 12px;
+            padding: 10px;
             border-radius: 40px;
             text-align: center;
             font-weight: 600;
             cursor: pointer;
             border: none;
             color: white;
-        }
-        .yandex-btn { background: #ffcc00; color:#000; }
-        .youtube-btn { background: #ff0000; }
-        .section-title {
-            font-size: 13px;
-            font-weight: 600;
-            margin: 12px 0 8px;
-            color: #6c757d;
-        }
-        .popular-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .popular-tag {
-            background: #2481cc;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 30px;
             font-size: 14px;
-            cursor: pointer;
         }
+        
+        .yandex-btn { background: #ffcc00; color: #000; }
+        .youtube-btn { background: #ff0000; }
+        .vk-btn { background: #0077ff; }
+        .spotify-btn { background: #1db954; }
+        
+        /* ИГРА */
         .game-question {
             text-align: center;
         }
+        
         .track-name {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 800;
-            margin: 20px 0;
+            margin: 16px 0;
         }
+        
         .game-options {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             margin: 20px 0;
         }
+        
         .game-option {
             background: #e9ecef;
-            padding: 14px;
-            border-radius: 60px;
+            padding: 12px;
+            border-radius: 40px;
             text-align: center;
             font-weight: 500;
             cursor: pointer;
         }
+        
         .game-option.correct { background: #28a745; color: white; }
         .game-option.wrong { background: #dc3545; color: white; }
+        
         .hidden { display: none; }
+        
         .user-info {
-            font-size: 12px;
+            font-size: 11px;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 16px;
             color: #6c757d;
         }
+        
         button {
             cursor: pointer;
         }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px);}
             to { opacity: 1; transform: translateY(0);}
         }
+        
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .card { padding: 16px; }
+            .menu-icon { font-size: 40px; }
+            .menu-title { font-size: 22px; }
+            .menu-btn { padding: 14px 16px; }
+        }
     </style>
 </head>
-<body>
-<div class="container">
-    <!-- ЭКРАН МЕНЮ (2 КНОПКИ) -->
-    <div id="menuScreen" class="menu-screen">
-        <div class="menu-btn" id="goToMusicBtn">
-            <span class="menu-icon">🎵</span>
-            <div class="menu-title">Музыка</div>
-            <div class="menu-desc">Поиск треков, исполнители, хиты</div>
-        </div>
-        <div class="menu-btn" id="goToGameBtn">
-            <span class="menu-icon">🎮</span>
-            <div class="menu-title">Игра</div>
-            <div class="menu-desc">Угадай исполнителя по треку</div>
-        </div>
-    </div>
-
-    <!-- ЭКРАН МУЗЫКИ -->
-    <div id="musicScreen" class="music-screen hidden">
-        <button class="back-btn" id="backToMenuFromMusic">← Назад</button>
-        <div class="card">
-            <h1>🎵 Музыкальный поиск</h1>
-            <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Асия, Big Baby Tape, Imagine Dragons...">
-                <button id="doSearchBtn" class="search-btn">Найти</button>
+<body class="default-bg">
+    <div class="container">
+        <!-- ПАНЕЛЬ НАСТРОЕК (маленькая) -->
+        <div class="appearance-panel">
+            <div class="appearance-title">🎨 Оформление</div>
+            <div class="appearance-grid">
+                <button class="appearance-btn" onclick="resetBackground()">Сбросить фон</button>
+                <div class="file-input-wrapper appearance-btn">
+                    📸 Своё фото
+                    <input type="file" id="bgImageInput" accept="image/*" onchange="loadCustomBackground(this)">
+                </div>
+                <button class="appearance-btn" onclick="openColorPicker()">Цвет фона</button>
+                <button class="appearance-btn" onclick="toggleDarkTheme()">🌙 Тёмная</button>
             </div>
-            <div class="section-title">🔥 ПОПУЛЯРНЫЕ</div>
-            <div class="popular-grid" id="popularGrid"></div>
-            <div id="musicResult"></div>
-        </div>
-        <div class="user-info">👤 <span id="userName">Музыкальный бот</span></div>
-    </div>
-
-    <!-- ЭКРАН ИГРЫ -->
-    <div id="gameScreen" class="game-screen hidden">
-        <button class="back-btn" id="backToMenuFromGame">← Назад</button>
-        <div class="card">
-            <div style="text-align: center;">
-                <h1>🎮 Угадай трек</h1>
-                <button id="startGameBtn" style="background:#9b59b6; border:none; padding:12px 28px; border-radius:40px; color:white; font-weight:bold; margin:12px 0;">▶ Начать игру</button>
-            </div>
-            <div id="gameContent">
-                <div style="text-align:center; padding:20px; color:gray;">Нажми «Начать игру»</div>
-            </div>
-        </div>
-        <div class="user-info">🎮 Игра «Угадай трек»</div>
-    </div>
-</div>
-
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-
-    // ----- БАЗА ТРЕКОВ (реальные хиты) -----
-    const tracksDatabase = [
-        { track: "Останься", artist: "Асия" },
-        { track: "Твой поцелуй", artist: "Асия" },
-        { track: "Случилась осень", artist: "Мари Краймбрери" },
-        { track: "За деньги да", artist: "INSTASAMKA" },
-        { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
-        { track: "Втюрилась", artist: "Дора" },
-        { track: "Дора дура", artist: "Дора" },
-        { track: "Там, за облаками", artist: "NЮ" },
-        { track: "Gimme The Loot", artist: "Big Baby Tape" },
-        { track: "Cadillac", artist: "Моргенштерн" },
-        { track: "Кукла колдуна", artist: "Король и Шут" },
-        { track: "Believer", artist: "Imagine Dragons" },
-        { track: "Bad Guy", artist: "Billie Eilish" },
-        { track: "Blinding Lights", artist: "The Weeknd" },
-        { track: "Группа крови", artist: "Кино" },
-        { track: "Искала", artist: "Земфира" }
-    ];
-
-    const allArtists = [...new Set(tracksDatabase.map(t => t.artist))];
-    const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons"];
-
-    // ----- УПРАВЛЕНИЕ ЭКРАНАМИ -----
-    const menuScreen = document.getElementById('menuScreen');
-    const musicScreen = document.getElementById('musicScreen');
-    const gameScreen = document.getElementById('gameScreen');
-
-    document.getElementById('goToMusicBtn').onclick = () => {
-        menuScreen.classList.add('hidden');
-        musicScreen.classList.remove('hidden');
-        loadPopularArtists();
-    };
-    document.getElementById('goToGameBtn').onclick = () => {
-        menuScreen.classList.add('hidden');
-        gameScreen.classList.remove('hidden');
-    };
-    document.getElementById('backToMenuFromMusic').onclick = () => {
-        musicScreen.classList.add('hidden');
-        menuScreen.classList.remove('hidden');
-    };
-    document.getElementById('backToMenuFromGame').onclick = () => {
-        gameScreen.classList.add('hidden');
-        menuScreen.classList.remove('hidden');
-    };
-
-    // ----- МУЗЫКАЛЬНАЯ ЧАСТЬ -----
-    function loadPopularArtists() {
-        const container = document.getElementById('popularGrid');
-        container.innerHTML = popularArtistsList.map(artist => 
-            `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`
-        ).join('');
-    }
-
-    window.searchArtist = function(artistName) {
-        document.getElementById('searchInput').value = artistName;
-        performSearch();
-    };
-
-    function performSearch() {
-        const query = document.getElementById('searchInput').value.trim();
-        if(!query) return;
-        const links = {
-            yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
-            youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`,
-            vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`
-        };
-        const resultDiv = document.getElementById('musicResult');
-        resultDiv.innerHTML = `
-            <div class="result-card">
-                <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                <div class="section-title">🎵 Слушать</div>
-                <div class="platform-buttons">
-                    <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                    <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                    <button onclick="tg.openLink('${links.vk}')" class="platform-btn" style="background:#0077ff;">📱 VK Музыка</button>
+            <div class="appearance-grid">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 11px;">🎨 Кнопки:</span>
+                    <input type="color" id="buttonColorPicker" value="#2481cc" onchange="changeButtonColor(this.value)">
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 11px;">🔘 Прозрачность:</span>
+                    <input type="range" id="opacitySlider" min="0.5" max="1" step="0.01" value="0.95" onchange="changeCardOpacity(this.value)">
                 </div>
             </div>
-        `;
-    }
-
-    document.getElementById('doSearchBtn').onclick = performSearch;
-    document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
-
-    // ----- ИГРА «УГАДАЙ ТРЕК» -----
-    let gameQuestions = [];
-    let currentQ = 0;
-    let gameScore = 0;
-    let gameActive = false;
-    let gameStats = { gamesPlayed: 0, bestScore: 0 };
-
-    function loadGameStats() {
-        const saved = localStorage.getItem('music_game_stats');
-        if(saved) gameStats = JSON.parse(saved);
-    }
-    function saveGameStats() {
-        localStorage.setItem('music_game_stats', JSON.stringify(gameStats));
-    }
-
-    function generateQuestion() {
-        const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
-        const correct = randomTrack.artist;
-        let other = allArtists.filter(a => a !== correct);
-        for(let i=other.length-1; i>0; i--){
-            const j=Math.floor(Math.random()*(i+1));
-            [other[i], other[j]] = [other[j], other[i]];
-        }
-        let options = [correct, ...other.slice(0,3)];
-        for(let i=options.length-1; i>0; i--){
-            const j=Math.floor(Math.random()*(i+1));
-            [options[i], options[j]] = [options[j], options[i]];
-        }
-        return { track: randomTrack.track, correct, options };
-    }
-
-    function startGame() {
-        gameQuestions = [];
-        for(let i=0; i<8; i++) gameQuestions.push(generateQuestion());
-        currentQ = 0;
-        gameScore = 0;
-        gameActive = true;
-        const startBtn = document.getElementById('startGameBtn');
-        startBtn.textContent = '🎮 Игра идёт...';
-        startBtn.style.background = '#28a745';
-        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-        showGameQuestion();
-    }
-
-    function showGameQuestion() {
-        const container = document.getElementById('gameContent');
-        if(currentQ >= gameQuestions.length) {
-            endGame();
-            return;
-        }
-        const q = gameQuestions[currentQ];
-        const percent = Math.round((gameScore/gameQuestions.length)*100);
-        let optsHtml = '';
-        q.options.forEach(opt => {
-            optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">🎤 ${escapeHtml(opt)}</div>`;
-        });
-        container.innerHTML = `
-            <div class="game-question">
-                <div style="font-size:14px;">🎵 Вопрос ${currentQ+1}/${gameQuestions.length}</div>
-                <div class="track-name">"${escapeHtml(q.track)}"</div>
-                <div>Кто исполнитель?</div>
-                <div class="game-options" id="gameOptions">${optsHtml}</div>
-                <div class="game-score">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div>
+            <div class="appearance-grid">
+                <div onclick="setGradient('linear-gradient(135deg, #667eea 0%, #764ba2 100%)')"><div class="gradient-preview" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div></div>
+                <div onclick="setGradient('linear-gradient(135deg, #f093fb 0%, #f5576c 100%)')"><div class="gradient-preview" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div></div>
+                <div onclick="setGradient('linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)')"><div class="gradient-preview" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div></div>
+                <div onclick="setGradient('linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)')"><div class="gradient-preview" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div></div>
+                <div onclick="setGradient('linear-gradient(135deg, #fa709a 0%, #fee140 100%)')"><div class="gradient-preview" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div></div>
+                <div onclick="setGradient('linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)')"><div class="gradient-preview" style="background: linear-gradient(135deg, #a8edea, #fed6e3);"></div></div>
             </div>
-        `;
-    }
+        </div>
 
-    window.checkAnswer = function(selected, correct) {
-        if(!gameActive) return;
-        const optsDiv = document.getElementById('gameOptions');
-        if(!optsDiv) return;
-        const btns = optsDiv.querySelectorAll('.game-option');
-        gameActive = false;
-        btns.forEach(btn => {
-            if(btn.innerText.includes(correct)) btn.classList.add('correct');
-            if(btn.innerText.includes(selected) && selected !== correct) btn.classList.add('wrong');
-            btn.style.pointerEvents = 'none';
-        });
-        if(selected === correct) {
-            gameScore++;
-            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        } else {
-            if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+        <!-- ЭКРАН МЕНЮ (2 КНОПКИ) -->
+        <div id="menuScreen" class="menu-screen">
+            <div class="menu-btn" id="goToMusicBtn">
+                <span class="menu-icon">🎵</span>
+                <div class="menu-title">Музыка</div>
+                <div class="menu-desc">Поиск треков и исполнителей</div>
+            </div>
+            <div class="menu-btn" id="goToGameBtn">
+                <span class="menu-icon">🎮</span>
+                <div class="menu-title">Игра</div>
+                <div class="menu-desc">Угадай исполнителя</div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН МУЗЫКИ -->
+        <div id="musicScreen" class="hidden">
+            <button class="back-btn" id="backToMenuFromMusic">← Назад</button>
+            <div class="card">
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Асия, Big Baby Tape, Останься...">
+                    <button id="doSearchBtn" class="search-btn">Найти</button>
+                </div>
+                
+                <button class="random-track-btn" id="randomTrackBtn">🎲 СЛУЧАЙНЫЙ ТРЕК</button>
+                
+                <div class="section-title">🔥 ПОПУЛЯРНЫЕ</div>
+                <div class="popular-grid" id="popularGrid"></div>
+                
+                <div id="musicResult"></div>
+            </div>
+            <div class="user-info">👤 <span id="userName">Музыка</span></div>
+        </div>
+
+        <!-- ЭКРАН ИГРЫ -->
+        <div id="gameScreen" class="hidden">
+            <button class="back-btn" id="backToMenuFromGame">← Назад</button>
+            <div class="card">
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🎮</div>
+                    <button id="startGameBtn" style="background:#9b59b6; border:none; padding:10px 24px; border-radius:40px; color:white; font-weight:bold; margin:8px 0;">▶ Начать игру</button>
+                </div>
+                <div id="gameContent">
+                    <div style="text-align:center; padding:20px; color:gray;">Нажми «Начать игру»</div>
+                </div>
+            </div>
+            <div class="user-info">🎮 Угадай трек</div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
+        function loadSavedAppearance() {
+            const savedBg = localStorage.getItem('music_bot_background');
+            if (savedBg && savedBg !== 'default') {
+                if (savedBg.startsWith('linear-gradient')) {
+                    document.body.style.background = savedBg;
+                    document.body.classList.remove('default-bg', 'has-bg');
+                } else {
+                    document.body.style.backgroundImage = `url(${savedBg})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    document.body.classList.remove('default-bg');
+                    document.body.classList.add('has-bg');
+                }
+            } else {
+                resetBackground();
+            }
+            const savedButtonColor = localStorage.getItem('music_bot_button_color');
+            if (savedButtonColor) {
+                document.documentElement.style.setProperty('--button-color', savedButtonColor);
+                document.getElementById('buttonColorPicker').value = savedButtonColor;
+            }
+            const savedOpacity = localStorage.getItem('music_bot_card_opacity');
+            if (savedOpacity) {
+                document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${savedOpacity})`);
+                document.getElementById('opacitySlider').value = savedOpacity;
+            }
+            const savedTheme = localStorage.getItem('music_bot_theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
         }
-        setTimeout(() => {
-            currentQ++;
+        
+        function resetBackground() {
+            document.body.style.background = '';
+            document.body.style.backgroundImage = '';
+            document.body.classList.remove('has-bg');
+            document.body.classList.add('default-bg');
+            localStorage.setItem('music_bot_background', 'default');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            tg.showAlert('Фон сброшен');
+        }
+        
+        function loadCustomBackground(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgUrl = e.target.result;
+                    document.body.style.backgroundImage = `url(${imgUrl})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    document.body.classList.remove('default-bg');
+                    document.body.classList.add('has-bg');
+                    localStorage.setItem('music_bot_background', imgUrl);
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                    tg.showAlert('✅ Фон обновлён!');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        function openColorPicker() {
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.onchange = function(e) {
+                const color = e.target.value;
+                document.body.style.background = color;
+                document.body.style.backgroundImage = '';
+                document.body.classList.remove('default-bg', 'has-bg');
+                localStorage.setItem('music_bot_background', color);
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            };
+            colorInput.click();
+        }
+        
+        function setGradient(gradient) {
+            document.body.style.background = gradient;
+            document.body.style.backgroundImage = '';
+            document.body.classList.remove('default-bg', 'has-bg');
+            localStorage.setItem('music_bot_background', gradient);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            tg.showAlert('✅ Градиент применён');
+        }
+        
+        function changeButtonColor(color) {
+            document.documentElement.style.setProperty('--button-color', color);
+            localStorage.setItem('music_bot_button_color', color);
+        }
+        
+        function changeCardOpacity(opacity) {
+            document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${opacity})`);
+            localStorage.setItem('music_bot_card_opacity', opacity);
+        }
+        
+        function toggleDarkTheme() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('music_bot_theme', isDark ? 'dark' : 'light');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            tg.showAlert(isDark ? '🌙 Тёмная тема' : '☀️ Светлая тема');
+        }
+
+        // ========== БАЗА ТРЕКОВ ==========
+        const tracksDatabase = [
+            { track: "Останься", artist: "Асия" },
+            { track: "Твой поцелуй", artist: "Асия" },
+            { track: "Случилась осень", artist: "Мари Краймбрери" },
+            { track: "За деньги да", artist: "INSTASAMKA" },
+            { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
+            { track: "Втюрилась", artist: "Дора" },
+            { track: "Дора дура", artist: "Дора" },
+            { track: "Там, за облаками", artist: "NЮ" },
+            { track: "Gimme The Loot", artist: "Big Baby Tape" },
+            { track: "Cadillac", artist: "Моргенштерн" },
+            { track: "Кукла колдуна", artist: "Король и Шут" },
+            { track: "Believer", artist: "Imagine Dragons" },
+            { track: "Bad Guy", artist: "Billie Eilish" },
+            { track: "Blinding Lights", artist: "The Weeknd" },
+            { track: "Группа крови", artist: "Кино" },
+            { track: "Искала", artist: "Земфира" }
+        ];
+
+        const allArtists = [...new Set(tracksDatabase.map(t => t.artist))];
+        const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons"];
+
+        // ========== УПРАВЛЕНИЕ ЭКРАНАМИ ==========
+        const menuScreen = document.getElementById('menuScreen');
+        const musicScreen = document.getElementById('musicScreen');
+        const gameScreen = document.getElementById('gameScreen');
+
+        document.getElementById('goToMusicBtn').onclick = () => {
+            menuScreen.classList.add('hidden');
+            musicScreen.classList.remove('hidden');
+            loadPopularArtists();
+        };
+        document.getElementById('goToGameBtn').onclick = () => {
+            menuScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+        };
+        document.getElementById('backToMenuFromMusic').onclick = () => {
+            musicScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+        };
+        document.getElementById('backToMenuFromGame').onclick = () => {
+            gameScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+        };
+
+        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
+        function loadPopularArtists() {
+            const container = document.getElementById('popularGrid');
+            container.innerHTML = popularArtistsList.map(artist => 
+                `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`
+            ).join('');
+        }
+
+        window.searchArtist = function(artistName) {
+            document.getElementById('searchInput').value = artistName;
+            performSearch();
+        };
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if(!query) return;
+            const links = {
+                yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
+                youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`,
+                vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`,
+                spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}`
+            };
+            const resultDiv = document.getElementById('musicResult');
+            resultDiv.innerHTML = `
+                <div class="result-card">
+                    <div class="artist-name">🎵 ${escapeHtml(query)}</div>
+                    <div class="section-title">Слушать</div>
+                    <div class="platform-buttons">
+                        <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                        <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                        <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                        <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getRandomTrack() {
+            const randomIndex = Math.floor(Math.random() * tracksDatabase.length);
+            const randomTrack = tracksDatabase[randomIndex];
+            document.getElementById('searchInput').value = randomTrack.track;
+            performSearch();
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        document.getElementById('doSearchBtn').onclick = performSearch;
+        document.getElementById('randomTrackBtn').onclick = getRandomTrack;
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
+
+        // ========== ИГРА ==========
+        let gameQuestions = [];
+        let currentQ = 0;
+        let gameScore = 0;
+        let gameActive = false;
+        let gameStats = { gamesPlayed: 0, bestScore: 0 };
+
+        function loadGameStats() {
+            const saved = localStorage.getItem('music_game_stats');
+            if(saved) gameStats = JSON.parse(saved);
+        }
+        function saveGameStats() {
+            localStorage.setItem('music_game_stats', JSON.stringify(gameStats));
+        }
+
+        function generateQuestion() {
+            const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
+            const correct = randomTrack.artist;
+            let other = allArtists.filter(a => a !== correct);
+            for(let i=other.length-1; i>0; i--){
+                const j=Math.floor(Math.random()*(i+1));
+                [other[i], other[j]] = [other[j], other[i]];
+            }
+            let options = [correct, ...other.slice(0,3)];
+            for(let i=options.length-1; i>0; i--){
+                const j=Math.floor(Math.random()*(i+1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+            return { track: randomTrack.track, correct, options };
+        }
+
+        function startGame() {
+            gameQuestions = [];
+            for(let i=0; i<8; i++) gameQuestions.push(generateQuestion());
+            currentQ = 0;
+            gameScore = 0;
             gameActive = true;
+            const startBtn = document.getElementById('startGameBtn');
+            startBtn.textContent = '🎮 Игра идёт...';
+            startBtn.style.background = '#28a745';
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             showGameQuestion();
-        }, 1000);
-    };
+        }
 
-    function endGame() {
-        gameActive = false;
-        const total = gameQuestions.length;
-        const percent = Math.round((gameScore/total)*100);
-        gameStats.gamesPlayed++;
-        if(gameScore > gameStats.bestScore) gameStats.bestScore = gameScore;
-        saveGameStats();
-        let msg = percent === 100 ? '🏆 ИДЕАЛЬНО!' : (percent>=70 ? '🎵 Отлично!' : '🎧 Попробуй ещё!');
-        const container = document.getElementById('gameContent');
-        container.innerHTML = `
-            <div style="text-align:center; padding:20px;">
-                <h3>🎉 Игра окончена</h3>
-                <div style="font-size:32px; margin:16px;">${gameScore}/${total}</div>
-                <div>${msg}</div>
-                <div>⭐ Лучший результат: ${gameStats.bestScore}/${total}</div>
-                <div>🎮 Сыграно: ${gameStats.gamesPlayed}</div>
-                <button id="restartGameBtn" style="background:#9b59b6; margin-top:20px; border:none; padding:12px 24px; border-radius:40px;">🔄 Сыграть снова</button>
-            </div>
-        `;
-        document.getElementById('restartGameBtn')?.addEventListener('click', startGame);
-        const startBtn = document.getElementById('startGameBtn');
-        startBtn.textContent = '▶ Начать игру';
-        startBtn.style.background = '#9b59b6';
-    }
+        function showGameQuestion() {
+            const container = document.getElementById('gameContent');
+            if(currentQ >= gameQuestions.length) {
+                endGame();
+                return;
+            }
+            const q = gameQuestions[currentQ];
+            const percent = Math.round((gameScore/gameQuestions.length)*100);
+            let optsHtml = '';
+            q.options.forEach(opt => {
+                optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">🎤 ${escapeHtml(opt)}</div>`;
+            });
+            container.innerHTML = `
+                <div class="game-question">
+                    <div style="font-size:13px;">🎵 Вопрос ${currentQ+1}/${gameQuestions.length}</div>
+                    <div class="track-name">"${escapeHtml(q.track)}"</div>
+                    <div>Кто исполнитель?</div>
+                    <div class="game-options" id="gameOptions">${optsHtml}</div>
+                    <div style="margin-top:12px;">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div>
+                </div>
+            `;
+        }
 
-    document.getElementById('startGameBtn').onclick = startGame;
-    loadGameStats();
+        window.checkAnswer = function(selected, correct) {
+            if(!gameActive) return;
+            const optsDiv = document.getElementById('gameOptions');
+            if(!optsDiv) return;
+            const btns = optsDiv.querySelectorAll('.game-option');
+            gameActive = false;
+            btns.forEach(btn => {
+                if(btn.innerText.includes(correct)) btn.classList.add('correct');
+                if(btn.innerText.includes(selected) && selected !== correct) btn.classList.add('wrong');
+                btn.style.pointerEvents = 'none';
+            });
+            if(selected === correct) {
+                gameScore++;
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+            setTimeout(() => {
+                currentQ++;
+                gameActive = true;
+                showGameQuestion();
+            }, 1000);
+        };
 
-    function escapeHtml(str) {
-        if(!str) return '';
-        return str.replace(/[&<>]/g, function(m){
-            if(m === '&') return '&amp;';
-            if(m === '<') return '&lt;';
-            if(m === '>') return '&gt;';
-            return m;
-        });
-    }
+        function endGame() {
+            gameActive = false;
+            const total = gameQuestions.length;
+            const percent = Math.round((gameScore/total)*100);
+            gameStats.gamesPlayed++;
+            if(gameScore > gameStats.bestScore) gameStats.bestScore = gameScore;
+            saveGameStats();
+            let msg = percent === 100 ? '🏆 ИДЕАЛЬНО!' : (percent>=70 ? '🎵 Отлично!' : '🎧 Попробуй ещё!');
+            const container = document.getElementById('gameContent');
+            container.innerHTML = `
+                <div style="text-align:center; padding:20px;">
+                    <div style="font-size:28px; margin-bottom:8px;">🎉</div>
+                    <div style="font-size:20px; font-weight:bold;">${gameScore}/${total}</div>
+                    <div style="margin:12px 0;">${msg}</div>
+                    <div>⭐ Лучший: ${gameStats.bestScore}/${total}</div>
+                    <div>🎮 Сыграно: ${gameStats.gamesPlayed}</div>
+                    <button id="restartGameBtn" style="background:#9b59b6; margin-top:16px; border:none; padding:10px 24px; border-radius:40px;">🔄 Сыграть снова</button>
+                </div>
+            `;
+            document.getElementById('restartGameBtn')?.addEventListener('click', startGame);
+            const startBtn = document.getElementById('startGameBtn');
+            startBtn.textContent = '▶ Начать игру';
+            startBtn.style.background = '#9b59b6';
+        }
 
-    // Telegram user
-    const user = tg.initDataUnsafe?.user;
-    if(user && user.first_name) document.getElementById('userName').innerText = user.first_name;
-</script>
+        document.getElementById('startGameBtn').onclick = startGame;
+        loadGameStats();
+
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>]/g, function(m){
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // Telegram user
+        const user = tg.initDataUnsafe?.user;
+        if(user && user.first_name) document.getElementById('userName').innerText = user.first_name;
+
+        loadSavedAppearance();
+        loadPopularArtists();
+    </script>
 </body>
 </html>
