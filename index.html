@@ -74,7 +74,6 @@
             color: #fff;
         }
         
-        /* ПРИВЕТСТВЕННОЕ ОКНО */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -156,7 +155,6 @@
             background: rgba(255,255,255,0.22);
         }
         
-        /* КНОПКА НАСТРОЕК */
         .settings-fab {
             position: fixed;
             bottom: 20px;
@@ -184,7 +182,6 @@
             font-size: 22px;
         }
         
-        /* Модалка настроек */
         .settings-modal {
             position: fixed;
             top: 0;
@@ -257,7 +254,6 @@
             cursor: pointer;
         }
         
-        /* ГЛАВНОЕ МЕНЮ */
         .menu-screen {
             display: flex;
             flex-direction: column;
@@ -305,7 +301,6 @@
             margin-top: 4px;
         }
         
-        /* ОБЩИЕ СТИЛИ */
         .back-btn {
             background: rgba(0,0,0,0.5);
             border: none;
@@ -444,7 +439,6 @@
         .vk-btn { background: #0077ff; }
         .spotify-btn { background: #1db954; }
         
-        /* ИГРА */
         .game-question {
             text-align: center;
         }
@@ -503,7 +497,6 @@
 </head>
 <body class="default-bg">
     <div class="container">
-        <!-- ЭКРАН МЕНЮ -->
         <div id="menuScreen" class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <span class="menu-icon">🎵</span>
@@ -517,7 +510,6 @@
             </div>
         </div>
 
-        <!-- ЭКРАН МУЗЫКИ -->
         <div id="musicScreen" class="hidden">
             <button class="back-btn" id="backToMenuFromMusic">← Назад</button>
             <div class="card">
@@ -541,7 +533,6 @@
             <div class="user-info">👤 <span id="userName">Music</span></div>
         </div>
 
-        <!-- ЭКРАН ИГРЫ -->
         <div id="gameScreen" class="hidden">
             <button class="back-btn" id="backToMenuFromGame">← Назад</button>
             <div class="card">
@@ -557,12 +548,10 @@
         </div>
     </div>
 
-    <!-- КНОПКА НАСТРОЕК -->
     <div class="settings-fab" id="settingsFab">
         <span>⚙️</span>
     </div>
 
-    <!-- МОДАЛКА НАСТРОЕК -->
     <div id="settingsModal" class="settings-modal hidden">
         <div class="modal-card">
             <div class="modal-title">🎨 Оформление</div>
@@ -617,6 +606,46 @@
             tg.sendData(JSON.stringify({ action: 'get_background' }));
         }
 
+        // Применяем фон, полученный от бота
+        function applyBackgroundFromCloud(bgValue) {
+            if (!bgValue || bgValue === 'default') {
+                resetBackgroundLocal();
+                return;
+            }
+            
+            const colonIndex = bgValue.indexOf(':');
+            if (colonIndex === -1) return;
+            
+            const type = bgValue.substring(0, colonIndex);
+            const value = bgValue.substring(colonIndex + 1);
+            
+            if (type === 'gradient') {
+                document.body.style.background = value;
+                document.body.style.backgroundImage = '';
+                document.body.classList.remove('default-bg', 'has-bg');
+            } else if (type === 'image') {
+                document.body.style.backgroundImage = `url(${value})`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+                document.body.classList.remove('default-bg');
+                document.body.classList.add('has-bg');
+            } else if (type === 'color') {
+                document.body.style.background = value;
+                document.body.style.backgroundImage = '';
+                document.body.classList.remove('default-bg', 'has-bg');
+            }
+            localStorage.setItem('music_bot_background', bgValue);
+        }
+        
+        function resetBackgroundLocal() {
+            document.body.style.background = '';
+            document.body.style.backgroundImage = '';
+            document.body.classList.remove('has-bg');
+            document.body.classList.add('default-bg');
+            localStorage.setItem('music_bot_background', 'default');
+        }
+
         // ========== ПРИВЕТСТВИЕ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
@@ -654,16 +683,23 @@
                 if (savedBg.startsWith('linear-gradient')) {
                     document.body.style.background = savedBg;
                     document.body.classList.remove('default-bg', 'has-bg');
-                } else {
-                    document.body.style.backgroundImage = `url(${savedBg})`;
+                } else if (savedBg.startsWith('image:')) {
+                    const imgUrl = savedBg.substring(6);
+                    document.body.style.backgroundImage = `url(${imgUrl})`;
                     document.body.style.backgroundSize = 'cover';
                     document.body.style.backgroundPosition = 'center';
                     document.body.style.backgroundAttachment = 'fixed';
                     document.body.classList.remove('default-bg');
                     document.body.classList.add('has-bg');
+                } else if (savedBg.startsWith('color:')) {
+                    document.body.style.background = savedBg.substring(6);
+                    document.body.classList.remove('default-bg', 'has-bg');
+                } else if (savedBg.startsWith('gradient:')) {
+                    document.body.style.background = savedBg.substring(9);
+                    document.body.classList.remove('default-bg', 'has-bg');
                 }
             } else {
-                resetBackground();
+                resetBackgroundLocal();
             }
             const savedButtonColor = localStorage.getItem('music_bot_button_color');
             if (savedButtonColor) {
@@ -682,11 +718,7 @@
         }
         
         function resetBackground() {
-            document.body.style.background = '';
-            document.body.style.backgroundImage = '';
-            document.body.classList.remove('has-bg');
-            document.body.classList.add('default-bg');
-            localStorage.setItem('music_bot_background', 'default');
+            resetBackgroundLocal();
             saveBackgroundToCloud('default', '');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
@@ -702,7 +734,7 @@
                     document.body.style.backgroundAttachment = 'fixed';
                     document.body.classList.remove('default-bg');
                     document.body.classList.add('has-bg');
-                    localStorage.setItem('music_bot_background', imgUrl);
+                    localStorage.setItem('music_bot_background', `image:${imgUrl}`);
                     saveBackgroundToCloud('image', imgUrl);
                     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 };
@@ -718,7 +750,7 @@
                 document.body.style.background = color;
                 document.body.style.backgroundImage = '';
                 document.body.classList.remove('default-bg', 'has-bg');
-                localStorage.setItem('music_bot_background', color);
+                localStorage.setItem('music_bot_background', `color:${color}`);
                 saveBackgroundToCloud('color', color);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             };
@@ -729,7 +761,7 @@
             document.body.style.background = gradient;
             document.body.style.backgroundImage = '';
             document.body.classList.remove('default-bg', 'has-bg');
-            localStorage.setItem('music_bot_background', gradient);
+            localStorage.setItem('music_bot_background', `gradient:${gradient}`);
             saveBackgroundToCloud('gradient', gradient);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
@@ -1055,33 +1087,6 @@
                 if(m === '>') return '&gt;';
                 return m;
             });
-        }
-
-        // ========== ОБРАБОТЧИК СООБЩЕНИЙ ОТ БОТА ==========
-        // Этот обработчик будет вызван когда бот пришлёт ответ на get_background
-        // Данные приходят через WebApp
-        function handleBotResponse(response) {
-            if (response && response.startsWith('BG:')) {
-                const bgData = response.substring(3);
-                if (bgData && bgData !== 'default') {
-                    const [type, value] = bgData.split(':');
-                    if (type === 'gradient') {
-                        document.body.style.background = value;
-                        document.body.classList.remove('default-bg', 'has-bg');
-                    } else if (type === 'image') {
-                        document.body.style.backgroundImage = `url(${value})`;
-                        document.body.style.backgroundSize = 'cover';
-                        document.body.style.backgroundPosition = 'center';
-                        document.body.style.backgroundAttachment = 'fixed';
-                        document.body.classList.remove('default-bg');
-                        document.body.classList.add('has-bg');
-                    } else if (type === 'color') {
-                        document.body.style.background = value;
-                        document.body.classList.remove('default-bg', 'has-bg');
-                    }
-                    localStorage.setItem('music_bot_background', bgData);
-                }
-            }
         }
 
         // Telegram user
