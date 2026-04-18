@@ -74,7 +74,7 @@
             color: #fff;
         }
         
-        /* ПРИВЕТСТВЕННОЕ ОКНО - БЕЗ РАМКИ, ТОЛЬКО ИЕРОГЛИФЫ */
+        /* ПРИВЕТСТВЕННОЕ ОКНО */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -97,7 +97,6 @@
             background: transparent;
             box-shadow: none;
             border: none;
-            backdrop-filter: none;
         }
         
         .welcome-emoji {
@@ -113,7 +112,6 @@
             100% { transform: translateY(0px); }
         }
         
-        /* КРАСИВЫЕ ИЕРОГЛИФЫ (японские/китайские символы) */
         .welcome-kanji {
             font-size: 56px;
             font-weight: 400;
@@ -124,17 +122,11 @@
             font-family: "KaiTi", "Noto Serif SC", "Yu Gothic", "Hiragino Kaku Gothic Pro", serif;
         }
         
-        .welcome-kanji small {
-            font-size: 28px;
-            letter-spacing: 4px;
-        }
-        
         .welcome-text-en {
             font-size: 22px;
             font-weight: 500;
             color: rgba(255,255,255,0.9);
             margin-bottom: 8px;
-            letter-spacing: 1px;
         }
         
         .welcome-text-fr {
@@ -157,7 +149,6 @@
             cursor: pointer;
             transition: all 0.25s;
             width: 100%;
-            letter-spacing: 1px;
         }
         
         .welcome-btn:active {
@@ -507,9 +498,6 @@
             .menu-icon { font-size: 32px; }
             .menu-title { font-size: 20px; }
             .welcome-kanji { font-size: 42px; letter-spacing: 8px; }
-            .welcome-kanji small { font-size: 22px; }
-            .welcome-text-en { font-size: 18px; }
-            .welcome-text-fr { font-size: 15px; }
         }
     </style>
 </head>
@@ -616,7 +604,20 @@
         tg.ready();
         tg.expand();
 
-        // ========== ПРИВЕТСТВИЕ БЕЗ РАМКИ, С ИЕРОГЛИФАМИ ==========
+        // ========== СИНХРОНИЗАЦИЯ ФОНА С БОТОМ ==========
+        function saveBackgroundToCloud(type, value) {
+            tg.sendData(JSON.stringify({
+                action: 'sync_background',
+                type: type,
+                value: value
+            }));
+        }
+
+        function loadCloudBackground() {
+            tg.sendData(JSON.stringify({ action: 'get_background' }));
+        }
+
+        // ========== ПРИВЕТСТВИЕ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
             if (!welcomeShown) {
@@ -686,6 +687,7 @@
             document.body.classList.remove('has-bg');
             document.body.classList.add('default-bg');
             localStorage.setItem('music_bot_background', 'default');
+            saveBackgroundToCloud('default', '');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
         
@@ -701,6 +703,7 @@
                     document.body.classList.remove('default-bg');
                     document.body.classList.add('has-bg');
                     localStorage.setItem('music_bot_background', imgUrl);
+                    saveBackgroundToCloud('image', imgUrl);
                     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 };
                 reader.readAsDataURL(input.files[0]);
@@ -716,6 +719,7 @@
                 document.body.style.backgroundImage = '';
                 document.body.classList.remove('default-bg', 'has-bg');
                 localStorage.setItem('music_bot_background', color);
+                saveBackgroundToCloud('color', color);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             };
             colorInput.click();
@@ -726,23 +730,27 @@
             document.body.style.backgroundImage = '';
             document.body.classList.remove('default-bg', 'has-bg');
             localStorage.setItem('music_bot_background', gradient);
+            saveBackgroundToCloud('gradient', gradient);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
         
         function changeButtonColor(color) {
             document.documentElement.style.setProperty('--button-color', color);
             localStorage.setItem('music_bot_button_color', color);
+            tg.sendData(JSON.stringify({ action: 'sync_button_color', color: color }));
         }
         
         function changeCardOpacity(opacity) {
             document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${opacity})`);
             localStorage.setItem('music_bot_card_opacity', opacity);
+            tg.sendData(JSON.stringify({ action: 'sync_card_opacity', opacity: opacity }));
         }
         
         function toggleDarkTheme() {
             document.body.classList.toggle('dark-theme');
             const isDark = document.body.classList.contains('dark-theme');
             localStorage.setItem('music_bot_theme', isDark ? 'dark' : 'light');
+            tg.sendData(JSON.stringify({ action: 'sync_theme', theme: isDark ? 'dark' : 'light' }));
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
@@ -1049,12 +1057,42 @@
             });
         }
 
+        // ========== ОБРАБОТЧИК СООБЩЕНИЙ ОТ БОТА ==========
+        // Этот обработчик будет вызван когда бот пришлёт ответ на get_background
+        // Данные приходят через WebApp
+        function handleBotResponse(response) {
+            if (response && response.startsWith('BG:')) {
+                const bgData = response.substring(3);
+                if (bgData && bgData !== 'default') {
+                    const [type, value] = bgData.split(':');
+                    if (type === 'gradient') {
+                        document.body.style.background = value;
+                        document.body.classList.remove('default-bg', 'has-bg');
+                    } else if (type === 'image') {
+                        document.body.style.backgroundImage = `url(${value})`;
+                        document.body.style.backgroundSize = 'cover';
+                        document.body.style.backgroundPosition = 'center';
+                        document.body.style.backgroundAttachment = 'fixed';
+                        document.body.classList.remove('default-bg');
+                        document.body.classList.add('has-bg');
+                    } else if (type === 'color') {
+                        document.body.style.background = value;
+                        document.body.classList.remove('default-bg', 'has-bg');
+                    }
+                    localStorage.setItem('music_bot_background', bgData);
+                }
+            }
+        }
+
         // Telegram user
         const user = tg.initDataUnsafe?.user;
         if(user && user.first_name) document.getElementById('userName').innerText = user.first_name;
 
         loadSavedAppearance();
         loadPopularArtists();
+        
+        // Запрашиваем фон из облака при загрузке
+        loadCloudBackground();
         
         // ПОКАЗЫВАЕМ ПРИВЕТСТВИЕ
         showWelcome();
