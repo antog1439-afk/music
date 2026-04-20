@@ -1,1002 +1,1063 @@
-import os
-import time
-import re
-import json
-import threading
-from datetime import datetime
-from typing import Optional, List, Dict, Any
-import urllib.parse
-
-import telebot
-from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
-from yandex_music import Client
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, WebDriverException
-from bs4 import BeautifulSoup
-
-# === ТОКЕНЫ ===
-TELEGRAM_TOKEN = '8586892813:AAE3qgxUtGTfA6kefeuOlPy2bNypojFj6Sw'
-YANDEX_MUSIC_TOKEN = None
-
-# === НАСТРОЙКИ ===
-CACHE_DURATION = 3600  # 1 час
-MAX_CONCERTS = 15
-MAX_ALBUMS = 20
-REQUEST_TIMEOUT = 30
-
-bot = telebot.TeleBot(TELEGRAM_TOKEN)
-
-# Яндекс.Музыка клиент
-try:
-    yandex_client = Client().init()
-    print("✅ Яндекс.Музыка: работает")
-except Exception as e:
-    print(f"❌ Ошибка Яндекс.Музыки: {e}")
-    yandex_client = None
-
-# Кэш для концертов, биографий и альбомов
-concert_cache = {}
-bio_cache = {}
-albums_cache = {}
-
-# Временное хранение состояний пользователей
-user_data = {}
-
-
-# === УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ ===
-def register_user(user_id: int, username: str = None, first_name: str = None) -> None:
-    """Регистрирует пользователя в базе данных (словаре)"""
-    if user_id not in user_data:
-        user_data[user_id] = {
-            'artist_name': None,
-            'artist_id': None,
-            'username': username,
-            'first_name': first_name,
-            'registered_at': datetime.now().timestamp()
-        }
-        print(f"✅ Новый пользователь зарегистрирован: {user_id} ({first_name})")
-    else:
-        if username:
-            user_data[user_id]['username'] = username
-        if first_name:
-            user_data[user_id]['first_name'] = first_name
-
-
-# === ФУНКЦИИ ДЛЯ ПОИСКА ТРЕКА НА РАЗНЫХ ПЛАТФОРМАХ ===
-def get_platform_links(track_name: str, artist_name: str = "") -> Dict[str, str]:
-    """Генерирует ссылки на разные музыкальные платформы для поиска трека"""
-    search_query = f"{artist_name} {track_name}".strip().replace(" ", "+")
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Music Hub</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    return {
-        'youtube_music': f"https://music.youtube.com/search?q={search_query}",
-        'yandex': f"https://music.yandex.ru/search?text={search_query}",
-        'vk': f"https://vk.com/search?c%5Bq%5D={search_query.replace('+', ' ')}&c%5Bsection%5D=audio",
-        'soundcloud': f"https://soundcloud.com/search?q={search_query}",
-        'deezer': f"https://www.deezer.com/search/{search_query}",
-        'youtube': f"https://www.youtube.com/results?search_query={search_query}"
-    }
-
-
-def format_duration(ms: int) -> str:
-    if not ms:
-        return "—"
-    seconds = ms // 1000
-    minutes = seconds // 60
-    seconds = seconds % 60
-    return f"{minutes}:{seconds:02d}"
-
-
-def search_track_multi_platform(query: str) -> Optional[Dict[str, Any]]:
-    """Ищет трек и возвращает ссылки на все платформы"""
-    if not yandex_client:
-        return None
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="theme-color" content="#2481cc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    try:
-        search_result = yandex_client.search(text=query, type_='track', page=0)
-        
-        if not search_result.tracks or not search_result.tracks.results:
-            return None
-        
-        track = search_result.tracks.results[0]
-        artists = ', '.join([artist.name for artist in track.artists])
-        main_artist = track.artists[0].name if track.artists else artists.split(',')[0].strip()
-        main_artist_id = track.artists[0].id if track.artists else None
-        
-        album_id = track.albums[0].id if track.albums else '0'
-        track_id = track.id
-        yandex_link = f"https://music.yandex.ru/album/{album_id}/track/{track_id}"
-        
-        album_title = track.albums[0].title if track.albums else "Неизвестный альбом"
-        year = track.albums[0].year if track.albums else None
-        
-        # Получаем ссылки на все платформы
-        platform_links = get_platform_links(track.title, main_artist)
-        platform_links['yandex'] = yandex_link  # Прямая ссылка на трек
-        
-        return {
-            'artists': artists,
-            'title': track.title,
-            'duration': format_duration(getattr(track, 'duration_ms', 0)),
-            'album': album_title,
-            'year': year,
-            'main_artist': main_artist,
-            'main_artist_id': main_artist_id,
-            'links': platform_links
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-    except Exception as e:
-        print(f"Ошибка поиска: {e}")
-        return None
-
-
-def create_multi_platform_keyboard(links: Dict[str, str]) -> InlineKeyboardMarkup:
-    """Создает клавиатуру со ссылками на все платформы"""
-    keyboard = InlineKeyboardMarkup(row_width=2)
-    
-    buttons = [
-        InlineKeyboardButton("🎵 YouTube Music", url=links['youtube_music']),
-        InlineKeyboardButton("🎶 Яндекс Музыка", url=links['yandex']),
-        InlineKeyboardButton("📱 VK Музыка", url=links['vk']),
-        InlineKeyboardButton("🌊 SoundCloud", url=links['soundcloud']),
-        InlineKeyboardButton("🎧 Deezer", url=links['deezer']),
-        InlineKeyboardButton("📺 YouTube", url=links['youtube'])
-    ]
-    
-    keyboard.add(*buttons)
-    return keyboard
-
-
-# === SELENIUM ===
-def get_chrome_driver():
-    """Настройка Chrome WebDriver"""
-    chrome_options = Options()
-    chrome_options.add_argument("--headless=new")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--window-size=1920,1080")
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--lang=ru")
-    
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option('useAutomationExtension', False)
-    
-    service = Service()
-    return webdriver.Chrome(service=service, options=chrome_options)
-
-
-# === ПОЛУЧЕНИЕ АЛЬБОМОВ ИСПОЛНИТЕЛЯ ===
-def get_artist_albums(artist_name: str, artist_id: int = None, page: int = 0) -> Dict[str, Any]:
-    result = {
-        'success': False,
-        'albums': [],
-        'total': 0,
-        'page': page,
-        'has_more': False,
-        'artist': artist_name,
-        'artist_id': artist_id,
-        'error': None
-    }
-    
-    try:
-        if not yandex_client:
-            result['error'] = "yandex_music_unavailable"
-            return result
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            transition: all 0.3s ease;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         
-        if not artist_id:
-            search_result = yandex_client.search(text=artist_name, type_='artist', page=0)
-            if search_result.artists and search_result.artists.results:
-                artist_id = search_result.artists.results[0].id
-                result['artist_id'] = artist_id
+        body.default-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
         
-        if artist_id:
-            all_albums = []
-            
-            try:
-                albums_response = yandex_client.artists_direct_albums(
-                    artist_id, 
-                    page=page, 
-                    page_size=20,
-                    sort_by='year',
-                    sort_direction='desc'
-                )
+        body.has-bg::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+        
+        body.has-bg {
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card {
+            background: var(--card-bg, rgba(255, 255, 255, 0.95));
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-theme .card {
+            background: rgba(30, 30, 35, 0.95);
+            color: #fff;
+        }
+        
+        /* ПРИВЕТСТВЕННОЕ ОКНО - БЕЗ РАМКИ, ТОЛЬКО ИЕРОГЛИФЫ */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .welcome-card {
+            text-align: center;
+            max-width: 340px;
+            width: 85%;
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            backdrop-filter: none;
+        }
+        
+        .welcome-emoji {
+            font-size: 88px;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* КРАСИВЫЕ ИЕРОГЛИФЫ (японские/китайские символы) */
+        .welcome-kanji {
+            font-size: 56px;
+            font-weight: 400;
+            letter-spacing: 12px;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+            font-family: "KaiTi", "Noto Serif SC", "Yu Gothic", "Hiragino Kaku Gothic Pro", serif;
+        }
+        
+        .welcome-kanji small {
+            font-size: 28px;
+            letter-spacing: 4px;
+        }
+        
+        .welcome-text-en {
+            font-size: 22px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .welcome-text-fr {
+            font-size: 18px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 32px;
+            font-style: italic;
+        }
+        
+        .welcome-btn {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 14px 32px;
+            border-radius: 80px;
+            font-size: 18px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: all 0.25s;
+            width: 100%;
+            letter-spacing: 1px;
+        }
+        
+        .welcome-btn:active {
+            transform: scale(0.96);
+            background: rgba(255,255,255,0.22);
+        }
+        
+        /* КНОПКА НАСТРОЕК */
+        .settings-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .settings-fab:active {
+            transform: scale(0.92);
+        }
+        
+        .settings-fab span {
+            font-size: 22px;
+        }
+        
+        /* Модалка настроек */
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        
+        .settings-modal .modal-card {
+            background: var(--card-bg, rgba(30, 30, 40, 0.98));
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 20px;
+            width: 90%;
+            max-width: 340px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .settings-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .gradient-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        
+        .gradient-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .close-modal {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 10px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 16px;
+            cursor: pointer;
+        }
+        
+        /* ГЛАВНОЕ МЕНЮ */
+        .menu-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            min-height: 60vh;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 60px;
+            padding: 14px 28px;
+            width: 260px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+        
+        .menu-btn:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.28);
+        }
+        
+        .menu-icon {
+            font-size: 38px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        
+        .menu-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.3px;
+        }
+        
+        .menu-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 4px;
+        }
+        
+        /* ОБЩИЕ СТИЛИ */
+        .back-btn {
+            background: rgba(0,0,0,0.5);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            width: auto;
+            margin-bottom: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .search-type-switch {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .search-type-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            background: rgba(0,0,0,0.3);
+            color: white;
+        }
+        
+        .search-type-btn.active {
+            background: var(--button-color, #2481cc);
+            color: white;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin: 12px 0;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            background: white;
+        }
+        
+        .search-btn {
+            background: var(--button-color, #2481cc);
+            border: none;
+            padding: 0 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .random-track-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            margin: 12px 0;
+            padding: 10px;
+            font-size: 14px;
+            border: none;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin: 12px 0 6px 0;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+        
+        .popular-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .popular-tag {
+            background: var(--button-color, #2481cc);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .result-card {
+            background: rgba(240, 242, 245, 0.9);
+            border-radius: 20px;
+            padding: 14px;
+            margin-top: 16px;
+        }
+        
+        .artist-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .platform-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .platform-btn {
+            padding: 10px;
+            border-radius: 40px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .yandex-btn { background: #ffcc00; color: #000; }
+        .youtube-btn { background: #ff0000; }
+        .vk-btn { background: #0077ff; }
+        .spotify-btn { background: #1db954; }
+        
+        /* ИГРА */
+        .game-question {
+            text-align: center;
+        }
+        
+        .track-name {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 16px 0;
+        }
+        
+        .game-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .game-option {
+            background: #e9ecef;
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .game-option.correct { background: #28a745; color: white; }
+        .game-option.wrong { background: #dc3545; color: white; }
+        
+        .hidden { display: none; }
+        
+        .user-info {
+            font-size: 11px;
+            text-align: center;
+            margin-top: 16px;
+            color: #6c757d;
+        }
+        
+        button {
+            cursor: pointer;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        
+        @media (max-width: 480px) {
+            body { padding: 16px; }
+            .menu-btn { width: 220px; padding: 12px 20px; }
+            .menu-icon { font-size: 32px; }
+            .menu-title { font-size: 20px; }
+            .welcome-kanji { font-size: 42px; letter-spacing: 8px; }
+            .welcome-kanji small { font-size: 22px; }
+            .welcome-text-en { font-size: 18px; }
+            .welcome-text-fr { font-size: 15px; }
+        }
+    </style>
+</head>
+<body class="default-bg">
+    <div class="container">
+        <!-- ЭКРАН МЕНЮ -->
+        <div id="menuScreen" class="menu-screen">
+            <div class="menu-btn" id="goToMusicBtn">
+                <span class="menu-icon">🎵</span>
+                <div class="menu-title">Музыка</div>
+                <div class="menu-desc">Поиск треков и исполнителей</div>
+            </div>
+            <div class="menu-btn" id="goToGameBtn">
+                <span class="menu-icon">🎮</span>
+                <div class="menu-title">Игра</div>
+                <div class="menu-desc">Угадай исполнителя</div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН МУЗЫКИ -->
+        <div id="musicScreen" class="hidden">
+            <button class="back-btn" id="backToMenuFromMusic">← Назад</button>
+            <div class="card">
+                <div class="search-type-switch">
+                    <div class="search-type-btn active" id="searchArtistBtn" onclick="setSearchMode('artist')">🎤 Исполнитель</div>
+                    <div class="search-type-btn" id="searchTrackBtn" onclick="setSearchMode('track')">🎵 Трек</div>
+                </div>
                 
-                if albums_response and albums_response.albums:
-                    for album in albums_response.albums:
-                        album_info = {
-                            'id': album.id,
-                            'title': album.title,
-                            'year': album.year,
-                            'track_count': album.track_count,
-                            'genre': album.genre if hasattr(album, 'genre') else None,
-                            'cover_uri': album.cover_uri if hasattr(album, 'cover_uri') else None,
-                            'type': album.type if hasattr(album, 'type') else 'Альбом',
-                            'artists': [a.name for a in album.artists] if album.artists else []
-                        }
-                        all_albums.append(album_info)
-                    
-                    if hasattr(albums_response, 'pager'):
-                        result['total'] = albums_response.pager.total
-                        result['has_more'] = (page + 1) * 20 < albums_response.pager.total
-            except Exception as e:
-                print(f"Ошибка при получении основных альбомов: {e}")
-            
-            all_albums.sort(key=lambda x: x.get('year', 0) or 0, reverse=True)
-            result['albums'] = all_albums[:MAX_ALBUMS]
-            result['success'] = True
-            print(f"✅ Найдено альбомов: {len(all_albums)}")
-        
-        return result
-        
-    except Exception as e:
-        result['error'] = str(e)[:100]
-        print(f"❌ Ошибка получения альбомов: {e}")
-        return result
-
-
-def format_albums_message(albums_data: Dict[str, Any], page: int = 0) -> str:
-    if not albums_data['success'] or not albums_data['albums']:
-        return f"📀 У исполнителя {albums_data['artist']} нет альбомов в Яндекс.Музыке"
-    
-    result = f"📀 <b>АЛЬБОМЫ {albums_data['artist'].upper()}</b>\n"
-    result += f"📊 Всего: {albums_data['total'] or len(albums_data['albums'])}\n\n"
-    
-    start_idx = page * 10
-    end_idx = min(start_idx + 10, len(albums_data['albums']))
-    
-    for i, album in enumerate(albums_data['albums'][start_idx:end_idx], start_idx + 1):
-        album_type = album.get('type', 'Альбом')
-        year = f" ({album['year']})" if album.get('year') else ""
-        tracks = f", {album['track_count']} треков" if album.get('track_count') else ""
-        
-        result += f"{i}. <b>{album['title']}</b>{year}\n"
-        result += f"   📀 {album_type}{tracks}\n"
-        
-        album_link = f"https://music.yandex.ru/album/{album['id']}"
-        result += f"   🔗 <a href='{album_link}'>Слушать альбом</a>\n\n"
-    
-    return result
-
-
-# === ПОЛНАЯ БИОГРАФИЯ ИСПОЛНИТЕЛЯ ===
-def get_artist_full_bio(artist_name: str, artist_id: int = None) -> Dict[str, Any]:
-    driver = None
-    result = {
-        'success': False,
-        'bio_full': None,
-        'bio_short': None,
-        'birth_date': None,
-        'birth_place': None,
-        'death_date': None,
-        'death_place': None,
-        'country': None,
-        'genres': [],
-        'members': [],
-        'labels': [],
-        'albums_count': None,
-        'years_active': None,
-        'instruments': [],
-        'associated_acts': [],
-        'awards': [],
-        'website': None,
-        'social_links': [],
-        'listeners': None,
-        'listeners_text': None,
-        'error': None
-    }
-    
-    try:
-        driver = get_chrome_driver()
-        
-        if not artist_id and yandex_client:
-            try:
-                search_result = yandex_client.search(text=artist_name, type_='artist', page=0)
-                if search_result.artists and search_result.artists.results:
-                    artist_id = search_result.artists.results[0].id
-                    try:
-                        artist_api = yandex_client.artists(artist_id)
-                        if artist_api and artist_api[0]:
-                            if artist_api[0].genres:
-                                result['genres'] = artist_api[0].genres
-                            if artist_api[0].years:
-                                result['years_active'] = artist_api[0].years
-                            if hasattr(artist_api[0], 'listeners') and artist_api[0].listeners:
-                                result['listeners'] = artist_api[0].listeners
-                                listeners_str = str(artist_api[0].listeners).replace(' ', '')
-                                result['listeners_text'] = f"👥 {listeners_str} слушателей в месяц"
-                    except:
-                        pass
-            except:
-                pass
-        
-        if artist_id:
-            if not result['listeners'] and yandex_client:
-                try:
-                    artist_info = yandex_client.artists(artist_id)
-                    if artist_info and artist_info[0] and hasattr(artist_info[0], 'listeners'):
-                        listeners = artist_info[0].listeners
-                        if listeners:
-                            result['listeners'] = listeners
-                            listeners_str = str(listeners).replace(' ', '')
-                            result['listeners_text'] = f"👥 {listeners_str} слушателей в месяц"
-                except:
-                    pass
-            
-            info_url = f"https://music.yandex.ru/artist/{artist_id}/info"
-            print(f"🔍 Загружаем полную биографию: {info_url}")
-            
-            driver.get(info_url)
-            time.sleep(4)
-            
-            for _ in range(5):
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                time.sleep(1)
-            
-            soup = BeautifulSoup(driver.page_source, 'lxml')
-            
-            bio_full = None
-            bio_selectors = [
-                'div[class*="description"]',
-                'div[class*="bio"]',
-                'div[class*="Biography"]',
-                'div[class*="about"]',
-                'div[class*="info"]',
-                'div[class*="artist-info"]',
-                'div[class*="rich-text"]'
-            ]
-            
-            for selector in bio_selectors:
-                bio_elem = soup.select_one(selector)
-                if bio_elem:
-                    bio_full = bio_elem.get_text(strip=True)
-                    if len(bio_full) > 100:
-                        break
-            
-            if bio_full:
-                bio_full = re.sub(r'\s+', ' ', bio_full)
-                bio_full = re.sub(r'\.\s+', '.\n', bio_full)
-                bio_full = re.sub(r'\s+([,.;:!?])', r'\1', bio_full)
-            
-            result['bio_full'] = bio_full
-            result['bio_short'] = bio_full[:300] + '...' if bio_full and len(bio_full) > 300 else bio_full
-            result['success'] = True
-            return result
-            
-    except Exception as e:
-        print(f"❌ Ошибка при получении биографии: {e}")
-        result['error'] = str(e)[:100]
-        return result
-    finally:
-        if driver:
-            driver.quit()
-
-
-def get_bio_link(artist_name: str, artist_id: int = None) -> str:
-    if artist_id:
-        return f"https://music.yandex.ru/artist/{artist_id}/info"
-    else:
-        search_query = urllib.parse.quote(f"{artist_name} биография")
-        return f"https://music.yandex.ru/search?text={search_query}"
-
-
-def format_full_bio(bio_data: Dict[str, Any], artist_name: str = None, artist_id: int = None) -> str:
-    if not bio_data['success']:
-        if artist_id:
-            bio_link = get_bio_link(artist_name, artist_id)
-            return f"❌ Не удалось загрузить биографию {artist_name}\n\n🔗 <a href='{bio_link}'>Смотреть биографию на Яндекс.Музыке</a>"
-        return ""
-    
-    parts = []
-    
-    artist_display = artist_name if artist_name else "Исполнитель"
-    bio_link = get_bio_link(artist_name, artist_id)
-    parts.append(f"📖 <b>ПОЛНАЯ БИОГРАФИЯ: {artist_display.upper()}</b>")
-    parts.append(f"🔗 <a href='{bio_link}'>Открыть на Яндекс.Музыке</a>\n")
-    
-    info_parts = []
-    
-    if bio_data['birth_date']:
-        birth_text = f"род. {bio_data['birth_date']}"
-        if bio_data['birth_place']:
-            birth_text += f", {bio_data['birth_place']}"
-        info_parts.append(f"👶 {birth_text}")
-    
-    if bio_data['death_date']:
-        death_text = f"ум. {bio_data['death_date']}"
-        if bio_data['death_place']:
-            death_text += f", {bio_data['death_place']}"
-        info_parts.append(f"💔 {death_text}")
-    
-    if bio_data['country']:
-        info_parts.append(f"🌍 Страна: {bio_data['country']}")
-    
-    if bio_data['years_active']:
-        info_parts.append(f"🎭 Годы активности: {bio_data['years_active']}")
-    
-    if bio_data['genres']:
-        genres_str = ', '.join(bio_data['genres'][:7])
-        info_parts.append(f"🎵 Жанры: {genres_str}")
-    
-    if bio_data['albums_count']:
-        info_parts.append(f"💿 Альбомов: {bio_data['albums_count']}")
-    
-    if bio_data['listeners_text']:
-        info_parts.append(bio_data['listeners_text'])
-    
-    if info_parts:
-        parts.append("\n".join(info_parts))
-        parts.append("")
-    
-    if bio_data['bio_full']:
-        parts.append(f"📜 <b>ПОДРОБНАЯ БИОГРАФИЯ:</b>\n")
-        paragraphs = bio_data['bio_full'].split('\n')
-        for para in paragraphs[:5]:
-            if para.strip():
-                clean_para = re.sub(r'\s+', ' ', para.strip())
-                parts.append(clean_para)
-                parts.append("")
-    
-    return "\n".join(parts)
-
-
-# === ПОЛУЧЕНИЕ КОНЦЕРТОВ ===
-def get_concerts_from_yandex_music(artist_name: str, artist_id: int = None) -> Dict[str, Any]:
-    driver = None
-    result = {
-        'success': False,
-        'concerts': [],
-        'error': None,
-        'artist': artist_name,
-        'artist_id': artist_id
-    }
-    
-    try:
-        driver = get_chrome_driver()
-        
-        if artist_id:
-            concerts_url = f"https://music.yandex.ru/artist/{artist_id}/concerts"
-            print(f"🔍 Загружаем концерты: {concerts_url}")
-            
-            driver.get(concerts_url)
-            time.sleep(4)
-            
-            for _ in range(3):
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-                time.sleep(1.5)
-            
-            soup = BeautifulSoup(driver.page_source, 'lxml')
-            concerts = parse_concerts_page(soup, artist_name)
-            
-            if concerts:
-                result['concerts'] = concerts[:MAX_CONCERTS]
-                result['success'] = True
-                print(f"✅ Найдено концертов: {len(concerts)}")
-            else:
-                result['error'] = "no_concerts"
-        
-        return result
-        
-    except Exception as e:
-        result['error'] = f"parse_error: {str(e)[:100]}"
-        return result
-    finally:
-        if driver:
-            driver.quit()
-
-
-def parse_concerts_page(soup: BeautifulSoup, artist_name: str) -> List[Dict]:
-    concerts = []
-    
-    try:
-        selectors = [
-            'div[class*="concert"]',
-            'div[class*="Concert"]',
-            'div[data-testid*="concert"]',
-            'div[class*="event"]',
-            'article'
-        ]
-        
-        concert_sections = []
-        for selector in selectors:
-            sections = soup.select(selector)
-            if sections:
-                concert_sections.extend(sections)
-        
-        for section in concert_sections[:MAX_CONCERTS]:
-            concert = extract_concert_info(section, artist_name)
-            if concert:
-                if not any(c['title'] == concert['title'] and c['date'] == concert['date'] for c in concerts):
-                    concerts.append(concert)
-        
-    except Exception as e:
-        print(f"Ошибка парсинга концертов: {e}")
-    
-    return concerts
-
-
-def extract_concert_info(section, artist_name: str) -> Optional[Dict]:
-    try:
-        section_text = section.get_text()
-        
-        title = None
-        title_elem = section.find(['h3', 'h4', 'span'], class_=re.compile(r'title|name', re.I))
-        if title_elem:
-            title = title_elem.get_text(strip=True)
-        if not title:
-            title = f"Концерт {artist_name}"
-        
-        date = "Дата уточняется"
-        date_patterns = [
-            r'(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)',
-            r'(\d{1,2})[./](\d{1,2})[./](\d{4})'
-        ]
-        for pattern in date_patterns:
-            match = re.search(pattern, section_text, re.I)
-            if match:
-                date = match.group(0)
-                break
-        
-        place = "Место уточняется"
-        place_keywords = ['клуб', 'стадион', 'дворец', 'arena', 'hall', 'crocus']
-        for keyword in place_keywords:
-            if keyword.lower() in section_text.lower():
-                lines = section_text.split('\n')
-                for line in lines:
-                    if keyword.lower() in line.lower():
-                        place = line.strip()[:100]
-                        break
-                break
-        
-        link = "https://music.yandex.ru"
-        link_elem = section.find('a', href=True)
-        if link_elem and link_elem.get('href'):
-            href = link_elem['href']
-            link = href if href.startswith('http') else 'https://music.yandex.ru' + href
-        
-        price = None
-        price_match = re.search(r'(\d{1,4})\s*(₽|руб)', section_text, re.I)
-        if price_match:
-            price = price_match.group(0)
-        
-        return {
-            'title': title[:150],
-            'date': date[:60],
-            'place': place[:100],
-            'link': link,
-            'price': price
-        }
-        
-    except Exception:
-        return None
-
-
-def format_concerts_short(concerts_data: Dict[str, Any], max_shown: int = 5) -> str:
-    if not concerts_data['success'] or not concerts_data['concerts']:
-        return "\n🎫 Нет предстоящих концертов"
-    
-    result = f"\n🎸 <b>КОНЦЕРТЫ ({len(concerts_data['concerts'])}):</b>\n"
-    
-    for i, concert in enumerate(concerts_data['concerts'][:max_shown], 1):
-        result += f"\n{i}. {concert['title']}\n"
-        result += f"   📅 {concert['date']}\n"
-        result += f"   📍 {concert['place']}\n"
-        if concert.get('price'):
-            result += f"   💰 {concert['price']}\n"
-        result += f"   🔗 <a href='{concert['link']}'>Билеты</a>\n"
-    
-    if len(concerts_data['concerts']) > max_shown:
-        result += f"\n   ...и ещё {len(concerts_data['concerts']) - max_shown} концертов\n"
-    
-    return result
-
-
-# === ФУНКЦИЯ КЭШИРОВАНИЯ ===
-def get_cached_artist_data(artist_name: str, artist_id: int = None) -> Dict[str, Any]:
-    if not artist_id and yandex_client:
-        try:
-            search_result = yandex_client.search(text=artist_name, type_='artist', page=0)
-            if search_result.artists and search_result.artists.results:
-                artist_id = search_result.artists.results[0].id
-        except:
-            pass
-    
-    concert_cache_key = f"concerts:{artist_name.lower()}"
-    if concert_cache_key in concert_cache:
-        concerts_value, concerts_time = concert_cache[concert_cache_key]
-        if datetime.now().timestamp() - concerts_time < CACHE_DURATION:
-            concerts_data = concerts_value
-        else:
-            concerts_data = get_concerts_from_yandex_music(artist_name, artist_id)
-            concert_cache[concert_cache_key] = (concerts_data, datetime.now().timestamp())
-    else:
-        concerts_data = get_concerts_from_yandex_music(artist_name, artist_id)
-        concert_cache[concert_cache_key] = (concerts_data, datetime.now().timestamp())
-    
-    bio_cache_key = f"fullbio:{artist_name.lower()}"
-    if bio_cache_key in bio_cache:
-        bio_value, bio_time = bio_cache[bio_cache_key]
-        if datetime.now().timestamp() - bio_time < CACHE_DURATION * 24:
-            bio_data = bio_value
-        else:
-            bio_data = get_artist_full_bio(artist_name, artist_id)
-            bio_cache[bio_cache_key] = (bio_data, datetime.now().timestamp())
-    else:
-        bio_data = get_artist_full_bio(artist_name, artist_id)
-        bio_cache[bio_cache_key] = (bio_data, datetime.now().timestamp())
-    
-    albums_cache_key = f"albums:{artist_name.lower()}"
-    if albums_cache_key in albums_cache:
-        albums_value, albums_time = albums_cache[albums_cache_key]
-        if datetime.now().timestamp() - albums_time < CACHE_DURATION * 12:
-            albums_data = albums_value
-        else:
-            albums_data = get_artist_albums(artist_name, artist_id)
-            albums_cache[albums_cache_key] = (albums_data, datetime.now().timestamp())
-    else:
-        albums_data = get_artist_albums(artist_name, artist_id)
-        albums_cache[albums_cache_key] = (albums_data, datetime.now().timestamp())
-    
-    return {
-        'concerts': concerts_data,
-        'bio': bio_data,
-        'albums': albums_data,
-        'artist_id': artist_id
-    }
-
-
-# === СОЗДАНИЕ КЛАВИАТУРЫ ===
-def create_artist_keyboard(artist_name: str, artist_id: int = None) -> InlineKeyboardMarkup:
-    """Создает клавиатуру с действиями для исполнителя"""
-    keyboard = InlineKeyboardMarkup(row_width=2)
-    
-    artist_id_str = str(artist_id) if artist_id else ""
-    
-    btn_bio = InlineKeyboardButton(
-        "📖 Биография", 
-        callback_data=f"bio_{artist_name}_{artist_id_str}"
-    )
-    btn_concerts = InlineKeyboardButton(
-        "🎸 Концерты", 
-        callback_data=f"concerts_{artist_name}_{artist_id_str}"
-    )
-    btn_albums = InlineKeyboardButton(
-        "📀 Альбомы", 
-        callback_data=f"albums_{artist_name}_{artist_id_str}_0"
-    )
-    btn_tracks = InlineKeyboardButton(
-        "🎵 Популярные треки", 
-        callback_data=f"tracks_{artist_name}_{artist_id_str}"
-    )
-    
-    btn_miniapp = InlineKeyboardButton(
-        "📱 Открыть в Mini App",
-        web_app=WebAppInfo(url="https://antog1439-afk.github.io/Музыка/")
-    )
-    
-    keyboard.add(btn_bio, btn_concerts)
-    keyboard.add(btn_albums, btn_tracks)
-    keyboard.add(btn_miniapp)
-    
-    return keyboard
-
-
-# === ОБРАБОТЧИКИ КОМАНД ===
-@bot.message_handler(commands=['start'])
-def send_welcome(message: Message):
-    register_user(
-        message.from_user.id,
-        message.from_user.username,
-        message.from_user.first_name
-    )
-    
-    welcome_text = (
-        "🎵 <b>МУЗЫКАЛЬНЫЙ БОТ</b>\n"
-        "📖 С ПОЛНОЙ БИОГРАФИЕЙ И АЛЬБОМАМИ\n\n"
-        "🔍 <b>Что я умею:</b>\n"
-        "• Нахожу любой трек в Яндекс.Музыке\n"
-        "• Даю ссылки на ВСЕ платформы:\n"
-        "  🎵 YouTube Music | 🎶 Яндекс | 📱 VK | 🌊 SoundCloud | 🎧 Deezer | 📺 YouTube\n"
-        "• Показываю ПОЛНУЮ биографию исполнителя\n"
-        "• Вывожу ВСЕ альбомы исполнителя\n"
-        "• Ищу концерты и даю ссылки на билеты\n"
-        "• 📱 Мини-приложение для поиска музыки\n\n"
-        "📝 <b>Примеры:</b>\n"
-        "• Кино — Группа крови\n"
-        "• Imagine Dragons - Believer\n"
-        "• Земфира - Искала\n\n"
-        "⚡ <b>Попробуйте написать название трека!</b>"
-    )
-    bot.reply_to(message, welcome_text, parse_mode='HTML')
-
-
-@bot.message_handler(commands=['help'])
-def send_help(message: Message):
-    help_text = (
-        "📖 <b>ПОМОЩЬ</b>\n\n"
-        "❓ <b>Как получить информацию об исполнителе?</b>\n"
-        "1. Напишите название трека\n"
-        "2. Бот найдёт его в Яндекс.Музыке\n"
-        "3. Покажет ссылки на ВСЕ платформы\n"
-        "4. И кнопки для получения:\n"
-        "   • Полной биографии\n"
-        "   • Списка всех альбомов\n"
-        "   • Предстоящих концертов\n"
-        "   • Популярных треков\n"
-        "   • 📱 Открыть в Mini App\n\n"
-        "📋 <b>Что входит в биографию:</b>\n"
-        "• Дата и место рождения/смерти\n"
-        "• Страна, жанры, инструменты\n"
-        "• Участники группы\n"
-        "• Лейблы и награды\n"
-        "• Полный текст биографии\n"
-        "• Количество слушателей\n\n"
-        "🔄 Кэш: биография 24ч, альбомы 12ч, концерты 1ч"
-    )
-    bot.reply_to(message, help_text, parse_mode='HTML')
-
-
-@bot.message_handler(commands=['cache'])
-def clear_cache(message: Message):
-    global concert_cache, bio_cache, albums_cache
-    concerts_count = len(concert_cache)
-    bio_count = len(bio_cache)
-    albums_count = len(albums_cache)
-    
-    concert_cache = {}
-    bio_cache = {}
-    albums_cache = {}
-    
-    bot.reply_to(
-        message, 
-        f"🧹 Кэш очищен.\nКонцерты: {concerts_count}, Биографии: {bio_count}, Альбомы: {albums_count}"
-    )
-
-
-# === ОБРАБОТЧИК ТЕКСТОВЫХ СООБЩЕНИЙ ===
-@bot.message_handler(func=lambda message: True)
-def handle_message(message: Message):
-    register_user(
-        message.from_user.id,
-        message.from_user.username,
-        message.from_user.first_name
-    )
-    
-    query = message.text.strip()
-    
-    if len(query) < 2:
-        bot.reply_to(message, "❌ Слишком короткий запрос")
-        return
-    
-    bot.send_chat_action(message.chat.id, 'typing')
-    
-    try:
-        if not yandex_client:
-            bot.reply_to(message, "❌ Яндекс.Музыка временно недоступна")
-            return
-        
-        # Ищем трек на всех платформах
-        track_info = search_track_multi_platform(query)
-        
-        if not track_info:
-            # Если точный трек не найден, предлагаем поискать вручную
-            links = get_platform_links(query, "")
-            keyboard = create_multi_platform_keyboard(links)
-            
-            bot.send_message(
-                message.chat.id,
-                f"🔍 <b>Поиск: {query}</b>\n\n"
-                f"🎵 <b>Точное совпадение не найдено</b>\n"
-                f"Нажми на любую платформу, чтобы найти трек вручную:\n\n"
-                f"📌 <i>Попробуй написать: Исполнитель - Название трека</i>",
-                parse_mode='HTML',
-                reply_markup=keyboard
-            )
-            return
-        
-        # Формируем сообщение с информацией о треке
-        track_message = (
-            f"🎵 <b>{track_info['artists']} — {track_info['title']}</b>\n"
-            f"💿 Альбом: {track_info['album']}"
-        )
-        if track_info.get('year'):
-            track_message += f" ({track_info['year']})"
-        track_message += f"\n⏱️ {track_info['duration']}\n\n"
-        track_message += "🎧 <b>Слушать на платформах:</b>"
-        
-        # Сохраняем данные об исполнителе для дополнительных кнопок
-        user_data[message.from_user.id] = {
-            'artist_name': track_info['main_artist'],
-            'artist_id': track_info['main_artist_id']
-        }
-        
-        # Отправляем сообщение с треком и кнопками платформ
-        bot.send_message(
-            message.chat.id,
-            track_message,
-            parse_mode='HTML',
-            reply_markup=create_multi_platform_keyboard(track_info['links'])
-        )
-        
-        # Отправляем отдельное сообщение с дополнительными кнопками (биография, концерты, альбомы)
-        bot.send_message(
-            message.chat.id,
-            f"🎤 <b>{track_info['main_artist']}</b>\nЧто ещё хотите узнать?",
-            parse_mode='HTML',
-            reply_markup=create_artist_keyboard(
-                track_info['main_artist'], 
-                track_info['main_artist_id']
-            )
-        )
-        
-    except Exception as e:
-        error_message = f"❌ Ошибка: {str(e)[:100]}"
-        bot.reply_to(message, error_message)
-        print(f"❌ Ошибка: {e}")
-
-
-# === ОБРАБОТЧИК НАЖАТИЙ НА КНОПКИ ===
-@bot.callback_query_handler(func=lambda call: True)
-def handle_callback(call):
-    register_user(
-        call.from_user.id,
-        call.from_user.username,
-        call.from_user.first_name
-    )
-    
-    data_parts = call.data.split('_')
-    action = data_parts[0]
-    artist_name = data_parts[1]
-    artist_id = data_parts[2] if len(data_parts) > 2 and data_parts[2] and data_parts[2] != 'None' else None
-    
-    bot.answer_callback_query(call.id)
-    bot.send_chat_action(call.message.chat.id, 'typing')
-    
-    try:
-        if action == "bio":
-            status_msg = bot.send_message(
-                call.message.chat.id,
-                f"🔍 Загружаю ПОЛНУЮ биографию {artist_name}...\nЭто может занять до 30 секунд",
-                parse_mode='HTML'
-            )
-            
-            artist_data = get_cached_artist_data(artist_name, artist_id)
-            bio_text = format_full_bio(artist_data['bio'], artist_name, artist_data['artist_id'])
-            
-            bot.delete_message(call.message.chat.id, status_msg.message_id)
-            
-            if bio_text:
-                bot.send_message(
-                    call.message.chat.id,
-                    bio_text,
-                    parse_mode='HTML',
-                    disable_web_page_preview=True
-                )
-            else:
-                bio_link = get_bio_link(artist_name, artist_data['artist_id'])
-                error_text = f"❌ Не удалось загрузить биографию {artist_name}\n\n🔗 <a href='{bio_link}'>Смотреть биографию на Яндекс.Музыке</a>"
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Асия, Big Baby Tape...">
+                    <button id="doSearchBtn" class="search-btn">Найти</button>
+                </div>
                 
-                bot.send_message(
-                    call.message.chat.id,
-                    error_text,
-                    parse_mode='HTML',
-                    disable_web_page_preview=True
-                )
-        
-        elif action == "concerts":
-            status_msg = bot.send_message(
-                call.message.chat.id,
-                f"🔍 Ищу концерты {artist_name}...",
-                parse_mode='HTML'
-            )
-            
-            artist_data = get_cached_artist_data(artist_name, artist_id)
-            concerts_text = format_concerts_short(artist_data['concerts'], max_shown=10)
-            
-            bot.delete_message(call.message.chat.id, status_msg.message_id)
-            
-            bot.send_message(
-                call.message.chat.id,
-                f"🎸 <b>{artist_name}</b>\n{concerts_text}",
-                parse_mode='HTML',
-                disable_web_page_preview=True
-            )
-        
-        elif action == "albums":
-            page = int(data_parts[3]) if len(data_parts) > 3 else 0
-            
-            status_msg = bot.send_message(
-                call.message.chat.id,
-                f"🔍 Загружаю альбомы {artist_name}...",
-                parse_mode='HTML'
-            )
-            
-            albums_cache_key = f"albums:{artist_name.lower()}"
-            if albums_cache_key in albums_cache:
-                albums_data, albums_time = albums_cache[albums_cache_key]
-                if datetime.now().timestamp() - albums_time < CACHE_DURATION * 12:
-                    pass
-                else:
-                    albums_data = get_artist_albums(artist_name, artist_id)
-                    albums_cache[albums_cache_key] = (albums_data, datetime.now().timestamp())
-            else:
-                albums_data = get_artist_albums(artist_name, artist_id)
-                albums_cache[albums_cache_key] = (albums_data, datetime.now().timestamp())
-            
-            bot.delete_message(call.message.chat.id, status_msg.message_id)
-            
-            albums_text = format_albums_message(albums_data, page)
-            
-            keyboard = None
-            if albums_data['has_more'] or page > 0:
-                keyboard = InlineKeyboardMarkup(row_width=2)
-                if page > 0:
-                    keyboard.add(InlineKeyboardButton(
-                        "◀️ Предыдущая", 
-                        callback_data=f"albums_{artist_name}_{artist_id}_{page-1}"
-                    ))
-                if albums_data['has_more']:
-                    keyboard.add(InlineKeyboardButton(
-                        "Следующая ▶️", 
-                        callback_data=f"albums_{artist_name}_{artist_id}_{page+1}"
-                    ))
-            
-            bot.send_message(
-                call.message.chat.id,
-                albums_text,
-                parse_mode='HTML',
-                disable_web_page_preview=True,
-                reply_markup=keyboard
-            )
-        
-        elif action == "tracks":
-            if artist_id:
-                tracks_url = f"https://music.yandex.ru/artist/{artist_id}/tracks"
-            else:
-                tracks_url = f"https://music.yandex.ru/search?text={artist_name}"
-            
-            bot.send_message(
-                call.message.chat.id,
-                f"🎵 <b>Популярные треки {artist_name}</b>\n\n🔗 {tracks_url}",
-                parse_mode='HTML',
-                disable_web_page_preview=True
-            )
-    
-    except Exception as e:
-        bot.send_message(
-            call.message.chat.id,
-            f"❌ Ошибка: {str(e)[:100]}",
-            parse_mode='HTML'
-        )
-        print(f"❌ Ошибка в callback: {e}")
+                <button class="random-track-btn" id="randomTrackBtn">🎲 СЛУЧАЙНЫЙ ТРЕК</button>
+                
+                <div class="section-title">🔥 ПОПУЛЯРНЫЕ</div>
+                <div class="popular-grid" id="popularGrid"></div>
+                
+                <div id="musicResult"></div>
+            </div>
+            <div class="user-info">👤 <span id="userName">Music</span></div>
+        </div>
 
+        <!-- ЭКРАН ИГРЫ -->
+        <div id="gameScreen" class="hidden">
+            <button class="back-btn" id="backToMenuFromGame">← Назад</button>
+            <div class="card">
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; margin-bottom: 8px;">🎮</div>
+                    <button id="startGameBtn" style="background:#9b59b6; border:none; padding:10px 24px; border-radius:40px; color:white; font-weight:bold; margin:8px 0;">▶ Начать игру</button>
+                </div>
+                <div id="gameContent">
+                    <div style="text-align:center; padding:20px; color:gray;">Нажми «Начать игру»</div>
+                </div>
+            </div>
+            <div class="user-info">🎮 Угадай трек</div>
+        </div>
+    </div>
 
-# === ЗАПУСК ===
-if __name__ == '__main__':
-    print("=" * 60)
-    print("🎵 МУЗЫКАЛЬНЫЙ БОТ v11.0")
-    print("📱 С ПОИСКОМ НА ВСЕХ ПЛАТФОРМАХ")
-    print("=" * 60)
-    print(f"🤖 Токен: {TELEGRAM_TOKEN[:10]}...{TELEGRAM_TOKEN[-5:]}")
-    print(f"🎵 Яндекс.Музыка: {'✅' if yandex_client else '❌'}")
-    print(f"🎫 Макс. концертов: {MAX_CONCERTS}")
-    print(f"📀 Макс. альбомов: {MAX_ALBUMS}")
-    print(f"🔄 Кэш: биография 24ч, альбомы 12ч, концерты 1ч")
-    print(f"🌐 Mini App: https://antog1439-afk.github.io/Музыка/")
-    print("=" * 60)
-    print("🚀 Бот запущен!")
-    print("📝 Для остановки нажмите Ctrl+C")
-    print("=" * 60)
-    
-    try:
-        bot.infinity_polling(timeout=30, long_polling_timeout=20)
-    except KeyboardInterrupt:
-        print("\n👋 Бот остановлен")
-    except Exception as e:
-        print(f"❌ Критическая ошибка: {e}")
+    <!-- КНОПКА НАСТРОЕК -->
+    <div class="settings-fab" id="settingsFab">
+        <span>⚙️</span>
+    </div>
+
+    <!-- МОДАЛКА НАСТРОЕК -->
+    <div id="settingsModal" class="settings-modal hidden">
+        <div class="modal-card">
+            <div class="modal-title">🎨 Оформление</div>
+            
+            <div class="settings-row">
+                <span class="settings-label">🎨 Цвет кнопок:</span>
+                <input type="color" id="buttonColorPicker" value="#2481cc" onchange="changeButtonColor(this.value)">
+            </div>
+            
+            <div class="settings-row">
+                <span class="settings-label">🔘 Прозрачность:</span>
+                <input type="range" id="opacitySlider" min="0.5" max="1" step="0.01" value="0.95" onchange="changeCardOpacity(this.value)">
+            </div>
+            
+            <div class="settings-row">
+                <button class="appearance-btn" onclick="resetBackground()" style="background:rgba(0,0,0,0.6); padding:6px 12px; border-radius:20px; color:white; border:none;">Сбросить фон</button>
+                <div class="file-input-wrapper" style="position:relative; overflow:hidden; display:inline-block;">
+                    <button class="appearance-btn" style="background:rgba(0,0,0,0.6); padding:6px 12px; border-radius:20px; color:white; border:none;">📸 Своё фото</button>
+                    <input type="file" id="bgImageInput" accept="image/*" style="position:absolute; font-size:100px; opacity:0; right:0; top:0; cursor:pointer;" onchange="loadCustomBackground(this)">
+                </div>
+                <button class="appearance-btn" onclick="openColorPicker()" style="background:rgba(0,0,0,0.6); padding:6px 12px; border-radius:20px; color:white; border:none;">Цвет фона</button>
+                <button class="appearance-btn" onclick="toggleDarkTheme()" style="background:rgba(0,0,0,0.6); padding:6px 12px; border-radius:20px; color:white; border:none;">🌙 Тёмная</button>
+            </div>
+            
+            <div class="gradient-row">
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="setGradient('linear-gradient(135deg, #667eea 0%, #764ba2 100%)')"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #f093fb, #f5576c);" onclick="setGradient('linear-gradient(135deg, #f093fb 0%, #f5576c 100%)')"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #4facfe, #00f2fe);" onclick="setGradient('linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)')"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #43e97b, #38f9d7);" onclick="setGradient('linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)')"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #fa709a, #fee140);" onclick="setGradient('linear-gradient(135deg, #fa709a 0%, #fee140 100%)')"></div>
+            </div>
+            
+            <button class="close-modal" id="closeSettingsBtn">Закрыть</button>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // ========== ПРИВЕТСТВИЕ БЕЗ РАМКИ, С ИЕРОГЛИФАМИ ==========
+        function showWelcome() {
+            const welcomeShown = sessionStorage.getItem('welcome_shown');
+            if (!welcomeShown) {
+                const overlay = document.createElement('div');
+                overlay.className = 'welcome-overlay';
+                overlay.innerHTML = `
+                    <div class="welcome-card">
+                        <div class="welcome-emoji">🎵✨</div>
+                        <div class="welcome-kanji">
+                            聴 <small>·</small> 音 <small>·</small> 心
+                        </div>
+                        <div class="welcome-text-en">Hello, dear listener</div>
+                        <div class="welcome-text-fr">Bonjour, auditeur natif</div>
+                        <button class="welcome-btn" id="closeWelcomeBtn">🎧 Войти в музыку</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                
+                document.getElementById('closeWelcomeBtn').onclick = () => {
+                    overlay.remove();
+                    sessionStorage.setItem('welcome_shown', 'true');
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                };
+            }
+        }
+
+        // ========== ПЕРЕМЕННЫЕ ==========
+        let currentSearchMode = 'artist';
+
+        // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
+        function loadSavedAppearance() {
+            const savedBg = localStorage.getItem('music_bot_background');
+            if (savedBg && savedBg !== 'default') {
+                if (savedBg.startsWith('linear-gradient')) {
+                    document.body.style.background = savedBg;
+                    document.body.classList.remove('default-bg', 'has-bg');
+                } else {
+                    document.body.style.backgroundImage = `url(${savedBg})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    document.body.classList.remove('default-bg');
+                    document.body.classList.add('has-bg');
+                }
+            } else {
+                resetBackground();
+            }
+            const savedButtonColor = localStorage.getItem('music_bot_button_color');
+            if (savedButtonColor) {
+                document.documentElement.style.setProperty('--button-color', savedButtonColor);
+                document.getElementById('buttonColorPicker').value = savedButtonColor;
+            }
+            const savedOpacity = localStorage.getItem('music_bot_card_opacity');
+            if (savedOpacity) {
+                document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${savedOpacity})`);
+                document.getElementById('opacitySlider').value = savedOpacity;
+            }
+            const savedTheme = localStorage.getItem('music_bot_theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+        }
+        
+        function resetBackground() {
+            document.body.style.background = '';
+            document.body.style.backgroundImage = '';
+            document.body.classList.remove('has-bg');
+            document.body.classList.add('default-bg');
+            localStorage.setItem('music_bot_background', 'default');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+        
+        function loadCustomBackground(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgUrl = e.target.result;
+                    document.body.style.backgroundImage = `url(${imgUrl})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed';
+                    document.body.classList.remove('default-bg');
+                    document.body.classList.add('has-bg');
+                    localStorage.setItem('music_bot_background', imgUrl);
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        function openColorPicker() {
+            const colorInput = document.createElement('input');
+            colorInput.type = 'color';
+            colorInput.onchange = function(e) {
+                const color = e.target.value;
+                document.body.style.background = color;
+                document.body.style.backgroundImage = '';
+                document.body.classList.remove('default-bg', 'has-bg');
+                localStorage.setItem('music_bot_background', color);
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            };
+            colorInput.click();
+        }
+        
+        function setGradient(gradient) {
+            document.body.style.background = gradient;
+            document.body.style.backgroundImage = '';
+            document.body.classList.remove('default-bg', 'has-bg');
+            localStorage.setItem('music_bot_background', gradient);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+        
+        function changeButtonColor(color) {
+            document.documentElement.style.setProperty('--button-color', color);
+            localStorage.setItem('music_bot_button_color', color);
+        }
+        
+        function changeCardOpacity(opacity) {
+            document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${opacity})`);
+            localStorage.setItem('music_bot_card_opacity', opacity);
+        }
+        
+        function toggleDarkTheme() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('music_bot_theme', isDark ? 'dark' : 'light');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        // Модалка настроек
+        const settingsFab = document.getElementById('settingsFab');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        
+        settingsFab.onclick = () => {
+            settingsModal.classList.remove('hidden');
+        };
+        closeSettingsBtn.onclick = () => {
+            settingsModal.classList.add('hidden');
+        };
+        settingsModal.onclick = (e) => {
+            if (e.target === settingsModal) settingsModal.classList.add('hidden');
+        };
+
+        // ========== БАЗА ТРЕКОВ ==========
+        const tracksDatabase = [
+            { track: "Останься", artist: "Асия" },
+            { track: "Твой поцелуй", artist: "Асия" },
+            { track: "Случилась осень", artist: "Мари Краймбрери" },
+            { track: "За деньги да", artist: "INSTASAMKA" },
+            { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
+            { track: "Втюрилась", artist: "Дора" },
+            { track: "Дора дура", artist: "Дора" },
+            { track: "Там, за облаками", artist: "NЮ" },
+            { track: "Gimme The Loot", artist: "Big Baby Tape" },
+            { track: "Cadillac", artist: "Моргенштерн" },
+            { track: "Кукла колдуна", artist: "Король и Шут" },
+            { track: "Believer", artist: "Imagine Dragons" },
+            { track: "Bad Guy", artist: "Billie Eilish" },
+            { track: "Blinding Lights", artist: "The Weeknd" },
+            { track: "Группа крови", artist: "Кино" },
+            { track: "Искала", artist: "Земфира" }
+        ];
+
+        const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons"];
+
+        // ========== УПРАВЛЕНИЕ ЭКРАНАМИ ==========
+        const menuScreen = document.getElementById('menuScreen');
+        const musicScreen = document.getElementById('musicScreen');
+        const gameScreen = document.getElementById('gameScreen');
+
+        document.getElementById('goToMusicBtn').onclick = () => {
+            menuScreen.classList.add('hidden');
+            musicScreen.classList.remove('hidden');
+            loadPopularArtists();
+        };
+        document.getElementById('goToGameBtn').onclick = () => {
+            menuScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+        };
+        document.getElementById('backToMenuFromMusic').onclick = () => {
+            musicScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+        };
+        document.getElementById('backToMenuFromGame').onclick = () => {
+            gameScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+        };
+
+        // ========== ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ПОИСКА ==========
+        function setSearchMode(mode) {
+            currentSearchMode = mode;
+            const artistBtn = document.getElementById('searchArtistBtn');
+            const trackBtn = document.getElementById('searchTrackBtn');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (mode === 'artist') {
+                artistBtn.classList.add('active');
+                trackBtn.classList.remove('active');
+                searchInput.placeholder = "Асия, Big Baby Tape, Imagine Dragons...";
+            } else {
+                artistBtn.classList.remove('active');
+                trackBtn.classList.add('active');
+                searchInput.placeholder = "Останься, Believer, Втюрилась...";
+            }
+        }
+
+        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
+        function loadPopularArtists() {
+            const container = document.getElementById('popularGrid');
+            container.innerHTML = popularArtistsList.map(artist => 
+                `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`
+            ).join('');
+        }
+
+        window.searchArtist = function(artistName) {
+            setSearchMode('artist');
+            document.getElementById('searchInput').value = artistName;
+            performSearch();
+        };
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if(!query) return;
+            
+            const links = {
+                yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
+                youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`,
+                vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`,
+                spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}`
+            };
+            
+            const resultDiv = document.getElementById('musicResult');
+            
+            if (currentSearchMode === 'artist') {
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <div class="artist-name">🎤 ${escapeHtml(query)}</div>
+                        <div class="section-title">Слушать</div>
+                        <div class="platform-buttons">
+                            <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                            <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                            <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                            <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
+                if (foundTrack) {
+                    const artistLinks = {
+                        yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.artist)}`,
+                        youtube: `https://music.youtube.com/search?q=${encodeURIComponent(foundTrack.artist)}`,
+                        vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(foundTrack.artist)}&c%5Bsection%5D=audio`,
+                        spotify: `https://open.spotify.com/search/${encodeURIComponent(foundTrack.artist)}`
+                    };
+                    resultDiv.innerHTML = `
+                        <div class="result-card">
+                            <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
+                            <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: var(--button-color);">${escapeHtml(foundTrack.artist)}</strong></div>
+                            <div class="section-title">Слушать трек</div>
+                            <div class="platform-buttons">
+                                <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                                <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                                <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                                <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
+                            </div>
+                            <div class="section-title">Страница исполнителя</div>
+                            <div class="platform-buttons">
+                                <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                                <button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result-card">
+                            <div class="artist-name">🎵 "${escapeHtml(query)}"</div>
+                            <div class="info-text">Трек не найден в базе</div>
+                            <div class="platform-buttons">
+                                <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button>
+                                <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function getRandomTrack() {
+            const randomIndex = Math.floor(Math.random() * tracksDatabase.length);
+            const randomTrack = tracksDatabase[randomIndex];
+            setSearchMode('track');
+            document.getElementById('searchInput').value = randomTrack.track;
+            performSearch();
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        document.getElementById('doSearchBtn').onclick = performSearch;
+        document.getElementById('randomTrackBtn').onclick = getRandomTrack;
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
+
+        // ========== ИГРА ==========
+        const allArtists = [...new Set(tracksDatabase.map(t => t.artist))];
+        let gameQuestions = [];
+        let currentQ = 0;
+        let gameScore = 0;
+        let gameActive = false;
+        let gameStats = { gamesPlayed: 0, bestScore: 0 };
+
+        function loadGameStats() {
+            const saved = localStorage.getItem('music_game_stats');
+            if(saved) gameStats = JSON.parse(saved);
+        }
+        function saveGameStats() {
+            localStorage.setItem('music_game_stats', JSON.stringify(gameStats));
+        }
+
+        function generateQuestion() {
+            const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
+            const correct = randomTrack.artist;
+            let other = allArtists.filter(a => a !== correct);
+            for(let i=other.length-1; i>0; i--){
+                const j=Math.floor(Math.random()*(i+1));
+                [other[i], other[j]] = [other[j], other[i]];
+            }
+            let options = [correct, ...other.slice(0,3)];
+            for(let i=options.length-1; i>0; i--){
+                const j=Math.floor(Math.random()*(i+1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+            return { track: randomTrack.track, correct, options };
+        }
+
+        function startGame() {
+            gameQuestions = [];
+            for(let i=0; i<8; i++) gameQuestions.push(generateQuestion());
+            currentQ = 0;
+            gameScore = 0;
+            gameActive = true;
+            const startBtn = document.getElementById('startGameBtn');
+            startBtn.textContent = '🎮 Игра идёт...';
+            startBtn.style.background = '#28a745';
+            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            showGameQuestion();
+        }
+
+        function showGameQuestion() {
+            const container = document.getElementById('gameContent');
+            if(currentQ >= gameQuestions.length) {
+                endGame();
+                return;
+            }
+            const q = gameQuestions[currentQ];
+            const percent = Math.round((gameScore/gameQuestions.length)*100);
+            let optsHtml = '';
+            q.options.forEach(opt => {
+                optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">🎤 ${escapeHtml(opt)}</div>`;
+            });
+            container.innerHTML = `
+                <div class="game-question">
+                    <div style="font-size:13px;">🎵 Вопрос ${currentQ+1}/${gameQuestions.length}</div>
+                    <div class="track-name">"${escapeHtml(q.track)}"</div>
+                    <div>Кто исполнитель?</div>
+                    <div class="game-options" id="gameOptions">${optsHtml}</div>
+                    <div style="margin-top:12px;">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div>
+                </div>
+            `;
+        }
+
+        window.checkAnswer = function(selected, correct) {
+            if(!gameActive) return;
+            const optsDiv = document.getElementById('gameOptions');
+            if(!optsDiv) return;
+            const btns = optsDiv.querySelectorAll('.game-option');
+            gameActive = false;
+            btns.forEach(btn => {
+                if(btn.innerText.includes(correct)) btn.classList.add('correct');
+                if(btn.innerText.includes(selected) && selected !== correct) btn.classList.add('wrong');
+                btn.style.pointerEvents = 'none';
+            });
+            if(selected === correct) {
+                gameScore++;
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            } else {
+                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+            setTimeout(() => {
+                currentQ++;
+                gameActive = true;
+                showGameQuestion();
+            }, 1000);
+        };
+
+        function endGame() {
+            gameActive = false;
+            const total = gameQuestions.length;
+            const percent = Math.round((gameScore/total)*100);
+            gameStats.gamesPlayed++;
+            if(gameScore > gameStats.bestScore) gameStats.bestScore = gameScore;
+            saveGameStats();
+            let msg = percent === 100 ? '🏆 ИДЕАЛЬНО!' : (percent>=70 ? '🎵 Отлично!' : '🎧 Попробуй ещё!');
+            const container = document.getElementById('gameContent');
+            container.innerHTML = `
+                <div style="text-align:center; padding:20px;">
+                    <div style="font-size:28px; margin-bottom:8px;">🎉</div>
+                    <div style="font-size:20px; font-weight:bold;">${gameScore}/${total}</div>
+                    <div style="margin:12px 0;">${msg}</div>
+                    <div>⭐ Лучший: ${gameStats.bestScore}/${total}</div>
+                    <div>🎮 Сыграно: ${gameStats.gamesPlayed}</div>
+                    <button id="restartGameBtn" style="background:#9b59b6; margin-top:16px; border:none; padding:10px 24px; border-radius:40px;">🔄 Сыграть снова</button>
+                </div>
+            `;
+            document.getElementById('restartGameBtn')?.addEventListener('click', startGame);
+            const startBtn = document.getElementById('startGameBtn');
+            startBtn.textContent = '▶ Начать игру';
+            startBtn.style.background = '#9b59b6';
+        }
+
+        document.getElementById('startGameBtn').onclick = startGame;
+        loadGameStats();
+
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>]/g, function(m){
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // Telegram user
+        const user = tg.initDataUnsafe?.user;
+        if(user && user.first_name) document.getElementById('userName').innerText = user.first_name;
+
+        loadSavedAppearance();
+        loadPopularArtists();
+        
+        // ПОКАЗЫВАЕМ ПРИВЕТСТВИЕ
+        showWelcome();
+    </script>
+</body>
+</html>
