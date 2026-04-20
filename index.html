@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Админ панель</title>
+    <title>Music Hub - Админ панель + AI</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -252,6 +252,43 @@
             color: #dc3545;
             font-size: 12px;
             margin-top: 8px;
+        }
+        
+        /* AI стили */
+        .ai-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            margin-top: 12px;
+            padding: 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .ai-cover-img {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 20px;
+            margin: 0 auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            display: block;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #9b59b6;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         /* ПРИВЕТСТВЕННОЕ ОКНО */
@@ -706,6 +743,11 @@
                 <div class="menu-title">Игра</div>
                 <div class="menu-desc">Угадай исполнителя</div>
             </div>
+            <div class="menu-btn" id="goToAIBtn">
+                <span class="menu-icon">🤖</span>
+                <div class="menu-title">AI Обложки</div>
+                <div class="menu-desc">Создай уникальную обложку</div>
+            </div>
         </div>
 
         <!-- ЭКРАН МУЗЫКИ -->
@@ -745,6 +787,24 @@
                 </div>
             </div>
             <div class="user-info">🎮 Угадай трек</div>
+        </div>
+
+        <!-- ЭКРАН AI ОБЛОЖЕК -->
+        <div id="aiScreen" class="hidden">
+            <button class="back-btn" id="backToMenuFromAI">← Назад</button>
+            <div class="card">
+                <div class="section-title">🤖 AI ГЕНЕРАТОР ОБЛОЖЕК</div>
+                <div class="search-box">
+                    <input type="text" id="aiPrompt" class="search-input" placeholder="Например: рок группа, гитара, концерт, ночь">
+                    <button id="generateAIBtn" class="search-btn">Создать</button>
+                </div>
+                <div id="aiResult" style="text-align: center; margin-top: 16px;">
+                    <div style="color: gray; padding: 20px;">
+                        🎨 Введите описание и AI создаст уникальную обложку<br><br>
+                        <small>Примеры: "электронная музыка, космос, неон" или "джаз, саксофон, вечерний город"</small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -844,14 +904,10 @@
         tg.expand();
 
         // ========== АДМИН ПАНЕЛЬ ==========
-        // Пароль для входа (ИЗМЕНИТЕ НА СВОЙ!)
         const ADMIN_PASSWORD = "admin123";
-        
-        // Хранилище действий
         let adminActions = [];
         let isAdminLoggedIn = false;
         
-        // Загрузка действий из localStorage
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
             if (saved) {
@@ -875,7 +931,6 @@
                 timestamp: Date.now()
             };
             adminActions.unshift(action);
-            // Храним последние 200 действий
             if (adminActions.length > 200) adminActions = adminActions.slice(0, 200);
             saveAdminActions();
             if (isAdminLoggedIn) updateActionsList();
@@ -887,7 +942,6 @@
                 container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Нет действий</div>';
                 return;
             }
-            
             container.innerHTML = adminActions.map(action => `
                 <div class="action-item">
                     <div class="action-time">🕐 ${action.time}</div>
@@ -902,7 +956,6 @@
                 gamePlays: adminActions.filter(a => a.type === 'Игра').length,
                 totalActions: adminActions.length
             };
-            
             document.getElementById('adminStats').innerHTML = `
                 <div class="stat-card">
                     <div class="stat-value">${stats.searches}</div>
@@ -927,12 +980,10 @@
             const saved = localStorage.getItem('search_history');
             const history = saved ? JSON.parse(saved) : [];
             const container = document.getElementById('adminHistoryList');
-            
             if (history.length === 0) {
                 container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">История пуста</div>';
                 return;
             }
-            
             container.innerHTML = history.slice(0, 20).map(item => `
                 <div class="action-item">
                     <div class="action-time">🕐 ${item.date}</div>
@@ -999,7 +1050,74 @@
             updateAdminHistory();
             updateGameStats();
         }
+
+        // ========== AI ГЕНЕРАЦИЯ ОБЛОЖЕК ==========
+        async function generateAICover(prompt) {
+            const resultDiv = document.getElementById('aiResult');
+            addAction('AI', `Генерация обложки: "${prompt}"`);
+            
+            resultDiv.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div class="loading-spinner"></div>
+                    <div style="margin-top: 12px; color: gray;">🤖 AI создаёт обложку...</div>
+                    <div style="font-size: 12px; margin-top: 8px;">⏱️ Обычно 5-10 секунд</div>
+                </div>
+            `;
+            
+            try {
+                const encodedPrompt = encodeURIComponent(prompt);
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true`;
+                
+                const img = new Image();
+                img.onload = () => {
+                    resultDiv.innerHTML = `
+                        <div style="text-align: center;">
+                            <img src="${imageUrl}" class="ai-cover-img" alt="AI Generated Cover">
+                            <div class="section-title" style="margin-top: 16px;">🎨 Описание: ${escapeHtml(prompt)}</div>
+                            <button onclick="downloadAICover('${imageUrl}')" class="ai-btn" style="background: #28a745; margin-top: 12px;">
+                                💾 Скачать обложку
+                            </button>
+                        </div>
+                    `;
+                    addAction('AI', `Обложка создана: "${prompt}"`);
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                };
+                img.onerror = () => {
+                    resultDiv.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: gray;">
+                            ❌ Не удалось создать обложку<br>
+                            <button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button>
+                        </div>
+                    `;
+                };
+                img.src = imageUrl;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: gray;">
+                        ❌ Ошибка: ${error.message}<br>
+                        <button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button>
+                    </div>
+                `;
+            }
+        }
         
+        function downloadAICover(imageUrl) {
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = `ai_cover_${Date.now()}.jpg`;
+            link.click();
+            addAction('AI', 'Скачал обложку');
+            showNotification("💾 Скачивание началось!");
+        }
+        
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
         // ========== ПРИВЕТСТВИЕ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
@@ -1018,7 +1136,6 @@
                     </div>
                 `;
                 document.body.appendChild(overlay);
-                
                 document.getElementById('closeWelcomeBtn').onclick = () => {
                     overlay.remove();
                     sessionStorage.setItem('welcome_shown', 'true');
@@ -1145,10 +1262,27 @@
             if (e.target === settingsModal) settingsModal.classList.add('hidden');
         };
 
-        // ========== БАЗА ТРЕКОВ ==========
+        // ========== БАЗА ТРЕКОВ С НОВЫМИ ТРЕКАМИ АСИИ ==========
         const tracksDatabase = [
+            // Асия - существующие треки
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
+            // Асия - новые треки
+            { track: "Детство", artist: "Асия" },
+            { track: "Звонок", artist: "Асия" },
+            { track: "Шекспир", artist: "Асия" },
+            { track: "Красное платье", artist: "Асия" },
+            { track: "Обочины", artist: "Асия" },
+            { track: "Лети", artist: "Асия feat Zvonkiy" },
+            { track: "Притворяюсь", artist: "Асия" },
+            { track: "Несправедливо", artist: "Асия" },
+            { track: "Помнишь", artist: "Асия feat NЮ" },
+            { track: "Ты далеко", artist: "Асия" },
+            { track: "Фонари", artist: "Асия feat Zvonkiy" },
+            { track: "Дом", artist: "Асия" },
+            { track: "Амур", artist: "Асия" },
+            { track: "Сильно так", artist: "Асия" },
+            // Другие исполнители
             { track: "Случилась осень", artist: "Мари Краймбрери" },
             { track: "За деньги да", artist: "INSTASAMKA" },
             { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
@@ -1165,32 +1299,38 @@
             { track: "Искала", artist: "Земфира" }
         ];
 
-        const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons"];
+        const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons","Кино","Земфира"];
 
         // ========== УПРАВЛЕНИЕ ЭКРАНАМИ ==========
         const menuScreen = document.getElementById('menuScreen');
         const musicScreen = document.getElementById('musicScreen');
         const gameScreen = document.getElementById('gameScreen');
+        const aiScreen = document.getElementById('aiScreen');
+
+        function showScreen(screenName) {
+            menuScreen.classList.add('hidden');
+            musicScreen.classList.add('hidden');
+            gameScreen.classList.add('hidden');
+            aiScreen.classList.add('hidden');
+            document.getElementById(screenName).classList.remove('hidden');
+        }
 
         document.getElementById('goToMusicBtn').onclick = () => {
-            menuScreen.classList.add('hidden');
-            musicScreen.classList.remove('hidden');
+            showScreen('musicScreen');
             loadPopularArtists();
             addAction('Переход', 'Открыл раздел Музыка');
         };
         document.getElementById('goToGameBtn').onclick = () => {
-            menuScreen.classList.add('hidden');
-            gameScreen.classList.remove('hidden');
+            showScreen('gameScreen');
             addAction('Переход', 'Открыл раздел Игра');
         };
-        document.getElementById('backToMenuFromMusic').onclick = () => {
-            musicScreen.classList.add('hidden');
-            menuScreen.classList.remove('hidden');
+        document.getElementById('goToAIBtn').onclick = () => {
+            showScreen('aiScreen');
+            addAction('Переход', 'Открыл раздел AI Обложки');
         };
-        document.getElementById('backToMenuFromGame').onclick = () => {
-            gameScreen.classList.add('hidden');
-            menuScreen.classList.remove('hidden');
-        };
+        document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
+        document.getElementById('backToMenuFromGame').onclick = () => { showScreen('menuScreen'); };
+        document.getElementById('backToMenuFromAI').onclick = () => { showScreen('menuScreen'); };
 
         // ========== ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ПОИСКА ==========
         function setSearchMode(mode) {
@@ -1206,7 +1346,7 @@
             } else {
                 artistBtn.classList.remove('active');
                 trackBtn.classList.add('active');
-                searchInput.placeholder = "Останься, Believer, Втюрилась...";
+                searchInput.placeholder = "Останься, Believer, Детство...";
             }
         }
 
@@ -1228,7 +1368,6 @@
             const query = document.getElementById('searchInput').value.trim();
             if(!query) return;
             
-            // Записываем действие в админку
             addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
             
             const links = {
@@ -1241,20 +1380,31 @@
             const resultDiv = document.getElementById('musicResult');
             
             if (currentSearchMode === 'artist') {
+                // Находим все треки этого исполнителя
+                const artistTracks = tracksDatabase.filter(t => 
+                    t.artist.toLowerCase().includes(query.toLowerCase())
+                );
+                const tracksList = artistTracks.map(t => t.track).join(', ');
+                
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                        <div class="section-title">Слушать</div>
+                        ${artistTracks.length > 0 ? `<div style="font-size: 13px; color: #666; margin-bottom: 12px;">🎵 Треки: ${tracksList}</div>` : ''}
+                        <div class="section-title">🎧 Слушать на платформах</div>
                         <div class="platform-buttons">
                             <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                             <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                             <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                             <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                         </div>
+                        <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку для ${escapeHtml(query)}</button>
                     </div>
                 `;
             } else {
-                const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
+                const foundTrack = tracksDatabase.find(t => 
+                    t.track.toLowerCase().includes(query.toLowerCase())
+                );
+                
                 if (foundTrack) {
                     const artistLinks = {
                         yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.artist)}`,
@@ -1266,29 +1416,31 @@
                         <div class="result-card">
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
                             <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: var(--button-color);">${escapeHtml(foundTrack.artist)}</strong></div>
-                            <div class="section-title">Слушать трек</div>
+                            <div class="section-title">🎧 Слушать трек</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                 <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                                 <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
-                            <div class="section-title">Страница исполнителя</div>
+                            <div class="section-title">🎤 Страница исполнителя</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                 <button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                             </div>
+                            <button class="ai-btn" onclick="generateAICover('${escapeHtml(foundTrack.artist)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку для трека</button>
                         </div>
                     `;
                 } else {
                     resultDiv.innerHTML = `
                         <div class="result-card">
                             <div class="artist-name">🎵 "${escapeHtml(query)}"</div>
-                            <div class="info-text">Трек не найден в базе</div>
+                            <div class="info-text">❌ Трек не найден в базе</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button>
                                 <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                             </div>
+                            <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} cover')">🤖 Создать AI обложку</button>
                         </div>
                     `;
                 }
@@ -1308,6 +1460,20 @@
         document.getElementById('doSearchBtn').onclick = performSearch;
         document.getElementById('randomTrackBtn').onclick = getRandomTrack;
         document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
+        
+        // AI генератор
+        document.getElementById('generateAIBtn').onclick = () => {
+            const prompt = document.getElementById('aiPrompt').value.trim();
+            if (!prompt) {
+                showNotification("❌ Введите описание для обложки!");
+                return;
+            }
+            generateAICover(prompt);
+        };
+        
+        document.getElementById('aiPrompt').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('generateAIBtn').click();
+        });
 
         // ========== ИГРА ==========
         const allArtists = [...new Set(tracksDatabase.map(t => t.artist))];
@@ -1443,55 +1609,49 @@
 
         // ========== АДМИН ПАНЕЛЬ - УПРАВЛЕНИЕ ==========
         const adminBadge = document.getElementById('adminBadge');
-        const adminPanel = document.getElementById('adminPanel');
-        const adminLogin = document.getElementById('adminLogin');
-        const adminPassword = document.getElementById('adminPassword');
-        const adminLoginBtn = document.getElementById('adminLoginBtn');
-        const loginError = document.getElementById('loginError');
-        const closeAdminPanelBtn = document.getElementById('closeAdminPanel');
+        const adminPanelEl = document.getElementById('adminPanel');
+        const adminLoginEl = document.getElementById('adminLogin');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const adminLoginBtnEl = document.getElementById('adminLoginBtn');
+        const loginErrorEl = document.getElementById('loginError');
+        const closeAdminPanelBtnEl = document.getElementById('closeAdminPanel');
         
-        // Показываем окно входа при клике на бейдж
         adminBadge.onclick = () => {
             if (isAdminLoggedIn) {
-                adminPanel.classList.remove('hidden');
+                adminPanelEl.classList.remove('hidden');
                 refreshAdminPanel();
             } else {
-                adminLogin.classList.remove('hidden');
-                adminPassword.value = '';
-                loginError.textContent = '';
+                adminLoginEl.classList.remove('hidden');
+                adminPasswordInput.value = '';
+                loginErrorEl.textContent = '';
             }
         };
         
-        // Вход в админку
-        adminLoginBtn.onclick = () => {
-            if (adminPassword.value === ADMIN_PASSWORD) {
+        adminLoginBtnEl.onclick = () => {
+            if (adminPasswordInput.value === ADMIN_PASSWORD) {
                 isAdminLoggedIn = true;
-                adminLogin.classList.add('hidden');
-                adminPanel.classList.remove('hidden');
+                adminLoginEl.classList.add('hidden');
+                adminPanelEl.classList.remove('hidden');
                 refreshAdminPanel();
                 addAction('Админ', 'Вошёл в админ панель');
             } else {
-                loginError.textContent = '❌ Неверный пароль';
+                loginErrorEl.textContent = '❌ Неверный пароль';
             }
         };
         
-        // Закрытие админки
-        closeAdminPanelBtn.onclick = () => {
-            adminPanel.classList.add('hidden');
+        closeAdminPanelBtnEl.onclick = () => {
+            adminPanelEl.classList.add('hidden');
         };
         
-        // Нажатие Enter в поле пароля
-        adminPassword.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') adminLoginBtn.click();
+        adminPasswordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') adminLoginBtnEl.click();
         });
         
-        // Кнопки админки
         document.getElementById('clearActionsBtn').onclick = clearActions;
         document.getElementById('exportActionsBtn').onclick = exportActions;
         document.getElementById('clearAdminHistoryBtn').onclick = clearAdminHistory;
         document.getElementById('resetGameStatsBtn').onclick = resetGameStats;
         
-        // Загрузка действий при старте
         loadAdminActions();
 
         // Telegram user
@@ -1501,7 +1661,10 @@
         loadSavedAppearance();
         loadPopularArtists();
         
-        // ПОКАЗЫВАЕМ ПРИВЕТСТВИЕ
+        if (tg.colorScheme === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+        
         showWelcome();
     </script>
 </body>
