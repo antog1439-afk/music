@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub</title>
+    <title>Music Hub - Админ панель</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -74,7 +74,187 @@
             color: #fff;
         }
         
-        /* ПРИВЕТСТВЕННОЕ ОКНО - БЕЗ РАМКИ, ТОЛЬКО ИЕРОГЛИФЫ */
+        /* Админ панель */
+        .admin-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: #ffcc00;
+            z-index: 150;
+            cursor: pointer;
+        }
+        
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 400;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .admin-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        
+        .admin-close {
+            background: #dc3545;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 4px;
+        }
+        
+        .admin-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .admin-section-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #ffcc00;
+        }
+        
+        .action-item {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .action-time {
+            color: #888;
+            font-size: 10px;
+            margin-bottom: 4px;
+        }
+        
+        .action-text {
+            color: #fff;
+        }
+        
+        .clear-btn {
+            background: #dc3545;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .export-btn {
+            background: #28a745;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .admin-login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 24px;
+            width: 280px;
+            text-align: center;
+        }
+        
+        .login-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 30px;
+            border: none;
+            margin: 16px 0;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .login-btn {
+            background: #28a745;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .login-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        
+        /* ПРИВЕТСТВЕННОЕ ОКНО */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -113,7 +293,6 @@
             100% { transform: translateY(0px); }
         }
         
-        /* КРАСИВЫЕ ИЕРОГЛИФЫ (японские/китайские символы) */
         .welcome-kanji {
             font-size: 56px;
             font-weight: 400;
@@ -611,12 +790,217 @@
         </div>
     </div>
 
+    <!-- АДМИН ПАНЕЛЬ (скрыта по умолчанию) -->
+    <div id="adminPanel" class="admin-panel hidden">
+        <div class="admin-header">
+            <div class="admin-title">👑 Админ панель</div>
+            <button class="admin-close" id="closeAdminPanel">✕ Закрыть</button>
+        </div>
+        
+        <div class="admin-stats" id="adminStats">
+            <!-- Статистика будет здесь -->
+        </div>
+        
+        <div class="admin-section">
+            <div class="admin-section-title">📊 Действия пользователя</div>
+            <div id="actionsList"></div>
+            <button class="clear-btn" id="clearActionsBtn">🗑 Очистить все действия</button>
+            <button class="export-btn" id="exportActionsBtn">📤 Экспорт действий (JSON)</button>
+        </div>
+        
+        <div class="admin-section">
+            <div class="admin-section-title">📜 История поиска</div>
+            <div id="adminHistoryList"></div>
+            <button class="clear-btn" id="clearAdminHistoryBtn">🗑 Очистить историю</button>
+        </div>
+        
+        <div class="admin-section">
+            <div class="admin-section-title">🎮 Статистика игры</div>
+            <div id="gameStats"></div>
+            <button class="clear-btn" id="resetGameStatsBtn">🔄 Сбросить статистику игры</button>
+        </div>
+    </div>
+
+    <!-- ОКНО ВХОДА В АДМИНКУ -->
+    <div id="adminLogin" class="admin-login">
+        <div class="login-box">
+            <div style="font-size: 48px; margin-bottom: 16px;">👑</div>
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">Вход в админ панель</div>
+            <div style="font-size: 12px; color: #aaa; margin-bottom: 16px;">Введите пароль для доступа</div>
+            <input type="password" id="adminPassword" class="login-input" placeholder="Пароль">
+            <button class="login-btn" id="adminLoginBtn">Войти</button>
+            <div id="loginError" class="login-error"></div>
+        </div>
+    </div>
+
+    <!-- БЕЙДЖ АДМИНА (виден всегда) -->
+    <div class="admin-badge" id="adminBadge">
+        👑 ADMIN
+    </div>
+
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // ========== ПРИВЕТСТВИЕ БЕЗ РАМКИ, С ИЕРОГЛИФАМИ ==========
+        // ========== АДМИН ПАНЕЛЬ ==========
+        // Пароль для входа (ИЗМЕНИТЕ НА СВОЙ!)
+        const ADMIN_PASSWORD = "admin123";
+        
+        // Хранилище действий
+        let adminActions = [];
+        let isAdminLoggedIn = false;
+        
+        // Загрузка действий из localStorage
+        function loadAdminActions() {
+            const saved = localStorage.getItem('admin_actions');
+            if (saved) {
+                adminActions = JSON.parse(saved);
+            } else {
+                adminActions = [];
+            }
+            updateActionsList();
+        }
+        
+        function saveAdminActions() {
+            localStorage.setItem('admin_actions', JSON.stringify(adminActions));
+        }
+        
+        function addAction(actionType, details) {
+            const action = {
+                id: Date.now(),
+                type: actionType,
+                details: details,
+                time: new Date().toLocaleString(),
+                timestamp: Date.now()
+            };
+            adminActions.unshift(action);
+            // Храним последние 200 действий
+            if (adminActions.length > 200) adminActions = adminActions.slice(0, 200);
+            saveAdminActions();
+            if (isAdminLoggedIn) updateActionsList();
+        }
+        
+        function updateActionsList() {
+            const container = document.getElementById('actionsList');
+            if (adminActions.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Нет действий</div>';
+                return;
+            }
+            
+            container.innerHTML = adminActions.map(action => `
+                <div class="action-item">
+                    <div class="action-time">🕐 ${action.time}</div>
+                    <div class="action-text">📌 ${action.type}: ${escapeHtml(action.details)}</div>
+                </div>
+            `).join('');
+        }
+        
+        function updateAdminStats() {
+            const stats = {
+                searches: adminActions.filter(a => a.type === 'Поиск').length,
+                gamePlays: adminActions.filter(a => a.type === 'Игра').length,
+                totalActions: adminActions.length
+            };
+            
+            document.getElementById('adminStats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.searches}</div>
+                    <div class="stat-label">🔍 Поисков</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.gamePlays}</div>
+                    <div class="stat-label">🎮 Игр сыграно</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${stats.totalActions}</div>
+                    <div class="stat-label">📊 Всего действий</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${adminActions.length > 0 ? Math.round(adminActions.filter(a => a.timestamp > Date.now() - 86400000).length) : 0}</div>
+                    <div class="stat-label">📅 За 24 часа</div>
+                </div>
+            `;
+        }
+        
+        function updateAdminHistory() {
+            const saved = localStorage.getItem('search_history');
+            const history = saved ? JSON.parse(saved) : [];
+            const container = document.getElementById('adminHistoryList');
+            
+            if (history.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">История пуста</div>';
+                return;
+            }
+            
+            container.innerHTML = history.slice(0, 20).map(item => `
+                <div class="action-item">
+                    <div class="action-time">🕐 ${item.date}</div>
+                    <div class="action-text">${item.type === 'artist' ? '🎤' : '🎵'} ${escapeHtml(item.query)}</div>
+                </div>
+            `).join('');
+        }
+        
+        function updateGameStats() {
+            const saved = localStorage.getItem('music_game_stats');
+            const stats = saved ? JSON.parse(saved) : { gamesPlayed: 0, bestScore: 0 };
+            const container = document.getElementById('gameStats');
+            container.innerHTML = `
+                <div class="action-item">
+                    <div class="action-text">🎮 Сыграно игр: ${stats.gamesPlayed}</div>
+                </div>
+                <div class="action-item">
+                    <div class="action-text">⭐ Лучший счёт: ${stats.bestScore}/8</div>
+                </div>
+            `;
+        }
+        
+        function clearActions() {
+            if (confirm('Очистить все записи действий?')) {
+                adminActions = [];
+                saveAdminActions();
+                updateActionsList();
+                updateAdminStats();
+                addAction('Админ', 'Очистил историю действий');
+            }
+        }
+        
+        function exportActions() {
+            const data = JSON.stringify(adminActions, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `admin_actions_${new Date().toISOString().slice(0,19)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            addAction('Админ', 'Экспортировал действия');
+        }
+        
+        function clearAdminHistory() {
+            if (confirm('Очистить всю историю поиска?')) {
+                localStorage.removeItem('search_history');
+                updateAdminHistory();
+                addAction('Админ', 'Очистил историю поиска');
+            }
+        }
+        
+        function resetGameStats() {
+            if (confirm('Сбросить статистику игры?')) {
+                localStorage.setItem('music_game_stats', JSON.stringify({ gamesPlayed: 0, bestScore: 0 }));
+                updateGameStats();
+                addAction('Админ', 'Сбросил статистику игры');
+            }
+        }
+        
+        function refreshAdminPanel() {
+            updateActionsList();
+            updateAdminStats();
+            updateAdminHistory();
+            updateGameStats();
+        }
+        
+        // ========== ПРИВЕТСТВИЕ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
             if (!welcomeShown) {
@@ -792,10 +1176,12 @@
             menuScreen.classList.add('hidden');
             musicScreen.classList.remove('hidden');
             loadPopularArtists();
+            addAction('Переход', 'Открыл раздел Музыка');
         };
         document.getElementById('goToGameBtn').onclick = () => {
             menuScreen.classList.add('hidden');
             gameScreen.classList.remove('hidden');
+            addAction('Переход', 'Открыл раздел Игра');
         };
         document.getElementById('backToMenuFromMusic').onclick = () => {
             musicScreen.classList.add('hidden');
@@ -841,6 +1227,9 @@
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if(!query) return;
+            
+            // Записываем действие в админку
+            addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
             
             const links = {
                 yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
@@ -912,6 +1301,7 @@
             setSearchMode('track');
             document.getElementById('searchInput').value = randomTrack.track;
             performSearch();
+            addAction('Случайный трек', `Выбран трек: ${randomTrack.track}`);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
@@ -961,6 +1351,7 @@
             startBtn.textContent = '🎮 Игра идёт...';
             startBtn.style.background = '#28a745';
             if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            addAction('Игра', 'Начал новую игру');
             showGameQuestion();
         }
 
@@ -1034,6 +1425,7 @@
             const startBtn = document.getElementById('startGameBtn');
             startBtn.textContent = '▶ Начать игру';
             startBtn.style.background = '#9b59b6';
+            addAction('Игра', `Закончил игру со счётом ${gameScore}/${total}`);
         }
 
         document.getElementById('startGameBtn').onclick = startGame;
@@ -1048,6 +1440,59 @@
                 return m;
             });
         }
+
+        // ========== АДМИН ПАНЕЛЬ - УПРАВЛЕНИЕ ==========
+        const adminBadge = document.getElementById('adminBadge');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminLogin = document.getElementById('adminLogin');
+        const adminPassword = document.getElementById('adminPassword');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const loginError = document.getElementById('loginError');
+        const closeAdminPanelBtn = document.getElementById('closeAdminPanel');
+        
+        // Показываем окно входа при клике на бейдж
+        adminBadge.onclick = () => {
+            if (isAdminLoggedIn) {
+                adminPanel.classList.remove('hidden');
+                refreshAdminPanel();
+            } else {
+                adminLogin.classList.remove('hidden');
+                adminPassword.value = '';
+                loginError.textContent = '';
+            }
+        };
+        
+        // Вход в админку
+        adminLoginBtn.onclick = () => {
+            if (adminPassword.value === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
+                adminLogin.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+                refreshAdminPanel();
+                addAction('Админ', 'Вошёл в админ панель');
+            } else {
+                loginError.textContent = '❌ Неверный пароль';
+            }
+        };
+        
+        // Закрытие админки
+        closeAdminPanelBtn.onclick = () => {
+            adminPanel.classList.add('hidden');
+        };
+        
+        // Нажатие Enter в поле пароля
+        adminPassword.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') adminLoginBtn.click();
+        });
+        
+        // Кнопки админки
+        document.getElementById('clearActionsBtn').onclick = clearActions;
+        document.getElementById('exportActionsBtn').onclick = exportActions;
+        document.getElementById('clearAdminHistoryBtn').onclick = clearAdminHistory;
+        document.getElementById('resetGameStatsBtn').onclick = resetGameStats;
+        
+        // Загрузка действий при старте
+        loadAdminActions();
 
         // Telegram user
         const user = tg.initDataUnsafe?.user;
