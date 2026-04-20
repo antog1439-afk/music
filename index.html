@@ -74,7 +74,7 @@
             color: #fff;
         }
         
-        /* ПРИВЕТСТВЕННОЕ ОКНО - БЕЗ РАМКИ, ТОЛЬКО ИЕРОГЛИФЫ */
+        /* ПРИВЕТСТВЕННОЕ ОКНО */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -113,7 +113,6 @@
             100% { transform: translateY(0px); }
         }
         
-        /* КРАСИВЫЕ ИЕРОГЛИФЫ (японские/китайские символы) */
         .welcome-kanji {
             font-size: 56px;
             font-weight: 400;
@@ -453,6 +452,24 @@
         .vk-btn { background: #0077ff; }
         .spotify-btn { background: #1db954; }
         
+        /* КНОПКА ПОДПИСКИ */
+        .subscribe-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .subscribe-btn.subscribed {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
         /* ИГРА */
         .game-question {
             text-align: center;
@@ -501,6 +518,26 @@
             to { opacity: 1; transform: translateY(0);}
         }
         
+        /* Уведомление */
+        .notification-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 12px 16px;
+            z-index: 150;
+            animation: slideUp 0.3s ease;
+            border-left: 4px solid #1db954;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
         @media (max-width: 480px) {
             body { padding: 16px; }
             .menu-btn { width: 220px; padding: 12px 20px; }
@@ -526,6 +563,11 @@
                 <span class="menu-icon">🎮</span>
                 <div class="menu-title">Игра</div>
                 <div class="menu-desc">Угадай исполнителя</div>
+            </div>
+            <div class="menu-btn" id="goToSubscriptionsBtn">
+                <span class="menu-icon">🔔</span>
+                <div class="menu-title">Подписки</div>
+                <div class="menu-desc">Мои исполнители</div>
             </div>
         </div>
 
@@ -566,6 +608,17 @@
                 </div>
             </div>
             <div class="user-info">🎮 Угадай трек</div>
+        </div>
+
+        <!-- ЭКРАН ПОДПИСОК -->
+        <div id="subscriptionsScreen" class="hidden">
+            <button class="back-btn" id="backToMenuFromSubs">← Назад</button>
+            <div class="card">
+                <div class="section-title">🔔 МОИ ПОДПИСКИ</div>
+                <div id="subscriptionsList" style="margin-top: 12px;">
+                    <div style="text-align:center; padding:20px; color:gray;">Загрузка...</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -616,7 +669,7 @@
         tg.ready();
         tg.expand();
 
-        // ========== ПРИВЕТСТВИЕ БЕЗ РАМКИ, С ИЕРОГЛИФАМИ ==========
+        // ========== ПРИВЕТСТВИЕ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
             if (!welcomeShown) {
@@ -645,6 +698,9 @@
 
         // ========== ПЕРЕМЕННЫЕ ==========
         let currentSearchMode = 'artist';
+        let currentArtist = null;
+        let currentArtistId = null;
+        let subscriptions = [];
 
         // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
         function loadSavedAppearance() {
@@ -686,6 +742,7 @@
             document.body.classList.remove('has-bg');
             document.body.classList.add('default-bg');
             localStorage.setItem('music_bot_background', 'default');
+            syncToBot('sync_background', 'default', '');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
         
@@ -701,6 +758,7 @@
                     document.body.classList.remove('default-bg');
                     document.body.classList.add('has-bg');
                     localStorage.setItem('music_bot_background', imgUrl);
+                    syncToBot('sync_background', 'image', imgUrl);
                     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 };
                 reader.readAsDataURL(input.files[0]);
@@ -716,6 +774,7 @@
                 document.body.style.backgroundImage = '';
                 document.body.classList.remove('default-bg', 'has-bg');
                 localStorage.setItem('music_bot_background', color);
+                syncToBot('sync_background', 'color', color);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             };
             colorInput.click();
@@ -726,24 +785,37 @@
             document.body.style.backgroundImage = '';
             document.body.classList.remove('default-bg', 'has-bg');
             localStorage.setItem('music_bot_background', gradient);
+            syncToBot('sync_background', 'gradient', gradient);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
         
         function changeButtonColor(color) {
             document.documentElement.style.setProperty('--button-color', color);
             localStorage.setItem('music_bot_button_color', color);
+            syncToBot('sync_button_color', color, '');
         }
         
         function changeCardOpacity(opacity) {
             document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${opacity})`);
             localStorage.setItem('music_bot_card_opacity', opacity);
+            syncToBot('sync_card_opacity', opacity, '');
         }
         
         function toggleDarkTheme() {
             document.body.classList.toggle('dark-theme');
             const isDark = document.body.classList.contains('dark-theme');
             localStorage.setItem('music_bot_theme', isDark ? 'dark' : 'light');
+            syncToBot('sync_theme', isDark ? 'dark' : 'light', '');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        // Синхронизация с ботом
+        function syncToBot(action, value, extra) {
+            tg.sendData(JSON.stringify({
+                action: action,
+                value: value,
+                extra: extra
+            }));
         }
 
         // Модалка настроек
@@ -787,6 +859,7 @@
         const menuScreen = document.getElementById('menuScreen');
         const musicScreen = document.getElementById('musicScreen');
         const gameScreen = document.getElementById('gameScreen');
+        const subscriptionsScreen = document.getElementById('subscriptionsScreen');
 
         document.getElementById('goToMusicBtn').onclick = () => {
             menuScreen.classList.add('hidden');
@@ -797,6 +870,11 @@
             menuScreen.classList.add('hidden');
             gameScreen.classList.remove('hidden');
         };
+        document.getElementById('goToSubscriptionsBtn').onclick = () => {
+            menuScreen.classList.add('hidden');
+            subscriptionsScreen.classList.remove('hidden');
+            loadSubscriptionsList();
+        };
         document.getElementById('backToMenuFromMusic').onclick = () => {
             musicScreen.classList.add('hidden');
             menuScreen.classList.remove('hidden');
@@ -805,6 +883,82 @@
             gameScreen.classList.add('hidden');
             menuScreen.classList.remove('hidden');
         };
+        document.getElementById('backToMenuFromSubs').onclick = () => {
+            subscriptionsScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+        };
+
+        // ========== ПОДПИСКИ ==========
+        function loadSubscriptionsList() {
+            const container = document.getElementById('subscriptionsList');
+            tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
+            
+            // Временное отображение
+            container.innerHTML = '<div style="text-align:center; padding:20px;">Загрузка подписок...</div>';
+        }
+
+        function updateSubscriptionsList(subsData) {
+            const container = document.getElementById('subscriptionsList');
+            subscriptions = subsData.subscriptions || [];
+            
+            if (subscriptions.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:20px; color:gray;">
+                        🔔 У вас пока нет подписок<br><br>
+                        Найдите исполнителя и нажмите<br>
+                        «Подписаться на новинки»
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            for (let i = 0; i < subscriptions.length; i++) {
+                const artist = subscriptions[i];
+                const date = new Date(artist.subscribed_at * 1000).toLocaleDateString('ru-RU');
+                html += `
+                    <div style="background: rgba(0,0,0,0.05); border-radius: 16px; padding: 12px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 700; font-size: 16px;">🎤 ${escapeHtml(artist.name)}</div>
+                                <div style="font-size: 11px; color: gray;">Подписан: ${date}</div>
+                            </div>
+                            <button onclick="unsubscribeArtist('${escapeHtml(artist.name)}')" 
+                                    style="background: #dc3545; border: none; padding: 6px 12px; border-radius: 20px; color: white; font-size: 12px;">
+                                Отписаться
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function unsubscribeArtist(artistName) {
+            tg.sendData(JSON.stringify({
+                action: 'unsubscribe',
+                artist: artistName
+            }));
+            showNotification(`🔕 Вы отписались от ${artistName}`);
+            setTimeout(() => loadSubscriptionsList(), 500);
+        }
+
+        function subscribeToArtist(artistName, artistId) {
+            tg.sendData(JSON.stringify({
+                action: 'subscribe',
+                artist: artistName,
+                artist_id: artistId
+            }));
+            showNotification(`✅ Вы подписались на ${artistName}!`);
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification-toast';
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
 
         // ========== ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ПОИСКА ==========
         function setSearchMode(mode) {
@@ -852,6 +1006,15 @@
             const resultDiv = document.getElementById('musicResult');
             
             if (currentSearchMode === 'artist') {
+                currentArtist = query;
+                currentArtistId = null;
+                
+                // Проверяем, подписан ли пользователь
+                const isSubscribed = subscriptions.some(s => s.name.toLowerCase() === query.toLowerCase());
+                const subscribeBtnHtml = isSubscribed 
+                    ? `<div class="subscribe-btn subscribed" onclick="unsubscribeArtist('${escapeHtml(query)}')">🔔 Отписаться от новинок</div>`
+                    : `<div class="subscribe-btn" onclick="subscribeToArtist('${escapeHtml(query)}', '')">🔔 Подписаться на новинки</div>`;
+                
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎤 ${escapeHtml(query)}</div>
@@ -862,11 +1025,20 @@
                             <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                             <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                         </div>
+                        ${subscribeBtnHtml}
                     </div>
                 `;
             } else {
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 if (foundTrack) {
+                    currentArtist = foundTrack.artist;
+                    currentArtistId = null;
+                    
+                    const isSubscribed = subscriptions.some(s => s.name.toLowerCase() === foundTrack.artist.toLowerCase());
+                    const subscribeBtnHtml = isSubscribed 
+                        ? `<div class="subscribe-btn subscribed" onclick="unsubscribeArtist('${escapeHtml(foundTrack.artist)}')">🔔 Отписаться от новинок</div>`
+                        : `<div class="subscribe-btn" onclick="subscribeToArtist('${escapeHtml(foundTrack.artist)}', '')">🔔 Подписаться на новинки</div>`;
+                    
                     const artistLinks = {
                         yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.artist)}`,
                         youtube: `https://music.youtube.com/search?q=${encodeURIComponent(foundTrack.artist)}`,
@@ -889,6 +1061,7 @@
                                 <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                 <button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                             </div>
+                            ${subscribeBtnHtml}
                         </div>
                     `;
                 } else {
@@ -1048,6 +1221,16 @@
                 return m;
             });
         }
+
+        // Обработка ответов от бота
+        tg.onEvent('web_app_data_send', function(data) {
+            try {
+                const response = JSON.parse(data);
+                if (response.subscriptions) {
+                    updateSubscriptionsList(response);
+                }
+            } catch(e) {}
+        });
 
         // Telegram user
         const user = tg.initDataUnsafe?.user;
