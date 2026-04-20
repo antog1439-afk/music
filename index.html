@@ -74,6 +74,22 @@
             color: #fff;
         }
         
+        body.dark-theme .search-input {
+            background: #2a2a2a;
+            color: #fff;
+            border-color: #444;
+        }
+        
+        body.dark-theme .result-card {
+            background: rgba(40, 40, 45, 0.9);
+            color: #fff;
+        }
+        
+        body.dark-theme .game-option {
+            background: #2a2a2a;
+            color: #fff;
+        }
+        
         /* ПРИВЕТСТВЕННОЕ ОКНО */
         .welcome-overlay {
             position: fixed;
@@ -400,6 +416,10 @@
             text-transform: uppercase;
         }
         
+        body.dark-theme .section-title {
+            color: #aaa;
+        }
+        
         .popular-grid {
             display: flex;
             flex-wrap: wrap;
@@ -470,6 +490,44 @@
             background: linear-gradient(135deg, #28a745, #20c997);
         }
         
+        /* ИСТОРИЯ ПОИСКА */
+        .history-item {
+            background: rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .history-item:active {
+            transform: scale(0.98);
+            background: rgba(0,0,0,0.1);
+        }
+        
+        body.dark-theme .history-item {
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .history-query {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        
+        .history-date {
+            font-size: 11px;
+            color: gray;
+        }
+        
+        .history-type {
+            font-size: 11px;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.1);
+        }
+        
         /* ИГРА */
         .game-question {
             text-align: center;
@@ -513,11 +571,6 @@
             cursor: pointer;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-        
         /* Уведомление */
         .notification-toast {
             position: fixed;
@@ -531,11 +584,40 @@
             z-index: 150;
             animation: slideUp 0.3s ease;
             border-left: 4px solid #1db954;
+            color: white;
         }
         
         @keyframes slideUp {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Табы */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 8px;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            background: rgba(0,0,0,0.05);
+        }
+        
+        .tab.active {
+            background: var(--button-color, #2481cc);
+            color: white;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
         }
         
         @media (max-width: 480px) {
@@ -563,6 +645,11 @@
                 <span class="menu-icon">🎮</span>
                 <div class="menu-title">Игра</div>
                 <div class="menu-desc">Угадай исполнителя</div>
+            </div>
+            <div class="menu-btn" id="goToHistoryBtn">
+                <span class="menu-icon">📜</span>
+                <div class="menu-title">История</div>
+                <div class="menu-desc">Ваши поиски</div>
             </div>
             <div class="menu-btn" id="goToSubscriptionsBtn">
                 <span class="menu-icon">🔔</span>
@@ -608,6 +695,18 @@
                 </div>
             </div>
             <div class="user-info">🎮 Угадай трек</div>
+        </div>
+
+        <!-- ЭКРАН ИСТОРИИ -->
+        <div id="historyScreen" class="hidden">
+            <button class="back-btn" id="backToMenuFromHistory">← Назад</button>
+            <div class="card">
+                <div class="section-title">📜 ИСТОРИЯ ПОИСКА</div>
+                <div id="historyList" style="margin-top: 12px;">
+                    <div style="text-align:center; padding:20px; color:gray;">Загрузка...</div>
+                </div>
+                <button id="clearHistoryBtn" class="subscribe-btn" style="background: #dc3545; margin-top: 16px;">🗑 Очистить историю</button>
+            </div>
         </div>
 
         <!-- ЭКРАН ПОДПИСОК -->
@@ -701,6 +800,7 @@
         let currentArtist = null;
         let currentArtistId = null;
         let subscriptions = [];
+        let searchHistory = [];
 
         // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
         function loadSavedAppearance() {
@@ -809,7 +909,6 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Синхронизация с ботом
         function syncToBot(action, value, extra) {
             tg.sendData(JSON.stringify({
                 action: action,
@@ -859,6 +958,7 @@
         const menuScreen = document.getElementById('menuScreen');
         const musicScreen = document.getElementById('musicScreen');
         const gameScreen = document.getElementById('gameScreen');
+        const historyScreen = document.getElementById('historyScreen');
         const subscriptionsScreen = document.getElementById('subscriptionsScreen');
 
         document.getElementById('goToMusicBtn').onclick = () => {
@@ -869,6 +969,11 @@
         document.getElementById('goToGameBtn').onclick = () => {
             menuScreen.classList.add('hidden');
             gameScreen.classList.remove('hidden');
+        };
+        document.getElementById('goToHistoryBtn').onclick = () => {
+            menuScreen.classList.add('hidden');
+            historyScreen.classList.remove('hidden');
+            loadSearchHistory();
         };
         document.getElementById('goToSubscriptionsBtn').onclick = () => {
             menuScreen.classList.add('hidden');
@@ -883,17 +988,104 @@
             gameScreen.classList.add('hidden');
             menuScreen.classList.remove('hidden');
         };
+        document.getElementById('backToMenuFromHistory').onclick = () => {
+            historyScreen.classList.add('hidden');
+            menuScreen.classList.remove('hidden');
+        };
         document.getElementById('backToMenuFromSubs').onclick = () => {
             subscriptionsScreen.classList.add('hidden');
             menuScreen.classList.remove('hidden');
+        };
+
+        // ========== ИСТОРИЯ ПОИСКА (ЛОКАЛЬНАЯ) ==========
+        function loadSearchHistory() {
+            const saved = localStorage.getItem('mini_app_search_history');
+            if (saved) {
+                searchHistory = JSON.parse(saved);
+            } else {
+                searchHistory = [];
+            }
+            displaySearchHistory();
+        }
+
+        function saveSearchHistory() {
+            localStorage.setItem('mini_app_search_history', JSON.stringify(searchHistory.slice(0, 30)));
+        }
+
+        function addToLocalHistory(query, type, artistName, artistId) {
+            searchHistory.unshift({
+                query: query,
+                type: type,
+                artistName: artistName,
+                artistId: artistId,
+                date: new Date().toLocaleString('ru-RU'),
+                timestamp: Date.now()
+            });
+            // Ограничиваем до 50 записей
+            if (searchHistory.length > 50) searchHistory = searchHistory.slice(0, 50);
+            saveSearchHistory();
+            
+            // Отправляем в бот для синхронизации
+            syncToBot('add_to_history', '', JSON.stringify({
+                query: query,
+                type: type,
+                artist_name: artistName,
+                artist_id: artistId
+            }));
+        }
+
+        function displaySearchHistory() {
+            const container = document.getElementById('historyList');
+            if (searchHistory.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:20px; color:gray;">
+                        📜 История поиска пуста<br><br>
+                        Найдите несколько треков, и они появятся здесь!
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            for (let i = 0; i < searchHistory.length; i++) {
+                const item = searchHistory[i];
+                const typeIcon = item.type === 'track' ? '🎵' : '🎤';
+                const typeText = item.type === 'track' ? 'Трек' : 'Исполнитель';
+                
+                html += `
+                    <div class="history-item" onclick="repeatSearch('${escapeHtml(item.query)}', '${item.type}')">
+                        <div class="history-query">${typeIcon} ${escapeHtml(item.query)}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                            <span class="history-type">${typeText}</span>
+                            <span class="history-date">${item.date}</span>
+                        </div>
+                        ${item.artistName ? `<div style="font-size: 12px; margin-top: 4px; color: gray;">🎤 ${escapeHtml(item.artistName)}</div>` : ''}
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function repeatSearch(query, type) {
+            document.getElementById('searchInput').value = query;
+            setSearchMode(type);
+            performSearch();
+            showNotification(`🔍 Повторный поиск: ${query}`);
+        }
+
+        document.getElementById('clearHistoryBtn').onclick = () => {
+            if (confirm('Очистить всю историю поиска?')) {
+                searchHistory = [];
+                saveSearchHistory();
+                displaySearchHistory();
+                showNotification('🗑 История поиска очищена!');
+            }
         };
 
         // ========== ПОДПИСКИ ==========
         function loadSubscriptionsList() {
             const container = document.getElementById('subscriptionsList');
             tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
-            
-            // Временное отображение
             container.innerHTML = '<div style="text-align:center; padding:20px;">Загрузка подписок...</div>';
         }
 
@@ -996,6 +1188,9 @@
             const query = document.getElementById('searchInput').value.trim();
             if(!query) return;
             
+            // Добавляем в историю
+            addToLocalHistory(query, currentSearchMode, currentArtist, currentArtistId);
+            
             const links = {
                 yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
                 youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`,
@@ -1009,7 +1204,6 @@
                 currentArtist = query;
                 currentArtistId = null;
                 
-                // Проверяем, подписан ли пользователь
                 const isSubscribed = subscriptions.some(s => s.name.toLowerCase() === query.toLowerCase());
                 const subscribeBtnHtml = isSubscribed 
                     ? `<div class="subscribe-btn subscribed" onclick="unsubscribeArtist('${escapeHtml(query)}')">🔔 Отписаться от новинок</div>`
@@ -1228,10 +1422,14 @@
                 const response = JSON.parse(data);
                 if (response.subscriptions) {
                     updateSubscriptionsList(response);
+                    subscriptions = response.subscriptions;
                 }
             } catch(e) {}
         });
 
+        // Загружаем историю и подписки при старте
+        loadSearchHistory();
+        
         // Telegram user
         const user = tg.initDataUnsafe?.user;
         if(user && user.first_name) document.getElementById('userName').innerText = user.first_name;
