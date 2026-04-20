@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Админ панель</title>
+    <title>Music Hub - Обложки треков</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -74,184 +74,28 @@
             color: #fff;
         }
         
-        /* Админ панель */
-        .admin-badge {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            color: #ffcc00;
-            z-index: 150;
-            cursor: pointer;
+        body.dark-theme .search-input {
+            background: #2a2a2a;
+            color: #fff;
+            border-color: #444;
         }
         
-        .admin-panel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 400;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #333;
-        }
-        
-        .admin-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #ffcc00;
-        }
-        
-        .admin-close {
-            background: #dc3545;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-        }
-        
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        
-        .stat-card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 12px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #ffcc00;
-        }
-        
-        .stat-label {
-            font-size: 11px;
-            color: #aaa;
-            margin-top: 4px;
-        }
-        
-        .admin-section {
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .admin-section-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            color: #ffcc00;
-        }
-        
-        .action-item {
-            background: rgba(255,255,255,0.08);
-            border-radius: 12px;
-            padding: 10px;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-        
-        .action-time {
-            color: #888;
-            font-size: 10px;
-            margin-bottom: 4px;
-        }
-        
-        .action-text {
+        body.dark-theme .result-card {
+            background: rgba(40, 40, 45, 0.9);
             color: #fff;
         }
         
-        .clear-btn {
-            background: #dc3545;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 10px;
-            width: 100%;
+        body.dark-theme .game-option {
+            background: #2a2a2a;
+            color: #fff;
         }
         
-        .export-btn {
-            background: #28a745;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 10px;
-            width: 100%;
+        body.dark-theme .section-title {
+            color: #aaa;
         }
         
-        .admin-login {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 500;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .login-box {
-            background: rgba(255,255,255,0.1);
-            border-radius: 24px;
-            padding: 24px;
-            width: 280px;
-            text-align: center;
-        }
-        
-        .login-input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 30px;
-            border: none;
-            margin: 16px 0;
-            font-size: 16px;
-            text-align: center;
-        }
-        
-        .login-btn {
-            background: #28a745;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 30px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        .login-error {
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 8px;
+        body.dark-theme .result-card div[style*="color: #666"] {
+            color: #aaa !important;
         }
         
         /* ПРИВЕТСТВЕННОЕ ОКНО */
@@ -632,6 +476,23 @@
         .vk-btn { background: #0077ff; }
         .spotify-btn { background: #1db954; }
         
+        /* Стили для обложек */
+        .track-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .result-cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
         /* ИГРА */
         .game-question {
             text-align: center;
@@ -790,216 +651,11 @@
         </div>
     </div>
 
-    <!-- АДМИН ПАНЕЛЬ (скрыта по умолчанию) -->
-    <div id="adminPanel" class="admin-panel hidden">
-        <div class="admin-header">
-            <div class="admin-title">👑 Админ панель</div>
-            <button class="admin-close" id="closeAdminPanel">✕ Закрыть</button>
-        </div>
-        
-        <div class="admin-stats" id="adminStats">
-            <!-- Статистика будет здесь -->
-        </div>
-        
-        <div class="admin-section">
-            <div class="admin-section-title">📊 Действия пользователя</div>
-            <div id="actionsList"></div>
-            <button class="clear-btn" id="clearActionsBtn">🗑 Очистить все действия</button>
-            <button class="export-btn" id="exportActionsBtn">📤 Экспорт действий (JSON)</button>
-        </div>
-        
-        <div class="admin-section">
-            <div class="admin-section-title">📜 История поиска</div>
-            <div id="adminHistoryList"></div>
-            <button class="clear-btn" id="clearAdminHistoryBtn">🗑 Очистить историю</button>
-        </div>
-        
-        <div class="admin-section">
-            <div class="admin-section-title">🎮 Статистика игры</div>
-            <div id="gameStats"></div>
-            <button class="clear-btn" id="resetGameStatsBtn">🔄 Сбросить статистику игры</button>
-        </div>
-    </div>
-
-    <!-- ОКНО ВХОДА В АДМИНКУ -->
-    <div id="adminLogin" class="admin-login">
-        <div class="login-box">
-            <div style="font-size: 48px; margin-bottom: 16px;">👑</div>
-            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">Вход в админ панель</div>
-            <div style="font-size: 12px; color: #aaa; margin-bottom: 16px;">Введите пароль для доступа</div>
-            <input type="password" id="adminPassword" class="login-input" placeholder="Пароль">
-            <button class="login-btn" id="adminLoginBtn">Войти</button>
-            <div id="loginError" class="login-error"></div>
-        </div>
-    </div>
-
-    <!-- БЕЙДЖ АДМИНА (виден всегда) -->
-    <div class="admin-badge" id="adminBadge">
-        👑 ADMIN
-    </div>
-
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // ========== АДМИН ПАНЕЛЬ ==========
-        // Пароль для входа (ИЗМЕНИТЕ НА СВОЙ!)
-        const ADMIN_PASSWORD = "admin123";
-        
-        // Хранилище действий
-        let adminActions = [];
-        let isAdminLoggedIn = false;
-        
-        // Загрузка действий из localStorage
-        function loadAdminActions() {
-            const saved = localStorage.getItem('admin_actions');
-            if (saved) {
-                adminActions = JSON.parse(saved);
-            } else {
-                adminActions = [];
-            }
-            updateActionsList();
-        }
-        
-        function saveAdminActions() {
-            localStorage.setItem('admin_actions', JSON.stringify(adminActions));
-        }
-        
-        function addAction(actionType, details) {
-            const action = {
-                id: Date.now(),
-                type: actionType,
-                details: details,
-                time: new Date().toLocaleString(),
-                timestamp: Date.now()
-            };
-            adminActions.unshift(action);
-            // Храним последние 200 действий
-            if (adminActions.length > 200) adminActions = adminActions.slice(0, 200);
-            saveAdminActions();
-            if (isAdminLoggedIn) updateActionsList();
-        }
-        
-        function updateActionsList() {
-            const container = document.getElementById('actionsList');
-            if (adminActions.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Нет действий</div>';
-                return;
-            }
-            
-            container.innerHTML = adminActions.map(action => `
-                <div class="action-item">
-                    <div class="action-time">🕐 ${action.time}</div>
-                    <div class="action-text">📌 ${action.type}: ${escapeHtml(action.details)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function updateAdminStats() {
-            const stats = {
-                searches: adminActions.filter(a => a.type === 'Поиск').length,
-                gamePlays: adminActions.filter(a => a.type === 'Игра').length,
-                totalActions: adminActions.length
-            };
-            
-            document.getElementById('adminStats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${stats.searches}</div>
-                    <div class="stat-label">🔍 Поисков</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.gamePlays}</div>
-                    <div class="stat-label">🎮 Игр сыграно</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.totalActions}</div>
-                    <div class="stat-label">📊 Всего действий</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${adminActions.length > 0 ? Math.round(adminActions.filter(a => a.timestamp > Date.now() - 86400000).length) : 0}</div>
-                    <div class="stat-label">📅 За 24 часа</div>
-                </div>
-            `;
-        }
-        
-        function updateAdminHistory() {
-            const saved = localStorage.getItem('search_history');
-            const history = saved ? JSON.parse(saved) : [];
-            const container = document.getElementById('adminHistoryList');
-            
-            if (history.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">История пуста</div>';
-                return;
-            }
-            
-            container.innerHTML = history.slice(0, 20).map(item => `
-                <div class="action-item">
-                    <div class="action-time">🕐 ${item.date}</div>
-                    <div class="action-text">${item.type === 'artist' ? '🎤' : '🎵'} ${escapeHtml(item.query)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function updateGameStats() {
-            const saved = localStorage.getItem('music_game_stats');
-            const stats = saved ? JSON.parse(saved) : { gamesPlayed: 0, bestScore: 0 };
-            const container = document.getElementById('gameStats');
-            container.innerHTML = `
-                <div class="action-item">
-                    <div class="action-text">🎮 Сыграно игр: ${stats.gamesPlayed}</div>
-                </div>
-                <div class="action-item">
-                    <div class="action-text">⭐ Лучший счёт: ${stats.bestScore}/8</div>
-                </div>
-            `;
-        }
-        
-        function clearActions() {
-            if (confirm('Очистить все записи действий?')) {
-                adminActions = [];
-                saveAdminActions();
-                updateActionsList();
-                updateAdminStats();
-                addAction('Админ', 'Очистил историю действий');
-            }
-        }
-        
-        function exportActions() {
-            const data = JSON.stringify(adminActions, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `admin_actions_${new Date().toISOString().slice(0,19)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            addAction('Админ', 'Экспортировал действия');
-        }
-        
-        function clearAdminHistory() {
-            if (confirm('Очистить всю историю поиска?')) {
-                localStorage.removeItem('search_history');
-                updateAdminHistory();
-                addAction('Админ', 'Очистил историю поиска');
-            }
-        }
-        
-        function resetGameStats() {
-            if (confirm('Сбросить статистику игры?')) {
-                localStorage.setItem('music_game_stats', JSON.stringify({ gamesPlayed: 0, bestScore: 0 }));
-                updateGameStats();
-                addAction('Админ', 'Сбросил статистику игры');
-            }
-        }
-        
-        function refreshAdminPanel() {
-            updateActionsList();
-            updateAdminStats();
-            updateAdminHistory();
-            updateGameStats();
-        }
-        
         // ========== ПРИВЕТСТВИЕ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
@@ -1145,24 +801,24 @@
             if (e.target === settingsModal) settingsModal.classList.add('hidden');
         };
 
-        // ========== БАЗА ТРЕКОВ ==========
+        // ========== БАЗА ТРЕКОВ С ОБЛОЖКАМИ ==========
         const tracksDatabase = [
-            { track: "Останься", artist: "Асия" },
-            { track: "Твой поцелуй", artist: "Асия" },
-            { track: "Случилась осень", artist: "Мари Краймбрери" },
-            { track: "За деньги да", artist: "INSTASAMKA" },
-            { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
-            { track: "Втюрилась", artist: "Дора" },
-            { track: "Дора дура", artist: "Дора" },
-            { track: "Там, за облаками", artist: "NЮ" },
-            { track: "Gimme The Loot", artist: "Big Baby Tape" },
-            { track: "Cadillac", artist: "Моргенштерн" },
-            { track: "Кукла колдуна", artist: "Король и Шут" },
-            { track: "Believer", artist: "Imagine Dragons" },
-            { track: "Bad Guy", artist: "Billie Eilish" },
-            { track: "Blinding Lights", artist: "The Weeknd" },
-            { track: "Группа крови", artist: "Кино" },
-            { track: "Искала", artist: "Земфира" }
+            { track: "Останься", artist: "Асия", cover: "https://avatars.yandex.net/get-music-content/39839/4c9f3a5a.p.200x200/1000x1000" },
+            { track: "Твой поцелуй", artist: "Асия", cover: "https://avatars.yandex.net/get-music-content/39839/4c9f3a5a.p.200x200/1000x1000" },
+            { track: "Случилась осень", artist: "Мари Краймбрери", cover: "https://avatars.yandex.net/get-music-content/39839/7e5c3b2a.p.200x200/1000x1000" },
+            { track: "За деньги да", artist: "INSTASAMKA", cover: "https://avatars.yandex.net/get-music-content/39839/8a1f4c3d.p.200x200/1000x1000" },
+            { track: "Силиконовый гном", artist: "Мэйби Бэйби", cover: "https://avatars.yandex.net/get-music-content/39839/2b9e5d7a.p.200x200/1000x1000" },
+            { track: "Втюрилась", artist: "Дора", cover: "https://avatars.yandex.net/get-music-content/39839/6c3a8b2e.p.200x200/1000x1000" },
+            { track: "Дора дура", artist: "Дора", cover: "https://avatars.yandex.net/get-music-content/39839/6c3a8b2e.p.200x200/1000x1000" },
+            { track: "Там, за облаками", artist: "NЮ", cover: "https://avatars.yandex.net/get-music-content/39839/1d5e9f2a.p.200x200/1000x1000" },
+            { track: "Gimme The Loot", artist: "Big Baby Tape", cover: "https://avatars.yandex.net/get-music-content/39839/3e7a2b9c.p.200x200/1000x1000" },
+            { track: "Cadillac", artist: "Моргенштерн", cover: "https://avatars.yandex.net/get-music-content/39839/5f8c2d4a.p.200x200/1000x1000" },
+            { track: "Кукла колдуна", artist: "Король и Шут", cover: "https://avatars.yandex.net/get-music-content/39839/7a3e5c9b.p.200x200/1000x1000" },
+            { track: "Believer", artist: "Imagine Dragons", cover: "https://avatars.yandex.net/get-music-content/39839/4b8d2a6e.p.200x200/1000x1000" },
+            { track: "Bad Guy", artist: "Billie Eilish", cover: "https://avatars.yandex.net/get-music-content/39839/9c2e4a7d.p.200x200/1000x1000" },
+            { track: "Blinding Lights", artist: "The Weeknd", cover: "https://avatars.yandex.net/get-music-content/39839/2d6b8a4e.p.200x200/1000x1000" },
+            { track: "Группа крови", artist: "Кино", cover: "https://avatars.yandex.net/get-music-content/39839/5e7c2a9b.p.200x200/1000x1000" },
+            { track: "Искала", artist: "Земфира", cover: "https://avatars.yandex.net/get-music-content/39839/8a3b6e2c.p.200x200/1000x1000" }
         ];
 
         const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons"];
@@ -1176,12 +832,10 @@
             menuScreen.classList.add('hidden');
             musicScreen.classList.remove('hidden');
             loadPopularArtists();
-            addAction('Переход', 'Открыл раздел Музыка');
         };
         document.getElementById('goToGameBtn').onclick = () => {
             menuScreen.classList.add('hidden');
             gameScreen.classList.remove('hidden');
-            addAction('Переход', 'Открыл раздел Игра');
         };
         document.getElementById('backToMenuFromMusic').onclick = () => {
             musicScreen.classList.add('hidden');
@@ -1210,7 +864,7 @@
             }
         }
 
-        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
+        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ С ОБЛОЖКАМИ ==========
         function loadPopularArtists() {
             const container = document.getElementById('popularGrid');
             container.innerHTML = popularArtistsList.map(artist => 
@@ -1228,9 +882,6 @@
             const query = document.getElementById('searchInput').value.trim();
             if(!query) return;
             
-            // Записываем действие в админку
-            addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
-            
             const links = {
                 yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
                 youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`,
@@ -1241,10 +892,22 @@
             const resultDiv = document.getElementById('musicResult');
             
             if (currentSearchMode === 'artist') {
+                // Поиск исполнителя с обложкой
+                const artistTracks = tracksDatabase.filter(t => 
+                    t.artist.toLowerCase().includes(query.toLowerCase())
+                );
+                const coverUrl = artistTracks.length > 0 ? artistTracks[0].cover : null;
+                
                 resultDiv.innerHTML = `
                     <div class="result-card">
-                        <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                        <div class="section-title">Слушать</div>
+                        <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
+                            ${coverUrl ? `<img src="${coverUrl}" style="width: 80px; height: 80px; border-radius: 16px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" onerror="this.style.display='none'">` : ''}
+                            <div>
+                                <div class="artist-name">🎤 ${escapeHtml(query)}</div>
+                                ${artistTracks.length > 0 ? `<div style="font-size: 13px; color: #666;">🎵 Популярные треки: ${artistTracks.slice(0,3).map(t => t.track).join(', ')}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="section-title">🎧 Слушать на платформах</div>
                         <div class="platform-buttons">
                             <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                             <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
@@ -1254,7 +917,11 @@
                     </div>
                 `;
             } else {
-                const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
+                // Поиск трека с обложкой
+                const foundTrack = tracksDatabase.find(t => 
+                    t.track.toLowerCase().includes(query.toLowerCase())
+                );
+                
                 if (foundTrack) {
                     const artistLinks = {
                         yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.artist)}`,
@@ -1262,18 +929,24 @@
                         vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(foundTrack.artist)}&c%5Bsection%5D=audio`,
                         spotify: `https://open.spotify.com/search/${encodeURIComponent(foundTrack.artist)}`
                     };
+                    
                     resultDiv.innerHTML = `
                         <div class="result-card">
-                            <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
-                            <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: var(--button-color);">${escapeHtml(foundTrack.artist)}</strong></div>
-                            <div class="section-title">Слушать трек</div>
+                            <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
+                                <img src="${foundTrack.cover}" style="width: 80px; height: 80px; border-radius: 16px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" onerror="this.src='https://via.placeholder.com/80x80?text=🎵'">
+                                <div>
+                                    <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
+                                    <div style="font-size: 14px; color: #666;">🎤 ${escapeHtml(foundTrack.artist)}</div>
+                                </div>
+                            </div>
+                            <div class="section-title">🎧 Слушать трек</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                 <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                                 <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
-                            <div class="section-title">Страница исполнителя</div>
+                            <div class="section-title">🎤 Страница исполнителя</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                 <button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
@@ -1284,7 +957,7 @@
                     resultDiv.innerHTML = `
                         <div class="result-card">
                             <div class="artist-name">🎵 "${escapeHtml(query)}"</div>
-                            <div class="info-text">Трек не найден в базе</div>
+                            <div class="info-text">❌ Трек не найден в базе</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button>
                                 <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
@@ -1301,7 +974,6 @@
             setSearchMode('track');
             document.getElementById('searchInput').value = randomTrack.track;
             performSearch();
-            addAction('Случайный трек', `Выбран трек: ${randomTrack.track}`);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
@@ -1351,7 +1023,6 @@
             startBtn.textContent = '🎮 Игра идёт...';
             startBtn.style.background = '#28a745';
             if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            addAction('Игра', 'Начал новую игру');
             showGameQuestion();
         }
 
@@ -1425,7 +1096,6 @@
             const startBtn = document.getElementById('startGameBtn');
             startBtn.textContent = '▶ Начать игру';
             startBtn.style.background = '#9b59b6';
-            addAction('Игра', `Закончил игру со счётом ${gameScore}/${total}`);
         }
 
         document.getElementById('startGameBtn').onclick = startGame;
@@ -1440,59 +1110,6 @@
                 return m;
             });
         }
-
-        // ========== АДМИН ПАНЕЛЬ - УПРАВЛЕНИЕ ==========
-        const adminBadge = document.getElementById('adminBadge');
-        const adminPanel = document.getElementById('adminPanel');
-        const adminLogin = document.getElementById('adminLogin');
-        const adminPassword = document.getElementById('adminPassword');
-        const adminLoginBtn = document.getElementById('adminLoginBtn');
-        const loginError = document.getElementById('loginError');
-        const closeAdminPanelBtn = document.getElementById('closeAdminPanel');
-        
-        // Показываем окно входа при клике на бейдж
-        adminBadge.onclick = () => {
-            if (isAdminLoggedIn) {
-                adminPanel.classList.remove('hidden');
-                refreshAdminPanel();
-            } else {
-                adminLogin.classList.remove('hidden');
-                adminPassword.value = '';
-                loginError.textContent = '';
-            }
-        };
-        
-        // Вход в админку
-        adminLoginBtn.onclick = () => {
-            if (adminPassword.value === ADMIN_PASSWORD) {
-                isAdminLoggedIn = true;
-                adminLogin.classList.add('hidden');
-                adminPanel.classList.remove('hidden');
-                refreshAdminPanel();
-                addAction('Админ', 'Вошёл в админ панель');
-            } else {
-                loginError.textContent = '❌ Неверный пароль';
-            }
-        };
-        
-        // Закрытие админки
-        closeAdminPanelBtn.onclick = () => {
-            adminPanel.classList.add('hidden');
-        };
-        
-        // Нажатие Enter в поле пароля
-        adminPassword.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') adminLoginBtn.click();
-        });
-        
-        // Кнопки админки
-        document.getElementById('clearActionsBtn').onclick = clearActions;
-        document.getElementById('exportActionsBtn').onclick = exportActions;
-        document.getElementById('clearAdminHistoryBtn').onclick = clearAdminHistory;
-        document.getElementById('resetGameStatsBtn').onclick = resetGameStats;
-        
-        // Загрузка действий при старте
-        loadAdminActions();
 
         // Telegram user
         const user = tg.initDataUnsafe?.user;
