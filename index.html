@@ -5,36 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Music Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            transition: all 0.3s ease;
             padding: 20px;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
-        body.default-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        
-        .container { max-width: 500px; width: 100%; margin: 0 auto; position: relative; z-index: 1; }
+        .container { max-width: 500px; width: 100%; margin: 0 auto; }
         
         .card {
-            background: var(--card-bg, rgba(255, 255, 255, 0.95));
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 20px;
             margin-bottom: 16px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         }
-        
-        body.dark-theme .card { background: rgba(30, 30, 35, 0.95); color: #fff; }
-        body.dark-theme .search-input { background: #2a2a2a; color: #fff; border-color: #444; }
-        body.dark-theme .result-card { background: rgba(40, 40, 45, 0.9); color: #fff; }
         
         /* Меню */
         .menu-screen {
@@ -55,15 +45,15 @@
             width: 260px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.25s;
+            transition: all 0.2s;
         }
         
         .menu-btn:active { transform: scale(0.96); }
-        .menu-icon { font-size: 38px; display: block; margin-bottom: 6px; }
+        .menu-icon { font-size: 38px; display: block; }
         .menu-title { font-size: 22px; font-weight: 700; color: white; }
         .menu-desc { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 4px; }
         
-        /* Общие стили */
+        /* Общие */
         .back-btn {
             background: rgba(0,0,0,0.5);
             border: none;
@@ -72,6 +62,7 @@
             color: white;
             margin-bottom: 16px;
             cursor: pointer;
+            display: inline-block;
         }
         
         .search-box { display: flex; gap: 10px; margin: 12px 0; }
@@ -86,7 +77,7 @@
         }
         
         .search-btn {
-            background: var(--button-color, #2481cc);
+            background: #2481cc;
             border: none;
             padding: 0 20px;
             border-radius: 30px;
@@ -95,69 +86,18 @@
             cursor: pointer;
         }
         
-        .subscribe-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 40px;
-            text-align: center;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            color: white;
-        }
-        
-        .subscribe-btn.subscribed { background: linear-gradient(135deg, #28a745, #20c997); }
-        
-        .subscription-item {
-            background: rgba(0,0,0,0.05);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        body.dark-theme .subscription-item { background: rgba(255,255,255,0.08); }
-        
-        .unsub-btn {
-            background: #dc3545;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 10px;
-            border: 3px solid rgba(0,0,0,0.1);
-            border-radius: 50%;
-            border-top-color: var(--button-color, #2481cc);
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .hidden { display: none; }
-        
         .section-title {
             font-size: 12px;
             font-weight: 600;
-            margin: 12px 0 6px 0;
+            margin: 12px 0 6px;
             color: #6c757d;
             text-transform: uppercase;
         }
         
-        body.dark-theme .section-title { color: #aaa; }
-        
         .popular-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
         
         .popular-tag {
-            background: var(--button-color, #2481cc);
+            background: #2481cc;
             color: white;
             padding: 6px 14px;
             border-radius: 30px;
@@ -191,25 +131,42 @@
         .vk-btn { background: #0077ff; }
         .spotify-btn { background: #1db954; }
         
-        .notification-toast {
-            position: fixed;
-            bottom: 80px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.9);
-            border-radius: 16px;
-            padding: 12px 16px;
-            z-index: 150;
-            animation: slideUp 0.3s ease;
-            color: white;
+        /* Кнопка подписки */
+        .subscribe-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 40px;
             text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            color: white;
         }
         
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .subscribe-btn.subscribed { background: linear-gradient(135deg, #28a745, #20c997); }
+        
+        /* Подписки */
+        .subscription-item {
+            background: rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
+        .unsub-btn {
+            background: #dc3545;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        /* История */
         .history-item {
             background: rgba(0,0,0,0.05);
             border-radius: 16px;
@@ -218,29 +175,60 @@
             cursor: pointer;
         }
         
-        body.dark-theme .history-item { background: rgba(255,255,255,0.08); }
-        
         .history-query { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
         .history-date { font-size: 11px; color: gray; }
         
         /* Игра */
-        .game-question { text-align: center; }
-        .track-name { font-size: 22px; font-weight: 800; margin: 16px 0; }
-        .game-options { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
-        .game-option { background: #e9ecef; padding: 12px; border-radius: 40px; text-align: center; font-weight: 500; cursor: pointer; }
+        .game-option {
+            background: #e9ecef;
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            cursor: pointer;
+            margin: 8px 0;
+        }
+        
         .game-option.correct { background: #28a745; color: white; }
         .game-option.wrong { background: #dc3545; color: white; }
         
-        .user-info { font-size: 11px; text-align: center; margin-top: 16px; color: #6c757d; }
-        button { cursor: pointer; }
+        .track-name { font-size: 20px; font-weight: bold; margin: 16px 0; text-align: center; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px);}
-            to { opacity: 1; transform: translateY(0);}
+        /* Анимации */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top-color: #2481cc;
+            animation: spin 1s ease-in-out infinite;
         }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .notification-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            color: white;
+            z-index: 150;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .hidden { display: none; }
     </style>
 </head>
-<body class="default-bg">
+<body>
     <div class="container">
         <!-- ГЛАВНОЕ МЕНЮ -->
         <div id="menuScreen" class="menu-screen">
@@ -266,54 +254,47 @@
             </div>
         </div>
 
-        <!-- ЭКРАН МУЗЫКИ -->
+        <!-- МУЗЫКА -->
         <div id="musicScreen" class="hidden">
             <button class="back-btn" id="backToMenuFromMusic">← Назад</button>
             <div class="card">
                 <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Асия, Big Baby Tape...">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons...">
                     <button id="doSearchBtn" class="search-btn">Найти</button>
                 </div>
-                
                 <div class="section-title">🔥 ПОПУЛЯРНЫЕ</div>
                 <div class="popular-grid" id="popularGrid"></div>
-                
                 <div id="musicResult"></div>
             </div>
-            <div class="user-info">👤 <span id="userName">Music</span></div>
         </div>
 
-        <!-- ЭКРАН ИГРЫ -->
+        <!-- ИГРА -->
         <div id="gameScreen" class="hidden">
             <button class="back-btn" id="backToMenuFromGame">← Назад</button>
             <div class="card">
                 <div style="text-align: center;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">🎮</div>
-                    <button id="startGameBtn" style="background:#9b59b6; border:none; padding:10px 24px; border-radius:40px; color:white; font-weight:bold; margin:8px 0;">▶ Начать игру</button>
+                    <button id="startGameBtn" style="background:#9b59b6; border:none; padding:10px 24px; border-radius:40px; color:white; font-weight:bold;">▶ Начать игру</button>
                 </div>
-                <div id="gameContent">
-                    <div style="text-align:center; padding:20px; color:gray;">Нажми «Начать игру»</div>
-                </div>
+                <div id="gameContent"></div>
             </div>
-            <div class="user-info">🎮 Угадай трек</div>
         </div>
 
-        <!-- ЭКРАН ИСТОРИИ -->
+        <!-- ИСТОРИЯ -->
         <div id="historyScreen" class="hidden">
             <button class="back-btn" id="backToMenuFromHistory">← Назад</button>
             <div class="card">
                 <div class="section-title">📜 ИСТОРИЯ ПОИСКА</div>
-                <div id="historyList" style="margin-top: 12px;"></div>
+                <div id="historyList"></div>
                 <button id="clearHistoryBtn" class="subscribe-btn" style="background: #dc3545; margin-top: 16px;">🗑 Очистить историю</button>
             </div>
         </div>
 
-        <!-- ЭКРАН ПОДПИСОК -->
+        <!-- ПОДПИСКИ -->
         <div id="subscriptionsScreen" class="hidden">
             <button class="back-btn" id="backToMenuFromSubs">← Назад</button>
             <div class="card">
                 <div class="section-title">🔔 МОИ ПОДПИСКИ</div>
-                <div id="subscriptionsList" style="margin-top: 12px;"></div>
+                <div id="subscriptionsList"></div>
             </div>
         </div>
     </div>
@@ -326,263 +307,157 @@
         // ========== ПЕРЕМЕННЫЕ ==========
         let subscriptions = [];
         let searchHistory = [];
-        let pendingRequestId = null;
 
         // ========== УПРАВЛЕНИЕ ЭКРАНАМИ ==========
-        const menuScreen = document.getElementById('menuScreen');
-        const musicScreen = document.getElementById('musicScreen');
-        const gameScreen = document.getElementById('gameScreen');
-        const historyScreen = document.getElementById('historyScreen');
-        const subscriptionsScreen = document.getElementById('subscriptionsScreen');
+        function showScreen(screenId) {
+            document.querySelectorAll('#menuScreen, #musicScreen, #gameScreen, #historyScreen, #subscriptionsScreen').forEach(s => {
+                s.classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
 
-        document.getElementById('goToMusicBtn').onclick = () => {
-            menuScreen.classList.add('hidden');
-            musicScreen.classList.remove('hidden');
-            loadPopularArtists();
-        };
-        document.getElementById('goToGameBtn').onclick = () => {
-            menuScreen.classList.add('hidden');
-            gameScreen.classList.remove('hidden');
-        };
-        document.getElementById('goToHistoryBtn').onclick = () => {
-            menuScreen.classList.add('hidden');
-            historyScreen.classList.remove('hidden');
-            loadSearchHistory();
-        };
-        document.getElementById('goToSubscriptionsBtn').onclick = () => {
-            menuScreen.classList.add('hidden');
-            subscriptionsScreen.classList.remove('hidden');
-            loadSubscriptionsList();
-        };
+        document.getElementById('goToMusicBtn').onclick = () => { showScreen('musicScreen'); loadPopularArtists(); };
+        document.getElementById('goToGameBtn').onclick = () => { showScreen('gameScreen'); };
+        document.getElementById('goToHistoryBtn').onclick = () => { showScreen('historyScreen'); loadSearchHistory(); };
+        document.getElementById('goToSubscriptionsBtn').onclick = () => { showScreen('subscriptionsScreen'); loadSubscriptionsList(); };
         
-        document.getElementById('backToMenuFromMusic').onclick = () => {
-            musicScreen.classList.add('hidden');
-            menuScreen.classList.remove('hidden');
-        };
-        document.getElementById('backToMenuFromGame').onclick = () => {
-            gameScreen.classList.add('hidden');
-            menuScreen.classList.remove('hidden');
-        };
-        document.getElementById('backToMenuFromHistory').onclick = () => {
-            historyScreen.classList.add('hidden');
-            menuScreen.classList.remove('hidden');
-        };
-        document.getElementById('backToMenuFromSubs').onclick = () => {
-            subscriptionsScreen.classList.add('hidden');
-            menuScreen.classList.remove('hidden');
-        };
+        document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
+        document.getElementById('backToMenuFromGame').onclick = () => { showScreen('menuScreen'); };
+        document.getElementById('backToMenuFromHistory').onclick = () => { showScreen('menuScreen'); };
+        document.getElementById('backToMenuFromSubs').onclick = () => { showScreen('menuScreen'); };
 
-        // ========== ИСТОРИЯ ПОИСКА ==========
+        // ========== ИСТОРИЯ ==========
         function loadSearchHistory() {
-            const saved = localStorage.getItem('mini_app_search_history');
+            const saved = localStorage.getItem('search_history');
             searchHistory = saved ? JSON.parse(saved) : [];
             displaySearchHistory();
         }
 
         function saveSearchHistory() {
-            localStorage.setItem('mini_app_search_history', JSON.stringify(searchHistory.slice(0, 50)));
+            localStorage.setItem('search_history', JSON.stringify(searchHistory.slice(0, 50)));
         }
 
-        function addToLocalHistory(query, type, artistName, artistId) {
-            searchHistory.unshift({
-                query: query,
-                type: type,
-                artistName: artistName,
-                artistId: artistId,
-                date: new Date().toLocaleString('ru-RU'),
-                timestamp: Date.now()
-            });
-            if (searchHistory.length > 50) searchHistory = searchHistory.slice(0, 50);
+        function addToHistory(query, type) {
+            searchHistory.unshift({ query: query, type: type, date: new Date().toLocaleString() });
+            if (searchHistory.length > 50) searchHistory.pop();
             saveSearchHistory();
+            
+            // Отправляем в бот
+            tg.sendData(JSON.stringify({ action: 'add_to_history', value: JSON.stringify({ query: query, type: type }) }));
         }
 
         function displaySearchHistory() {
             const container = document.getElementById('historyList');
             if (searchHistory.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:20px; color:gray;">📜 История поиска пуста</div>`;
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">📜 История поиска пуста</div>';
                 return;
             }
-            
-            let html = '';
-            for (let i = 0; i < searchHistory.length; i++) {
-                const item = searchHistory[i];
-                const typeIcon = item.type === 'track' ? '🎵' : '🎤';
-                html += `
-                    <div class="history-item" onclick="repeatSearch('${escapeHtml(item.query)}', '${item.type}')">
-                        <div class="history-query">${typeIcon} ${escapeHtml(item.query)}</div>
-                        <div style="display: flex; justify-content: space-between; margin-top: 6px;">
-                            <span class="history-date">${item.date}</span>
-                        </div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
+            container.innerHTML = searchHistory.map(item => `
+                <div class="history-item" onclick="repeatSearch('${escapeHtml(item.query)}')">
+                    <div class="history-query">${item.type === 'artist' ? '🎤' : '🎵'} ${escapeHtml(item.query)}</div>
+                    <div class="history-date">${item.date}</div>
+                </div>
+            `).join('');
         }
 
-        function repeatSearch(query, type) {
+        window.repeatSearch = function(query) {
             document.getElementById('searchInput').value = query;
             performSearch();
-            showNotification(`🔍 Повторный поиск: ${query}`);
-        }
+            showScreen('musicScreen');
+        };
 
         document.getElementById('clearHistoryBtn').onclick = () => {
-            if (confirm('Очистить всю историю поиска?')) {
+            if (confirm('Очистить историю?')) {
                 searchHistory = [];
                 saveSearchHistory();
                 displaySearchHistory();
-                showNotification('🗑 История поиска очищена!');
+                showNotification('🗑 История очищена');
             }
         };
 
-        // ========== ПОДПИСКИ (ОСНОВНАЯ ФИКСАЦИЯ) ==========
+        // ========== ПОДПИСКИ ==========
         function loadSubscriptionsList() {
             const container = document.getElementById('subscriptionsList');
-            
-            // Показываем загрузку
-            container.innerHTML = `
-                <div style="text-align:center; padding:20px;">
-                    <div class="loading-spinner"></div>
-                    <div>Загрузка подписок...</div>
-                </div>
-            `;
-            
-            // Генерируем ID запроса
-            const requestId = Date.now();
-            pendingRequestId = requestId;
+            container.innerHTML = '<div style="text-align:center; padding:20px;"><div class="loading-spinner"></div><div>Загрузка подписок...</div></div>';
             
             // Отправляем запрос в бот
-            tg.sendData(JSON.stringify({ 
-                action: 'get_subscriptions',
-                request_id: requestId
-            }));
+            tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
             
-            // Таймаут на случай если бот не ответит
+            // Таймаут через 5 секунд
             setTimeout(() => {
-                if (pendingRequestId === requestId) {
-                    pendingRequestId = null;
-                    if (subscriptions.length === 0) {
-                        container.innerHTML = `
-                            <div style="text-align:center; padding:20px; color:gray;">
-                                ⚠️ Не удалось загрузить подписки<br><br>
-                                <button onclick="loadSubscriptionsList()" style="padding: 8px 16px; border-radius: 20px; border: none; background: var(--button-color); color: white;">
-                                    🔄 Повторить
-                                </button>
-                            </div>
-                        `;
-                    }
+                if (container.innerHTML.includes('Загрузка')) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:20px; color:gray;">
+                            ⚠️ Не удалось загрузить подписки<br>
+                            <button onclick="loadSubscriptionsList()" style="margin-top:10px; padding:8px 16px; border-radius:20px; border:none; background:#2481cc; color:white;">🔄 Повторить</button>
+                        </div>
+                    `;
                 }
-            }, 8000);
+            }, 5000);
         }
 
         function updateSubscriptionsList(subsData) {
             const container = document.getElementById('subscriptionsList');
-            pendingRequestId = null;
-            
             subscriptions = subsData.subscriptions || [];
             
             if (subscriptions.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding:20px; color:gray;">
-                        🔔 У вас пока нет подписок<br><br>
-                        Найдите исполнителя и нажмите<br>
-                        «Подписаться на новинки»
-                    </div>
-                `;
+                container.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">🔔 У вас пока нет подписок<br><br>Найдите исполнителя и нажмите «Подписаться на новинки»</div>';
                 return;
             }
             
-            let html = '';
-            for (let i = 0; i < subscriptions.length; i++) {
-                const artist = subscriptions[i];
-                const date = new Date(artist.subscribed_at * 1000).toLocaleDateString('ru-RU');
-                html += `
-                    <div class="subscription-item">
-                        <div>
-                            <div style="font-weight: 700;">🎤 ${escapeHtml(artist.name)}</div>
-                            <div style="font-size: 11px; color: gray;">Подписан: ${date}</div>
-                        </div>
-                        <button class="unsub-btn" onclick="unsubscribeArtist('${escapeHtml(artist.name)}')">Отписаться</button>
+            container.innerHTML = subscriptions.map(artist => `
+                <div class="subscription-item">
+                    <div>
+                        <div style="font-weight: 700;">🎤 ${escapeHtml(artist.name)}</div>
+                        <div style="font-size: 11px; color: gray;">Подписан: ${new Date(artist.subscribed_at * 1000).toLocaleDateString()}</div>
                     </div>
-                `;
-            }
-            container.innerHTML = html;
+                    <button class="unsub-btn" onclick="unsubscribeArtist('${escapeHtml(artist.name)}')">Отписаться</button>
+                </div>
+            `).join('');
         }
 
-        function unsubscribeArtist(artistName) {
-            tg.sendData(JSON.stringify({
-                action: 'unsubscribe',
-                artist: artistName
-            }));
+        window.unsubscribeArtist = function(artistName) {
+            tg.sendData(JSON.stringify({ action: 'unsubscribe', artist: artistName }));
             showNotification(`🔕 Отписка от ${artistName}...`);
-            
-            // Обновляем локально
             subscriptions = subscriptions.filter(s => s.name !== artistName);
             updateSubscriptionsList({ subscriptions: subscriptions });
-        }
+        };
 
-        function subscribeToArtist(artistName, artistId) {
-            tg.sendData(JSON.stringify({
-                action: 'subscribe',
-                artist: artistName,
-                artist_id: artistId
-            }));
+        window.subscribeToArtist = function(artistName, artistId) {
+            tg.sendData(JSON.stringify({ action: 'subscribe', artist: artistName, artist_id: artistId || '' }));
             showNotification(`✅ Подписка на ${artistName} оформлена!`);
-        }
+        };
 
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'notification-toast';
-            notification.innerHTML = message;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
-        }
-
-        // ========== ГЛАВНЫЙ ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА ==========
-        // Слушаем входящие сообщения от бота
-        if (tg.onEvent) {
-            tg.onEvent('web_app_data_send', function(receivedData) {
-                console.log("📨 Получены данные от бота:", receivedData);
-                
-                try {
-                    // Пробуем распарсить как JSON
-                    let data;
-                    if (typeof receivedData === 'string') {
-                        data = JSON.parse(receivedData);
-                    } else {
-                        data = receivedData;
-                    }
-                    
-                    // Если это подписки
-                    if (data.subscriptions !== undefined) {
-                        console.log("📋 Обновляем список подписок, найдено:", data.subscriptions.length);
-                        updateSubscriptionsList(data);
-                    }
-                    
-                    // Если это ответ на подписку/отписку
-                    if (data.type === 'subscription_success') {
-                        showNotification(data.message);
-                        loadSubscriptionsList();
-                    }
-                    
-                    if (data.type === 'unsubscribe_success') {
-                        showNotification(data.message);
-                    }
-                    
-                    if (data.type === 'subscription_error') {
-                        showNotification(data.message || '❌ Ошибка подписки');
-                    }
-                    
-                } catch (e) {
-                    console.log("Получены не-JSON данные:", receivedData);
-                    // Если данные не JSON, возможно это просто текст
+        // ========== ОБРАБОТКА ОТВЕТОВ ОТ БОТА ==========
+        tg.onEvent('web_app_data_send', function(data) {
+            console.log("📨 Получены данные от бота:", data);
+            try {
+                const response = JSON.parse(data);
+                if (response.subscriptions) {
+                    console.log("✅ Обновляем подписки, найдено:", response.subscriptions.length);
+                    updateSubscriptionsList(response);
                 }
-            });
-        }
+                if (response.type === 'subscription_success') {
+                    showNotification(response.message);
+                    loadSubscriptionsList();
+                }
+                if (response.type === 'unsubscribe_success') {
+                    showNotification(response.message);
+                }
+                if (response.type === 'subscription_error') {
+                    showNotification(response.message || '❌ Ошибка подписки');
+                }
+            } catch(e) {
+                console.log("Не JSON данные:", data);
+            }
+        });
 
         // ========== ПОИСК ==========
         const tracksDatabase = [
             { track: "Останься", artist: "Асия" },
+            { track: "Твой поцелуй", artist: "Асия" },
             { track: "Believer", artist: "Imagine Dragons" },
+            { track: "Bad Guy", artist: "Billie Eilish" },
             { track: "Группа крови", artist: "Кино" },
             { track: "Искала", artist: "Земфира" },
             { track: "Cadillac", artist: "Моргенштерн" }
@@ -591,9 +466,8 @@
         const popularArtistsList = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
 
         function loadPopularArtists() {
-            const container = document.getElementById('popularGrid');
-            container.innerHTML = popularArtistsList.map(artist => 
-                `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`
+            document.getElementById('popularGrid').innerHTML = popularArtistsList.map(artist => 
+                `<span class="popular-tag" onclick="searchArtist('${escapeHtml(artist)}')">🎤 ${escapeHtml(artist)}</span>`
             ).join('');
         }
 
@@ -606,8 +480,7 @@
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
             
-            // Добавляем в историю
-            addToLocalHistory(query, 'artist', query, null);
+            addToHistory(query, 'artist');
             
             const links = {
                 yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
@@ -616,15 +489,12 @@
                 spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}`
             };
             
-            const resultDiv = document.getElementById('musicResult');
-            
-            // Проверяем подписку
-            const isSubscribed = subscriptions.some(s => s.name && s.name.toLowerCase() === query.toLowerCase());
-            const subscribeBtnHtml = isSubscribed 
+            const isSubscribed = subscriptions.some(s => s.name === query);
+            const subscribeBtn = isSubscribed 
                 ? `<div class="subscribe-btn subscribed" onclick="unsubscribeArtist('${escapeHtml(query)}')">🔔 Отписаться от новинок</div>`
                 : `<div class="subscribe-btn" onclick="subscribeToArtist('${escapeHtml(query)}', '')">🔔 Подписаться на новинки</div>`;
             
-            resultDiv.innerHTML = `
+            document.getElementById('musicResult').innerHTML = `
                 <div class="result-card">
                     <div class="artist-name">🎤 ${escapeHtml(query)}</div>
                     <div class="section-title">Слушать</div>
@@ -634,153 +504,94 @@
                         <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                         <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                     </div>
-                    ${subscribeBtnHtml}
+                    ${subscribeBtn}
                 </div>
             `;
         }
 
         document.getElementById('doSearchBtn').onclick = performSearch;
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
-        });
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
 
         // ========== ИГРА ==========
-        const allArtists = [...new Set(tracksDatabase.map(t => t.artist))];
-        let gameQuestions = [];
-        let currentQ = 0;
-        let gameScore = 0;
-        let gameActive = false;
-        let gameStats = { gamesPlayed: 0, bestScore: 0 };
-
-        function loadGameStats() {
-            const saved = localStorage.getItem('music_game_stats');
-            if(saved) gameStats = JSON.parse(saved);
-        }
-        
-        function saveGameStats() {
-            localStorage.setItem('music_game_stats', JSON.stringify(gameStats));
-        }
-
-        function generateQuestion() {
-            const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
-            const correct = randomTrack.artist;
-            let other = allArtists.filter(a => a !== correct);
-            for(let i=other.length-1; i>0; i--){
-                const j=Math.floor(Math.random()*(i+1));
-                [other[i], other[j]] = [other[j], other[i]];
-            }
-            let options = [correct, ...other.slice(0,3)];
-            for(let i=options.length-1; i>0; i--){
-                const j=Math.floor(Math.random()*(i+1));
-                [options[i], options[j]] = [options[j], options[i]];
-            }
-            return { track: randomTrack.track, correct, options };
-        }
+        let gameQuestions = [], currentQ = 0, gameScore = 0, gameActive = false;
 
         function startGame() {
             gameQuestions = [];
-            for(let i=0; i<8; i++) gameQuestions.push(generateQuestion());
+            for(let i = 0; i < 5; i++) {
+                const track = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
+                gameQuestions.push({ track: track.track, correct: track.artist });
+            }
             currentQ = 0;
             gameScore = 0;
             gameActive = true;
-            const startBtn = document.getElementById('startGameBtn');
-            startBtn.textContent = '🎮 Игра идёт...';
-            startBtn.style.background = '#28a745';
-            showGameQuestion();
+            showQuestion();
         }
 
-        function showGameQuestion() {
-            const container = document.getElementById('gameContent');
-            if(currentQ >= gameQuestions.length) {
-                endGame();
-                return;
-            }
+        function showQuestion() {
+            if (currentQ >= gameQuestions.length) { endGame(); return; }
             const q = gameQuestions[currentQ];
-            let optsHtml = '';
-            q.options.forEach(opt => {
-                optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">🎤 ${escapeHtml(opt)}</div>`;
-            });
-            container.innerHTML = `
-                <div class="game-question">
-                    <div style="font-size:13px;">🎵 Вопрос ${currentQ+1}/${gameQuestions.length}</div>
+            const allArtists = [...new Set(tracksDatabase.map(t => t.artist))];
+            const otherArtists = allArtists.filter(a => a !== q.correct);
+            const options = [q.correct, ...otherArtists.slice(0, 3)];
+            options.sort(() => Math.random() - 0.5);
+            
+            document.getElementById('gameContent').innerHTML = `
+                <div style="text-align:center">
                     <div class="track-name">"${escapeHtml(q.track)}"</div>
                     <div>Кто исполнитель?</div>
-                    <div class="game-options" id="gameOptions">${optsHtml}</div>
-                    <div style="margin-top:12px;">🎯 Счёт: ${gameScore} / ${gameQuestions.length}</div>
+                    ${options.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">🎤 ${escapeHtml(opt)}</div>`).join('')}
+                    <div style="margin-top:12px;">🎯 Счёт: ${gameScore}/${gameQuestions.length}</div>
                 </div>
             `;
         }
 
         window.checkAnswer = function(selected, correct) {
-            if(!gameActive) return;
-            const optsDiv = document.getElementById('gameOptions');
-            if(!optsDiv) return;
-            const btns = optsDiv.querySelectorAll('.game-option');
+            if (!gameActive) return;
             gameActive = false;
-            btns.forEach(btn => {
-                if(btn.innerText.includes(correct)) btn.classList.add('correct');
-                if(btn.innerText.includes(selected) && selected !== correct) btn.classList.add('wrong');
-                btn.style.pointerEvents = 'none';
-            });
-            if(selected === correct) {
-                gameScore++;
-            }
-            setTimeout(() => {
-                currentQ++;
-                gameActive = true;
-                showGameQuestion();
-            }, 1000);
+            if (selected === correct) gameScore++;
+            currentQ++;
+            gameActive = true;
+            showQuestion();
         };
 
         function endGame() {
-            gameActive = false;
-            const total = gameQuestions.length;
-            gameStats.gamesPlayed++;
-            if(gameScore > gameStats.bestScore) gameStats.bestScore = gameScore;
-            saveGameStats();
-            const container = document.getElementById('gameContent');
-            container.innerHTML = `
-                <div style="text-align:center; padding:20px;">
-                    <div style="font-size:28px; margin-bottom:8px;">🎉</div>
-                    <div style="font-size:20px; font-weight:bold;">${gameScore}/${total}</div>
-                    <div>⭐ Лучший: ${gameStats.bestScore}/${total}</div>
-                    <div>🎮 Сыграно: ${gameStats.gamesPlayed}</div>
-                    <button id="restartGameBtn" style="background:#9b59b6; margin-top:16px; border:none; padding:10px 24px; border-radius:40px;">🔄 Сыграть снова</button>
+            document.getElementById('gameContent').innerHTML = `
+                <div style="text-align:center; padding:20px">
+                    <div style="font-size:28px;">🎉</div>
+                    <div style="font-size:20px; font-weight:bold; margin:12px 0;">${gameScore}/${gameQuestions.length}</div>
+                    <button onclick="startGame()" style="margin-top:16px; padding:10px 24px; border-radius:40px; border:none; background:#9b59b6; color:white;">🔄 Играть снова</button>
                 </div>
             `;
-            document.getElementById('restartGameBtn')?.addEventListener('click', startGame);
-            const startBtn = document.getElementById('startGameBtn');
-            startBtn.textContent = '▶ Начать игру';
-            startBtn.style.background = '#9b59b6';
         }
 
         document.getElementById('startGameBtn').onclick = startGame;
-        loadGameStats();
+
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
 
         function escapeHtml(str) {
-            if(!str) return '';
-            return str.replace(/[&<>]/g, function(m){
-                if(m === '&') return '&amp;';
-                if(m === '<') return '&lt;';
-                if(m === '>') return '&gt;';
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
                 return m;
             });
         }
 
-        // Telegram user
-        const user = tg.initDataUnsafe?.user;
-        if(user && user.first_name) document.getElementById('userName').innerText = user.first_name;
-
-        // Загружаем начальные данные
+        // Загрузка
         loadPopularArtists();
         loadSearchHistory();
         
-        // Проверяем тему Telegram
-        if (tg.colorScheme === 'dark') {
-            document.body.classList.add('dark-theme');
-        }
+        // Приветствие
+        tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать!", buttons: [{ type: "ok" }] });
         
-        console.log("✅ Mini App загружен, ожидаем данные от бота...");
+        console.log("✅ Mini App загружен!");
     </script>
 </body>
 </html>
