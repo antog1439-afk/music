@@ -291,7 +291,7 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Стили для полной биографии */
+        /* Стили для чистой биографии */
         .bio-section {
             background: rgba(0,0,0,0.05);
             border-radius: 16px;
@@ -1184,7 +1184,7 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // ========== ВИКИПЕДИЯ - ПОЛУЧЕНИЕ ПОЛНОЙ БИОГРАФИИ ==========
+        // ========== ВИКИПЕДИЯ - ПОЛУЧЕНИЕ ЧИСТОЙ ПОЛНОЙ БИОГРАФИИ ==========
         async function getWikipediaFullBio(artistName) {
             try {
                 // Шаг 1: ищем страницу
@@ -1198,48 +1198,37 @@
                 
                 const pageTitle = searchData.query.search[0].title;
                 
-                // Шаг 2: получаем ПОЛНОЕ содержимое страницы
-                const contentUrl = `https://ru.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(pageTitle)}&format=json&origin=*&prop=text&section=0`;
+                // Шаг 2: получаем содержимое страницы в ЧИСТОМ ТЕКСТЕ (без HTML!)
+                // explaintext=1 даёт чистый текст, а не HTML
+                const contentUrl = `https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`;
                 const contentResponse = await fetch(contentUrl);
                 const contentData = await contentResponse.json();
                 
-                if (!contentData.parse || !contentData.parse.text) {
+                const pages = contentData.query.pages;
+                const pageId = Object.keys(pages)[0];
+                let cleanText = pages[pageId].extract || "";
+                
+                if (!cleanText) {
                     return null;
                 }
                 
-                // Шаг 3: извлекаем текст из HTML и убираем теги
-                const htmlText = contentData.parse.text['*'];
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = htmlText;
-                
-                // Убираем служебные элементы
-                const removeSelectors = [
-                    'table', '.navbox', '.metadata', '.thumb', '.toc', 
-                    '.mw-editsection', '.reference', '.reflist', '.noprint',
-                    'sup', '.hatnote', '.mw-empty-elt'
-                ];
-                removeSelectors.forEach(selector => {
-                    const elements = tempDiv.querySelectorAll(selector);
-                    elements.forEach(el => el.remove());
-                });
-                
-                // Получаем чистый текст
-                let fullText = tempDiv.textContent || '';
-                
-                // Очищаем текст от лишних пробелов
-                fullText = fullText
-                    .replace(/\s+/g, ' ')
-                    .replace(/\[\d+\]/g, '')
+                // Дополнительная очистка от служебных символов
+                cleanText = cleanText
+                    .replace(/\[править\]/g, '')           // Удаляем "[править]"
+                    .replace(/\[\d+\]/g, '')                // Удаляем ссылки [1], [2]
+                    .replace(/\s+/g, ' ')                   // Убираем лишние пробелы
+                    .replace(/\n{3,}/g, '\n\n')             // Убираем лишние переносы
+                    .replace(/\([^)]*ссылка[^)]*\)/gi, '')  // Удаляем "(ссылка)"
                     .trim();
                 
-                // Ограничиваем длину для производительности (первые 8000 символов)
-                if (fullText.length > 8000) {
-                    fullText = fullText.substring(0, 8000) + '...';
+                // Ограничиваем длину для производительности (первые 5000 символов)
+                if (cleanText.length > 5000) {
+                    cleanText = cleanText.substring(0, 5000) + '...';
                 }
                 
                 return {
                     title: pageTitle,
-                    fullText: fullText,
+                    fullText: cleanText,
                     pageUrl: `https://ru.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`
                 };
                 
@@ -1249,7 +1238,7 @@
             }
         }
         
-        // Функция для отображения полной биографии
+        // Функция для отображения чистой биографии
         function displayBio(bioData, artistName) {
             if (!bioData) {
                 return `
@@ -1504,7 +1493,7 @@
             }
         }
 
-        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ С ВИКИПЕДИЕЙ ==========
+        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ С ЧИСТОЙ БИОГРАФИЕЙ ==========
         function loadPopularArtists() {
             const container = document.getElementById('popularGrid');
             container.innerHTML = popularArtistsList.map(artist => 
@@ -1553,7 +1542,7 @@
                     </div>
                 `;
                 
-                // Загружаем полную биографию из Википедии
+                // Загружаем чистую полную биографию из Википедии
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 
