@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Админ панель + AI + Википедия</title>
+    <title>Music Hub - Полная биография из Википедии</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -291,12 +291,14 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Стили для биографии */
+        /* Стили для полной биографии */
         .bio-section {
             background: rgba(0,0,0,0.05);
             border-radius: 16px;
             padding: 16px;
             margin-top: 16px;
+            max-height: 400px;
+            overflow-y: auto;
         }
         
         body.dark-theme .bio-section {
@@ -314,6 +316,8 @@
             font-size: 14px;
             line-height: 1.5;
             color: #333;
+            white-space: pre-wrap;
+            word-break: break-word;
         }
         
         body.dark-theme .bio-text {
@@ -324,6 +328,14 @@
             text-align: center;
             padding: 20px;
             color: gray;
+        }
+        
+        .bio-wiki-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: var(--button-color, #2481cc);
+            text-decoration: none;
+            font-size: 13px;
         }
         
         /* ПРИВЕТСТВЕННОЕ ОКНО */
@@ -1175,48 +1187,69 @@
         // ========== ВИКИПЕДИЯ - ПОЛУЧЕНИЕ ПОЛНОЙ БИОГРАФИИ ==========
         async function getWikipediaFullBio(artistName) {
             try {
-                // Сначала пробуем найти точное совпадение
-                let url = `https://ru.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(artistName)}`;
-                let response = await fetch(url);
-                let data = await response.json();
+                // Шаг 1: ищем страницу
+                const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
                 
-                // Если не нашли, пробуем поискать
-                if (!data || !data.extract) {
-                    // Поиск по Википедии
-                    const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
-                    const searchResponse = await fetch(searchUrl);
-                    const searchData = await searchResponse.json();
-                    
-                    if (searchData.query && searchData.query.search && searchData.query.search.length > 0) {
-                        const pageTitle = searchData.query.search[0].title;
-                        const pageUrl = `https://ru.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitle)}`;
-                        const pageResponse = await fetch(pageUrl);
-                        data = await pageResponse.json();
-                    }
+                if (!searchData.query || !searchData.query.search || searchData.query.search.length === 0) {
+                    return null;
                 }
                 
-                if (data && data.extract) {
-                    // Получаем полную версию страницы
-                    const fullUrl = `https://ru.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(data.title)}&format=json&origin=*&prop=text`;
-                    const fullResponse = await fetch(fullUrl);
-                    const fullData = await fullResponse.json();
-                    
-                    return {
-                        title: data.title,
-                        description: data.extract,
-                        fullText: data.extract,
-                        pageUrl: data.content_urls?.desktop?.page || `https://ru.wikipedia.org/wiki/${encodeURIComponent(data.title)}`,
-                        thumbnail: data.thumbnail?.source || null
-                    };
+                const pageTitle = searchData.query.search[0].title;
+                
+                // Шаг 2: получаем ПОЛНОЕ содержимое страницы
+                const contentUrl = `https://ru.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(pageTitle)}&format=json&origin=*&prop=text&section=0`;
+                const contentResponse = await fetch(contentUrl);
+                const contentData = await contentResponse.json();
+                
+                if (!contentData.parse || !contentData.parse.text) {
+                    return null;
                 }
-                return null;
+                
+                // Шаг 3: извлекаем текст из HTML и убираем теги
+                const htmlText = contentData.parse.text['*'];
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlText;
+                
+                // Убираем служебные элементы
+                const removeSelectors = [
+                    'table', '.navbox', '.metadata', '.thumb', '.toc', 
+                    '.mw-editsection', '.reference', '.reflist', '.noprint',
+                    'sup', '.hatnote', '.mw-empty-elt'
+                ];
+                removeSelectors.forEach(selector => {
+                    const elements = tempDiv.querySelectorAll(selector);
+                    elements.forEach(el => el.remove());
+                });
+                
+                // Получаем чистый текст
+                let fullText = tempDiv.textContent || '';
+                
+                // Очищаем текст от лишних пробелов
+                fullText = fullText
+                    .replace(/\s+/g, ' ')
+                    .replace(/\[\d+\]/g, '')
+                    .trim();
+                
+                // Ограничиваем длину для производительности (первые 8000 символов)
+                if (fullText.length > 8000) {
+                    fullText = fullText.substring(0, 8000) + '...';
+                }
+                
+                return {
+                    title: pageTitle,
+                    fullText: fullText,
+                    pageUrl: `https://ru.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`
+                };
+                
             } catch (error) {
                 console.error('Ошибка при запросе к Википедии:', error);
                 return null;
             }
         }
         
-        // Функция для отображения биографии
+        // Функция для отображения полной биографии
         function displayBio(bioData, artistName) {
             if (!bioData) {
                 return `
@@ -1233,12 +1266,11 @@
                 <div class="bio-section">
                     <div class="bio-title">📖 ${escapeHtml(bioData.title)}</div>
                     <div class="bio-text">
-                        ${escapeHtml(bioData.description)}
-                        <br><br>
-                        <a href="${bioData.pageUrl}" target="_blank" style="color: var(--button-color, #2481cc); text-decoration: none;">
-                            🔗 Читать полную статью на Википедии →
-                        </a>
+                        ${escapeHtml(bioData.fullText)}
                     </div>
+                    <a href="${bioData.pageUrl}" target="_blank" class="bio-wiki-link">
+                        🔗 Читать полную статью на Википедии →
+                    </a>
                 </div>
             `;
         }
@@ -1515,13 +1547,13 @@
                         </div>
                         <div class="bio-loading">
                             <div class="loading-spinner" style="width: 30px; height: 30px;"></div>
-                            <div style="margin-top: 8px;">📖 Загружаем биографию из Википедии...</div>
+                            <div style="margin-top: 8px;">📖 Загружаем полную биографию из Википедии...</div>
                         </div>
                         <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку для ${escapeHtml(query)}</button>
                     </div>
                 `;
                 
-                // Загружаем биографию из Википедии
+                // Загружаем полную биографию из Википедии
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 
