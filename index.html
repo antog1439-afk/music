@@ -1184,22 +1184,67 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // ========== ВИКИПЕДИЯ - ПОЛУЧЕНИЕ ЧИСТОЙ ПОЛНОЙ БИОГРАФИИ ==========
+        // ========== ВИКИПЕДИЯ - ТОЧНЫЙ ПОИСК БИОГРАФИИ ==========
         async function getWikipediaFullBio(artistName) {
             try {
-                // Шаг 1: ищем страницу
-                const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
-                const searchResponse = await fetch(searchUrl);
-                const searchData = await searchResponse.json();
+                // Специальные запросы для известных исполнителей (точные названия страниц)
+                const exactMatches = {
+                    "асия": "Асия (певица)",
+                    "асия певица": "Асия (певица)",
+                    "big baby tape": "Big Baby Tape",
+                    "big baby tape певец": "Big Baby Tape",
+                    "instasamka": "Instasamka",
+                    "моргенштерн": "Моргенштерн",
+                    "алла пугачева": "Алла Пугачёва",
+                    "земфира": "Земфира",
+                    "кино": "Кино (группа)",
+                    "король и шут": "Король и Шут",
+                    "дора": "Дора (певица)",
+                    "мари краймбрери": "Мари Краймбрери",
+                    "nю": "NЮ",
+                    "мари краймбрери певица": "Мари Краймбрери",
+                    "биг бейби тейп": "Big Baby Tape",
+                    "имаджин драгонс": "Imagine Dragons",
+                    "imagine dragons": "Imagine Dragons",
+                    "the weeknd": "The Weeknd",
+                    "billie eilish": "Billie Eilish"
+                };
                 
-                if (!searchData.query || !searchData.query.search || searchData.query.search.length === 0) {
-                    return null;
+                // Проверяем точное совпадение
+                let searchQuery = artistName.toLowerCase().trim();
+                let pageTitle = exactMatches[searchQuery];
+                
+                if (!pageTitle) {
+                    // Если нет точного совпадения, ищем через API
+                    const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
+                    const searchResponse = await fetch(searchUrl);
+                    const searchData = await searchResponse.json();
+                    
+                    if (!searchData.query || !searchData.query.search || searchData.query.search.length === 0) {
+                        return null;
+                    }
+                    
+                    // Фильтруем результаты: ищем точное совпадение по названию или уточнение "певица", "музыкант", "рэпер"
+                    const relevantResults = searchData.query.search.filter(item => {
+                        const title = item.title.toLowerCase();
+                        return title.includes(artistName.toLowerCase()) ||
+                               title.includes("певица") ||
+                               title.includes("музыкант") ||
+                               title.includes("рэпер") ||
+                               title.includes("певец") ||
+                               title.includes("группа");
+                    });
+                    
+                    if (relevantResults.length === 0) {
+                        // Если нет релевантных результатов, берём первый
+                        if (searchData.query.search.length === 0) return null;
+                        pageTitle = searchData.query.search[0].title;
+                    } else {
+                        pageTitle = relevantResults[0].title;
+                    }
                 }
                 
-                const pageTitle = searchData.query.search[0].title;
-                
-                // Шаг 2: получаем содержимое страницы в ЧИСТОМ ТЕКСТЕ (без HTML!)
-                // explaintext=1 даёт чистый текст, а не HTML
+                // Получаем содержимое страницы в чистом тексте
                 const contentUrl = `https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`;
                 const contentResponse = await fetch(contentUrl);
                 const contentData = await contentResponse.json();
@@ -1212,13 +1257,13 @@
                     return null;
                 }
                 
-                // Дополнительная очистка от служебных символов
+                // Дополнительная очистка текста
                 cleanText = cleanText
-                    .replace(/\[править\]/g, '')           // Удаляем "[править]"
-                    .replace(/\[\d+\]/g, '')                // Удаляем ссылки [1], [2]
-                    .replace(/\s+/g, ' ')                   // Убираем лишние пробелы
-                    .replace(/\n{3,}/g, '\n\n')             // Убираем лишние переносы
-                    .replace(/\([^)]*ссылка[^)]*\)/gi, '')  // Удаляем "(ссылка)"
+                    .replace(/\[править\]/g, '')
+                    .replace(/\[\d+\]/g, '')
+                    .replace(/\s+/g, ' ')
+                    .replace(/\n{3,}/g, '\n\n')
+                    .replace(/\([^)]*ссылка[^)]*\)/gi, '')
                     .trim();
                 
                 // Ограничиваем длину для производительности (первые 5000 символов)
