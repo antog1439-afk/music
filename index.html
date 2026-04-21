@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Админ панель + AI</title>
+    <title>Music Hub - Админ панель + AI + Википедия</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -289,6 +289,41 @@
         
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        
+        /* Стили для биографии */
+        .bio-section {
+            background: rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        body.dark-theme .bio-section {
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .bio-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--button-color, #2481cc);
+        }
+        
+        .bio-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        body.dark-theme .bio-text {
+            color: #ddd;
+        }
+        
+        .bio-loading {
+            text-align: center;
+            padding: 20px;
+            color: gray;
         }
         
         /* ПРИВЕТСТВЕННОЕ ОКНО */
@@ -712,6 +747,25 @@
             cursor: pointer;
         }
         
+        .notification-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            color: white;
+            z-index: 150;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px);}
             to { opacity: 1; transform: translateY(0);}
@@ -760,7 +814,7 @@
                 </div>
                 
                 <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Асия, Big Baby Tape...">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons...">
                     <button id="doSearchBtn" class="search-btn">Найти</button>
                 </div>
                 
@@ -1118,6 +1172,77 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
+        // ========== ВИКИПЕДИЯ - ПОЛУЧЕНИЕ ПОЛНОЙ БИОГРАФИИ ==========
+        async function getWikipediaFullBio(artistName) {
+            try {
+                // Сначала пробуем найти точное совпадение
+                let url = `https://ru.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(artistName)}`;
+                let response = await fetch(url);
+                let data = await response.json();
+                
+                // Если не нашли, пробуем поискать
+                if (!data || !data.extract) {
+                    // Поиск по Википедии
+                    const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
+                    const searchResponse = await fetch(searchUrl);
+                    const searchData = await searchResponse.json();
+                    
+                    if (searchData.query && searchData.query.search && searchData.query.search.length > 0) {
+                        const pageTitle = searchData.query.search[0].title;
+                        const pageUrl = `https://ru.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(pageTitle)}`;
+                        const pageResponse = await fetch(pageUrl);
+                        data = await pageResponse.json();
+                    }
+                }
+                
+                if (data && data.extract) {
+                    // Получаем полную версию страницы
+                    const fullUrl = `https://ru.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(data.title)}&format=json&origin=*&prop=text`;
+                    const fullResponse = await fetch(fullUrl);
+                    const fullData = await fullResponse.json();
+                    
+                    return {
+                        title: data.title,
+                        description: data.extract,
+                        fullText: data.extract,
+                        pageUrl: data.content_urls?.desktop?.page || `https://ru.wikipedia.org/wiki/${encodeURIComponent(data.title)}`,
+                        thumbnail: data.thumbnail?.source || null
+                    };
+                }
+                return null;
+            } catch (error) {
+                console.error('Ошибка при запросе к Википедии:', error);
+                return null;
+            }
+        }
+        
+        // Функция для отображения биографии
+        function displayBio(bioData, artistName) {
+            if (!bioData) {
+                return `
+                    <div class="bio-section">
+                        <div class="bio-title">📖 Биография</div>
+                        <div class="bio-text" style="color: gray;">
+                            ❌ Не удалось найти биографию для "${escapeHtml(artistName)}" в Википедии
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div class="bio-section">
+                    <div class="bio-title">📖 ${escapeHtml(bioData.title)}</div>
+                    <div class="bio-text">
+                        ${escapeHtml(bioData.description)}
+                        <br><br>
+                        <a href="${bioData.pageUrl}" target="_blank" style="color: var(--button-color, #2481cc); text-decoration: none;">
+                            🔗 Читать полную статью на Википедии →
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
         // ========== ПРИВЕТСТВИЕ ==========
         function showWelcome() {
             const welcomeShown = sessionStorage.getItem('welcome_shown');
@@ -1262,12 +1387,10 @@
             if (e.target === settingsModal) settingsModal.classList.add('hidden');
         };
 
-        // ========== БАЗА ТРЕКОВ С НОВЫМИ ТРЕКАМИ АСИИ ==========
+        // ========== БАЗА ТРЕКОВ ==========
         const tracksDatabase = [
-            // Асия - существующие треки
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
-            // Асия - новые треки
             { track: "Детство", artist: "Асия" },
             { track: "Звонок", artist: "Асия" },
             { track: "Шекспир", artist: "Асия" },
@@ -1282,7 +1405,6 @@
             { track: "Дом", artist: "Асия" },
             { track: "Амур", artist: "Асия" },
             { track: "Сильно так", artist: "Асия" },
-            // Другие исполнители
             { track: "Случилась осень", artist: "Мари Краймбрери" },
             { track: "За деньги да", artist: "INSTASAMKA" },
             { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
@@ -1342,7 +1464,7 @@
             if (mode === 'artist') {
                 artistBtn.classList.add('active');
                 trackBtn.classList.remove('active');
-                searchInput.placeholder = "Асия, Big Baby Tape, Imagine Dragons...";
+                searchInput.placeholder = "Асия, Imagine Dragons, Кино...";
             } else {
                 artistBtn.classList.remove('active');
                 trackBtn.classList.add('active');
@@ -1350,7 +1472,7 @@
             }
         }
 
-        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
+        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ С ВИКИПЕДИЕЙ ==========
         function loadPopularArtists() {
             const container = document.getElementById('popularGrid');
             container.innerHTML = popularArtistsList.map(artist => 
@@ -1364,7 +1486,7 @@
             performSearch();
         };
 
-        function performSearch() {
+        async function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if(!query) return;
             
@@ -1380,16 +1502,10 @@
             const resultDiv = document.getElementById('musicResult');
             
             if (currentSearchMode === 'artist') {
-                // Находим все треки этого исполнителя
-                const artistTracks = tracksDatabase.filter(t => 
-                    t.artist.toLowerCase().includes(query.toLowerCase())
-                );
-                const tracksList = artistTracks.map(t => t.track).join(', ');
-                
+                // Показываем загрузку биографии
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                        ${artistTracks.length > 0 ? `<div style="font-size: 13px; color: #666; margin-bottom: 12px;">🎵 Треки: ${tracksList}</div>` : ''}
                         <div class="section-title">🎧 Слушать на платформах</div>
                         <div class="platform-buttons">
                             <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -1397,10 +1513,36 @@
                             <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                             <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                         </div>
+                        <div class="bio-loading">
+                            <div class="loading-spinner" style="width: 30px; height: 30px;"></div>
+                            <div style="margin-top: 8px;">📖 Загружаем биографию из Википедии...</div>
+                        </div>
                         <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку для ${escapeHtml(query)}</button>
                     </div>
                 `;
+                
+                // Загружаем биографию из Википедии
+                const bioData = await getWikipediaFullBio(query);
+                const bioHtml = displayBio(bioData, query);
+                
+                // Обновляем результат с биографией
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <div class="artist-name">🎤 ${escapeHtml(query)}</div>
+                        <div class="section-title">🎧 Слушать на платформах</div>
+                        <div class="platform-buttons">
+                            <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                            <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                            <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                            <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
+                        </div>
+                        ${bioHtml}
+                        <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку для ${escapeHtml(query)}</button>
+                    </div>
+                `;
+                
             } else {
+                // Поиск трека
                 const foundTrack = tracksDatabase.find(t => 
                     t.track.toLowerCase().includes(query.toLowerCase())
                 );
@@ -1412,6 +1554,7 @@
                         vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(foundTrack.artist)}&c%5Bsection%5D=audio`,
                         spotify: `https://open.spotify.com/search/${encodeURIComponent(foundTrack.artist)}`
                     };
+                    
                     resultDiv.innerHTML = `
                         <div class="result-card">
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
