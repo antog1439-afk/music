@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Аудиоплеер + Голос + QR + AI</title>
+    <title>Music Hub - Голосовой поиск + QR + AI + Википедия</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -72,6 +72,12 @@
         body.dark-theme .card {
             background: rgba(30, 30, 35, 0.95);
             color: #fff;
+        }
+        
+        body.dark-theme .search-input {
+            background: #2a2a2a;
+            color: #fff;
+            border-color: #444;
         }
         
         /* Админ панель */
@@ -419,56 +425,6 @@
             margin-top: 16px;
         }
         
-        /* Стили для аудиоплеера */
-        .audio-player {
-            background: rgba(0,0,0,0.05);
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        body.dark-theme .audio-player {
-            background: rgba(255,255,255,0.08);
-        }
-        
-        .player-cover {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            object-fit: cover;
-        }
-        
-        .player-info {
-            flex: 1;
-        }
-        
-        .player-title {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-        
-        .player-artist {
-            font-size: 11px;
-            color: gray;
-        }
-        
-        audio {
-            width: 100%;
-            height: 36px;
-            margin-top: 6px;
-        }
-        
-        .preview-note {
-            font-size: 10px;
-            color: gray;
-            text-align: center;
-            margin-top: 8px;
-        }
-        
         /* ПРИВЕТСТВЕННОЕ ОКНО */
         .welcome-overlay {
             position: fixed;
@@ -795,6 +751,10 @@
             text-transform: uppercase;
         }
         
+        body.dark-theme .section-title {
+            color: #aaa;
+        }
+        
         .popular-grid {
             display: flex;
             flex-wrap: wrap;
@@ -816,6 +776,10 @@
             border-radius: 20px;
             padding: 14px;
             margin-top: 16px;
+        }
+        
+        body.dark-theme .result-card {
+            background: rgba(40, 40, 45, 0.9);
         }
         
         .artist-name {
@@ -1333,70 +1297,27 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // ========== АУДИОПЛЕЕР (Deezer API с CORS-прокси) ==========
-        async function searchWithPreview(query) {
-            // Если запрос пустой или слишком короткий
-            if (!query || query.length < 2) {
-                return '<div style="color: gray; text-align: center; padding: 20px;">🔍 Введите название трека для поиска превью</div>';
-            }
-            
-            try {
-                // Используем CORS-прокси для обхода блокировки
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const apiUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=4`;
-                
-                console.log('🔍 Запрос превью для:', query);
-                
-                // Пробуем через прокси
-                let response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
-                let data = await response.json();
-                
-                // Если через прокси не работает, пробуем напрямую
-                if (!data || !data.data) {
-                    console.log('Пробуем прямой запрос...');
-                    const directResponse = await fetch(apiUrl);
-                    data = await directResponse.json();
-                }
-                
-                if (data && data.data && data.data.length > 0) {
-                    let html = '<div class="section-title">🎧 Превью треков (30 сек)</div>';
-                    let hasTracks = false;
-                    
-                    for (const track of data.data) {
-                        const previewUrl = track.preview;
-                        if (!previewUrl) continue;
-                        hasTracks = true;
-                        
-                        // Получаем обложку (если есть)
-                        let coverUrl = track.album?.cover_medium || 'https://via.placeholder.com/50?text=🎵';
-                        
-                        html += `
-                            <div class="audio-player">
-                                <img src="${coverUrl}" class="player-cover" onerror="this.src='https://via.placeholder.com/50?text=🎵'">
-                                <div class="player-info">
-                                    <div class="player-title">${escapeHtml(track.title.substring(0, 30))}</div>
-                                    <div class="player-artist">${escapeHtml(track.artist?.name || 'Неизвестен')}</div>
-                                    <audio controls preload="none">
-                                        <source src="${previewUrl}" type="audio/mpeg">
-                                        Ваш браузер не поддерживает аудио
-                                    </audio>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    if (!hasTracks) {
-                        return '<div style="color: gray; text-align: center; padding: 20px;">❌ Нет доступных превью для этого запроса</div>';
-                    }
-                    
-                    html += '<div class="preview-note">🎵 30-секундные превью от Deezer</div>';
-                    return html;
-                }
-                
-                return '<div style="color: gray; text-align: center; padding: 20px;">❌ Нет доступных превью для этого запроса</div>';
-            } catch (error) {
-                console.error('Ошибка загрузки превью:', error);
-                return '<div style="color: gray; text-align: center; padding: 20px;">⚠️ Сервис превью временно недоступен. Попробуйте позже.</div>';
+        // ========== ПРИВЕТСТВИЕ ==========
+        function showWelcome() {
+            const welcomeShown = sessionStorage.getItem('welcome_shown');
+            if (!welcomeShown) {
+                const overlay = document.createElement('div');
+                overlay.className = 'welcome-overlay';
+                overlay.innerHTML = `
+                    <div class="welcome-card">
+                        <div class="welcome-emoji">🎵✨</div>
+                        <div class="welcome-kanji">聴 <small>·</small> 音 <small>·</small> 心</div>
+                        <div class="welcome-text-en">Hello, dear listener</div>
+                        <div class="welcome-text-fr">Bonjour, auditeur natif</div>
+                        <button class="welcome-btn" id="closeWelcomeBtn">🎧 Войти в музыку</button>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                document.getElementById('closeWelcomeBtn').onclick = () => {
+                    overlay.remove();
+                    sessionStorage.setItem('welcome_shown', 'true');
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                };
             }
         }
 
@@ -1555,30 +1476,6 @@
                     <a href="${bioData.pageUrl}" target="_blank" class="bio-wiki-link">🔗 Читать полную статью на Википедии →</a>
                 </div>
             `;
-        }
-
-        // ========== ПРИВЕТСТВИЕ ==========
-        function showWelcome() {
-            const welcomeShown = sessionStorage.getItem('welcome_shown');
-            if (!welcomeShown) {
-                const overlay = document.createElement('div');
-                overlay.className = 'welcome-overlay';
-                overlay.innerHTML = `
-                    <div class="welcome-card">
-                        <div class="welcome-emoji">🎵✨</div>
-                        <div class="welcome-kanji">聴 <small>·</small> 音 <small>·</small> 心</div>
-                        <div class="welcome-text-en">Hello, dear listener</div>
-                        <div class="welcome-text-fr">Bonjour, auditeur natif</div>
-                        <button class="welcome-btn" id="closeWelcomeBtn">🎧 Войти в музыку</button>
-                    </div>
-                `;
-                document.body.appendChild(overlay);
-                document.getElementById('closeWelcomeBtn').onclick = () => {
-                    overlay.remove();
-                    sessionStorage.setItem('welcome_shown', 'true');
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                };
-            }
         }
 
         // ========== ПЕРЕМЕННЫЕ ==========
@@ -1843,7 +1740,6 @@
                 `;
             } else {
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
-                const previewHtml = await searchWithPreview(query);
                 
                 if (foundTrack) {
                     const artistLinks = {
@@ -1854,8 +1750,7 @@
                         <div class="result-card">
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
                             <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong>${escapeHtml(foundTrack.artist)}</strong></div>
-                            ${previewHtml}
-                            <div class="section-title">🎧 Слушать полную версию</div>
+                            <div class="section-title">🎧 Слушать трек</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                 <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
@@ -1875,7 +1770,7 @@
                     resultDiv.innerHTML = `
                         <div class="result-card">
                             <div class="artist-name">🎵 "${escapeHtml(query)}"</div>
-                            ${previewHtml}
+                            <div class="info-text">❌ Трек не найден в базе</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button>
                                 <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
