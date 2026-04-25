@@ -1333,37 +1333,70 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // ========== АУДИОПЛЕЕР (Deezer API) ==========
+        // ========== АУДИОПЛЕЕР (Deezer API с CORS-прокси) ==========
         async function searchWithPreview(query) {
+            // Если запрос пустой или слишком короткий
+            if (!query || query.length < 2) {
+                return '<div style="color: gray; text-align: center; padding: 20px;">🔍 Введите название трека для поиска превью</div>';
+            }
+            
             try {
-                const response = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=4`);
-                const data = await response.json();
+                // Используем CORS-прокси для обхода блокировки
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const apiUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=4`;
                 
-                if (data.data && data.data.length > 0) {
+                console.log('🔍 Запрос превью для:', query);
+                
+                // Пробуем через прокси
+                let response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
+                let data = await response.json();
+                
+                // Если через прокси не работает, пробуем напрямую
+                if (!data || !data.data) {
+                    console.log('Пробуем прямой запрос...');
+                    const directResponse = await fetch(apiUrl);
+                    data = await directResponse.json();
+                }
+                
+                if (data && data.data && data.data.length > 0) {
                     let html = '<div class="section-title">🎧 Превью треков (30 сек)</div>';
+                    let hasTracks = false;
                     
-                    data.data.forEach(track => {
+                    for (const track of data.data) {
+                        const previewUrl = track.preview;
+                        if (!previewUrl) continue;
+                        hasTracks = true;
+                        
+                        // Получаем обложку (если есть)
+                        let coverUrl = track.album?.cover_medium || 'https://via.placeholder.com/50?text=🎵';
+                        
                         html += `
                             <div class="audio-player">
-                                <img src="${track.album.cover_medium}" class="player-cover" onerror="this.src='https://via.placeholder.com/50?text=🎵'">
+                                <img src="${coverUrl}" class="player-cover" onerror="this.src='https://via.placeholder.com/50?text=🎵'">
                                 <div class="player-info">
-                                    <div class="player-title">${escapeHtml(track.title)}</div>
-                                    <div class="player-artist">${escapeHtml(track.artist.name)}</div>
+                                    <div class="player-title">${escapeHtml(track.title.substring(0, 30))}</div>
+                                    <div class="player-artist">${escapeHtml(track.artist?.name || 'Неизвестен')}</div>
                                     <audio controls preload="none">
-                                        <source src="${track.preview}" type="audio/mpeg">
+                                        <source src="${previewUrl}" type="audio/mpeg">
                                         Ваш браузер не поддерживает аудио
                                     </audio>
                                 </div>
                             </div>
                         `;
-                    });
+                    }
+                    
+                    if (!hasTracks) {
+                        return '<div style="color: gray; text-align: center; padding: 20px;">❌ Нет доступных превью для этого запроса</div>';
+                    }
+                    
                     html += '<div class="preview-note">🎵 30-секундные превью от Deezer</div>';
                     return html;
                 }
+                
                 return '<div style="color: gray; text-align: center; padding: 20px;">❌ Нет доступных превью для этого запроса</div>';
             } catch (error) {
                 console.error('Ошибка загрузки превью:', error);
-                return '<div style="color: gray; text-align: center; padding: 20px;">⚠️ Ошибка загрузки превью</div>';
+                return '<div style="color: gray; text-align: center; padding: 20px;">⚠️ Сервис превью временно недоступен. Попробуйте позже.</div>';
             }
         }
 
