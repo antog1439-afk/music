@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Голосовой поиск + QR + AI + Википедия</title>
+    <title>Music Hub - Трек + Биография исполнителя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -423,6 +423,43 @@
             color: white;
             cursor: pointer;
             margin-top: 16px;
+        }
+        
+        /* Стили для карточки исполнителя */
+        .artist-card {
+            background: linear-gradient(135deg, rgba(0,0,0,0.05), rgba(0,0,0,0.02));
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        body.dark-theme .artist-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+        }
+        
+        .artist-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .artist-icon {
+            font-size: 40px;
+        }
+        
+        .artist-header-info {
+            flex: 1;
+        }
+        
+        .artist-name-large {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .artist-tracks-count {
+            font-size: 12px;
+            color: gray;
         }
         
         /* ПРИВЕТСТВЕННОЕ ОКНО */
@@ -1662,6 +1699,7 @@
         document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromGame').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromAI').onclick = () => { showScreen('menuScreen'); };
+        document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
 
         // ========== ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ПОИСКА ==========
         function setSearchMode(mode) {
@@ -1683,6 +1721,19 @@
             searchInput.value = '';
             if (musicResult) musicResult.innerHTML = '';
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        // ========== ПОЛУЧЕНИЕ ИНФОРМАЦИИ ОБ ИСПОЛНИТЕЛЕ ПО ТРЕКУ ==========
+        function getArtistFromTrack(trackName) {
+            const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(trackName.toLowerCase()));
+            if (foundTrack) {
+                return foundTrack.artist;
+            }
+            return null;
+        }
+
+        function getArtistTracks(artistName) {
+            return tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
         }
 
         // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
@@ -1716,6 +1767,7 @@
             resultDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 Поиск...</div>';
             
             if (currentSearchMode === 'artist') {
+                // Поиск исполнителя
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
@@ -1739,17 +1791,46 @@
                     </div>
                 `;
             } else {
+                // Поиск трека - теперь с информацией об исполнителе!
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 
                 if (foundTrack) {
+                    // Получаем информацию об исполнителе
+                    const artistName = foundTrack.artist;
+                    const bioData = await getWikipediaFullBio(artistName);
+                    const bioHtml = displayBio(bioData, artistName);
+                    const artistTracks = getArtistTracks(artistName);
+                    const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
+                    
                     const artistLinks = {
-                        yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.artist)}`,
-                        youtube: `https://music.youtube.com/search?q=${encodeURIComponent(foundTrack.artist)}`
+                        yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`,
+                        youtube: `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`,
+                        vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(artistName)}&c%5Bsection%5D=audio`,
+                        spotify: `https://open.spotify.com/search/${encodeURIComponent(artistName)}`
                     };
+                    
                     resultDiv.innerHTML = `
                         <div class="result-card">
+                            <!-- Информация о треке -->
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
-                            <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong>${escapeHtml(foundTrack.artist)}</strong></div>
+                            <div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: var(--button-color); font-size: 16px;">${escapeHtml(artistName)}</strong></div>
+                            
+                            <!-- Карточка исполнителя -->
+                            <div class="artist-card">
+                                <div class="artist-header">
+                                    <div class="artist-icon">🎤</div>
+                                    <div class="artist-header-info">
+                                        <div class="artist-name-large">${escapeHtml(artistName)}</div>
+                                        <div class="artist-tracks-count">📀 ${artistTracks.length} треков в базе</div>
+                                    </div>
+                                </div>
+                                ${otherTracks.length > 0 ? `<div style="font-size: 13px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}
+                            </div>
+                            
+                            <!-- Биография из Википедии -->
+                            ${bioHtml}
+                            
+                            <!-- Ссылки на платформы для трека -->
                             <div class="section-title">🎧 Слушать трек</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -1757,13 +1838,20 @@
                                 <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
+                            
+                            <!-- Ссылки на платформы для исполнителя -->
                             <div class="section-title">🎤 Страница исполнителя</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                 <button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                                <button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                                <button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
+                            
+                            <!-- Поделиться -->
+                            <div class="section-title">🔗 Поделиться</div>
                             <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button>
-                            <button class="ai-btn" onclick="generateAICover('${escapeHtml(foundTrack.artist)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button>
+                            <button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button>
                         </div>
                     `;
                 } else {
