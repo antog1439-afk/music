@@ -523,7 +523,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 14px;
         }
         
         .input-area {
@@ -1154,7 +1154,7 @@
                         <div class="message-icon">🤖</div>
                         <div class="message-bubble">
                             Привет! Я твой музыкальный AI-ассистент. 🎵<br>
-                            Могу посоветовать трек, рассказать об исполнителе или просто поболтать о музыке. Спрашивай!
+                            Могу посоветовать трек, рассказать об исполнителе (информация из Википедии). Спрашивай!
                         </div>
                     </div>
                 </div>
@@ -1164,8 +1164,9 @@
                     <button class="suggestion-btn" data-query="песня для зарядки">💪 Для зарядки</button>
                     <button class="suggestion-btn" data-query="романтическая песня">💖 Романтичная</button>
                     <button class="suggestion-btn" data-query="случайный трек">🎲 Случайный</button>
-                    <button class="suggestion-btn" data-query="кто такая Асия">📖 Асия</button>
-                    <button class="suggestion-btn" data-query="кто такой Big Baby Tape">📖 Big Baby Tape</button>
+                    <button class="suggestion-btn" data-query="Асия">📖 Асия</button>
+                    <button class="suggestion-btn" data-query="Big Baby Tape">📖 Big Baby Tape</button>
+                    <button class="suggestion-btn" data-query="Imagine Dragons">📖 Imagine Dragons</button>
                 </div>
                 <div class="input-area">
                     <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке...">
@@ -1683,71 +1684,36 @@
             `;
         }
 
-        // ========== AI АССИСТЕНТ ==========
-        // База треков для ассистента
-        const assistantTracks = [
-            { track: "Останься", artist: "Асия", mood: "грустн" },
-            { track: "Твой поцелуй", artist: "Асия", mood: "романтик" },
-            { track: "Детство", artist: "Асия", mood: "ностальгия" },
-            { track: "Believer", artist: "Imagine Dragons", mood: "энергичн" },
-            { track: "Bad Guy", artist: "Billie Eilish", mood: "загадочн" },
-            { track: "Blinding Lights", artist: "The Weeknd", mood: "энергичн" },
-            { track: "Группа крови", artist: "Кино", mood: "грустн" },
-            { track: "Искала", artist: "Земфира", mood: "грустн" },
-            { track: "Cadillac", artist: "Моргенштерн", mood: "энергичн" }
-        ];
-        
-        const artistInfoAI = {
-            "асия": "Асия (полное имя Асия Мухамедшина) — российская певица и автор песен. Родилась в Казани. Стала известной благодаря треку 'Останься'. Её музыка сочетает поп и R&B элементы.",
-            "big baby tape": "Big Baby Tape (настоящее имя Егор Ракитин) — российский рэпер, участник объединения Benzo Gang. Один из самых популярных молодых исполнителей в России.",
-            "instasamka": "Instasamka (настоящее имя Дарья Зотеева) — российская певица и блогер. Известна треками 'За деньги да', 'Комета'.",
-            "моргенштерн": "Моргенштерн (Алишер Моргенштерн) — российский рэп-исполнитель, шоумен и блогер. Известен своими провокационными клипами и треками.",
-            "земфира": "Земфира (Земфира Рамазанова) — российская рок-певица, автор песен. Дебютный альбом 'Земфира' вышел в 1999 году.",
-            "кино": "Кино — советская рок-группа, лидером которой был Виктор Цой. Легендарные песни: 'Группа крови', 'Звезда по имени Солнце', 'Кукушка'.",
-            "дора": "Дора (настоящее имя Дарья Шиханова) — российская певица. Известна треками 'Втюрилась', 'Дора дура'.",
-            "imagine dragons": "Imagine Dragons — американская рок-группа, образованная в 2008 году в Лас-Вегасе. Известна хитами 'Believer', 'Radioactive'."
-        };
-        
-        function getAIResponse(query) {
+        // ========== AI АССИСТЕНТ (С ВИКИПЕДИЕЙ) ==========
+        async function getAIResponse(query) {
             const lowerQuery = query.toLowerCase();
             
-            // Поиск настроения
-            if (lowerQuery.includes("посоветуй") || lowerQuery.includes("рекомендуй")) {
-                if (lowerQuery.includes("грустн")) {
-                    const sadTracks = assistantTracks.filter(t => t.mood === "грустн");
-                    const randomTrack = sadTracks[Math.floor(Math.random() * sadTracks.length)];
-                    return `😢 Послушай "${randomTrack.track}" - ${randomTrack.artist}. Очень душевная песня.`;
-                } else if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) {
-                    return "😊 Для поднятия настроения отлично подойдёт 'Believer' - Imagine Dragons или 'Blinding Lights' - The Weeknd!";
-                } else if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) {
-                    return "💪 Для зарядки рекомендую 'Believer' - Imagine Dragons или 'Cadillac' - Моргенштерн!";
-                } else if (lowerQuery.includes("романтик")) {
-                    const romanticTracks = assistantTracks.filter(t => t.mood === "романтик");
-                    const randomTrack = romanticTracks[Math.floor(Math.random() * romanticTracks.length)];
-                    return `💖 Отличный романтический трек: "${randomTrack.track}" - ${randomTrack.artist}. Обязательно послушай!`;
-                }
-            }
-            
-            // Информация об исполнителе
-            for (const [artist, info] of Object.entries(artistInfoAI)) {
+            // Проверка на запрос информации об исполнителе (через Википедию)
+            const artistNames = ["асия", "big baby tape", "instasamka", "моргенштерн", "земфира", "кино", "дора", "imagine dragons", "billie eilish", "the weeknd"];
+            for (const artist of artistNames) {
                 if (lowerQuery.includes(artist)) {
-                    return `📖 ${info}`;
+                    showAssistantTyping();
+                    const bioData = await getWikipediaFullBio(artist);
+                    hideAssistantTyping();
+                    if (bioData && bioData.fullText) {
+                        return `📖 ${bioData.fullText.substring(0, 800)}${bioData.fullText.length > 800 ? '...' : ''}\n\n🔗 ${bioData.pageUrl}`;
+                    } else {
+                        return `❌ Не удалось найти информацию об исполнителе "${artist}" в Википедии.`;
+                    }
                 }
             }
             
-            // Случайный трек
+            // Совет по настроению
+            if (lowerQuery.includes("грустн")) return "😢 Грустные треки: 'Останься' - Асия, 'Группа крови' - Кино, 'Искала' - Земфира";
+            if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) return "😊 Весёлые треки: 'Believer' - Imagine Dragons, 'Blinding Lights' - The Weeknd";
+            if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) return "💪 Для зарядки: 'Believer' - Imagine Dragons, 'Cadillac' - Моргенштерн";
+            if (lowerQuery.includes("романтик")) return "💖 Романтичные треки: 'Твой поцелуй' - Асия, 'Останься' - Асия";
             if (lowerQuery.includes("случайный") || lowerQuery.includes("рандом")) {
-                const randomTrack = assistantTracks[Math.floor(Math.random() * assistantTracks.length)];
-                return `🎲 Случайный трек: "${randomTrack.track}" - ${randomTrack.artist}\n\nПопробуй найти его в разделе "Музыка"!`;
+                const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
+                return `🎲 Случайный трек: "${randomTrack.track}" - ${randomTrack.artist}`;
             }
-            
-            // Приветствие
-            if (lowerQuery.includes("привет")) {
-                return "Привет! 👋 Я твой музыкальный помощник. Спроси меня о песнях, исполнителях или попроси совет!\n\nНапример:\n• посоветуй грустную песню\n• кто такая Асия?\n• случайный трек";
-            }
-            
-            // Стандартный ответ
-            return "🎶 Я могу помочь найти музыку, посоветовать трек или рассказать об исполнителе. Попробуй спросить:\n• посоветуй грустную песню\n• кто такая Асия?\n• случайный трек";
+            if (lowerQuery.includes("привет")) return "Привет! 👋 Я твой музыкальный помощник. Спроси: 'грустная песня', 'кто такая Асия?' или 'случайный трек'";
+            return "🎶 Я могу помочь найти музыку. Попробуй спросить:\n• грустная песня\n• кто такая Асия?\n• случайный трек";
         }
         
         function addMessage(text, isUser = false) {
@@ -1755,53 +1721,45 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message message-${isUser ? 'user' : 'ai'}`;
             messageDiv.style.animation = 'fadeIn 0.3s ease';
-            
             if (isUser) {
                 messageDiv.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon">👤</div>`;
             } else {
                 messageDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">${escapeHtml(text)}</div>`;
             }
-            
             chatContainer.appendChild(messageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
         
-        function showTyping() {
+        let assistantTypingDiv = null;
+        function showAssistantTyping() {
             const chatContainer = document.getElementById('chatContainer');
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message message-ai';
-            typingDiv.id = 'typingIndicator';
-            typingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble"><span class="loading-dots">🤔 <span>.</span><span>.</span><span>.</span></span></div>`;
-            chatContainer.appendChild(typingDiv);
+            assistantTypingDiv = document.createElement('div');
+            assistantTypingDiv.className = 'message message-ai';
+            assistantTypingDiv.id = 'assistantTyping';
+            assistantTypingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble"><span class="loading-dots">🤔 <span>.</span><span>.</span><span>.</span></span></div>`;
+            chatContainer.appendChild(assistantTypingDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
-        
-        function hideTyping() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
+        function hideAssistantTyping() {
+            if (assistantTypingDiv) { assistantTypingDiv.remove(); assistantTypingDiv = null; }
         }
         
-        function sendAssistantMessage() {
+        async function sendAssistantMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
             if (!message) return;
-            
             addMessage(message, true);
             input.value = '';
-            
-            showTyping();
-            
-            setTimeout(() => {
-                hideTyping();
-                const response = getAIResponse(message);
-                addMessage(response);
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            }, 500 + Math.random() * 500);
+            showAssistantTyping();
+            const response = await getAIResponse(message);
+            hideAssistantTyping();
+            addMessage(response);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         // ========== ПЕРЕМЕННЫЕ ==========
         let currentSearchMode = 'artist';
-        
+
         // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
         function loadSavedAppearance() {
             const savedBg = localStorage.getItem('music_bot_background');
@@ -1917,7 +1875,7 @@
             if (e.target === settingsModal) settingsModal.classList.add('hidden');
         };
 
-        // ========== ПОЛНАЯ БАЗА ТРЕКОВ ==========
+        // ========== БАЗА ТРЕКОВ ==========
         const tracksDatabase = [
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
@@ -2013,6 +1971,19 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
+        // ========== ПОЛУЧЕНИЕ ИНФОРМАЦИИ ОБ ИСПОЛНИТЕЛЕ ПО ТРЕКУ ==========
+        function getArtistFromTrack(trackName) {
+            const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(trackName.toLowerCase()));
+            if (foundTrack) {
+                return foundTrack.artist;
+            }
+            return null;
+        }
+
+        function getArtistTracks(artistName) {
+            return tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
+        }
+
         // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
         function loadPopularArtists() {
             const container = document.getElementById('popularGrid');
@@ -2044,6 +2015,7 @@
             resultDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 Поиск...</div>';
             
             if (currentSearchMode === 'artist') {
+                // Поиск исполнителя
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
@@ -2067,13 +2039,15 @@
                     </div>
                 `;
             } else {
+                // Поиск трека - теперь с информацией об исполнителе!
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 
                 if (foundTrack) {
+                    // Получаем информацию об исполнителе
                     const artistName = foundTrack.artist;
                     const bioData = await getWikipediaFullBio(artistName);
                     const bioHtml = displayBio(bioData, artistName);
-                    const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
+                    const artistTracks = getArtistTracks(artistName);
                     const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
                     
                     const artistLinks = {
@@ -2085,8 +2059,11 @@
                     
                     resultDiv.innerHTML = `
                         <div class="result-card">
+                            <!-- Информация о треке -->
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
                             <div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: var(--button-color); font-size: 16px;">${escapeHtml(artistName)}</strong></div>
+                            
+                            <!-- Карточка исполнителя -->
                             <div class="artist-card">
                                 <div class="artist-header">
                                     <div class="artist-icon">🎤</div>
@@ -2097,7 +2074,11 @@
                                 </div>
                                 ${otherTracks.length > 0 ? `<div style="font-size: 13px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}
                             </div>
+                            
+                            <!-- Биография из Википедии -->
                             ${bioHtml}
+                            
+                            <!-- Ссылки на платформы для трека -->
                             <div class="section-title">🎧 Слушать трек</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -2105,6 +2086,8 @@
                                 <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
+                            
+                            <!-- Ссылки на платформы для исполнителя -->
                             <div class="section-title">🎤 Страница исполнителя</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -2112,6 +2095,8 @@
                                 <button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
+                            
+                            <!-- Поделиться -->
                             <div class="section-title">🔗 Поделиться</div>
                             <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button>
                             <button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button>
