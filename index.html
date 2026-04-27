@@ -1074,11 +1074,6 @@
                 <div class="menu-title">Игра</div>
                 <div class="menu-desc">Угадай исполнителя</div>
             </div>
-            <div class="menu-btn" id="goToAIBtn">
-                <span class="menu-icon">🤖</span>
-                <div class="menu-title">AI Обложки</div>
-                <div class="menu-desc">Создай уникальную обложку</div>
-            </div>
             <div class="menu-btn" id="goToAssistantBtn">
                 <span class="menu-icon">💬</span>
                 <div class="menu-title">AI Ассистент</div>
@@ -1126,25 +1121,7 @@
             <div class="user-info">🎮 Угадай трек</div>
         </div>
 
-        <!-- ЭКРАН AI ОБЛОЖЕК -->
-        <div id="aiScreen" class="hidden">
-            <button class="back-btn" id="backToMenuFromAI">← Назад</button>
-            <div class="card">
-                <div class="section-title">🤖 AI ГЕНЕРАТОР ОБЛОЖЕК</div>
-                <div class="search-box">
-                    <input type="text" id="aiPrompt" class="search-input" placeholder="Например: рок группа, гитара, концерт, ночь">
-                    <button id="generateAIBtn" class="search-btn">Создать</button>
-                </div>
-                <div id="aiResult" style="text-align: center; margin-top: 16px;">
-                    <div style="color: gray; padding: 20px;">
-                        🎨 Введите описание и AI создаст уникальную обложку<br><br>
-                        <small>Примеры: "электронная музыка, космос, неон" или "джаз, саксофон, вечерний город"</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ЭКРАН AI АССИСТЕНТА -->
+        <!-- ЭКРАН AI АССИСТЕНТА (отдельная вкладка) -->
         <div id="assistantScreen" class="hidden">
             <button class="back-btn" id="backToMenuFromAssistant">← Назад</button>
             <div class="card">
@@ -1154,7 +1131,7 @@
                         <div class="message-icon">🤖</div>
                         <div class="message-bubble">
                             Привет! Я твой музыкальный AI-ассистент. 🎵<br>
-                            Могу посоветовать трек, рассказать об исполнителе (информация из Википедии). Спрашивай!
+                            Могу посоветовать трек или рассказать об исполнителе (информация из Википедии). Спрашивай!
                         </div>
                     </div>
                 </div>
@@ -1419,73 +1396,6 @@
             updateGameStats();
         }
 
-        // ========== AI ГЕНЕРАЦИЯ ОБЛОЖЕК ==========
-        async function generateAICover(prompt) {
-            const resultDiv = document.getElementById('aiResult');
-            addAction('AI', `Генерация обложки: "${prompt}"`);
-            
-            resultDiv.innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <div class="loading-spinner"></div>
-                    <div style="margin-top: 12px; color: gray;">🤖 AI создаёт обложку...</div>
-                    <div style="font-size: 12px; margin-top: 8px;">⏱️ Обычно 5-10 секунд</div>
-                </div>
-            `;
-            
-            try {
-                const encodedPrompt = encodeURIComponent(prompt);
-                const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true`;
-                
-                const img = new Image();
-                img.onload = () => {
-                    resultDiv.innerHTML = `
-                        <div style="text-align: center;">
-                            <img src="${imageUrl}" class="ai-cover-img" alt="AI Generated Cover">
-                            <div class="section-title" style="margin-top: 16px;">🎨 Описание: ${escapeHtml(prompt)}</div>
-                            <button onclick="downloadAICover('${imageUrl}')" class="ai-btn" style="background: #28a745; margin-top: 12px;">
-                                💾 Скачать обложку
-                            </button>
-                        </div>
-                    `;
-                    addAction('AI', `Обложка создана: "${prompt}"`);
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                };
-                img.onerror = () => {
-                    resultDiv.innerHTML = `
-                        <div style="text-align: center; padding: 20px; color: gray;">
-                            ❌ Не удалось создать обложку<br>
-                            <button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button>
-                        </div>
-                    `;
-                };
-                img.src = imageUrl;
-            } catch (error) {
-                resultDiv.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: gray;">
-                        ❌ Ошибка: ${error.message}<br>
-                        <button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button>
-                    </div>
-                `;
-            }
-        }
-        
-        function downloadAICover(imageUrl) {
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            link.download = `ai_cover_${Date.now()}.jpg`;
-            link.click();
-            addAction('AI', 'Скачал обложку');
-            showNotification("💾 Скачивание началось!");
-        }
-        
-        function showNotification(msg) {
-            const toast = document.createElement('div');
-            toast.className = 'notification-toast';
-            toast.textContent = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
         // ========== QR КОД ==========
         function showQR(text, title) {
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
@@ -1601,6 +1511,14 @@
             if (voiceBtn) {
                 voiceBtn.classList.remove('listening');
             }
+        }
+
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
 
         // ========== ВИКИПЕДИЯ - ТОЧНЫЙ ПОИСК БИОГРАФИИ ==========
@@ -1757,9 +1675,6 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // ========== ПЕРЕМЕННЫЕ ==========
-        let currentSearchMode = 'artist';
-
         // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
         function loadSavedAppearance() {
             const savedBg = localStorage.getItem('music_bot_background');
@@ -1915,14 +1830,12 @@
         const menuScreen = document.getElementById('menuScreen');
         const musicScreen = document.getElementById('musicScreen');
         const gameScreen = document.getElementById('gameScreen');
-        const aiScreen = document.getElementById('aiScreen');
         const assistantScreen = document.getElementById('assistantScreen');
 
         function showScreen(screenName) {
             menuScreen.classList.add('hidden');
             musicScreen.classList.add('hidden');
             gameScreen.classList.add('hidden');
-            aiScreen.classList.add('hidden');
             assistantScreen.classList.add('hidden');
             document.getElementById(screenName).classList.remove('hidden');
         }
@@ -1936,17 +1849,12 @@
             showScreen('gameScreen');
             addAction('Переход', 'Открыл раздел Игра');
         };
-        document.getElementById('goToAIBtn').onclick = () => {
-            showScreen('aiScreen');
-            addAction('Переход', 'Открыл раздел AI Обложки');
-        };
         document.getElementById('goToAssistantBtn').onclick = () => {
             showScreen('assistantScreen');
             addAction('Переход', 'Открыл раздел AI Ассистент');
         };
         document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromGame').onclick = () => { showScreen('menuScreen'); };
-        document.getElementById('backToMenuFromAI').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromAssistant').onclick = () => { showScreen('menuScreen'); };
 
         // ========== ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ПОИСКА ==========
@@ -1971,20 +1879,9 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // ========== ПОЛУЧЕНИЕ ИНФОРМАЦИИ ОБ ИСПОЛНИТЕЛЕ ПО ТРЕКУ ==========
-        function getArtistFromTrack(trackName) {
-            const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(trackName.toLowerCase()));
-            if (foundTrack) {
-                return foundTrack.artist;
-            }
-            return null;
-        }
-
-        function getArtistTracks(artistName) {
-            return tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
-        }
-
         // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
+        let currentSearchMode = 'artist';
+        
         function loadPopularArtists() {
             const container = document.getElementById('popularGrid');
             container.innerHTML = popularArtistsList.map(artist => 
@@ -2015,7 +1912,6 @@
             resultDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 Поиск...</div>';
             
             if (currentSearchMode === 'artist') {
-                // Поиск исполнителя
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
@@ -2035,19 +1931,16 @@
                         ${bioHtml}
                         <div class="section-title">🔗 Поделиться</div>
                         <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button>
-                        <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button>
                     </div>
                 `;
             } else {
-                // Поиск трека - теперь с информацией об исполнителе!
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 
                 if (foundTrack) {
-                    // Получаем информацию об исполнителе
                     const artistName = foundTrack.artist;
                     const bioData = await getWikipediaFullBio(artistName);
                     const bioHtml = displayBio(bioData, artistName);
-                    const artistTracks = getArtistTracks(artistName);
+                    const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
                     const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
                     
                     const artistLinks = {
@@ -2059,11 +1952,8 @@
                     
                     resultDiv.innerHTML = `
                         <div class="result-card">
-                            <!-- Информация о треке -->
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
                             <div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: var(--button-color); font-size: 16px;">${escapeHtml(artistName)}</strong></div>
-                            
-                            <!-- Карточка исполнителя -->
                             <div class="artist-card">
                                 <div class="artist-header">
                                     <div class="artist-icon">🎤</div>
@@ -2074,11 +1964,7 @@
                                 </div>
                                 ${otherTracks.length > 0 ? `<div style="font-size: 13px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}
                             </div>
-                            
-                            <!-- Биография из Википедии -->
                             ${bioHtml}
-                            
-                            <!-- Ссылки на платформы для трека -->
                             <div class="section-title">🎧 Слушать трек</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -2086,8 +1972,6 @@
                                 <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
-                            
-                            <!-- Ссылки на платформы для исполнителя -->
                             <div class="section-title">🎤 Страница исполнителя</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -2095,11 +1979,8 @@
                                 <button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
-                            
-                            <!-- Поделиться -->
                             <div class="section-title">🔗 Поделиться</div>
                             <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button>
-                            <button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button>
                         </div>
                     `;
                 } else {
@@ -2112,7 +1993,6 @@
                                 <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                             </div>
                             <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)}')">📱 QR-код для поиска</button>
-                            <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} cover')">🤖 Создать AI обложку</button>
                         </div>
                     `;
                 }
@@ -2137,19 +2017,6 @@
         const voiceBtn = document.getElementById('voiceSearchBtn');
         if (voiceBtn) voiceBtn.onclick = startVoiceSearch;
         initVoiceSearch();
-        
-        // AI генератор
-        document.getElementById('generateAIBtn').onclick = () => {
-            const prompt = document.getElementById('aiPrompt').value.trim();
-            if (!prompt) {
-                showNotification("❌ Введите описание для обложки!");
-                return;
-            }
-            generateAICover(prompt);
-        };
-        document.getElementById('aiPrompt').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('generateAIBtn').click();
-        });
         
         // AI Ассистент
         document.getElementById('sendChatBtn').onclick = sendAssistantMessage;
