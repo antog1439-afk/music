@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Трек + Биография исполнителя</title>
+    <title>Music Hub - Трек + Биография + AI Ассистент</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -460,6 +460,139 @@
         .artist-tracks-count {
             font-size: 12px;
             color: gray;
+        }
+        
+        /* Стили для AI Ассистента */
+        .chat-container {
+            background: rgba(0,0,0,0.05);
+            border-radius: 20px;
+            padding: 12px;
+            height: 350px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+        
+        body.dark-theme .chat-container {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .message {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .message-user {
+            justify-content: flex-end;
+        }
+        
+        .message-ai {
+            justify-content: flex-start;
+        }
+        
+        .message-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .message-user .message-bubble {
+            background: #2481cc;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-ai .message-bubble {
+            background: rgba(0,0,0,0.1);
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+        
+        body.dark-theme .message-ai .message-bubble {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .message-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background: white;
+        }
+        
+        body.dark-theme .chat-input {
+            background: #2a2a2a;
+            color: #fff;
+            border-color: #444;
+        }
+        
+        .send-btn {
+            background: #28a745;
+            border: none;
+            width: 44px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .suggestion-btn {
+            background: rgba(0,0,0,0.1);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        body.dark-theme .suggestion-btn {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .loading-dots {
+            display: inline-block;
+        }
+        
+        .loading-dots span {
+            animation: blink 1.4s infinite;
+        }
+        
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
         }
         
         /* ПРИВЕТСТВЕННОЕ ОКНО */
@@ -946,6 +1079,11 @@
                 <div class="menu-title">AI Обложки</div>
                 <div class="menu-desc">Создай уникальную обложку</div>
             </div>
+            <div class="menu-btn" id="goToAssistantBtn">
+                <span class="menu-icon">💬</span>
+                <div class="menu-title">AI Ассистент</div>
+                <div class="menu-desc">Поможет найти музыку</div>
+            </div>
         </div>
 
         <!-- ЭКРАН МУЗЫКИ -->
@@ -1002,6 +1140,36 @@
                         🎨 Введите описание и AI создаст уникальную обложку<br><br>
                         <small>Примеры: "электронная музыка, космос, неон" или "джаз, саксофон, вечерний город"</small>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН AI АССИСТЕНТА -->
+        <div id="assistantScreen" class="hidden">
+            <button class="back-btn" id="backToMenuFromAssistant">← Назад</button>
+            <div class="card">
+                <div class="section-title">💬 AI МУЗЫКАЛЬНЫЙ АССИСТЕНТ</div>
+                <div class="chat-container" id="chatContainer">
+                    <div class="message message-ai">
+                        <div class="message-icon">🤖</div>
+                        <div class="message-bubble">
+                            Привет! Я твой музыкальный AI-ассистент. 🎵<br>
+                            Могу посоветовать трек, рассказать об исполнителе или просто поболтать о музыке. Спрашивай!
+                        </div>
+                    </div>
+                </div>
+                <div class="suggestions">
+                    <button class="suggestion-btn" data-query="грустная песня">😢 Грустная</button>
+                    <button class="suggestion-btn" data-query="весёлая песня">😊 Весёлая</button>
+                    <button class="suggestion-btn" data-query="песня для зарядки">💪 Для зарядки</button>
+                    <button class="suggestion-btn" data-query="романтическая песня">💖 Романтичная</button>
+                    <button class="suggestion-btn" data-query="случайный трек">🎲 Случайный</button>
+                    <button class="suggestion-btn" data-query="кто такая Асия">📖 Асия</button>
+                    <button class="suggestion-btn" data-query="кто такой Big Baby Tape">📖 Big Baby Tape</button>
+                </div>
+                <div class="input-area">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке...">
+                    <button id="sendChatBtn" class="send-btn">📤</button>
                 </div>
             </div>
         </div>
@@ -1515,9 +1683,125 @@
             `;
         }
 
+        // ========== AI АССИСТЕНТ ==========
+        // База треков для ассистента
+        const assistantTracks = [
+            { track: "Останься", artist: "Асия", mood: "грустн" },
+            { track: "Твой поцелуй", artist: "Асия", mood: "романтик" },
+            { track: "Детство", artist: "Асия", mood: "ностальгия" },
+            { track: "Believer", artist: "Imagine Dragons", mood: "энергичн" },
+            { track: "Bad Guy", artist: "Billie Eilish", mood: "загадочн" },
+            { track: "Blinding Lights", artist: "The Weeknd", mood: "энергичн" },
+            { track: "Группа крови", artist: "Кино", mood: "грустн" },
+            { track: "Искала", artist: "Земфира", mood: "грустн" },
+            { track: "Cadillac", artist: "Моргенштерн", mood: "энергичн" }
+        ];
+        
+        const artistInfoAI = {
+            "асия": "Асия (полное имя Асия Мухамедшина) — российская певица и автор песен. Родилась в Казани. Стала известной благодаря треку 'Останься'. Её музыка сочетает поп и R&B элементы.",
+            "big baby tape": "Big Baby Tape (настоящее имя Егор Ракитин) — российский рэпер, участник объединения Benzo Gang. Один из самых популярных молодых исполнителей в России.",
+            "instasamka": "Instasamka (настоящее имя Дарья Зотеева) — российская певица и блогер. Известна треками 'За деньги да', 'Комета'.",
+            "моргенштерн": "Моргенштерн (Алишер Моргенштерн) — российский рэп-исполнитель, шоумен и блогер. Известен своими провокационными клипами и треками.",
+            "земфира": "Земфира (Земфира Рамазанова) — российская рок-певица, автор песен. Дебютный альбом 'Земфира' вышел в 1999 году.",
+            "кино": "Кино — советская рок-группа, лидером которой был Виктор Цой. Легендарные песни: 'Группа крови', 'Звезда по имени Солнце', 'Кукушка'.",
+            "дора": "Дора (настоящее имя Дарья Шиханова) — российская певица. Известна треками 'Втюрилась', 'Дора дура'.",
+            "imagine dragons": "Imagine Dragons — американская рок-группа, образованная в 2008 году в Лас-Вегасе. Известна хитами 'Believer', 'Radioactive'."
+        };
+        
+        function getAIResponse(query) {
+            const lowerQuery = query.toLowerCase();
+            
+            // Поиск настроения
+            if (lowerQuery.includes("посоветуй") || lowerQuery.includes("рекомендуй")) {
+                if (lowerQuery.includes("грустн")) {
+                    const sadTracks = assistantTracks.filter(t => t.mood === "грустн");
+                    const randomTrack = sadTracks[Math.floor(Math.random() * sadTracks.length)];
+                    return `😢 Послушай "${randomTrack.track}" - ${randomTrack.artist}. Очень душевная песня.`;
+                } else if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) {
+                    return "😊 Для поднятия настроения отлично подойдёт 'Believer' - Imagine Dragons или 'Blinding Lights' - The Weeknd!";
+                } else if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) {
+                    return "💪 Для зарядки рекомендую 'Believer' - Imagine Dragons или 'Cadillac' - Моргенштерн!";
+                } else if (lowerQuery.includes("романтик")) {
+                    const romanticTracks = assistantTracks.filter(t => t.mood === "романтик");
+                    const randomTrack = romanticTracks[Math.floor(Math.random() * romanticTracks.length)];
+                    return `💖 Отличный романтический трек: "${randomTrack.track}" - ${randomTrack.artist}. Обязательно послушай!`;
+                }
+            }
+            
+            // Информация об исполнителе
+            for (const [artist, info] of Object.entries(artistInfoAI)) {
+                if (lowerQuery.includes(artist)) {
+                    return `📖 ${info}`;
+                }
+            }
+            
+            // Случайный трек
+            if (lowerQuery.includes("случайный") || lowerQuery.includes("рандом")) {
+                const randomTrack = assistantTracks[Math.floor(Math.random() * assistantTracks.length)];
+                return `🎲 Случайный трек: "${randomTrack.track}" - ${randomTrack.artist}\n\nПопробуй найти его в разделе "Музыка"!`;
+            }
+            
+            // Приветствие
+            if (lowerQuery.includes("привет")) {
+                return "Привет! 👋 Я твой музыкальный помощник. Спроси меня о песнях, исполнителях или попроси совет!\n\nНапример:\n• посоветуй грустную песню\n• кто такая Асия?\n• случайный трек";
+            }
+            
+            // Стандартный ответ
+            return "🎶 Я могу помочь найти музыку, посоветовать трек или рассказать об исполнителе. Попробуй спросить:\n• посоветуй грустную песню\n• кто такая Асия?\n• случайный трек";
+        }
+        
+        function addMessage(text, isUser = false) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${isUser ? 'user' : 'ai'}`;
+            messageDiv.style.animation = 'fadeIn 0.3s ease';
+            
+            if (isUser) {
+                messageDiv.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon">👤</div>`;
+            } else {
+                messageDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">${escapeHtml(text)}</div>`;
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function showTyping() {
+            const chatContainer = document.getElementById('chatContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message message-ai';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble"><span class="loading-dots">🤔 <span>.</span><span>.</span><span>.</span></span></div>`;
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+        
+        function sendAssistantMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            addMessage(message, true);
+            input.value = '';
+            
+            showTyping();
+            
+            setTimeout(() => {
+                hideTyping();
+                const response = getAIResponse(message);
+                addMessage(response);
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            }, 500 + Math.random() * 500);
+        }
+
         // ========== ПЕРЕМЕННЫЕ ==========
         let currentSearchMode = 'artist';
-
+        
         // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
         function loadSavedAppearance() {
             const savedBg = localStorage.getItem('music_bot_background');
@@ -1633,7 +1917,7 @@
             if (e.target === settingsModal) settingsModal.classList.add('hidden');
         };
 
-        // ========== БАЗА ТРЕКОВ ==========
+        // ========== ПОЛНАЯ БАЗА ТРЕКОВ ==========
         const tracksDatabase = [
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
@@ -1674,12 +1958,14 @@
         const musicScreen = document.getElementById('musicScreen');
         const gameScreen = document.getElementById('gameScreen');
         const aiScreen = document.getElementById('aiScreen');
+        const assistantScreen = document.getElementById('assistantScreen');
 
         function showScreen(screenName) {
             menuScreen.classList.add('hidden');
             musicScreen.classList.add('hidden');
             gameScreen.classList.add('hidden');
             aiScreen.classList.add('hidden');
+            assistantScreen.classList.add('hidden');
             document.getElementById(screenName).classList.remove('hidden');
         }
 
@@ -1696,10 +1982,14 @@
             showScreen('aiScreen');
             addAction('Переход', 'Открыл раздел AI Обложки');
         };
+        document.getElementById('goToAssistantBtn').onclick = () => {
+            showScreen('assistantScreen');
+            addAction('Переход', 'Открыл раздел AI Ассистент');
+        };
         document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromGame').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromAI').onclick = () => { showScreen('menuScreen'); };
-        document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
+        document.getElementById('backToMenuFromAssistant').onclick = () => { showScreen('menuScreen'); };
 
         // ========== ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ПОИСКА ==========
         function setSearchMode(mode) {
@@ -1721,19 +2011,6 @@
             searchInput.value = '';
             if (musicResult) musicResult.innerHTML = '';
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
-        // ========== ПОЛУЧЕНИЕ ИНФОРМАЦИИ ОБ ИСПОЛНИТЕЛЕ ПО ТРЕКУ ==========
-        function getArtistFromTrack(trackName) {
-            const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(trackName.toLowerCase()));
-            if (foundTrack) {
-                return foundTrack.artist;
-            }
-            return null;
-        }
-
-        function getArtistTracks(artistName) {
-            return tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
         }
 
         // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
@@ -1767,7 +2044,6 @@
             resultDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 Поиск...</div>';
             
             if (currentSearchMode === 'artist') {
-                // Поиск исполнителя
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
@@ -1791,15 +2067,13 @@
                     </div>
                 `;
             } else {
-                // Поиск трека - теперь с информацией об исполнителе!
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 
                 if (foundTrack) {
-                    // Получаем информацию об исполнителе
                     const artistName = foundTrack.artist;
                     const bioData = await getWikipediaFullBio(artistName);
                     const bioHtml = displayBio(bioData, artistName);
-                    const artistTracks = getArtistTracks(artistName);
+                    const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
                     const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
                     
                     const artistLinks = {
@@ -1811,11 +2085,8 @@
                     
                     resultDiv.innerHTML = `
                         <div class="result-card">
-                            <!-- Информация о треке -->
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
                             <div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: var(--button-color); font-size: 16px;">${escapeHtml(artistName)}</strong></div>
-                            
-                            <!-- Карточка исполнителя -->
                             <div class="artist-card">
                                 <div class="artist-header">
                                     <div class="artist-icon">🎤</div>
@@ -1826,11 +2097,7 @@
                                 </div>
                                 ${otherTracks.length > 0 ? `<div style="font-size: 13px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}
                             </div>
-                            
-                            <!-- Биография из Википедии -->
                             ${bioHtml}
-                            
-                            <!-- Ссылки на платформы для трека -->
                             <div class="section-title">🎧 Слушать трек</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -1838,8 +2105,6 @@
                                 <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
-                            
-                            <!-- Ссылки на платформы для исполнителя -->
                             <div class="section-title">🎤 Страница исполнителя</div>
                             <div class="platform-buttons">
                                 <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -1847,8 +2112,6 @@
                                 <button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 <button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
                             </div>
-                            
-                            <!-- Поделиться -->
                             <div class="section-title">🔗 Поделиться</div>
                             <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button>
                             <button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button>
@@ -1901,6 +2164,21 @@
         };
         document.getElementById('aiPrompt').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') document.getElementById('generateAIBtn').click();
+        });
+        
+        // AI Ассистент
+        document.getElementById('sendChatBtn').onclick = sendAssistantMessage;
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendAssistantMessage();
+        });
+        
+        // Кнопки-подсказки для ассистента
+        document.querySelectorAll('.suggestion-btn').forEach(btn => {
+            btn.onclick = () => {
+                const query = btn.getAttribute('data-query');
+                document.getElementById('chatInput').value = query;
+                sendAssistantMessage();
+            };
         });
 
         // ========== ИГРА ==========
