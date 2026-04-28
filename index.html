@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Компактное меню</title>
+    <title>Music Hub - Универсальный AI Ассистент</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
@@ -22,7 +22,6 @@
             transition: background 0.5s ease;
         }
         
-        /* Кастомные фоны для каждого раздела */
         body.music-mode {
             background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
             animation: none !important;
@@ -48,7 +47,6 @@
             100% { background-position: 0% 0%; }
         }
         
-        /* Полноэкранные контейнеры */
         .fullscreen-page {
             position: fixed;
             top: 0;
@@ -70,7 +68,6 @@
             transform: translateX(0);
         }
         
-        /* Главное меню (полноэкранное) */
         .menu-container {
             position: fixed;
             top: 0;
@@ -90,7 +87,6 @@
             transform: translateX(-100%);
         }
         
-        /* КОМПАКТНЫЕ КНОПКИ МЕНЮ */
         .menu-screen {
             display: flex;
             flex-direction: column;
@@ -116,7 +112,7 @@
             width: 100%;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.3s;
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
         
@@ -125,7 +121,6 @@
         .menu-title { font-size: 16px; font-weight: 600; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .menu-desc { font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 2px; }
         
-        /* Шапка внутри разделов */
         .page-header {
             display: flex;
             align-items: center;
@@ -152,7 +147,6 @@
         .back-btn:active { transform: scale(0.95); }
         .page-title { font-size: 24px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); flex: 1; }
         
-        /* Эффект стекла для контента */
         .glass-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
@@ -168,7 +162,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* Поиск */
         .search-type-switch { display: flex; gap: 10px; margin-bottom: 16px; }
         .search-type-btn {
             flex: 1;
@@ -296,7 +289,6 @@
         .qr-btn { background: #607d8b; }
         .ai-btn { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
         
-        /* Биография */
         .bio-section {
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
@@ -310,7 +302,6 @@
         .bio-text { font-size: 12px; line-height: 1.4; color: rgba(255,255,255,0.9); }
         .bio-wiki-link { display: inline-block; margin-top: 8px; color: #4facfe; text-decoration: none; font-size: 11px; }
         
-        /* Игра */
         .game-question { text-align: center; }
         .track-name { font-size: 18px; font-weight: 800; margin: 16px 0; color: white; }
         .game-options { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
@@ -329,7 +320,6 @@
         .game-option.correct { background: #28a745; }
         .game-option.wrong { background: #dc3545; }
         
-        /* AI обложки */
         .ai-cover-img {
             width: 100%;
             max-width: 200px;
@@ -349,13 +339,12 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* Чат ассистента */
         .chat-container {
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 12px;
-            height: 380px;
+            height: 400px;
             overflow-y: auto;
             margin-bottom: 12px;
         }
@@ -363,7 +352,7 @@
         .message-user { justify-content: flex-end; }
         .message-ai { justify-content: flex-start; }
         .message-bubble {
-            max-width: 75%;
+            max-width: 80%;
             padding: 10px 14px;
             border-radius: 20px;
             font-size: 13px;
@@ -406,7 +395,6 @@
             font-size: 18px;
         }
         
-        /* Кнопка настроек */
         .settings-fab {
             position: fixed;
             bottom: 20px;
@@ -425,7 +413,6 @@
         }
         .settings-fab:active { transform: scale(0.92); }
         
-        /* Модалка настроек */
         .settings-modal {
             position: fixed;
             top: 0;
@@ -456,7 +443,6 @@
         .close-modal { background: rgba(255,255,255,0.2); border: none; padding: 10px; border-radius: 40px; color: white; font-weight: 600; width: 100%; margin-top: 16px; cursor: pointer; }
         .appearance-btn { background: rgba(255,255,255,0.15); border: none; padding: 6px 12px; border-radius: 25px; color: white; cursor: pointer; font-size: 12px; }
         
-        /* Админ панель */
         .admin-badge {
             position: fixed;
             top: 10px;
@@ -590,15 +576,13 @@
             .menu-btn { padding: 10px 20px; }
             .menu-icon { font-size: 24px; }
             .menu-title { font-size: 14px; }
-            .menu-desc { font-size: 9px; }
             .page-title { font-size: 20px; }
             .glass-card { padding: 16px; }
-            .chat-container { height: 340px; }
+            .chat-container { height: 350px; }
         }
     </style>
 </head>
 <body>
-    <!-- ГЛАВНОЕ МЕНЮ (полноэкранное) -->
     <div class="menu-container" id="menuContainer">
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
@@ -619,12 +603,11 @@
             <div class="menu-btn" id="goToAssistantBtn">
                 <span class="menu-icon">💬</span>
                 <div class="menu-title">AI Ассистент</div>
-                <div class="menu-desc">Поможет найти музыку</div>
+                <div class="menu-desc">Универсальный помощник</div>
             </div>
         </div>
     </div>
 
-    <!-- МУЗЫКА - полноэкранная страница -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic">← Назад</button>
@@ -648,7 +631,6 @@
         <div class="user-info">👤 <span id="userName">Music</span></div>
     </div>
 
-    <!-- ИГРА - полноэкранная страница -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header">
             <button class="back-btn" id="backFromGame">← Назад</button>
@@ -663,7 +645,6 @@
         <div class="user-info">🎮 Угадай исполнителя</div>
     </div>
 
-    <!-- AI ОБЛОЖКИ - полноэкранная страница -->
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header">
             <button class="back-btn" id="backFromAI">← Назад</button>
@@ -682,7 +663,7 @@
         <div class="user-info">🤖 AI генерация обложек</div>
     </div>
 
-    <!-- AI АССИСТЕНТ - полноэкранная страница -->
+    <!-- УНИВЕРСАЛЬНЫЙ AI АССИСТЕНТ -->
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header">
             <button class="back-btn" id="backFromAssistant">← Назад</button>
@@ -693,28 +674,28 @@
                 <div class="message message-ai">
                     <div class="message-icon">🤖</div>
                     <div class="message-bubble">
-                        Привет! Я твой музыкальный AI-ассистент. 🎵<br><br>
+                        Привет! Я твой универсальный AI-ассистент. 🎯<br><br>
                         <b>Что я умею:</b><br>
-                        • 📖 Расскажу об исполнителе (информация из Википедии)<br>
-                        • 🎵 Посоветую песню по настроению<br>
-                        • 🎲 Дам случайный трек<br><br>
-                        <b>Просто напиши:</b><br>
-                        "грустная песня", "весёлая песня", "Асия", "случайный трек"...
+                        • 📖 Расскажу об исполнителях (Википедия)<br>
+                        • 🎵 Посоветую музыку по настроению<br>
+                        • 🌤️ Скажу погоду (напиши "погода в Москве")<br>
+                        • 🔢 Помогу с математикой (напиши "2+2")<br>
+                        • 😂 Расскажу анекдот или факт<br>
+                        • 🕐 Скажу текущее время<br><br>
+                        <b>Просто напиши что угодно!</b>
                     </div>
                 </div>
             </div>
             <div class="input-area">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке...">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о чём угодно...">
                 <button id="sendChatBtn" class="send-btn">📤</button>
             </div>
         </div>
-        <div class="user-info">💬 AI Ассистент | Информация из Википедии</div>
+        <div class="user-info">💬 Универсальный AI Ассистент</div>
     </div>
 
-    <!-- КНОПКА НАСТРОЕК -->
     <div class="settings-fab" id="settingsFab"><span>⚙️</span></div>
 
-    <!-- МОДАЛКА НАСТРОЕК -->
     <div id="settingsModal" class="settings-modal hidden">
         <div class="modal-card">
             <div class="modal-title">🎨 Оформление</div>
@@ -738,7 +719,6 @@
         </div>
     </div>
 
-    <!-- АДМИН ПАНЕЛЬ -->
     <div id="adminPanel" class="admin-panel hidden">
         <div class="admin-header"><div class="admin-title">👑 Админ панель</div><button class="admin-close" id="closeAdminPanel">✕ Закрыть</button></div>
         <div class="admin-stats" id="adminStats"></div>
@@ -770,6 +750,7 @@
         let adminActions = [];
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD = "admin123";
+        let currentMode = 'menu';
 
         // ========== БАЗА ТРЕКОВ ==========
         const tracksDatabase = [
@@ -814,6 +795,7 @@
             else if (mode === 'game') document.body.classList.add('game-mode');
             else if (mode === 'ai') document.body.classList.add('ai-mode');
             else if (mode === 'assistant') document.body.classList.add('assistant-mode');
+            else document.body.classList.remove('music-mode', 'game-mode', 'ai-mode', 'assistant-mode');
         }
 
         // ========== УПРАВЛЕНИЕ СТРАНИЦАМИ ==========
@@ -846,7 +828,6 @@
             setBodyMode(mode);
         }
 
-        // Навигация
         document.getElementById('goToMusicBtn').onclick = () => { showPage(musicPage, 'music'); loadPopularArtists(); addAction('Переход', 'Открыл раздел Музыка'); };
         document.getElementById('goToGameBtn').onclick = () => { showPage(gamePage, 'game'); addAction('Переход', 'Открыл раздел Игра'); };
         document.getElementById('goToAIBtn').onclick = () => { showPage(aiPage, 'ai'); addAction('Переход', 'Открыл раздел AI Обложки'); };
@@ -981,7 +962,7 @@
         if (closeSettingsBtn) closeSettingsBtn.onclick = () => { if (settingsModal) settingsModal.classList.add('hidden'); };
         if (settingsModal) settingsModal.onclick = (e) => { if (e.target === settingsModal) settingsModal.classList.add('hidden'); };
 
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
+        // ========== ВИКИПЕДИЯ ==========
         async function getWikipediaFullBio(artistName) {
             try {
                 const exactMatches = { "асия": "Асия (певица)", "big baby tape": "Big Baby Tape", "instasamka": "Instasamka", "моргенштерн": "Моргенштерн", "земфира": "Земфира", "кино": "Кино (группа)", "imagine dragons": "Imagine Dragons" };
@@ -1012,6 +993,7 @@
             return `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bioData.title)}</div><div class="bio-text">${escapeHtml(bioData.fullText)}</div><a href="${bioData.pageUrl}" target="_blank" class="bio-wiki-link">🔗 Читать полную статью на Википедии →</a></div>`;
         }
 
+        // ========== AI ОБЛОЖКИ ==========
         async function generateAICover(prompt) {
             const resultDiv = document.getElementById('aiResult');
             addAction('AI', `Генерация обложки: "${prompt}"`);
@@ -1049,7 +1031,7 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // ========== ПОИСК ==========
+        // ========== МУЗЫКАЛЬНЫЙ ПОИСК ==========
         function setSearchMode(mode) {
             currentSearchMode = mode;
             const artistBtn = document.getElementById('searchArtistBtn');
@@ -1233,24 +1215,129 @@
             addAction('Игра', `Закончил игру со счётом ${gameScore}/${total}`);
         }
 
-        // ========== AI АССИСТЕНТ ==========
+        // ========== УНИВЕРСАЛЬНЫЙ AI АССИСТЕНТ ==========
         async function getAIResponse(query) {
             const lowerQuery = query.toLowerCase().trim();
-            const isArtistQuery = !lowerQuery.includes("песн") && !lowerQuery.includes("трек") && !lowerQuery.includes("посоветуй") && !lowerQuery.includes("случайн") && !lowerQuery.includes("грустн") && !lowerQuery.includes("весел") && !lowerQuery.includes("зарядк") && !lowerQuery.includes("романтик") && !lowerQuery.includes("привет") && lowerQuery.length > 2;
+            
+            // ===== 1. ПОГОДА =====
+            const weatherMatch = lowerQuery.match(/погода\s*(?:в\s*)?([а-яА-ЯёЁ\s]+)/);
+            if (weatherMatch || lowerQuery.includes("погода")) {
+                let city = weatherMatch ? weatherMatch[1].trim() : "Москва";
+                if (city.length < 2) city = "Москва";
+                const weatherUrl = `https://wttr.in/${encodeURIComponent(city)}?format=%C+%t&m&lang=ru`;
+                try {
+                    const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(weatherUrl)}`);
+                    const weatherData = await response.text();
+                    if (weatherData && !weatherData.includes("Unknown")) {
+                        return `🌤️ Погода в ${city}: ${weatherData}`;
+                    }
+                } catch(e) {}
+                return `🌤️ Не удалось получить погоду для "${city}". Попробуй: погода в Москве`;
+            }
+            
+            // ===== 2. МАТЕМАТИКА =====
+            const mathMatch = lowerQuery.match(/(\d+)\s*([+\-*/×÷])\s*(\d+)/);
+            if (mathMatch) {
+                const a = parseFloat(mathMatch[1]);
+                const b = parseFloat(mathMatch[3]);
+                let result;
+                switch(mathMatch[2]) {
+                    case '+': result = a + b; break;
+                    case '-': result = a - b; break;
+                    case '*': case '×': result = a * b; break;
+                    case '/': case '÷': result = a / b; break;
+                    default: result = null;
+                }
+                if (result !== null) return `🔢 ${a} ${mathMatch[2]} ${b} = ${result}`;
+            }
+            
+            // ===== 3. ВРЕМЯ =====
+            if (lowerQuery.includes("который час") || lowerQuery.includes("время")) {
+                const now = new Date();
+                return `🕐 ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+            }
+            
+            // ===== 4. АНЕКДОТЫ =====
+            if (lowerQuery.includes("анекдот") || lowerQuery.includes("шутка")) {
+                const jokes = [
+                    "🤣 Почему программисты не любят природу? Слишком много багов.",
+                    "😄 Что говорит один бит другому? Дополни меня!",
+                    "😂 Как назвать кота, который ловит мышей? Интернет-ловитель!",
+                    "😁 - Что такое идеальный брак? Это когда муж говорит: 'Дорогая, я всё удалил, перезагрузи комп'.",
+                    "🥲 Почему музыканты такие плохие? Потому что не могут найти общий язык!"
+                ];
+                return jokes[Math.floor(Math.random() * jokes.length)];
+            }
+            
+            // ===== 5. ФАКТЫ =====
+            if (lowerQuery.includes("факт") || lowerQuery.includes("интересно")) {
+                const facts = [
+                    "📚 Кошки спят около 16 часов в сутки.",
+                    "🌍 Вода закипает при 100°C, а замерзает при 0°C.",
+                    "🐘 Слоны — единственные млекопитающие, которые не умеют прыгать.",
+                    "🍕 Самая популярная пицца в мире — Маргарита.",
+                    "🎵 Самая длинная песня в мире длится более 24 часов!"
+                ];
+                return facts[Math.floor(Math.random() * facts.length)];
+            }
+            
+            // ===== 6. МУЗЫКА =====
+            if (lowerQuery.includes("грустн")) {
+                return `😢 **Грустные треки:**\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира`;
+            }
+            if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) {
+                return `😊 **Весёлые треки:**\n"Believer" - Imagine Dragons\n"Blinding Lights" - The Weeknd`;
+            }
+            if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) {
+                return `💪 **Для зарядки:**\n"Believer" - Imagine Dragons\n"Cadillac" - Моргенштерн`;
+            }
+            if (lowerQuery.includes("романтик")) {
+                return `💖 **Романтичные треки:**\n"Твой поцелуй" - Асия\n"Останься" - Асия`;
+            }
+            if (lowerQuery.includes("случайный") || lowerQuery.includes("рандом")) {
+                const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
+                return `🎲 **Случайный трек:**\n"${randomTrack.track}" - ${randomTrack.artist}`;
+            }
+            
+            // ===== 7. ИСПОЛНИТЕЛИ =====
+            const isArtistQuery = lowerQuery.length > 2 && !lowerQuery.includes("песн") && !lowerQuery.includes("трек") && !lowerQuery.includes("посоветуй") && !lowerQuery.includes("случайн") && !lowerQuery.includes("грустн") && !lowerQuery.includes("весел") && !lowerQuery.includes("зарядк") && !lowerQuery.includes("романтик") && !lowerQuery.includes("привет") && !lowerQuery.includes("как дела") && !lowerQuery.includes("как ты") && !lowerQuery.includes("погода") && !lowerQuery.includes("анекдот") && !lowerQuery.includes("факт");
+            
             if (isArtistQuery) {
                 showAssistantTyping();
                 const bioData = await getWikipediaFullBio(query);
                 hideAssistantTyping();
-                if (bioData && bioData.fullText) return `📖 **${bioData.title}**\n\n${bioData.fullText}\n\n🔗 [Читать полную статью на Википедии](${bioData.pageUrl})`;
-                else return `❌ Не удалось найти информацию об исполнителе "${query}" в Википедии.\n\nПопробуй написать имя на русском или английском языке.`;
+                if (bioData && bioData.fullText) {
+                    return `📖 **${bioData.title}**\n\n${bioData.fullText.substring(0, 800)}...\n\n🔗 [Читать полностью](${bioData.pageUrl})`;
+                } else {
+                    return `💡 Не нашёл "${query}" в Википедии. Попробуй спросить: "погода", "анекдот" или "2+2"`;
+                }
             }
-            if (lowerQuery.includes("грустн")) return `😢 **Грустные треки:**\n\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира`;
-            if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) return `😊 **Весёлые треки:**\n\n"Believer" - Imagine Dragons\n"Blinding Lights" - The Weeknd`;
-            if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) return `💪 **Для зарядки:**\n\n"Believer" - Imagine Dragons\n"Cadillac" - Моргенштерн`;
-            if (lowerQuery.includes("романтик")) return `💖 **Романтичные треки:**\n\n"Твой поцелуй" - Асия\n"Останься" - Асия`;
-            if (lowerQuery.includes("случайный") || lowerQuery.includes("рандом")) { const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)]; return `🎲 **Случайный трек:**\n\n"${randomTrack.track}" - ${randomTrack.artist}\n\nПопробуй найти его в разделе "Музыка"!`; }
-            if (lowerQuery.includes("привет")) return `Привет! 👋 Я твой музыкальный помощник.\n\n**Что я могу:**\n• Напиши имя исполнителя — получу биографию из Википедии\n• "грустная песня" — посоветую треки\n• "случайный трек" — выберу случайный трек\n\nСпрашивай!`;
-            return `🎶 Я не совсем понял запрос. Попробуй:\n\n• Напиши имя исполнителя (например, "Асия")\n• "грустная песня"\n• "случайный трек"`;
+            
+            // ===== 8. ПРИВЕТСТВИЕ =====
+            if (lowerQuery.includes("привет") || lowerQuery.includes("здравствуй")) {
+                return `Привет! 👋 Я универсальный помощник.\n\n🌤️ "погода в Москве"\n🔢 "2+2"\n😂 "анекдот"\n🎵 "грустная песня"\n📖 "Асия"\n\nСпрашивай что угодно!`;
+            }
+            
+            if (lowerQuery.includes("как дела") || lowerQuery.includes("как ты")) {
+                return "У меня всё отлично! 🤖 Готов помочь тебе!";
+            }
+            
+            if (lowerQuery.includes("спасибо")) {
+                return "Пожалуйста! 😊 Всегда рад помочь.";
+            }
+            
+            // ===== 9. ПОИСК В ВИКИПЕДИИ =====
+            if (lowerQuery.length > 3 && !lowerQuery.includes(" ")) {
+                showAssistantTyping();
+                const wikiData = await getWikipediaFullBio(query);
+                hideAssistantTyping();
+                if (wikiData && wikiData.fullText) {
+                    return `📖 **${wikiData.title}**\n\n${wikiData.fullText.substring(0, 800)}...\n\n🔗 [Читать полностью](${wikiData.pageUrl})`;
+                }
+            }
+            
+            // ===== 10. СТАНДАРТНЫЙ ОТВЕТ =====
+            return `💡 Что я умею:\n\n• "Асия" — биография\n• "грустная песня" — музыка\n• "погода в Москве"\n• "2+2" — математика\n• "анекдот" — шутка\n• "факт" — интересно\n\nЧто тебя интересует?`;
         }
         
         function addMessage(text, isUser = false) {
@@ -1273,11 +1360,22 @@
         let assistantTypingDiv = null;
         function showAssistantTyping() { const chatContainer = document.getElementById('chatContainer'); if (!chatContainer) return; assistantTypingDiv = document.createElement('div'); assistantTypingDiv.className = 'message message-ai'; assistantTypingDiv.id = 'assistantTyping'; assistantTypingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble"><span class="loading-dots">🤔 <span>.</span><span>.</span><span>.</span></span></div>`; chatContainer.appendChild(assistantTypingDiv); chatContainer.scrollTop = chatContainer.scrollHeight; }
         function hideAssistantTyping() { if (assistantTypingDiv) { assistantTypingDiv.remove(); assistantTypingDiv = null; } }
-        async function sendAssistantMessage() { const input = document.getElementById('chatInput'); if (!input) return; const message = input.value.trim(); if (!message) return; addMessage(message, true); input.value = ''; showAssistantTyping(); const response = await getAIResponse(message); hideAssistantTyping(); addMessage(response); if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); }
+        
+        async function sendAssistantMessage() {
+            const input = document.getElementById('chatInput');
+            if (!input) return;
+            const message = input.value.trim();
+            if (!message) return;
+            addMessage(message, true);
+            input.value = '';
+            showAssistantTyping();
+            const response = await getAIResponse(message);
+            hideAssistantTyping();
+            addMessage(response);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
 
-        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-
-        // ========== ПОДКЛЮЧЕНИЕ СОБЫТИЙ ==========
+        // ========== ОСНОВНЫЕ СОБЫТИЯ ==========
         document.getElementById('doSearchBtn').onclick = performSearch;
         document.getElementById('randomTrackBtn').onclick = getRandomTrack;
         const searchInputElem = document.getElementById('searchInput');
