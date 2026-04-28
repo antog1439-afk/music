@@ -1684,7 +1684,7 @@
         
         function displayBio(bioData, artistName) {
             if (!bioData) {
-                return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию для "${escapeHtml(artistName)}"</div></div>`;
+                return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию dla "${escapeHtml(artistName)}"</div></div>`;
             }
             return `
                 <div class="bio-section">
@@ -2183,67 +2183,97 @@
             };
         });
 
-        // ========== ИГРА ==========
-        const allArtists = [...new Set(tracksDatabase.map(t => t.artist))];
+        // ========== ИГРА (ИСПРАВЛЕННАЯ - УНИКАЛЬНЫЕ ВАРИАНТЫ) ==========
+        const allArtistsForGame = [...new Set(tracksDatabase.map(t => t.artist))];
+
         let gameQuestions = [];
         let currentQ = 0;
         let gameScore = 0;
         let gameActive = false;
-        let gameStats = { gamesPlayed: 0, bestScore: 0 };
+        let gameStatsData = { gamesPlayed: 0, bestScore: 0 };
 
         function loadGameStats() {
             const saved = localStorage.getItem('music_game_stats');
-            if(saved) gameStats = JSON.parse(saved);
+            if (saved) gameStatsData = JSON.parse(saved);
         }
+
         function saveGameStats() {
-            localStorage.setItem('music_game_stats', JSON.stringify(gameStats));
+            localStorage.setItem('music_game_stats', JSON.stringify(gameStatsData));
         }
 
         function generateQuestion() {
+            // Выбираем случайный трек из базы
             const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
-            const correct = randomTrack.artist;
-            let other = allArtists.filter(a => a !== correct);
-            for(let i=other.length-1; i>0; i--){
-                const j=Math.floor(Math.random()*(i+1));
-                [other[i], other[j]] = [other[j], other[i]];
+            const correctArtist = randomTrack.artist;
+            
+            // Получаем УНИКАЛЬНЫХ исполнителей (без правильного ответа)
+            let otherArtists = [...allArtistsForGame];
+            otherArtists = otherArtists.filter(a => a !== correctArtist);
+            
+            // Перемешиваем
+            for (let i = otherArtists.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [otherArtists[i], otherArtists[j]] = [otherArtists[j], otherArtists[i]];
             }
-            let options = [correct, ...other.slice(0,3)];
-            for(let i=options.length-1; i>0; i--){
-                const j=Math.floor(Math.random()*(i+1));
+            
+            // Берём 3 УНИКАЛЬНЫХ неправильных варианта
+            let wrongOptions = otherArtists.slice(0, 3);
+            
+            // Если в базе мало исполнителей, добавляем заглушку
+            while (wrongOptions.length < 3) {
+                wrongOptions.push("Неизвестный исполнитель");
+            }
+            
+            // Формируем варианты (1 правильный + 3 неправильных)
+            let options = [correctArtist, ...wrongOptions];
+            
+            // Перемешиваем варианты
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
                 [options[i], options[j]] = [options[j], options[i]];
             }
-            return { track: randomTrack.track, correct, options };
+            
+            return {
+                track: randomTrack.track,
+                correct: correctArtist,
+                options: options
+            };
         }
 
         function startGame() {
             gameQuestions = [];
-            for(let i=0; i<8; i++) gameQuestions.push(generateQuestion());
+            for (let i = 0; i < 8; i++) {
+                gameQuestions.push(generateQuestion());
+            }
             currentQ = 0;
             gameScore = 0;
             gameActive = true;
             const startBtn = document.getElementById('startGameBtn');
             startBtn.textContent = '🎮 Игра идёт...';
             startBtn.style.background = '#28a745';
-            if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             addAction('Игра', 'Начал новую игру');
             showGameQuestion();
         }
 
         function showGameQuestion() {
             const container = document.getElementById('gameContent');
-            if(currentQ >= gameQuestions.length) {
+            if (currentQ >= gameQuestions.length) {
                 endGame();
                 return;
             }
             const q = gameQuestions[currentQ];
-            const percent = Math.round((gameScore/gameQuestions.length)*100);
+            const percent = Math.round((gameScore / gameQuestions.length) * 100);
             let optsHtml = '';
+            
             q.options.forEach(opt => {
-                optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">🎤 ${escapeHtml(opt)}</div>`;
+                const displayOpt = opt === "Неизвестный исполнитель" ? opt : `🎤 ${opt}`;
+                optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(displayOpt)}</div>`;
             });
+            
             container.innerHTML = `
                 <div class="game-question">
-                    <div style="font-size:13px;">🎵 Вопрос ${currentQ+1}/${gameQuestions.length}</div>
+                    <div style="font-size:13px;">🎵 Вопрос ${currentQ + 1}/${gameQuestions.length}</div>
                     <div class="track-name">"${escapeHtml(q.track)}"</div>
                     <div>Кто исполнитель?</div>
                     <div class="game-options" id="gameOptions">${optsHtml}</div>
@@ -2253,22 +2283,30 @@
         }
 
         window.checkAnswer = function(selected, correct) {
-            if(!gameActive) return;
+            if (!gameActive) return;
             const optsDiv = document.getElementById('gameOptions');
-            if(!optsDiv) return;
+            if (!optsDiv) return;
             const btns = optsDiv.querySelectorAll('.game-option');
             gameActive = false;
+            
             btns.forEach(btn => {
-                if(btn.innerText.includes(correct)) btn.classList.add('correct');
-                if(btn.innerText.includes(selected) && selected !== correct) btn.classList.add('wrong');
+                let btnText = btn.innerText.replace('🎤 ', '');
+                if (btnText === correct) {
+                    btn.classList.add('correct');
+                }
+                if (btnText === selected && selected !== correct) {
+                    btn.classList.add('wrong');
+                }
                 btn.style.pointerEvents = 'none';
             });
-            if(selected === correct) {
+            
+            if (selected === correct) {
                 gameScore++;
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             } else {
-                if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             }
+            
             setTimeout(() => {
                 currentQ++;
                 gameActive = true;
@@ -2279,22 +2317,24 @@
         function endGame() {
             gameActive = false;
             const total = gameQuestions.length;
-            const percent = Math.round((gameScore/total)*100);
-            gameStats.gamesPlayed++;
-            if(gameScore > gameStats.bestScore) gameStats.bestScore = gameScore;
+            const percent = Math.round((gameScore / total) * 100);
+            gameStatsData.gamesPlayed++;
+            if (gameScore > gameStatsData.bestScore) gameStatsData.bestScore = gameScore;
             saveGameStats();
-            let msg = percent === 100 ? '🏆 ИДЕАЛЬНО!' : (percent>=70 ? '🎵 Отлично!' : '🎧 Попробуй ещё!');
+            
+            let msg = percent === 100 ? '🏆 ИДЕАЛЬНО!' : (percent >= 70 ? '🎵 Отлично!' : '🎧 Попробуй ещё!');
             const container = document.getElementById('gameContent');
             container.innerHTML = `
                 <div style="text-align:center; padding:20px;">
                     <div style="font-size:28px; margin-bottom:8px;">🎉</div>
                     <div style="font-size:20px; font-weight:bold;">${gameScore}/${total}</div>
                     <div style="margin:12px 0;">${msg}</div>
-                    <div>⭐ Лучший: ${gameStats.bestScore}/${total}</div>
-                    <div>🎮 Сыграно: ${gameStats.gamesPlayed}</div>
+                    <div>⭐ Лучший: ${gameStatsData.bestScore}/${total}</div>
+                    <div>🎮 Сыграно: ${gameStatsData.gamesPlayed}</div>
                     <button id="restartGameBtn" style="background:#9b59b6; margin-top:16px; border:none; padding:10px 24px; border-radius:40px;">🔄 Сыграть снова</button>
                 </div>
             `;
+            
             document.getElementById('restartGameBtn')?.addEventListener('click', startGame);
             const startBtn = document.getElementById('startGameBtn');
             startBtn.textContent = '▶ Начать игру';
