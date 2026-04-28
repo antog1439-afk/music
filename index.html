@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Полноэкранное приложение</title>
+    <title>Music Hub - Компактное меню</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
@@ -22,7 +22,7 @@
             transition: background 0.5s ease;
         }
         
-        /* Кастомные фоны для каждого раздела (можно менять в настройках) */
+        /* Кастомные фоны для каждого раздела */
         body.music-mode {
             background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
             animation: none !important;
@@ -90,14 +90,15 @@
             transform: translateX(-100%);
         }
         
+        /* КОМПАКТНЫЕ КНОПКИ МЕНЮ */
         .menu-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 24px;
+            gap: 16px;
             width: 100%;
-            max-width: 320px;
+            max-width: 260px;
             animation: fadeInUp 0.6s ease;
         }
         
@@ -110,8 +111,8 @@
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 80px;
-            padding: 20px 32px;
+            border-radius: 50px;
+            padding: 12px 24px;
             width: 100%;
             text-align: center;
             cursor: pointer;
@@ -120,16 +121,16 @@
         }
         
         .menu-btn:active { transform: scale(0.96); }
-        .menu-icon { font-size: 48px; display: block; margin-bottom: 8px; }
-        .menu-title { font-size: 24px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .menu-desc { font-size: 12px; color: rgba(255,255,255,0.9); margin-top: 6px; }
+        .menu-icon { font-size: 28px; display: block; margin-bottom: 4px; }
+        .menu-title { font-size: 16px; font-weight: 600; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .menu-desc { font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 2px; }
         
         /* Шапка внутри разделов */
         .page-header {
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             padding-top: 10px;
         }
         
@@ -137,27 +138,27 @@
             background: rgba(0,0,0,0.5);
             backdrop-filter: blur(10px);
             border: none;
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: 40px;
             color: white;
             font-weight: 500;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .back-btn:active { transform: scale(0.95); }
-        .page-title { font-size: 28px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); flex: 1; }
+        .page-title { font-size: 24px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); flex: 1; }
         
         /* Эффект стекла для контента */
         .glass-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 24px;
-            margin-bottom: 20px;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.2);
         }
@@ -168,13 +169,13 @@
         }
         
         /* Поиск */
-        .search-type-switch { display: flex; gap: 12px; margin-bottom: 20px; }
+        .search-type-switch { display: flex; gap: 10px; margin-bottom: 16px; }
         .search-type-btn {
             flex: 1;
-            padding: 12px;
+            padding: 8px;
             border-radius: 40px;
             text-align: center;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             background: rgba(0,0,0,0.3);
@@ -183,13 +184,13 @@
         }
         .search-type-btn.active { background: #2481cc; box-shadow: 0 4px 15px rgba(36,129,204,0.3); }
         
-        .search-box { display: flex; gap: 10px; margin: 20px 0; }
+        .search-box { display: flex; gap: 8px; margin: 16px 0; }
         .search-input {
             flex: 1;
-            padding: 14px 18px;
+            padding: 12px 16px;
             border-radius: 40px;
             border: none;
-            font-size: 15px;
+            font-size: 14px;
             background: rgba(255,255,255,0.9);
         }
         body.dark-theme .search-input { background: rgba(30,30,40,0.9); color: white; }
@@ -198,56 +199,58 @@
         .search-btn {
             background: #2481cc;
             border: none;
-            padding: 0 24px;
+            padding: 0 20px;
             border-radius: 40px;
             color: white;
             font-weight: 600;
             cursor: pointer;
+            font-size: 13px;
         }
         .search-btn:active { transform: scale(0.95); }
         
         .voice-btn {
             background: #9b59b6;
             border: none;
-            width: 48px;
+            width: 44px;
             border-radius: 40px;
             color: white;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
         }
         .voice-btn.listening { background: #e74c3c; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         
         .random-track-btn {
             background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            margin: 16px 0;
-            padding: 12px;
+            margin: 12px 0;
+            padding: 10px;
             border: none;
             border-radius: 40px;
             color: white;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
+            font-size: 13px;
         }
         .random-track-btn:active { transform: scale(0.98); }
         
         .section-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            margin: 16px 0 12px;
+            margin: 12px 0 10px;
             color: rgba(255,255,255,0.7);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
-        .popular-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+        .popular-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
         .popular-tag {
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(10px);
             color: white;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 40px;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
         }
         .popular-tag:active { transform: scale(0.95); }
@@ -255,21 +258,22 @@
         .result-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 16px;
-            margin-top: 20px;
+            border-radius: 20px;
+            padding: 14px;
+            margin-top: 16px;
         }
-        .artist-name { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: white; }
+        .artist-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: white; }
         
-        .platform-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+        .platform-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
         .platform-btn {
-            padding: 12px;
+            padding: 10px;
             border-radius: 40px;
             text-align: center;
             font-weight: 600;
             cursor: pointer;
             border: none;
             color: white;
+            font-size: 13px;
         }
         .platform-btn:active { transform: scale(0.98); }
         .yandex-btn { background: #ffcc00; color: #000; }
@@ -278,8 +282,8 @@
         .spotify-btn { background: #1db954; }
         
         .qr-btn, .ai-btn {
-            margin-top: 12px;
-            padding: 12px;
+            margin-top: 10px;
+            padding: 10px;
             border-radius: 40px;
             text-align: center;
             font-weight: 600;
@@ -287,6 +291,7 @@
             border: none;
             color: white;
             width: 100%;
+            font-size: 13px;
         }
         .qr-btn { background: #607d8b; }
         .ai-btn { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
@@ -295,29 +300,30 @@
         .bio-section {
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 16px;
-            margin-top: 16px;
-            max-height: 350px;
+            border-radius: 16px;
+            padding: 12px;
+            margin-top: 12px;
+            max-height: 300px;
             overflow-y: auto;
         }
-        .bio-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #4facfe; }
-        .bio-text { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.9); }
-        .bio-wiki-link { display: inline-block; margin-top: 12px; color: #4facfe; text-decoration: none; font-size: 13px; }
+        .bio-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #4facfe; }
+        .bio-text { font-size: 12px; line-height: 1.4; color: rgba(255,255,255,0.9); }
+        .bio-wiki-link { display: inline-block; margin-top: 8px; color: #4facfe; text-decoration: none; font-size: 11px; }
         
         /* Игра */
         .game-question { text-align: center; }
-        .track-name { font-size: 22px; font-weight: 800; margin: 20px 0; color: white; }
-        .game-options { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
+        .track-name { font-size: 18px; font-weight: 800; margin: 16px 0; color: white; }
+        .game-options { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
         .game-option {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
-            padding: 14px;
+            padding: 12px;
             border-radius: 60px;
             text-align: center;
             font-weight: 500;
             cursor: pointer;
             color: white;
+            font-size: 14px;
         }
         .game-option:active { transform: scale(0.98); }
         .game-option.correct { background: #28a745; }
@@ -326,15 +332,15 @@
         /* AI обложки */
         .ai-cover-img {
             width: 100%;
-            max-width: 220px;
-            border-radius: 24px;
+            max-width: 200px;
+            border-radius: 20px;
             margin: 0 auto;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
             display: block;
         }
         .loading-spinner {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             margin: 0 auto;
             border: 3px solid rgba(255,255,255,0.2);
             border-radius: 50%;
@@ -347,57 +353,57 @@
         .chat-container {
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 16px;
-            height: 420px;
+            border-radius: 20px;
+            padding: 12px;
+            height: 380px;
             overflow-y: auto;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
-        .message { margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
+        .message { margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px; }
         .message-user { justify-content: flex-end; }
         .message-ai { justify-content: flex-start; }
         .message-bubble {
             max-width: 75%;
-            padding: 12px 18px;
-            border-radius: 24px;
-            font-size: 14px;
-            line-height: 1.45;
+            padding: 10px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            line-height: 1.4;
         }
-        .message-user .message-bubble { background: #2481cc; color: white; border-bottom-right-radius: 6px; }
+        .message-user .message-bubble { background: #2481cc; color: white; border-bottom-right-radius: 4px; }
         .message-ai .message-bubble {
             background: rgba(255,255,255,0.2);
             backdrop-filter: blur(10px);
             color: white;
-            border-bottom-left-radius: 6px;
+            border-bottom-left-radius: 4px;
         }
         .message-icon {
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 16px;
             background: rgba(255,255,255,0.2);
         }
-        .input-area { display: flex; gap: 12px; }
+        .input-area { display: flex; gap: 10px; }
         .chat-input {
             flex: 1;
-            padding: 14px 20px;
+            padding: 12px 16px;
             border-radius: 40px;
             border: none;
-            font-size: 15px;
+            font-size: 14px;
             background: rgba(255,255,255,0.9);
         }
         .send-btn {
             background: #28a745;
             border: none;
-            width: 52px;
+            width: 46px;
             border-radius: 40px;
             color: white;
             font-weight: 600;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
         }
         
         /* Кнопка настроек */
@@ -405,8 +411,8 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(10px);
@@ -415,7 +421,7 @@
             justify-content: center;
             cursor: pointer;
             z-index: 100;
-            font-size: 24px;
+            font-size: 20px;
         }
         .settings-fab:active { transform: scale(0.92); }
         
@@ -436,19 +442,19 @@
         .settings-modal .modal-card {
             background: rgba(30, 30, 40, 0.98);
             backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 24px;
+            border-radius: 28px;
+            padding: 20px;
             width: 90%;
-            max-width: 340px;
+            max-width: 320px;
             border: 1px solid rgba(255,255,255,0.15);
         }
-        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: white; }
-        .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-        .settings-label { font-size: 14px; font-weight: 500; color: white; }
-        .gradient-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .gradient-circle { width: 44px; height: 44px; border-radius: 12px; cursor: pointer; border: 2px solid rgba(255,255,255,0.3); }
-        .close-modal { background: rgba(255,255,255,0.2); border: none; padding: 12px; border-radius: 40px; color: white; font-weight: 600; width: 100%; margin-top: 20px; cursor: pointer; }
-        .appearance-btn { background: rgba(255,255,255,0.15); border: none; padding: 8px 14px; border-radius: 25px; color: white; cursor: pointer; font-size: 13px; }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; text-align: center; color: white; }
+        .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 6px; }
+        .settings-label { font-size: 13px; font-weight: 500; color: white; }
+        .gradient-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        .gradient-circle { width: 38px; height: 38px; border-radius: 10px; cursor: pointer; border: 2px solid rgba(255,255,255,0.3); }
+        .close-modal { background: rgba(255,255,255,0.2); border: none; padding: 10px; border-radius: 40px; color: white; font-weight: 600; width: 100%; margin-top: 16px; cursor: pointer; }
+        .appearance-btn { background: rgba(255,255,255,0.15); border: none; padding: 6px 12px; border-radius: 25px; color: white; cursor: pointer; font-size: 12px; }
         
         /* Админ панель */
         .admin-badge {
@@ -456,9 +462,9 @@
             top: 10px;
             right: 60px;
             background: rgba(0,0,0,0.6);
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 9px;
             color: #ffcc00;
             z-index: 150;
             cursor: pointer;
@@ -474,29 +480,29 @@
             background: rgba(0,0,0,0.95);
             z-index: 400;
             overflow-y: auto;
-            padding: 20px;
+            padding: 16px;
         }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #333; }
-        .admin-title { font-size: 20px; font-weight: bold; color: #ffcc00; }
-        .admin-close { background: #dc3545; border: none; padding: 8px 16px; border-radius: 20px; color: white; cursor: pointer; }
-        .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
-        .stat-card { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; text-align: center; }
-        .stat-value { font-size: 28px; font-weight: bold; color: #ffcc00; }
-        .stat-label { font-size: 11px; color: #aaa; margin-top: 4px; }
-        .admin-section { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 12px; margin-bottom: 16px; }
-        .admin-section-title { font-size: 14px; font-weight: bold; margin-bottom: 12px; color: #ffcc00; }
-        .action-item { background: rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; margin-bottom: 8px; font-size: 12px; }
-        .action-time { color: #888; font-size: 10px; margin-bottom: 4px; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+        .admin-title { font-size: 18px; font-weight: bold; color: #ffcc00; }
+        .admin-close { background: #dc3545; border: none; padding: 6px 14px; border-radius: 20px; color: white; cursor: pointer; font-size: 12px; }
+        .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-card { background: rgba(255,255,255,0.1); border-radius: 14px; padding: 10px; text-align: center; }
+        .stat-value { font-size: 24px; font-weight: bold; color: #ffcc00; }
+        .stat-label { font-size: 10px; color: #aaa; margin-top: 2px; }
+        .admin-section { background: rgba(255,255,255,0.05); border-radius: 14px; padding: 10px; margin-bottom: 12px; }
+        .admin-section-title { font-size: 12px; font-weight: bold; margin-bottom: 8px; color: #ffcc00; }
+        .action-item { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 8px; margin-bottom: 6px; font-size: 11px; }
+        .action-time { color: #888; font-size: 9px; margin-bottom: 2px; }
         .action-text { color: #fff; }
         .clear-btn, .export-btn {
             background: #dc3545;
             border: none;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 20px;
             color: white;
             cursor: pointer;
-            font-size: 12px;
-            margin-top: 10px;
+            font-size: 11px;
+            margin-top: 8px;
             width: 100%;
         }
         .export-btn { background: #28a745; }
@@ -516,21 +522,21 @@
         .login-box {
             background: rgba(255,255,255,0.1);
             border-radius: 24px;
-            padding: 24px;
-            width: 280px;
+            padding: 20px;
+            width: 260px;
             text-align: center;
         }
         .login-input {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border-radius: 30px;
             border: none;
-            margin: 16px 0;
-            font-size: 16px;
+            margin: 12px 0;
+            font-size: 14px;
             text-align: center;
         }
-        .login-btn { background: #28a745; border: none; padding: 10px 24px; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; width: 100%; }
-        .login-error { color: #dc3545; font-size: 12px; margin-top: 8px; }
+        .login-btn { background: #28a745; border: none; padding: 8px 20px; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; }
+        .login-error { color: #dc3545; font-size: 11px; margin-top: 6px; }
         
         .qr-modal {
             position: fixed;
@@ -546,44 +552,48 @@
         }
         .qr-content {
             background: white;
-            border-radius: 32px;
-            padding: 24px;
+            border-radius: 28px;
+            padding: 20px;
             text-align: center;
-            max-width: 320px;
+            max-width: 300px;
             width: 85%;
         }
-        .qr-img { width: 200px; height: 200px; margin: 16px auto; }
-        .qr-close { background: #dc3545; border: none; padding: 10px 20px; border-radius: 30px; color: white; cursor: pointer; margin-top: 16px; }
+        .qr-img { width: 180px; height: 180px; margin: 12px auto; }
+        .qr-close { background: #dc3545; border: none; padding: 8px 16px; border-radius: 30px; color: white; cursor: pointer; margin-top: 12px; font-size: 14px; }
         
         .notification-toast {
             position: fixed;
-            bottom: 90px;
+            bottom: 80px;
             left: 20px;
             right: 20px;
             background: rgba(0,0,0,0.9);
             backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 14px;
+            border-radius: 14px;
+            padding: 10px;
             text-align: center;
             color: white;
             z-index: 150;
             animation: slideUp 0.3s ease;
+            font-size: 13px;
         }
         @keyframes slideUp {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
         
-        .user-info { font-size: 11px; text-align: center; margin-top: 16px; color: rgba(255,255,255,0.6); }
+        .user-info { font-size: 10px; text-align: center; margin-top: 12px; color: rgba(255,255,255,0.6); }
         .hidden { display: none; }
         
         @media (max-width: 480px) {
-            .fullscreen-page { padding: 16px; }
-            .menu-btn { padding: 16px 24px; }
-            .menu-icon { font-size: 42px; }
-            .menu-title { font-size: 22px; }
-            .page-title { font-size: 24px; }
-            .chat-container { height: 380px; }
+            .fullscreen-page { padding: 14px; }
+            .menu-screen { max-width: 220px; gap: 12px; }
+            .menu-btn { padding: 10px 20px; }
+            .menu-icon { font-size: 24px; }
+            .menu-title { font-size: 14px; }
+            .menu-desc { font-size: 9px; }
+            .page-title { font-size: 20px; }
+            .glass-card { padding: 16px; }
+            .chat-container { height: 340px; }
         }
     </style>
 </head>
@@ -646,9 +656,9 @@
         </div>
         <div class="glass-card">
             <div style="text-align: center;">
-                <button id="startGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); border:none; padding:14px 28px; border-radius:50px; color:white; font-weight:bold; font-size:16px; margin:8px 0; width:100%; cursor:pointer;">▶ Начать игру</button>
+                <button id="startGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); border:none; padding:12px 24px; border-radius:50px; color:white; font-weight:bold; font-size:14px; margin:8px 0; width:100%; cursor:pointer;">▶ Начать игру</button>
             </div>
-            <div id="gameContent"><div style="text-align:center; padding:40px; color:rgba(255,255,255,0.6);">Нажми «Начать игру»</div></div>
+            <div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.6);">Нажми «Начать игру»</div></div>
         </div>
         <div class="user-info">🎮 Угадай исполнителя</div>
     </div>
@@ -665,8 +675,8 @@
                 <input type="text" id="aiPrompt" class="search-input" placeholder="Например: рок группа, гитара, концерт, ночь">
                 <button id="generateAIBtn" class="search-btn">Создать</button>
             </div>
-            <div id="aiResult" style="text-align: center; margin-top: 16px;">
-                <div style="color: rgba(255,255,255,0.7); padding: 30px; text-align: center;">🎨 Введите описание и AI создаст уникальную обложку<br><br><small>Примеры: "электронная музыка, космос, неон" или "джаз, саксофон, вечерний город"</small></div>
+            <div id="aiResult" style="text-align: center; margin-top: 12px;">
+                <div style="color: rgba(255,255,255,0.7); padding: 20px; text-align: center; font-size: 13px;">🎨 Введите описание и AI создаст уникальную обложку<br><br><small>Примеры: "электронная музыка, космос, неон" или "джаз, саксофон, вечерний город"</small></div>
             </div>
         </div>
         <div class="user-info">🤖 AI генерация обложек</div>
@@ -694,7 +704,7 @@
                 </div>
             </div>
             <div class="input-area">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке... Например: грустная песня">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке...">
                 <button id="sendChatBtn" class="send-btn">📤</button>
             </div>
         </div>
@@ -739,9 +749,9 @@
 
     <div id="adminLogin" class="admin-login">
         <div class="login-box">
-            <div style="font-size:48px; margin-bottom:16px;">👑</div>
-            <div style="font-size:18px; font-weight:bold; margin-bottom:8px;">Вход в админ панель</div>
-            <div style="font-size:12px; color:#aaa; margin-bottom:16px;">Введите пароль для доступа</div>
+            <div style="font-size:40px; margin-bottom:12px;">👑</div>
+            <div style="font-size:16px; font-weight:bold; margin-bottom:6px;">Вход в админ панель</div>
+            <div style="font-size:11px; color:#aaa; margin-bottom:12px;">Введите пароль для доступа</div>
             <input type="password" id="adminPassword" class="login-input" placeholder="Пароль">
             <button class="login-btn" id="adminLoginBtn">Войти</button>
             <div id="loginError" class="login-error"></div>
@@ -760,7 +770,6 @@
         let adminActions = [];
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD = "admin123";
-        let currentMode = 'menu';
 
         // ========== БАЗА ТРЕКОВ ==========
         const tracksDatabase = [
@@ -805,8 +814,6 @@
             else if (mode === 'game') document.body.classList.add('game-mode');
             else if (mode === 'ai') document.body.classList.add('ai-mode');
             else if (mode === 'assistant') document.body.classList.add('assistant-mode');
-            else document.body.classList.remove('music-mode', 'game-mode', 'ai-mode', 'assistant-mode');
-            currentMode = mode;
         }
 
         // ========== УПРАВЛЕНИЕ СТРАНИЦАМИ ==========
@@ -824,7 +831,7 @@
                 aiPage.classList.remove('active');
                 assistantPage.classList.remove('active');
             }, 50);
-            setBodyMode('menu');
+            setBodyMode('');
         }
 
         function showPage(page, mode) {
@@ -873,7 +880,7 @@
         function updateActionsList() {
             const container = document.getElementById('actionsList');
             if (!container) return;
-            if (adminActions.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Нет действий</div>'; return; }
+            if (adminActions.length === 0) { container.innerHTML = '<div style="text-align:center; padding:15px; color:#888;">Нет действий</div>'; return; }
             container.innerHTML = adminActions.map(action => `<div class="action-item"><div class="action-time">🕐 ${action.time}</div><div class="action-text">📌 ${action.type}: ${escapeHtml(action.details)}</div></div>`).join('');
         }
         
@@ -889,7 +896,7 @@
             if (!container) return;
             const saved = localStorage.getItem('search_history');
             const history = saved ? JSON.parse(saved) : [];
-            if (history.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">История пуста</div>'; return; }
+            if (history.length === 0) { container.innerHTML = '<div style="text-align:center; padding:15px; color:#888;">История пуста</div>'; return; }
             container.innerHTML = history.slice(0, 20).map(item => `<div class="action-item"><div class="action-time">🕐 ${item.date}</div><div class="action-text">${item.type === 'artist' ? '🎤' : '🎵'} ${escapeHtml(item.query)}</div></div>`).join('');
         }
         
@@ -959,7 +966,7 @@
             if (savedTheme === 'dark') document.body.classList.add('dark-theme');
         }
         
-        window.resetBackground = function() { document.body.style.background = ''; document.body.style.backgroundImage = ''; setBodyMode('menu'); localStorage.setItem('music_bot_background', 'default'); if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); };
+        window.resetBackground = function() { document.body.style.background = ''; document.body.style.backgroundImage = ''; setBodyMode(''); localStorage.setItem('music_bot_background', 'default'); if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); };
         window.loadCustomBackground = function(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const imgUrl = e.target.result; document.body.style.backgroundImage = `url(${imgUrl})`; document.body.style.backgroundSize = 'cover'; document.body.style.backgroundPosition = 'center'; localStorage.setItem('music_bot_background', imgUrl); if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }; reader.readAsDataURL(input.files[0]); } };
         window.openColorPicker = function() { const colorInput = document.createElement('input'); colorInput.type = 'color'; colorInput.onchange = function(e) { const color = e.target.value; document.body.style.background = color; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_background', color); if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }; colorInput.click(); };
         window.setGradient = function(gradient) { document.body.style.background = gradient; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_background', gradient); if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); };
@@ -974,7 +981,7 @@
         if (closeSettingsBtn) closeSettingsBtn.onclick = () => { if (settingsModal) settingsModal.classList.add('hidden'); };
         if (settingsModal) settingsModal.onclick = (e) => { if (e.target === settingsModal) settingsModal.classList.add('hidden'); };
 
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (ВИКИПЕДИЯ, ПОИСК, ИГРА, AI) ==========
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
         async function getWikipediaFullBio(artistName) {
             try {
                 const exactMatches = { "асия": "Асия (певица)", "big baby tape": "Big Baby Tape", "instasamka": "Instasamka", "моргенштерн": "Моргенштерн", "земфира": "Земфира", "кино": "Кино (группа)", "imagine dragons": "Imagine Dragons" };
@@ -1001,26 +1008,26 @@
         }
         
         function displayBio(bioData, artistName) {
-            if (!bioData) return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию dla "${escapeHtml(artistName)}"</div></div>`;
+            if (!bioData) return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию для "${escapeHtml(artistName)}"</div></div>`;
             return `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bioData.title)}</div><div class="bio-text">${escapeHtml(bioData.fullText)}</div><a href="${bioData.pageUrl}" target="_blank" class="bio-wiki-link">🔗 Читать полную статью на Википедии →</a></div>`;
         }
 
         async function generateAICover(prompt) {
             const resultDiv = document.getElementById('aiResult');
             addAction('AI', `Генерация обложки: "${prompt}"`);
-            resultDiv.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="loading-spinner"></div><div style="margin-top: 12px; color: rgba(255,255,255,0.8);">🤖 AI создаёт обложку...</div><div style="font-size: 12px; margin-top: 8px; color: rgba(255,255,255,0.6);">⏱️ Обычно 5-10 секунд</div></div>`;
+            resultDiv.innerHTML = `<div style="text-align: center; padding: 16px;"><div class="loading-spinner"></div><div style="margin-top: 10px; color: rgba(255,255,255,0.8); font-size: 13px;">🤖 AI создаёт обложку...</div><div style="font-size: 11px; margin-top: 6px; color: rgba(255,255,255,0.6);">⏱️ Обычно 5-10 секунд</div></div>`;
             try {
                 const encodedPrompt = encodeURIComponent(prompt);
                 const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true`;
                 const img = new Image();
                 img.onload = () => {
-                    resultDiv.innerHTML = `<div style="text-align: center;"><img src="${imageUrl}" class="ai-cover-img" alt="AI Generated Cover"><div class="section-title" style="margin-top: 16px;">🎨 Описание: ${escapeHtml(prompt)}</div><button onclick="downloadAICover('${imageUrl}')" class="ai-btn" style="background: #28a745; margin-top: 12px;">💾 Скачать обложку</button></div>`;
+                    resultDiv.innerHTML = `<div style="text-align: center;"><img src="${imageUrl}" class="ai-cover-img" alt="AI Generated Cover"><div class="section-title" style="margin-top: 14px;">🎨 Описание: ${escapeHtml(prompt)}</div><button onclick="downloadAICover('${imageUrl}')" class="ai-btn" style="background: #28a745; margin-top: 10px;">💾 Скачать обложку</button></div>`;
                     addAction('AI', `Обложка создана: "${prompt}"`);
                     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 };
-                img.onerror = () => { resultDiv.innerHTML = `<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">❌ Не удалось создать обложку<br><button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button></div>`; };
+                img.onerror = () => { resultDiv.innerHTML = `<div style="text-align: center; padding: 16px; color: rgba(255,255,255,0.7);">❌ Не удалось создать обложку<br><button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 10px;">🔄 Повторить</button></div>`; };
                 img.src = imageUrl;
-            } catch (error) { resultDiv.innerHTML = `<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">❌ Ошибка: ${error.message}<br><button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button></div>`; }
+            } catch (error) { resultDiv.innerHTML = `<div style="text-align: center; padding: 16px; color: rgba(255,255,255,0.7);">❌ Ошибка: ${error.message}<br><button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 10px;">🔄 Повторить</button></div>`; }
         }
         
         window.downloadAICover = function(imageUrl) { const link = document.createElement('a'); link.href = imageUrl; link.download = `ai_cover_${Date.now()}.jpg`; link.click(); addAction('AI', 'Скачал обложку'); showNotification("💾 Скачивание началось!"); };
@@ -1028,8 +1035,9 @@
         function showQR(text, title) {
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
             const modal = document.createElement('div'); modal.className = 'qr-modal';
-            modal.innerHTML = `<div class="qr-content"><div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">📱 ${escapeHtml(title)}</div><img src="${qrUrl}" class="qr-img" alt="QR Code"><div style="font-size: 12px; color: gray; margin-bottom: 8px;">Наведи камеру друга, чтобы поделиться</div><button class="qr-close" onclick="this.closest('.qr-modal').remove()">✕ Закрыть</button></div>`;
+            modal.innerHTML = `<div class="qr-content"><div style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">📱 ${escapeHtml(title)}</div><img src="${qrUrl}" class="qr-img" alt="QR Code"><div style="font-size: 11px; color: gray; margin-bottom: 6px;">Наведи камеру друга, чтобы поделиться</div><button class="qr-close">✕ Закрыть</button></div>`;
             document.body.appendChild(modal);
+            modal.querySelector('.qr-close').onclick = () => modal.remove();
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
@@ -1082,14 +1090,14 @@
             const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}` };
             const resultDiv = document.getElementById('musicResult');
             if (!resultDiv) return;
-            resultDiv.innerHTML = '<div style="text-align:center; padding:20px; color: rgba(255,255,255,0.8);">🔍 Поиск...</div>';
+            resultDiv.innerHTML = '<div style="text-align:center; padding:16px; color: rgba(255,255,255,0.8); font-size:13px;">🔍 Поиск...</div>';
             
             if (currentSearchMode === 'artist') {
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
                 const tracksList = artistTracks.map(t => t.track).join(', ');
-                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
+                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
             } else {
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 if (foundTrack) {
@@ -1099,7 +1107,7 @@
                     const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
                     const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
                     const artistLinks = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(artistName)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(artistName)}` };
-                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div><div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: #4facfe; font-size: 16px;">${escapeHtml(artistName)}</strong></div><div class="artist-card" style="background: rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; margin-bottom: 12px;"><div style="display: flex; align-items: center; gap: 12px;"><div style="font-size: 32px;">🎤</div><div><div style="font-weight: 700;">${escapeHtml(artistName)}</div><div style="font-size: 11px; color: rgba(255,255,255,0.6);">📀 ${artistTracks.length} треков в базе</div></div></div>${otherTracks.length > 0 ? `<div style="font-size: 12px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}</div>${bioHtml}<div class="section-title">🎧 Слушать трек</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🎤 Страница исполнителя</div><div class="platform-buttons"><button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button></div>`;
+                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div><div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: #4facfe; font-size: 14px;">${escapeHtml(artistName)}</strong></div><div class="artist-card" style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 10px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 10px;"><div style="font-size: 28px;">🎤</div><div><div style="font-weight: 700; font-size: 15px;">${escapeHtml(artistName)}</div><div style="font-size: 10px; color: rgba(255,255,255,0.6);">📀 ${artistTracks.length} треков в базе</div></div></div>${otherTracks.length > 0 ? `<div style="font-size: 11px; margin-top: 6px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}</div>${bioHtml}<div class="section-title">🎧 Слушать трек</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🎤 Страница исполнителя</div><div class="platform-buttons"><button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button></div>`;
                 } else {
                     resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(query)}"</div><div class="info-text">❌ Трек не найден в базе</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)}')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} cover')">🤖 Создать AI обложку</button></div>`;
                 }
@@ -1196,7 +1204,7 @@
             const percent = Math.round((gameScore / gameQuestions.length) * 100);
             let optsHtml = '';
             q.options.forEach(opt => { const displayOpt = opt === "Неизвестный исполнитель" ? opt : `🎤 ${opt}`; optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(displayOpt)}</div>`; });
-            container.innerHTML = `<div class="game-question"><div style="font-size:13px; color:rgba(255,255,255,0.7);">🎵 Вопрос ${currentQ + 1}/${gameQuestions.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div style="color:rgba(255,255,255,0.9);">Кто исполнитель?</div><div class="game-options" id="gameOptions">${optsHtml}</div><div style="margin-top:12px; color:rgba(255,255,255,0.7);">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div></div>`;
+            container.innerHTML = `<div class="game-question"><div style="font-size:11px; color:rgba(255,255,255,0.7);">🎵 Вопрос ${currentQ + 1}/${gameQuestions.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div style="color:rgba(255,255,255,0.9);">Кто исполнитель?</div><div class="game-options" id="gameOptions">${optsHtml}</div><div style="margin-top:10px; color:rgba(255,255,255,0.7);">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div></div>`;
         }
         window.checkAnswer = function(selected, correct) {
             if (!gameActive) return;
@@ -1217,7 +1225,7 @@
             let msg = percent === 100 ? '🏆 ИДЕАЛЬНО!' : (percent >= 70 ? '🎵 Отлично!' : '🎧 Попробуй ещё!');
             const container = document.getElementById('gameContent');
             if (!container) return;
-            container.innerHTML = `<div style="text-align:center; padding:20px;"><div style="font-size:48px; margin-bottom:8px;">🎉</div><div style="font-size:28px; font-weight:bold;">${gameScore}/${total}</div><div style="margin:12px 0;">${msg}</div><div style="color:rgba(255,255,255,0.7);">⭐ Лучший: ${gameStatsData.bestScore}/${total}</div><div style="color:rgba(255,255,255,0.7);">🎮 Сыграно: ${gameStatsData.gamesPlayed}</div><button id="restartGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); margin-top:20px; border:none; padding:12px 24px; border-radius:40px; color:white; font-weight:bold;">🔄 Сыграть снова</button></div>`;
+            container.innerHTML = `<div style="text-align:center; padding:16px;"><div style="font-size:40px; margin-bottom:6px;">🎉</div><div style="font-size:22px; font-weight:bold;">${gameScore}/${total}</div><div style="margin:8px 0; font-size:13px;">${msg}</div><div style="color:rgba(255,255,255,0.7); font-size:11px;">⭐ Лучший: ${gameStatsData.bestScore}/${total}</div><div style="color:rgba(255,255,255,0.7); font-size:11px;">🎮 Сыграно: ${gameStatsData.gamesPlayed}</div><button id="restartGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); margin-top:14px; border:none; padding:10px 20px; border-radius:40px; color:white; font-weight:bold; font-size:13px;">🔄 Сыграть снова</button></div>`;
             const restartBtn = document.getElementById('restartGameBtn');
             if (restartBtn) restartBtn.addEventListener('click', startGame);
             const startBtn = document.getElementById('startGameBtn');
