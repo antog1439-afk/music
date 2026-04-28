@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Трек + Биография + AI Ассистент</title>
+    <title>Music Hub - Красивый интерфейс</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <link rel="manifest" href="manifest.json">
@@ -21,34 +21,49 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            transition: all 0.3s ease;
-            padding: 20px;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            overflow-x: hidden;
         }
         
-        body.default-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Анимированный градиентный фон для главного экрана */
+        body.main-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 12s ease infinite;
         }
         
-        body.has-bg::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: -1;
+        /* Тёмный фон для других экранов */
+        body.dark-bg {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
         }
         
-        body.has-bg {
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
+        body.music-bg {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+        }
+        
+        body.game-bg {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6b48ff 100%);
+        }
+        
+        body.ai-bg {
+            background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #00d2ff 100%);
+        }
+        
+        body.assistant-bg {
+            background: linear-gradient(135deg, #0b8793 0%, #360033 100%);
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 0%; }
         }
         
         .container {
@@ -59,25 +74,694 @@
             z-index: 1;
         }
         
-        .card {
-            background: var(--card-bg, rgba(255, 255, 255, 0.95));
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        /* Эффект стекла для карточек */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
             transition: all 0.3s ease;
         }
         
-        body.dark-theme .card {
-            background: rgba(30, 30, 35, 0.95);
-            color: #fff;
+        body.dark-theme .glass-card {
+            background: rgba(30, 30, 40, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Анимированные кнопки меню */
+        .menu-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            min-height: 80vh;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 80px;
+            padding: 18px 32px;
+            width: 280px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .menu-btn:hover {
+            transform: scale(1.02);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        .menu-btn:active {
+            transform: scale(0.96);
+        }
+        
+        .menu-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        .menu-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .menu-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.9);
+            margin-top: 6px;
+        }
+        
+        /* Шапка с кнопкой назад */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: fadeInDown 0.4s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .back-btn {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            flex: 1;
+        }
+        
+        /* Стили для страницы музыки */
+        .search-type-switch {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .search-type-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .search-type-btn.active {
+            background: #2481cc;
+            color: white;
+            box-shadow: 0 4px 15px rgba(36,129,204,0.3);
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 14px 18px;
+            border-radius: 40px;
+            border: none;
+            font-size: 15px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
         }
         
         body.dark-theme .search-input {
+            background: rgba(30,30,40,0.9);
+            color: white;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background: white;
+        }
+        
+        body.dark-theme .search-input:focus {
             background: #2a2a2a;
-            color: #fff;
-            border-color: #444;
+        }
+        
+        .search-btn {
+            background: #2481cc;
+            border: none;
+            padding: 0 24px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .search-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .voice-btn {
+            background: #9b59b6;
+            border: none;
+            width: 48px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+        
+        .voice-btn.listening {
+            background: #e74c3c;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .random-track-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            margin: 16px 0;
+            padding: 12px;
+            border: none;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        
+        .random-track-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin: 16px 0 12px 0;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .popular-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        
+        .popular-tag {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .popular-tag:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .result-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 16px;
+            margin-top: 20px;
+            animation: fadeInUp 0.4s ease;
+        }
+        
+        .artist-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: white;
+        }
+        
+        .platform-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .platform-btn {
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .platform-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .yandex-btn { background: #ffcc00; color: #000; }
+        .youtube-btn { background: #ff0000; }
+        .vk-btn { background: #0077ff; }
+        .spotify-btn { background: #1db954; }
+        
+        .qr-btn, .ai-btn {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 40px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            color: white;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        
+        .qr-btn:active, .ai-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .qr-btn { background: #607d8b; }
+        .ai-btn { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        
+        /* Биография */
+        .bio-section {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 16px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        
+        .bio-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #4facfe;
+        }
+        
+        .bio-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .bio-wiki-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: #4facfe;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        
+        /* Стили для игры */
+        .game-question {
+            text-align: center;
+            animation: fadeInUp 0.4s ease;
+        }
+        
+        .track-name {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 20px 0;
+            color: white;
+        }
+        
+        .game-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 24px 0;
+        }
+        
+        .game-option {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 14px;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: 500;
+            cursor: pointer;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .game-option:active {
+            transform: scale(0.98);
+        }
+        
+        .game-option.correct { background: #28a745; color: white; }
+        .game-option.wrong { background: #dc3545; color: white; }
+        
+        /* Стили для AI обложек */
+        .ai-cover-img {
+            width: 100%;
+            max-width: 220px;
+            border-radius: 24px;
+            margin: 0 auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            display: block;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            border: 3px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            border-top-color: #9b59b6;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        /* Стили для чата ассистента */
+        .chat-container {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 16px;
+            height: 420px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+        }
+        
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: fadeInUp 0.3s ease;
+        }
+        
+        .message-user {
+            justify-content: flex-end;
+        }
+        
+        .message-ai {
+            justify-content: flex-start;
+        }
+        
+        .message-bubble {
+            max-width: 75%;
+            padding: 12px 18px;
+            border-radius: 24px;
+            font-size: 14px;
+            line-height: 1.45;
+        }
+        
+        .message-user .message-bubble {
+            background: #2481cc;
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+        
+        .message-ai .message-bubble {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border-bottom-left-radius: 6px;
+        }
+        
+        .message-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .input-area {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 40px;
+            border: none;
+            font-size: 15px;
+            background: rgba(255,255,255,0.9);
+        }
+        
+        body.dark-theme .chat-input {
+            background: rgba(30,30,40,0.9);
+            color: white;
+        }
+        
+        .send-btn {
+            background: #28a745;
+            border: none;
+            width: 52px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+        
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .suggestion-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .suggestion-btn:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.25);
+        }
+        
+        /* Кнопка настроек */
+        .settings-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 24px;
+        }
+        
+        .settings-fab:active {
+            transform: scale(0.92);
+        }
+        
+        /* Модалка настроек */
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        
+        .settings-modal .modal-card {
+            background: rgba(30, 30, 40, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 24px;
+            width: 90%;
+            max-width: 340px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .settings-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .gradient-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .gradient-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: transform 0.2s;
+        }
+        
+        .gradient-circle:active {
+            transform: scale(0.95);
+        }
+        
+        .close-modal {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        
+        .appearance-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .user-info {
+            font-size: 11px;
+            text-align: center;
+            margin-top: 16px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .notification-toast {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 14px;
+            text-align: center;
+            color: white;
+            z-index: 150;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .hidden {
+            display: none;
         }
         
         /* Админ панель */
@@ -85,13 +769,14 @@
             position: fixed;
             top: 10px;
             right: 10px;
-            background: rgba(0,0,0,0.7);
-            padding: 5px 10px;
+            background: rgba(0,0,0,0.6);
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 10px;
             color: #ffcc00;
             z-index: 150;
             cursor: pointer;
+            backdrop-filter: blur(5px);
         }
         
         .admin-panel {
@@ -188,7 +873,7 @@
             color: #fff;
         }
         
-        .clear-btn {
+        .clear-btn, .export-btn {
             background: #dc3545;
             border: none;
             padding: 8px 16px;
@@ -202,14 +887,6 @@
         
         .export-btn {
             background: #28a745;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 10px;
-            width: 100%;
         }
         
         .admin-login {
@@ -260,128 +937,6 @@
             margin-top: 8px;
         }
         
-        /* AI стили */
-        .ai-btn {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            margin-top: 12px;
-            padding: 12px;
-            font-size: 14px;
-            border: none;
-            border-radius: 40px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        .ai-cover-img {
-            width: 100%;
-            max-width: 200px;
-            border-radius: 20px;
-            margin: 0 auto;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            display: block;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto;
-            border: 3px solid rgba(0,0,0,0.1);
-            border-radius: 50%;
-            border-top-color: #9b59b6;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Стили для чистой биографии */
-        .bio-section {
-            background: rgba(0,0,0,0.05);
-            border-radius: 16px;
-            padding: 16px;
-            margin-top: 16px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        body.dark-theme .bio-section {
-            background: rgba(255,255,255,0.08);
-        }
-        
-        .bio-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: var(--button-color, #2481cc);
-        }
-        
-        .bio-text {
-            font-size: 14px;
-            line-height: 1.5;
-            color: #333;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-        
-        body.dark-theme .bio-text {
-            color: #ddd;
-        }
-        
-        .bio-loading {
-            text-align: center;
-            padding: 20px;
-            color: gray;
-        }
-        
-        .bio-wiki-link {
-            display: inline-block;
-            margin-top: 12px;
-            color: var(--button-color, #2481cc);
-            text-decoration: none;
-            font-size: 13px;
-        }
-        
-        /* Стили для голосового поиска */
-        .voice-btn {
-            background: #9b59b6;
-            border: none;
-            width: 44px;
-            border-radius: 30px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 18px;
-            transition: all 0.2s;
-        }
-        
-        .voice-btn.listening {
-            background: #e74c3c;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        /* Стили для QR кода */
-        .qr-btn {
-            background: #607d8b;
-            margin-top: 12px;
-            padding: 10px;
-            border-radius: 40px;
-            text-align: center;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            color: white;
-            font-size: 14px;
-        }
-        
         .qr-modal {
             position: fixed;
             top: 0;
@@ -425,642 +980,17 @@
             margin-top: 16px;
         }
         
-        /* Стили для карточки исполнителя */
-        .artist-card {
-            background: linear-gradient(135deg, rgba(0,0,0,0.05), rgba(0,0,0,0.02));
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        
-        body.dark-theme .artist-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-        }
-        
-        .artist-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-        
-        .artist-icon {
-            font-size: 40px;
-        }
-        
-        .artist-header-info {
-            flex: 1;
-        }
-        
-        .artist-name-large {
-            font-size: 20px;
-            font-weight: 700;
-        }
-        
-        .artist-tracks-count {
-            font-size: 12px;
-            color: gray;
-        }
-        
-        /* Стили для AI Ассистента */
-        .chat-container {
-            background: rgba(0,0,0,0.05);
-            border-radius: 20px;
-            padding: 12px;
-            height: 380px;
-            overflow-y: auto;
-            margin-bottom: 12px;
-        }
-        
-        body.dark-theme .chat-container {
-            background: rgba(255,255,255,0.05);
-        }
-        
-        .message {
-            margin-bottom: 12px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        
-        .message-user {
-            justify-content: flex-end;
-        }
-        
-        .message-ai {
-            justify-content: flex-start;
-        }
-        
-        .message-bubble {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 18px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-        
-        .message-user .message-bubble {
-            background: #2481cc;
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-        
-        .message-ai .message-bubble {
-            background: rgba(0,0,0,0.1);
-            color: #333;
-            border-bottom-left-radius: 4px;
-        }
-        
-        body.dark-theme .message-ai .message-bubble {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-        
-        .message-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        
-        .input-area {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-        }
-        
-        .chat-input {
-            flex: 1;
-            padding: 12px 16px;
-            border-radius: 30px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            background: white;
-        }
-        
-        body.dark-theme .chat-input {
-            background: #2a2a2a;
-            color: #fff;
-            border-color: #444;
-        }
-        
-        .send-btn {
-            background: #28a745;
-            border: none;
-            width: 44px;
-            border-radius: 30px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 18px;
-        }
-        
-        .suggestions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        
-        .suggestion-btn {
-            background: rgba(0,0,0,0.1);
-            border: none;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            cursor: pointer;
-        }
-        
-        body.dark-theme .suggestion-btn {
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
-        
-        .loading-dots {
-            display: inline-block;
-        }
-        
-        .loading-dots span {
-            animation: blink 1.4s infinite;
-        }
-        
-        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
-        }
-        
-        /* ПРИВЕТСТВЕННОЕ ОКНО */
-        .welcome-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(20px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 300;
-            animation: fadeIn 0.6s ease;
-        }
-        
-        .welcome-card {
-            text-align: center;
-            max-width: 340px;
-            width: 85%;
-            background: transparent;
-            box-shadow: none;
-            border: none;
-            backdrop-filter: none;
-        }
-        
-        .welcome-emoji {
-            font-size: 88px;
-            margin-bottom: 24px;
-            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        .welcome-kanji {
-            font-size: 56px;
-            font-weight: 400;
-            letter-spacing: 12px;
-            margin-bottom: 20px;
-            color: rgba(255, 255, 255, 0.95);
-            text-shadow: 0 0 20px rgba(255,255,255,0.3);
-            font-family: "KaiTi", "Noto Serif SC", "Yu Gothic", "Hiragino Kaku Gothic Pro", serif;
-        }
-        
-        .welcome-kanji small {
-            font-size: 28px;
-            letter-spacing: 4px;
-        }
-        
-        .welcome-text-en {
-            font-size: 22px;
-            font-weight: 500;
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-        
-        .welcome-text-fr {
-            font-size: 18px;
-            font-weight: 400;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 32px;
-            font-style: italic;
-        }
-        
-        .welcome-btn {
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.25);
-            padding: 14px 32px;
-            border-radius: 80px;
-            font-size: 18px;
-            font-weight: 500;
-            color: white;
-            cursor: pointer;
-            transition: all 0.25s;
-            width: 100%;
-            letter-spacing: 1px;
-        }
-        
-        .welcome-btn:active {
-            transform: scale(0.96);
-            background: rgba(255,255,255,0.22);
-        }
-        
-        /* КНОПКА НАСТРОЕК */
-        .settings-fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        
-        .settings-fab:active {
-            transform: scale(0.92);
-        }
-        
-        .settings-fab span {
-            font-size: 22px;
-        }
-        
-        /* Модалка настроек */
-        .settings-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-        }
-        
-        .settings-modal .modal-card {
-            background: var(--card-bg, rgba(30, 30, 40, 0.98));
-            backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 20px;
-            width: 90%;
-            max-width: 340px;
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-        
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        
-        .settings-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .settings-label {
-            font-size: 13px;
-            font-weight: 500;
-        }
-        
-        .gradient-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 8px;
-        }
-        
-        .gradient-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-        
-        .close-modal {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            padding: 10px;
-            border-radius: 40px;
-            color: white;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 16px;
-            cursor: pointer;
-        }
-        
-        /* ГЛАВНОЕ МЕНЮ */
-        .menu-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            min-height: 60vh;
-            animation: fadeIn 0.4s ease;
-        }
-        
-        .menu-btn {
-            background: rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            border-radius: 60px;
-            padding: 14px 28px;
-            width: 260px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.25s;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-        }
-        
-        .menu-btn:active {
-            transform: scale(0.96);
-            background: rgba(255, 255, 255, 0.28);
-        }
-        
-        .menu-icon {
-            font-size: 38px;
-            display: block;
-            margin-bottom: 6px;
-        }
-        
-        .menu-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: white;
-            letter-spacing: -0.3px;
-        }
-        
-        .menu-desc {
-            font-size: 11px;
-            color: rgba(255,255,255,0.8);
-            margin-top: 4px;
-        }
-        
-        /* ОБЩИЕ СТИЛИ */
-        .back-btn {
-            background: rgba(0,0,0,0.5);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            color: white;
-            font-weight: 500;
-            font-size: 14px;
-            width: auto;
-            margin-bottom: 16px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        
-        .search-type-switch {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .search-type-btn {
-            flex: 1;
-            padding: 8px;
-            border-radius: 30px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            background: rgba(0,0,0,0.3);
-            color: white;
-        }
-        
-        .search-type-btn.active {
-            background: var(--button-color, #2481cc);
-            color: white;
-        }
-        
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin: 12px 0;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 12px 16px;
-            border-radius: 30px;
-            border: 1px solid #ddd;
-            font-size: 15px;
-            background: white;
-        }
-        
-        .search-btn {
-            background: var(--button-color, #2481cc);
-            border: none;
-            padding: 0 20px;
-            border-radius: 30px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .random-track-btn {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            margin: 12px 0;
-            padding: 10px;
-            font-size: 14px;
-            border: none;
-            border-radius: 40px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        .section-title {
-            font-size: 12px;
-            font-weight: 600;
-            margin: 12px 0 6px 0;
-            color: #6c757d;
-            text-transform: uppercase;
-        }
-        
-        body.dark-theme .section-title {
-            color: #aaa;
-        }
-        
-        .popular-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .popular-tag {
-            background: var(--button-color, #2481cc);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 13px;
-            cursor: pointer;
-        }
-        
-        .result-card {
-            background: rgba(240, 242, 245, 0.9);
-            border-radius: 20px;
-            padding: 14px;
-            margin-top: 16px;
-        }
-        
-        body.dark-theme .result-card {
-            background: rgba(40, 40, 45, 0.9);
-        }
-        
-        .artist-name {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .platform-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .platform-btn {
-            padding: 10px;
-            border-radius: 40px;
-            text-align: center;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            color: white;
-            font-size: 14px;
-        }
-        
-        .yandex-btn { background: #ffcc00; color: #000; }
-        .youtube-btn { background: #ff0000; }
-        .vk-btn { background: #0077ff; }
-        .spotify-btn { background: #1db954; }
-        
-        /* ИГРА */
-        .game-question {
-            text-align: center;
-        }
-        
-        .track-name {
-            font-size: 22px;
-            font-weight: 800;
-            margin: 16px 0;
-        }
-        
-        .game-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        
-        .game-option {
-            background: #e9ecef;
-            padding: 12px;
-            border-radius: 40px;
-            text-align: center;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        
-        .game-option.correct { background: #28a745; color: white; }
-        .game-option.wrong { background: #dc3545; color: white; }
-        
-        .hidden { display: none; }
-        
-        .user-info {
-            font-size: 11px;
-            text-align: center;
-            margin-top: 16px;
-            color: #6c757d;
-        }
-        
-        button {
-            cursor: pointer;
-        }
-        
-        .notification-toast {
-            position: fixed;
-            bottom: 80px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.9);
-            border-radius: 16px;
-            padding: 12px;
-            text-align: center;
-            color: white;
-            z-index: 150;
-            animation: slideUp 0.3s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-        
         @media (max-width: 480px) {
             body { padding: 16px; }
-            .menu-btn { width: 220px; padding: 12px 20px; }
-            .menu-icon { font-size: 32px; }
-            .menu-title { font-size: 20px; }
-            .welcome-kanji { font-size: 42px; letter-spacing: 8px; }
-            .welcome-kanji small { font-size: 22px; }
-            .welcome-text-en { font-size: 18px; }
-            .welcome-text-fr { font-size: 15px; }
+            .menu-btn { width: 260px; padding: 16px 28px; }
+            .menu-icon { font-size: 42px; }
+            .menu-title { font-size: 22px; }
+            .page-title { font-size: 24px; }
+            .chat-container { height: 380px; }
         }
     </style>
 </head>
-<body class="default-bg">
+<body class="main-bg">
     <div class="container">
         <!-- ЭКРАН МЕНЮ -->
         <div id="menuScreen" class="menu-screen">
@@ -1088,8 +1018,11 @@
 
         <!-- ЭКРАН МУЗЫКИ -->
         <div id="musicScreen" class="hidden">
-            <button class="back-btn" id="backToMenuFromMusic">← Назад</button>
-            <div class="card">
+            <div class="page-header">
+                <button class="back-btn" id="backToMenuFromMusic">← Назад</button>
+                <div class="page-title">🎵 Музыка</div>
+            </div>
+            <div class="glass-card">
                 <div class="search-type-switch">
                     <div class="search-type-btn active" id="searchArtistBtn" onclick="setSearchMode('artist')">🎤 Исполнитель</div>
                     <div class="search-type-btn" id="searchTrackBtn" onclick="setSearchMode('track')">🎵 Трек</div>
@@ -1101,9 +1034,9 @@
                     <button id="doSearchBtn" class="search-btn">Найти</button>
                 </div>
                 
-                <button class="random-track-btn" id="randomTrackBtn">🎲 СЛУЧАЙНЫЙ ТРЕК</button>
+                <button class="random-track-btn" id="randomTrackBtn">🎲 Случайный трек</button>
                 
-                <div class="section-title">🔥 ПОПУЛЯРНЫЕ</div>
+                <div class="section-title">🔥 Популярные</div>
                 <div class="popular-grid" id="popularGrid"></div>
                 
                 <div id="musicResult"></div>
@@ -1113,48 +1046,56 @@
 
         <!-- ЭКРАН ИГРЫ -->
         <div id="gameScreen" class="hidden">
-            <button class="back-btn" id="backToMenuFromGame">← Назад</button>
-            <div class="card">
+            <div class="page-header">
+                <button class="back-btn" id="backToMenuFromGame">← Назад</button>
+                <div class="page-title">🎮 Угадай трек</div>
+            </div>
+            <div class="glass-card">
                 <div style="text-align: center;">
-                    <div style="font-size: 32px; margin-bottom: 8px;">🎮</div>
-                    <button id="startGameBtn" style="background:#9b59b6; border:none; padding:10px 24px; border-radius:40px; color:white; font-weight:bold; margin:8px 0;">▶ Начать игру</button>
+                    <button id="startGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); border:none; padding:14px 28px; border-radius:50px; color:white; font-weight:bold; font-size:16px; margin:8px 0; width:100%; cursor:pointer;">▶ Начать игру</button>
                 </div>
                 <div id="gameContent">
-                    <div style="text-align:center; padding:20px; color:gray;">Нажми «Начать игру»</div>
+                    <div style="text-align:center; padding:40px; color:rgba(255,255,255,0.6);">Нажми «Начать игру»</div>
                 </div>
             </div>
-            <div class="user-info">🎮 Угадай трек</div>
+            <div class="user-info">🎮 Угадай исполнителя</div>
         </div>
 
         <!-- ЭКРАН AI ОБЛОЖЕК -->
         <div id="aiScreen" class="hidden">
-            <button class="back-btn" id="backToMenuFromAI">← Назад</button>
-            <div class="card">
-                <div class="section-title">🤖 AI ГЕНЕРАТОР ОБЛОЖЕК</div>
+            <div class="page-header">
+                <button class="back-btn" id="backToMenuFromAI">← Назад</button>
+                <div class="page-title">🤖 AI Обложки</div>
+            </div>
+            <div class="glass-card">
+                <div class="section-title">🎨 AI генератор обложек</div>
                 <div class="search-box">
                     <input type="text" id="aiPrompt" class="search-input" placeholder="Например: рок группа, гитара, концерт, ночь">
                     <button id="generateAIBtn" class="search-btn">Создать</button>
                 </div>
                 <div id="aiResult" style="text-align: center; margin-top: 16px;">
-                    <div style="color: gray; padding: 20px;">
+                    <div style="color: rgba(255,255,255,0.7); padding: 30px; text-align: center;">
                         🎨 Введите описание и AI создаст уникальную обложку<br><br>
                         <small>Примеры: "электронная музыка, космос, неон" или "джаз, саксофон, вечерний город"</small>
                     </div>
                 </div>
             </div>
+            <div class="user-info">🤖 AI генерация обложек</div>
         </div>
 
         <!-- ЭКРАН AI АССИСТЕНТА -->
         <div id="assistantScreen" class="hidden">
-            <button class="back-btn" id="backToMenuFromAssistant">← Назад</button>
-            <div class="card">
-                <div class="section-title">💬 AI МУЗЫКАЛЬНЫЙ АССИСТЕНТ</div>
+            <div class="page-header">
+                <button class="back-btn" id="backToMenuFromAssistant">← Назад</button>
+                <div class="page-title">💬 AI Ассистент</div>
+            </div>
+            <div class="glass-card">
                 <div class="chat-container" id="chatContainer">
                     <div class="message message-ai">
                         <div class="message-icon">🤖</div>
                         <div class="message-bubble">
                             Привет! Я твой музыкальный AI-ассистент. 🎵<br>
-                            Могу посоветовать трек или рассказать об исполнителе (информация из Википедии). Спрашивай!
+                            Могу посоветовать трек или рассказать об исполнителе. Спрашивай!
                         </div>
                     </div>
                 </div>
@@ -1165,7 +1106,6 @@
                     <button class="suggestion-btn" data-query="романтическая песня">💖 Романтичная</button>
                     <button class="suggestion-btn" data-query="случайный трек">🎲 Случайный</button>
                     <button class="suggestion-btn" data-query="Асия">📖 Асия</button>
-                    <button class="suggestion-btn" data-query="Big Baby Tape">📖 Big Baby Tape</button>
                     <button class="suggestion-btn" data-query="Imagine Dragons">📖 Imagine Dragons</button>
                 </div>
                 <div class="input-area">
@@ -1173,39 +1113,35 @@
                     <button id="sendChatBtn" class="send-btn">📤</button>
                 </div>
             </div>
+            <div class="user-info">💬 AI Ассистент | Информация из Википедии</div>
         </div>
     </div>
 
-    <!-- КНОПКА НАСТРОЕК -->
+    <!-- КНОПКА НАСТРОЕК И АДМИН ПАНЕЛЬ -->
     <div class="settings-fab" id="settingsFab">
         <span>⚙️</span>
     </div>
 
-    <!-- МОДАЛКА НАСТРОЕК -->
     <div id="settingsModal" class="settings-modal hidden">
         <div class="modal-card">
             <div class="modal-title">🎨 Оформление</div>
-            
             <div class="settings-row">
                 <span class="settings-label">🎨 Цвет кнопок:</span>
                 <input type="color" id="buttonColorPicker" value="#2481cc" onchange="changeButtonColor(this.value)">
             </div>
-            
             <div class="settings-row">
                 <span class="settings-label">🔘 Прозрачность:</span>
                 <input type="range" id="opacitySlider" min="0.5" max="1" step="0.01" value="0.95" onchange="changeCardOpacity(this.value)">
             </div>
-            
             <div class="settings-row">
-                <button class="appearance-btn" onclick="resetBackground()" style="background:rgba(0,0,0,0.6); padding:6px 12px; border-radius:20px; color:white; border:none;">Сбросить фон</button>
+                <button class="appearance-btn" onclick="resetBackground()">Сбросить фон</button>
                 <div class="file-input-wrapper" style="position:relative; overflow:hidden; display:inline-block;">
-                    <button class="appearance-btn" style="background:rgba(0,0,0,0.6); padding:6px 12px; border-radius:20px; color:white; border:none;">📸 Своё фото</button>
+                    <button class="appearance-btn" onclick="document.getElementById('bgImageInput').click()">📸 Своё фото</button>
                     <input type="file" id="bgImageInput" accept="image/*" style="position:absolute; font-size:100px; opacity:0; right:0; top:0; cursor:pointer;" onchange="loadCustomBackground(this)">
                 </div>
-                <button class="appearance-btn" onclick="openColorPicker()" style="background:rgba(0,0,0,0.6); padding:6px 12px; border-radius:20px; color:white; border:none;">Цвет фона</button>
-                <button class="appearance-btn" onclick="toggleDarkTheme()" style="background:rgba(0,0,0,0.6); padding:6px 12px; border-radius:20px; color:white; border:none;">🌙 Тёмная</button>
+                <button class="appearance-btn" onclick="openColorPicker()">Цвет фона</button>
+                <button class="appearance-btn" onclick="toggleDarkTheme()">🌙 Тёмная</button>
             </div>
-            
             <div class="gradient-row">
                 <div class="gradient-circle" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="setGradient('linear-gradient(135deg, #667eea 0%, #764ba2 100%)')"></div>
                 <div class="gradient-circle" style="background: linear-gradient(135deg, #f093fb, #f5576c);" onclick="setGradient('linear-gradient(135deg, #f093fb 0%, #f5576c 100%)')"></div>
@@ -1213,35 +1149,28 @@
                 <div class="gradient-circle" style="background: linear-gradient(135deg, #43e97b, #38f9d7);" onclick="setGradient('linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)')"></div>
                 <div class="gradient-circle" style="background: linear-gradient(135deg, #fa709a, #fee140);" onclick="setGradient('linear-gradient(135deg, #fa709a 0%, #fee140 100%)')"></div>
             </div>
-            
             <button class="close-modal" id="closeSettingsBtn">Закрыть</button>
         </div>
     </div>
 
-    <!-- АДМИН ПАНЕЛЬ (скрыта по умолчанию) -->
+    <!-- АДМИН ПАНЕЛЬ -->
     <div id="adminPanel" class="admin-panel hidden">
         <div class="admin-header">
             <div class="admin-title">👑 Админ панель</div>
             <button class="admin-close" id="closeAdminPanel">✕ Закрыть</button>
         </div>
-        
-        <div class="admin-stats" id="adminStats">
-            <!-- Статистика будет здесь -->
-        </div>
-        
+        <div class="admin-stats" id="adminStats"></div>
         <div class="admin-section">
             <div class="admin-section-title">📊 Действия пользователя</div>
             <div id="actionsList"></div>
             <button class="clear-btn" id="clearActionsBtn">🗑 Очистить все действия</button>
             <button class="export-btn" id="exportActionsBtn">📤 Экспорт действий (JSON)</button>
         </div>
-        
         <div class="admin-section">
             <div class="admin-section-title">📜 История поиска</div>
             <div id="adminHistoryList"></div>
             <button class="clear-btn" id="clearAdminHistoryBtn">🗑 Очистить историю</button>
         </div>
-        
         <div class="admin-section">
             <div class="admin-section-title">🎮 Статистика игры</div>
             <div id="gameStats"></div>
@@ -1249,40 +1178,59 @@
         </div>
     </div>
 
-    <!-- ОКНО ВХОДА В АДМИНКУ -->
     <div id="adminLogin" class="admin-login">
         <div class="login-box">
-            <div style="font-size: 48px; margin-bottom: 16px;">👑</div>
-            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">Вход в админ панель</div>
-            <div style="font-size: 12px; color: #aaa; margin-bottom: 16px;">Введите пароль для доступа</div>
+            <div style="font-size:48px; margin-bottom:16px;">👑</div>
+            <div style="font-size:18px; font-weight:bold; margin-bottom:8px;">Вход в админ панель</div>
+            <div style="font-size:12px; color:#aaa; margin-bottom:16px;">Введите пароль для доступа</div>
             <input type="password" id="adminPassword" class="login-input" placeholder="Пароль">
             <button class="login-btn" id="adminLoginBtn">Войти</button>
             <div id="loginError" class="login-error"></div>
         </div>
     </div>
 
-    <!-- БЕЙДЖ АДМИНА (виден всегда) -->
-    <div class="admin-badge" id="adminBadge">
-        👑 ADMIN
-    </div>
+    <div class="admin-badge" id="adminBadge">👑 ADMIN</div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // ========== АДМИН ПАНЕЛЬ ==========
-        const ADMIN_PASSWORD = "admin123";
+        // ========== ПЕРЕМЕННЫЕ ==========
+        let currentSearchMode = 'artist';
         let adminActions = [];
         let isAdminLoggedIn = false;
-        
+        const ADMIN_PASSWORD = "admin123";
+
+        // ========== ФУНКЦИЯ СМЕНЫ ФОНА ПРИ ПЕРЕКЛЮЧЕНИИ ЭКРАНОВ ==========
+        function changeBackground(screenType) {
+            document.body.classList.remove('main-bg', 'dark-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
+            switch(screenType) {
+                case 'menu':
+                    document.body.classList.add('main-bg');
+                    break;
+                case 'music':
+                    document.body.classList.add('music-bg');
+                    break;
+                case 'game':
+                    document.body.classList.add('game-bg');
+                    break;
+                case 'ai':
+                    document.body.classList.add('ai-bg');
+                    break;
+                case 'assistant':
+                    document.body.classList.add('assistant-bg');
+                    break;
+                default:
+                    document.body.classList.add('main-bg');
+            }
+        }
+
+        // ========== АДМИН ПАНЕЛЬ ==========
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
-            if (saved) {
-                adminActions = JSON.parse(saved);
-            } else {
-                adminActions = [];
-            }
+            if (saved) adminActions = JSON.parse(saved);
+            else adminActions = [];
             updateActionsList();
         }
         
@@ -1325,22 +1273,10 @@
                 totalActions: adminActions.length
             };
             document.getElementById('adminStats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${stats.searches}</div>
-                    <div class="stat-label">🔍 Поисков</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.gamePlays}</div>
-                    <div class="stat-label">🎮 Игр сыграно</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${stats.totalActions}</div>
-                    <div class="stat-label">📊 Всего действий</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${adminActions.length > 0 ? Math.round(adminActions.filter(a => a.timestamp > Date.now() - 86400000).length) : 0}</div>
-                    <div class="stat-label">📅 За 24 часа</div>
-                </div>
+                <div class="stat-card"><div class="stat-value">${stats.searches}</div><div class="stat-label">🔍 Поисков</div></div>
+                <div class="stat-card"><div class="stat-value">${stats.gamePlays}</div><div class="stat-label">🎮 Игр сыграно</div></div>
+                <div class="stat-card"><div class="stat-value">${stats.totalActions}</div><div class="stat-label">📊 Всего действий</div></div>
+                <div class="stat-card"><div class="stat-value">${adminActions.length > 0 ? Math.round(adminActions.filter(a => a.timestamp > Date.now() - 86400000).length) : 0}</div><div class="stat-label">📅 За 24 часа</div></div>
             `;
         }
         
@@ -1363,14 +1299,9 @@
         function updateGameStats() {
             const saved = localStorage.getItem('music_game_stats');
             const stats = saved ? JSON.parse(saved) : { gamesPlayed: 0, bestScore: 0 };
-            const container = document.getElementById('gameStats');
-            container.innerHTML = `
-                <div class="action-item">
-                    <div class="action-text">🎮 Сыграно игр: ${stats.gamesPlayed}</div>
-                </div>
-                <div class="action-item">
-                    <div class="action-text">⭐ Лучший счёт: ${stats.bestScore}/8</div>
-                </div>
+            document.getElementById('gameStats').innerHTML = `
+                <div class="action-item"><div class="action-text">🎮 Сыграно игр: ${stats.gamesPlayed}</div></div>
+                <div class="action-item"><div class="action-text">⭐ Лучший счёт: ${stats.bestScore}/8</div></div>
             `;
         }
         
@@ -1419,408 +1350,19 @@
             updateGameStats();
         }
 
-        // ========== AI ГЕНЕРАЦИЯ ОБЛОЖЕК ==========
-        async function generateAICover(prompt) {
-            const resultDiv = document.getElementById('aiResult');
-            addAction('AI', `Генерация обложки: "${prompt}"`);
-            
-            resultDiv.innerHTML = `
-                <div style="text-align: center; padding: 20px;">
-                    <div class="loading-spinner"></div>
-                    <div style="margin-top: 12px; color: gray;">🤖 AI создаёт обложку...</div>
-                    <div style="font-size: 12px; margin-top: 8px;">⏱️ Обычно 5-10 секунд</div>
-                </div>
-            `;
-            
-            try {
-                const encodedPrompt = encodeURIComponent(prompt);
-                const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true`;
-                
-                const img = new Image();
-                img.onload = () => {
-                    resultDiv.innerHTML = `
-                        <div style="text-align: center;">
-                            <img src="${imageUrl}" class="ai-cover-img" alt="AI Generated Cover">
-                            <div class="section-title" style="margin-top: 16px;">🎨 Описание: ${escapeHtml(prompt)}</div>
-                            <button onclick="downloadAICover('${imageUrl}')" class="ai-btn" style="background: #28a745; margin-top: 12px;">
-                                💾 Скачать обложку
-                            </button>
-                        </div>
-                    `;
-                    addAction('AI', `Обложка создана: "${prompt}"`);
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                };
-                img.onerror = () => {
-                    resultDiv.innerHTML = `
-                        <div style="text-align: center; padding: 20px; color: gray;">
-                            ❌ Не удалось создать обложку<br>
-                            <button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button>
-                        </div>
-                    `;
-                };
-                img.src = imageUrl;
-            } catch (error) {
-                resultDiv.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: gray;">
-                        ❌ Ошибка: ${error.message}<br>
-                        <button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button>
-                    </div>
-                `;
-            }
-        }
-        
-        function downloadAICover(imageUrl) {
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            link.download = `ai_cover_${Date.now()}.jpg`;
-            link.click();
-            addAction('AI', 'Скачал обложку');
-            showNotification("💾 Скачивание началось!");
-        }
-        
-        function showNotification(msg) {
-            const toast = document.createElement('div');
-            toast.className = 'notification-toast';
-            toast.textContent = msg;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        // ========== QR КОД ==========
-        function showQR(text, title) {
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
-            const modal = document.createElement('div');
-            modal.className = 'qr-modal';
-            modal.innerHTML = `
-                <div class="qr-content">
-                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">📱 ${escapeHtml(title)}</div>
-                    <img src="${qrUrl}" class="qr-img" alt="QR Code">
-                    <div style="font-size: 12px; color: gray; margin-bottom: 8px;">Наведи камеру друга, чтобы поделиться</div>
-                    <button class="qr-close" onclick="this.closest('.qr-modal').remove()">✕ Закрыть</button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
-        // ========== ПРИВЕТСТВИЕ ==========
-        function showWelcome() {
-            const welcomeShown = sessionStorage.getItem('welcome_shown');
-            if (!welcomeShown) {
-                const overlay = document.createElement('div');
-                overlay.className = 'welcome-overlay';
-                overlay.innerHTML = `
-                    <div class="welcome-card">
-                        <div class="welcome-emoji">🎵✨</div>
-                        <div class="welcome-kanji">聴 <small>·</small> 音 <small>·</small> 心</div>
-                        <div class="welcome-text-en">Hello, dear listener</div>
-                        <div class="welcome-text-fr">Bonjour, auditeur natif</div>
-                        <button class="welcome-btn" id="closeWelcomeBtn">🎧 Войти в музыку</button>
-                    </div>
-                `;
-                document.body.appendChild(overlay);
-                document.getElementById('closeWelcomeBtn').onclick = () => {
-                    overlay.remove();
-                    sessionStorage.setItem('welcome_shown', 'true');
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                };
-            }
-        }
-
-        // ========== ГОЛОСОВОЙ ПОИСК ==========
-        let recognition = null;
-        let isListening = false;
-        
-        function initVoiceSearch() {
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                const voiceBtn = document.getElementById('voiceSearchBtn');
-                if (voiceBtn) {
-                    voiceBtn.style.opacity = '0.5';
-                    voiceBtn.title = 'Голосовой поиск не поддерживается';
-                }
-                return;
-            }
-            
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'ru-RU';
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            
-            recognition.onstart = () => {
-                isListening = true;
-                const voiceBtn = document.getElementById('voiceSearchBtn');
-                if (voiceBtn) {
-                    voiceBtn.classList.add('listening');
-                }
-                showNotification('🎤 Говорите...');
-            };
-            
-            recognition.onresult = (event) => {
-                const result = event.results[0][0].transcript;
-                const searchInput = document.getElementById('searchInput');
-                if (searchInput) {
-                    searchInput.value = result;
-                    showNotification(`🔍 Распознано: "${result}"`);
-                    performSearch();
-                }
-            };
-            
-            recognition.onerror = (event) => {
-                let errorMsg = 'Не удалось распознать';
-                if (event.error === 'no-speech') errorMsg = 'Речь не обнаружена';
-                if (event.error === 'not-allowed') errorMsg = 'Разрешите доступ к микрофону';
-                showNotification(`❌ ${errorMsg}`);
-                stopListening();
-            };
-            
-            recognition.onend = () => {
-                stopListening();
-            };
-        }
-        
-        function startVoiceSearch() {
-            if (!recognition) {
-                initVoiceSearch();
-                if (!recognition) return;
-            }
-            if (isListening) {
-                stopListening();
-                return;
-            }
-            try {
-                recognition.start();
-            } catch (e) {
-                showNotification('❌ Не удалось запустить микрофон');
-            }
-        }
-        
-        function stopListening() {
-            isListening = false;
-            const voiceBtn = document.getElementById('voiceSearchBtn');
-            if (voiceBtn) {
-                voiceBtn.classList.remove('listening');
-            }
-        }
-
-        // ========== ВИКИПЕДИЯ - ТОЧНЫЙ ПОИСК БИОГРАФИИ ==========
-        async function getWikipediaFullBio(artistName) {
-            try {
-                const exactMatches = {
-                    "асия": "Асия (певица)",
-                    "big baby tape": "Big Baby Tape",
-                    "instasamka": "Instasamka",
-                    "моргенштерн": "Моргенштерн",
-                    "земфира": "Земфира",
-                    "кино": "Кино (группа)",
-                    "король и шут": "Король и Шут",
-                    "дора": "Дора (певица)",
-                    "imagine dragons": "Imagine Dragons",
-                    "битлз": "The Beatles",
-                    "квін": "Queen",
-                    "металлика": "Metallica",
-                    "раммштайн": "Rammstein",
-                    "элвис": "Элвис Пресли",
-                    "майкл джексон": "Майкл Джексон",
-                    "фридрих меркьюри": "Фредди Меркьюри",
-                    "нервана": "Nirvana"
-                };
-                
-                let searchQuery = artistName.toLowerCase().trim();
-                let pageTitle = exactMatches[searchQuery];
-                
-                if (!pageTitle) {
-                    const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
-                    const searchResponse = await fetch(searchUrl);
-                    const searchData = await searchResponse.json();
-                    
-                    if (!searchData.query || !searchData.query.search || searchData.query.search.length === 0) {
-                        return null;
-                    }
-                    
-                    const relevantResults = searchData.query.search.filter(item => {
-                        const title = item.title.toLowerCase();
-                        return title.includes(artistName.toLowerCase()) ||
-                               title.includes("певица") || title.includes("музыкант") ||
-                               title.includes("рэпер") || title.includes("певец") || title.includes("группа");
-                    });
-                    
-                    if (relevantResults.length === 0) {
-                        if (searchData.query.search.length === 0) return null;
-                        pageTitle = searchData.query.search[0].title;
-                    } else {
-                        pageTitle = relevantResults[0].title;
-                    }
-                }
-                
-                const contentUrl = `https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`;
-                const contentResponse = await fetch(contentUrl);
-                const contentData = await contentResponse.json();
-                
-                const pages = contentData.query.pages;
-                const pageId = Object.keys(pages)[0];
-                let cleanText = pages[pageId].extract || "";
-                
-                if (!cleanText) return null;
-                
-                cleanText = cleanText
-                    .replace(/\[править\]/g, '')
-                    .replace(/\[\d+\]/g, '')
-                    .replace(/\s+/g, ' ')
-                    .replace(/\n{3,}/g, '\n\n')
-                    .trim();
-                
-                if (cleanText.length > 5000) cleanText = cleanText.substring(0, 5000) + '...';
-                
-                return {
-                    title: pageTitle,
-                    fullText: cleanText,
-                    pageUrl: `https://ru.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`
-                };
-            } catch (error) {
-                return null;
-            }
-        }
-        
-        function displayBio(bioData, artistName) {
-            if (!bioData) {
-                return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию dla "${escapeHtml(artistName)}"</div></div>`;
-            }
-            return `
-                <div class="bio-section">
-                    <div class="bio-title">📖 ${escapeHtml(bioData.title)}</div>
-                    <div class="bio-text">${escapeHtml(bioData.fullText)}</div>
-                    <a href="${bioData.pageUrl}" target="_blank" class="bio-wiki-link">🔗 Читать полную статью на Википедии →</a>
-                </div>
-            `;
-        }
-
-        // ========== AI АССИСТЕНТ ==========
-        async function getAIResponse(query) {
-            const lowerQuery = query.toLowerCase().trim();
-            
-            // Проверка: похоже на запрос об исполнителе (не содержит ключевых слов)
-            const isArtistQuery = !lowerQuery.includes("песн") && 
-                                  !lowerQuery.includes("трек") && 
-                                  !lowerQuery.includes("посоветуй") &&
-                                  !lowerQuery.includes("случайн") &&
-                                  !lowerQuery.includes("грустн") &&
-                                  !lowerQuery.includes("весел") &&
-                                  !lowerQuery.includes("зарядк") &&
-                                  !lowerQuery.includes("романтик") &&
-                                  !lowerQuery.includes("привет") &&
-                                  !lowerQuery.includes("как") &&
-                                  !lowerQuery.includes("что") &&
-                                  !lowerQuery.includes("кто") &&
-                                  lowerQuery.length > 2;
-            
-            if (isArtistQuery) {
-                showAssistantTyping();
-                const bioData = await getWikipediaFullBio(query);
-                hideAssistantTyping();
-                if (bioData && bioData.fullText) {
-                    return `📖 **${bioData.title}**\n\n${bioData.fullText}\n\n🔗 [Читать полную статью на Википедии](${bioData.pageUrl})`;
-                } else {
-                    return `❌ Не удалось найти информацию об исполнителе "${query}" в Википедии.\n\nПопробуй написать имя на русском или английском языке.`;
-                }
-            }
-            
-            // Совет по настроению
-            if (lowerQuery.includes("грустн")) {
-                return `😢 **Грустные треки:**\n\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира`;
-            }
-            if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) {
-                return `😊 **Весёлые треки:**\n\n"Believer" - Imagine Dragons\n"Blinding Lights" - The Weeknd\n"Uptown Funk" - Mark Ronson`;
-            }
-            if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) {
-                return `💪 **Для зарядки:**\n\n"Believer" - Imagine Dragons\n"Cadillac" - Моргенштерн\n"Till I Collapse" - Eminem`;
-            }
-            if (lowerQuery.includes("романтик")) {
-                return `💖 **Романтичные треки:**\n\n"Твой поцелуй" - Асия\n"Останься" - Асия\n"Perfect" - Ed Sheeran`;
-            }
-            if (lowerQuery.includes("случайный") || lowerQuery.includes("рандом")) {
-                const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
-                return `🎲 **Случайный трек:**\n\n"${randomTrack.track}" - ${randomTrack.artist}\n\nПопробуй найти его в разделе "Музыка"!`;
-            }
-            if (lowerQuery.includes("привет")) {
-                return `Привет! 👋 Я твой музыкальный помощник.\n\n**Что я могу:**\n• Напиши имя исполнителя — получу биографию из Википедии\n• "грустная песня" — посоветую треки\n• "случайный трек" — выберу случайный трек\n\nСпрашивай!`;
-            }
-            
-            return `🎶 Я не совсем понял запрос. Попробуй:\n\n• Напиши имя исполнителя (например, "Асия")\n• "грустная песня"\n• "весёлая песня"\n• "случайный трек"`;
-        }
-        
-        function addMessage(text, isUser = false) {
-            const chatContainer = document.getElementById('chatContainer');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message message-${isUser ? 'user' : 'ai'}`;
-            
-            let formattedText = text;
-            if (!isUser) {
-                formattedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-                formattedText = formattedText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-                formattedText = formattedText.replace(/\n/g, '<br>');
-            }
-            
-            if (isUser) {
-                messageDiv.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon">👤</div>`;
-            } else {
-                messageDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">${formattedText}</div>`;
-            }
-            
-            chatContainer.appendChild(messageDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-        
-        let assistantTypingDiv = null;
-        function showAssistantTyping() {
-            const chatContainer = document.getElementById('chatContainer');
-            assistantTypingDiv = document.createElement('div');
-            assistantTypingDiv.className = 'message message-ai';
-            assistantTypingDiv.id = 'assistantTyping';
-            assistantTypingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble"><span class="loading-dots">🤔 <span>.</span><span>.</span><span>.</span></span></div>`;
-            chatContainer.appendChild(assistantTypingDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-        
-        function hideAssistantTyping() {
-            if (assistantTypingDiv) { assistantTypingDiv.remove(); assistantTypingDiv = null; }
-        }
-        
-        async function sendAssistantMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            addMessage(message, true);
-            input.value = '';
-            
-            showAssistantTyping();
-            const response = await getAIResponse(message);
-            hideAssistantTyping();
-            addMessage(response);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
-
-        // ========== ПЕРЕМЕННЫЕ ==========
-        let currentSearchMode = 'artist';
-
         // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
         function loadSavedAppearance() {
             const savedBg = localStorage.getItem('music_bot_background');
             if (savedBg && savedBg !== 'default') {
                 if (savedBg.startsWith('linear-gradient')) {
                     document.body.style.background = savedBg;
-                    document.body.classList.remove('default-bg', 'has-bg');
+                    document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
                 } else {
                     document.body.style.backgroundImage = `url(${savedBg})`;
                     document.body.style.backgroundSize = 'cover';
                     document.body.style.backgroundPosition = 'center';
                     document.body.style.backgroundAttachment = 'fixed';
-                    document.body.classList.remove('default-bg');
-                    document.body.classList.add('has-bg');
                 }
-            } else {
-                resetBackground();
             }
             const savedButtonColor = localStorage.getItem('music_bot_button_color');
             if (savedButtonColor) {
@@ -1841,8 +1383,7 @@
         function resetBackground() {
             document.body.style.background = '';
             document.body.style.backgroundImage = '';
-            document.body.classList.remove('has-bg');
-            document.body.classList.add('default-bg');
+            changeBackground('menu');
             localStorage.setItem('music_bot_background', 'default');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
@@ -1856,8 +1397,7 @@
                     document.body.style.backgroundSize = 'cover';
                     document.body.style.backgroundPosition = 'center';
                     document.body.style.backgroundAttachment = 'fixed';
-                    document.body.classList.remove('default-bg');
-                    document.body.classList.add('has-bg');
+                    document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
                     localStorage.setItem('music_bot_background', imgUrl);
                     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
                 };
@@ -1872,7 +1412,7 @@
                 const color = e.target.value;
                 document.body.style.background = color;
                 document.body.style.backgroundImage = '';
-                document.body.classList.remove('default-bg', 'has-bg');
+                document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
                 localStorage.setItem('music_bot_background', color);
                 if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             };
@@ -1882,7 +1422,7 @@
         function setGradient(gradient) {
             document.body.style.background = gradient;
             document.body.style.backgroundImage = '';
-            document.body.classList.remove('default-bg', 'has-bg');
+            document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
             localStorage.setItem('music_bot_background', gradient);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
@@ -1903,21 +1443,6 @@
             localStorage.setItem('music_bot_theme', isDark ? 'dark' : 'light');
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
-
-        // Модалка настроек
-        const settingsFab = document.getElementById('settingsFab');
-        const settingsModal = document.getElementById('settingsModal');
-        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-        
-        settingsFab.onclick = () => {
-            settingsModal.classList.remove('hidden');
-        };
-        closeSettingsBtn.onclick = () => {
-            settingsModal.classList.add('hidden');
-        };
-        settingsModal.onclick = (e) => {
-            if (e.target === settingsModal) settingsModal.classList.add('hidden');
-        };
 
         // ========== БАЗА ТРЕКОВ ==========
         const tracksDatabase = [
@@ -1969,6 +1494,13 @@
             aiScreen.classList.add('hidden');
             assistantScreen.classList.add('hidden');
             document.getElementById(screenName).classList.remove('hidden');
+            
+            // Меняем фон в зависимости от экрана
+            if (screenName === 'menuScreen') changeBackground('menu');
+            else if (screenName === 'musicScreen') changeBackground('music');
+            else if (screenName === 'gameScreen') changeBackground('game');
+            else if (screenName === 'aiScreen') changeBackground('ai');
+            else if (screenName === 'assistantScreen') changeBackground('assistant');
         }
 
         document.getElementById('goToMusicBtn').onclick = () => {
@@ -1988,19 +1520,107 @@
             showScreen('assistantScreen');
             addAction('Переход', 'Открыл раздел AI Ассистент');
         };
+        
         document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromGame').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromAI').onclick = () => { showScreen('menuScreen'); };
         document.getElementById('backToMenuFromAssistant').onclick = () => { showScreen('menuScreen'); };
 
-        // ========== ПЕРЕКЛЮЧЕНИЕ РЕЖИМА ПОИСКА ==========
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (ВИКИПЕДИЯ, ПОИСК, ИГРА, AI) ==========
+        // [Здесь остаются все функции из предыдущей версии]
+        
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        function escapeHtml(str) {
+            if(!str) return '';
+            return str.replace(/[&<>]/g, function(m){
+                if(m === '&') return '&amp;';
+                if(m === '<') return '&lt;';
+                if(m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // ========== ВИКИПЕДИЯ ==========
+        async function getWikipediaFullBio(artistName) {
+            try {
+                const exactMatches = {
+                    "асия": "Асия (певица)",
+                    "big baby tape": "Big Baby Tape",
+                    "instasamka": "Instasamka",
+                    "моргенштерн": "Моргенштерн",
+                    "земфира": "Земфира",
+                    "кино": "Кино (группа)",
+                    "imagine dragons": "Imagine Dragons"
+                };
+                let searchQuery = artistName.toLowerCase().trim();
+                let pageTitle = exactMatches[searchQuery];
+                if (!pageTitle) {
+                    const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
+                    const searchResponse = await fetch(searchUrl);
+                    const searchData = await searchResponse.json();
+                    if (!searchData.query || !searchData.query.search || searchData.query.search.length === 0) return null;
+                    pageTitle = searchData.query.search[0].title;
+                }
+                const contentUrl = `https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`;
+                const contentResponse = await fetch(contentUrl);
+                const contentData = await contentResponse.json();
+                const pages = contentData.query.pages;
+                const pageId = Object.keys(pages)[0];
+                let cleanText = pages[pageId].extract || "";
+                if (!cleanText) return null;
+                cleanText = cleanText.replace(/\[править\]/g, '').replace(/\[\d+\]/g, '').replace(/\s+/g, ' ').trim();
+                if (cleanText.length > 3000) cleanText = cleanText.substring(0, 3000) + '...';
+                return { title: pageTitle, fullText: cleanText, pageUrl: `https://ru.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}` };
+            } catch (error) { return null; }
+        }
+        
+        function displayBio(bioData, artistName) {
+            if (!bioData) return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию для "${escapeHtml(artistName)}"</div></div>`;
+            return `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bioData.title)}</div><div class="bio-text">${escapeHtml(bioData.fullText)}</div><a href="${bioData.pageUrl}" target="_blank" class="bio-wiki-link">🔗 Читать полную статью на Википедии →</a></div>`;
+        }
+
+        // ========== АУДИОПЛЕЕР (AI генерация) ==========
+        async function generateAICover(prompt) {
+            const resultDiv = document.getElementById('aiResult');
+            addAction('AI', `Генерация обложки: "${prompt}"`);
+            resultDiv.innerHTML = `<div style="text-align: center; padding: 20px;"><div class="loading-spinner"></div><div style="margin-top: 12px; color: rgba(255,255,255,0.8);">🤖 AI создаёт обложку...</div><div style="font-size: 12px; margin-top: 8px; color: rgba(255,255,255,0.6);">⏱️ Обычно 5-10 секунд</div></div>`;
+            try {
+                const encodedPrompt = encodeURIComponent(prompt);
+                const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true`;
+                const img = new Image();
+                img.onload = () => {
+                    resultDiv.innerHTML = `<div style="text-align: center;"><img src="${imageUrl}" class="ai-cover-img" alt="AI Generated Cover"><div class="section-title" style="margin-top: 16px;">🎨 Описание: ${escapeHtml(prompt)}</div><button onclick="downloadAICover('${imageUrl}')" class="ai-btn" style="background: #28a745; margin-top: 12px;">💾 Скачать обложку</button></div>`;
+                    addAction('AI', `Обложка создана: "${prompt}"`);
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                };
+                img.onerror = () => { resultDiv.innerHTML = `<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">❌ Не удалось создать обложку<br><button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button></div>`; };
+                img.src = imageUrl;
+            } catch (error) { resultDiv.innerHTML = `<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">❌ Ошибка: ${error.message}<br><button onclick="generateAICover('${escapeHtml(prompt)}')" class="ai-btn" style="margin-top: 12px;">🔄 Повторить</button></div>`; }
+        }
+        
+        function downloadAICover(imageUrl) { const link = document.createElement('a'); link.href = imageUrl; link.download = `ai_cover_${Date.now()}.jpg`; link.click(); addAction('AI', 'Скачал обложку'); showNotification("💾 Скачивание началось!"); }
+
+        function showQR(text, title) {
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
+            const modal = document.createElement('div'); modal.className = 'qr-modal';
+            modal.innerHTML = `<div class="qr-content"><div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">📱 ${escapeHtml(title)}</div><img src="${qrUrl}" class="qr-img" alt="QR Code"><div style="font-size: 12px; color: gray; margin-bottom: 8px;">Наведи камеру друга, чтобы поделиться</div><button class="qr-close" onclick="this.closest('.qr-modal').remove()">✕ Закрыть</button></div>`;
+            document.body.appendChild(modal);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        // ========== ПОИСК ==========
         function setSearchMode(mode) {
             currentSearchMode = mode;
             const artistBtn = document.getElementById('searchArtistBtn');
             const trackBtn = document.getElementById('searchTrackBtn');
             const searchInput = document.getElementById('searchInput');
-            const musicResult = document.getElementById('musicResult');
-            
             if (mode === 'artist') {
                 artistBtn.classList.add('active');
                 trackBtn.classList.remove('active');
@@ -2010,12 +1630,9 @@
                 trackBtn.classList.add('active');
                 searchInput.placeholder = "Останься, Believer, Детство...";
             }
-            searchInput.value = '';
-            if (musicResult) musicResult.innerHTML = '';
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            document.getElementById('musicResult').innerHTML = '';
         }
 
-        // ========== МУЗЫКАЛЬНАЯ ЧАСТЬ ==========
         function loadPopularArtists() {
             const container = document.getElementById('popularGrid');
             container.innerHTML = popularArtistsList.map(artist => 
@@ -2032,29 +1649,25 @@
         async function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
             if(!query) return;
-            
             addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
-            
             const links = {
                 yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
                 youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`,
                 vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`,
                 spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}`
             };
-            
             const resultDiv = document.getElementById('musicResult');
-            resultDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 Поиск...</div>';
+            resultDiv.innerHTML = '<div style="text-align:center; padding:20px; color: rgba(255,255,255,0.8);">🔍 Поиск...</div>';
             
             if (currentSearchMode === 'artist') {
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
                 const tracksList = artistTracks.map(t => t.track).join(', ');
-                
                 resultDiv.innerHTML = `
                     <div class="result-card">
                         <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                        ${artistTracks.length > 0 ? `<div style="font-size: 13px; color: #666; margin-bottom: 12px;">🎵 Треки: ${tracksList}</div>` : ''}
+                        ${artistTracks.length > 0 ? `<div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px;">🎵 Треки: ${tracksList}</div>` : ''}
                         <div class="section-title">🎧 Слушать на платформах</div>
                         <div class="platform-buttons">
                             <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -2070,34 +1683,31 @@
                 `;
             } else {
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
-                
                 if (foundTrack) {
                     const artistName = foundTrack.artist;
                     const bioData = await getWikipediaFullBio(artistName);
                     const bioHtml = displayBio(bioData, artistName);
                     const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
                     const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
-                    
                     const artistLinks = {
                         yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`,
                         youtube: `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`,
                         vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(artistName)}&c%5Bsection%5D=audio`,
                         spotify: `https://open.spotify.com/search/${encodeURIComponent(artistName)}`
                     };
-                    
                     resultDiv.innerHTML = `
                         <div class="result-card">
                             <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
-                            <div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: var(--button-color); font-size: 16px;">${escapeHtml(artistName)}</strong></div>
-                            <div class="artist-card">
-                                <div class="artist-header">
-                                    <div class="artist-icon">🎤</div>
-                                    <div class="artist-header-info">
-                                        <div class="artist-name-large">${escapeHtml(artistName)}</div>
-                                        <div class="artist-tracks-count">📀 ${artistTracks.length} треков в базе</div>
+                            <div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: #4facfe; font-size: 16px;">${escapeHtml(artistName)}</strong></div>
+                            <div class="artist-card" style="background: rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="font-size: 32px;">🎤</div>
+                                    <div>
+                                        <div style="font-weight: 700;">${escapeHtml(artistName)}</div>
+                                        <div style="font-size: 11px; color: rgba(255,255,255,0.6);">📀 ${artistTracks.length} треков в базе</div>
                                     </div>
                                 </div>
-                                ${otherTracks.length > 0 ? `<div style="font-size: 13px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}
+                                ${otherTracks.length > 0 ? `<div style="font-size: 12px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}
                             </div>
                             ${bioHtml}
                             <div class="section-title">🎧 Слушать трек</div>
@@ -2146,108 +1756,85 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        document.getElementById('doSearchBtn').onclick = performSearch;
-        document.getElementById('randomTrackBtn').onclick = getRandomTrack;
-        document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
+        // ========== ГОЛОСОВОЙ ПОИСК ==========
+        let recognition = null;
+        let isListening = false;
         
-        // Голосовой поиск
-        const voiceBtn = document.getElementById('voiceSearchBtn');
-        if (voiceBtn) voiceBtn.onclick = startVoiceSearch;
-        initVoiceSearch();
-        
-        // AI генератор
-        document.getElementById('generateAIBtn').onclick = () => {
-            const prompt = document.getElementById('aiPrompt').value.trim();
-            if (!prompt) {
-                showNotification("❌ Введите описание для обложки!");
+        function initVoiceSearch() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                const voiceBtn = document.getElementById('voiceSearchBtn');
+                if (voiceBtn) {
+                    voiceBtn.style.opacity = '0.5';
+                    voiceBtn.title = 'Голосовой поиск не поддерживается';
+                }
                 return;
             }
-            generateAICover(prompt);
-        };
-        document.getElementById('aiPrompt').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('generateAIBtn').click();
-        });
-        
-        // AI Ассистент
-        document.getElementById('sendChatBtn').onclick = sendAssistantMessage;
-        document.getElementById('chatInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendAssistantMessage();
-        });
-        
-        // Кнопки-подсказки для ассистента
-        document.querySelectorAll('.suggestion-btn').forEach(btn => {
-            btn.onclick = () => {
-                const query = btn.getAttribute('data-query');
-                document.getElementById('chatInput').value = query;
-                sendAssistantMessage();
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'ru-RU';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.onstart = () => {
+                isListening = true;
+                const voiceBtn = document.getElementById('voiceSearchBtn');
+                if (voiceBtn) voiceBtn.classList.add('listening');
+                showNotification('🎤 Говорите...');
             };
-        });
+            recognition.onresult = (event) => {
+                const result = event.results[0][0].transcript;
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = result;
+                    showNotification(`🔍 Распознано: "${result}"`);
+                    performSearch();
+                }
+            };
+            recognition.onerror = (event) => {
+                let errorMsg = 'Не удалось распознать';
+                if (event.error === 'no-speech') errorMsg = 'Речь не обнаружена';
+                if (event.error === 'not-allowed') errorMsg = 'Разрешите доступ к микрофону';
+                showNotification(`❌ ${errorMsg}`);
+                stopListening();
+            };
+            recognition.onend = () => { stopListening(); };
+        }
+        
+        function startVoiceSearch() {
+            if (!recognition) { initVoiceSearch(); if (!recognition) return; }
+            if (isListening) { stopListening(); return; }
+            try { recognition.start(); } catch (e) { showNotification('❌ Не удалось запустить микрофон'); }
+        }
+        
+        function stopListening() {
+            isListening = false;
+            const voiceBtn = document.getElementById('voiceSearchBtn');
+            if (voiceBtn) voiceBtn.classList.remove('listening');
+        }
 
-        // ========== ИГРА (ИСПРАВЛЕННАЯ - УНИКАЛЬНЫЕ ВАРИАНТЫ) ==========
+        // ========== ИГРА ==========
         const allArtistsForGame = [...new Set(tracksDatabase.map(t => t.artist))];
+        let gameQuestions = [], currentQ = 0, gameScore = 0, gameActive = false, gameStatsData = { gamesPlayed: 0, bestScore: 0 };
 
-        let gameQuestions = [];
-        let currentQ = 0;
-        let gameScore = 0;
-        let gameActive = false;
-        let gameStatsData = { gamesPlayed: 0, bestScore: 0 };
-
-        function loadGameStats() {
-            const saved = localStorage.getItem('music_game_stats');
-            if (saved) gameStatsData = JSON.parse(saved);
-        }
-
-        function saveGameStats() {
-            localStorage.setItem('music_game_stats', JSON.stringify(gameStatsData));
-        }
+        function loadGameStats() { const saved = localStorage.getItem('music_game_stats'); if(saved) gameStatsData = JSON.parse(saved); }
+        function saveGameStats() { localStorage.setItem('music_game_stats', JSON.stringify(gameStatsData)); }
 
         function generateQuestion() {
-            // Выбираем случайный трек из базы
             const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
             const correctArtist = randomTrack.artist;
-            
-            // Получаем УНИКАЛЬНЫХ исполнителей (без правильного ответа)
             let otherArtists = [...allArtistsForGame];
             otherArtists = otherArtists.filter(a => a !== correctArtist);
-            
-            // Перемешиваем
-            for (let i = otherArtists.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [otherArtists[i], otherArtists[j]] = [otherArtists[j], otherArtists[i]];
-            }
-            
-            // Берём 3 УНИКАЛЬНЫХ неправильных варианта
+            for (let i = otherArtists.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [otherArtists[i], otherArtists[j]] = [otherArtists[j], otherArtists[i]]; }
             let wrongOptions = otherArtists.slice(0, 3);
-            
-            // Если в базе мало исполнителей, добавляем заглушку
-            while (wrongOptions.length < 3) {
-                wrongOptions.push("Неизвестный исполнитель");
-            }
-            
-            // Формируем варианты (1 правильный + 3 неправильных)
+            while (wrongOptions.length < 3) { wrongOptions.push("Неизвестный исполнитель"); }
             let options = [correctArtist, ...wrongOptions];
-            
-            // Перемешиваем варианты
-            for (let i = options.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [options[i], options[j]] = [options[j], options[i]];
-            }
-            
-            return {
-                track: randomTrack.track,
-                correct: correctArtist,
-                options: options
-            };
+            for (let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; }
+            return { track: randomTrack.track, correct: correctArtist, options: options };
         }
 
         function startGame() {
             gameQuestions = [];
-            for (let i = 0; i < 8; i++) {
-                gameQuestions.push(generateQuestion());
-            }
-            currentQ = 0;
-            gameScore = 0;
-            gameActive = true;
+            for (let i = 0; i < 8; i++) gameQuestions.push(generateQuestion());
+            currentQ = 0; gameScore = 0; gameActive = true;
             const startBtn = document.getElementById('startGameBtn');
             startBtn.textContent = '🎮 Игра идёт...';
             startBtn.style.background = '#28a745';
@@ -2258,60 +1845,22 @@
 
         function showGameQuestion() {
             const container = document.getElementById('gameContent');
-            if (currentQ >= gameQuestions.length) {
-                endGame();
-                return;
-            }
+            if (currentQ >= gameQuestions.length) { endGame(); return; }
             const q = gameQuestions[currentQ];
             const percent = Math.round((gameScore / gameQuestions.length) * 100);
             let optsHtml = '';
-            
-            q.options.forEach(opt => {
-                const displayOpt = opt === "Неизвестный исполнитель" ? opt : `🎤 ${opt}`;
-                optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(displayOpt)}</div>`;
-            });
-            
-            container.innerHTML = `
-                <div class="game-question">
-                    <div style="font-size:13px;">🎵 Вопрос ${currentQ + 1}/${gameQuestions.length}</div>
-                    <div class="track-name">"${escapeHtml(q.track)}"</div>
-                    <div>Кто исполнитель?</div>
-                    <div class="game-options" id="gameOptions">${optsHtml}</div>
-                    <div style="margin-top:12px;">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div>
-                </div>
-            `;
+            q.options.forEach(opt => { const displayOpt = opt === "Неизвестный исполнитель" ? opt : `🎤 ${opt}`; optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(displayOpt)}</div>`; });
+            container.innerHTML = `<div class="game-question"><div style="font-size:13px; color:rgba(255,255,255,0.7);">🎵 Вопрос ${currentQ + 1}/${gameQuestions.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div style="color:rgba(255,255,255,0.9);">Кто исполнитель?</div><div class="game-options" id="gameOptions">${optsHtml}</div><div style="margin-top:12px; color:rgba(255,255,255,0.7);">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div></div>`;
         }
 
         window.checkAnswer = function(selected, correct) {
             if (!gameActive) return;
-            const optsDiv = document.getElementById('gameOptions');
-            if (!optsDiv) return;
+            const optsDiv = document.getElementById('gameOptions'); if (!optsDiv) return;
             const btns = optsDiv.querySelectorAll('.game-option');
             gameActive = false;
-            
-            btns.forEach(btn => {
-                let btnText = btn.innerText.replace('🎤 ', '');
-                if (btnText === correct) {
-                    btn.classList.add('correct');
-                }
-                if (btnText === selected && selected !== correct) {
-                    btn.classList.add('wrong');
-                }
-                btn.style.pointerEvents = 'none';
-            });
-            
-            if (selected === correct) {
-                gameScore++;
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            } else {
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-            }
-            
-            setTimeout(() => {
-                currentQ++;
-                gameActive = true;
-                showGameQuestion();
-            }, 1000);
+            btns.forEach(btn => { let btnText = btn.innerText.replace('🎤 ', ''); if (btnText === correct) btn.classList.add('correct'); if (btnText === selected && selected !== correct) btn.classList.add('wrong'); btn.style.pointerEvents = 'none'; });
+            if (selected === correct) gameScore++;
+            setTimeout(() => { currentQ++; gameActive = true; showGameQuestion(); }, 1000);
         };
 
         function endGame() {
@@ -2321,39 +1870,84 @@
             gameStatsData.gamesPlayed++;
             if (gameScore > gameStatsData.bestScore) gameStatsData.bestScore = gameScore;
             saveGameStats();
-            
             let msg = percent === 100 ? '🏆 ИДЕАЛЬНО!' : (percent >= 70 ? '🎵 Отлично!' : '🎧 Попробуй ещё!');
             const container = document.getElementById('gameContent');
-            container.innerHTML = `
-                <div style="text-align:center; padding:20px;">
-                    <div style="font-size:28px; margin-bottom:8px;">🎉</div>
-                    <div style="font-size:20px; font-weight:bold;">${gameScore}/${total}</div>
-                    <div style="margin:12px 0;">${msg}</div>
-                    <div>⭐ Лучший: ${gameStatsData.bestScore}/${total}</div>
-                    <div>🎮 Сыграно: ${gameStatsData.gamesPlayed}</div>
-                    <button id="restartGameBtn" style="background:#9b59b6; margin-top:16px; border:none; padding:10px 24px; border-radius:40px;">🔄 Сыграть снова</button>
-                </div>
-            `;
-            
+            container.innerHTML = `<div style="text-align:center; padding:20px;"><div style="font-size:48px; margin-bottom:8px;">🎉</div><div style="font-size:28px; font-weight:bold;">${gameScore}/${total}</div><div style="margin:12px 0;">${msg}</div><div style="color:rgba(255,255,255,0.7);">⭐ Лучший: ${gameStatsData.bestScore}/${total}</div><div style="color:rgba(255,255,255,0.7);">🎮 Сыграно: ${gameStatsData.gamesPlayed}</div><button id="restartGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); margin-top:20px; border:none; padding:12px 24px; border-radius:40px; color:white; font-weight:bold;">🔄 Сыграть снова</button></div>`;
             document.getElementById('restartGameBtn')?.addEventListener('click', startGame);
             const startBtn = document.getElementById('startGameBtn');
             startBtn.textContent = '▶ Начать игру';
-            startBtn.style.background = '#9b59b6';
+            startBtn.style.background = 'linear-gradient(135deg, #9b59b6, #8e44ad)';
             addAction('Игра', `Закончил игру со счётом ${gameScore}/${total}`);
         }
 
-        document.getElementById('startGameBtn').onclick = startGame;
-        loadGameStats();
-
-        function escapeHtml(str) {
-            if(!str) return '';
-            return str.replace(/[&<>]/g, function(m){
-                if(m === '&') return '&amp;';
-                if(m === '<') return '&lt;';
-                if(m === '>') return '&gt;';
-                return m;
-            });
+        // ========== AI АССИСТЕНТ ==========
+        async function getAIResponse(query) {
+            const lowerQuery = query.toLowerCase().trim();
+            const isArtistQuery = !lowerQuery.includes("песн") && !lowerQuery.includes("трек") && !lowerQuery.includes("посоветуй") && !lowerQuery.includes("случайн") && !lowerQuery.includes("грустн") && !lowerQuery.includes("весел") && !lowerQuery.includes("зарядк") && !lowerQuery.includes("романтик") && !lowerQuery.includes("привет") && lowerQuery.length > 2;
+            if (isArtistQuery) {
+                showAssistantTyping();
+                const bioData = await getWikipediaFullBio(query);
+                hideAssistantTyping();
+                if (bioData && bioData.fullText) return `📖 **${bioData.title}**\n\n${bioData.fullText}\n\n🔗 [Читать полную статью на Википедии](${bioData.pageUrl})`;
+                else return `❌ Не удалось найти информацию об исполнителе "${query}" в Википедии.\n\nПопробуй написать имя на русском или английском языке.`;
+            }
+            if (lowerQuery.includes("грустн")) return `😢 **Грустные треки:**\n\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира`;
+            if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) return `😊 **Весёлые треки:**\n\n"Believer" - Imagine Dragons\n"Blinding Lights" - The Weeknd`;
+            if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) return `💪 **Для зарядки:**\n\n"Believer" - Imagine Dragons\n"Cadillac" - Моргенштерн`;
+            if (lowerQuery.includes("романтик")) return `💖 **Романтичные треки:**\n\n"Твой поцелуй" - Асия\n"Останься" - Асия`;
+            if (lowerQuery.includes("случайный") || lowerQuery.includes("рандом")) { const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)]; return `🎲 **Случайный трек:**\n\n"${randomTrack.track}" - ${randomTrack.artist}\n\nПопробуй найти его в разделе "Музыка"!`; }
+            if (lowerQuery.includes("привет")) return `Привет! 👋 Я твой музыкальный помощник.\n\n**Что я могу:**\n• Напиши имя исполнителя — получу биографию из Википедии\n• "грустная песня" — посоветую треки\n• "случайный трек" — выберу случайный трек\n\nСпрашивай!`;
+            return `🎶 Я не совсем понял запрос. Попробуй:\n\n• Напиши имя исполнителя (например, "Асия")\n• "грустная песня"\n• "случайный трек"`;
         }
+        
+        function addMessage(text, isUser = false) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message message-${isUser ? 'user' : 'ai'}`;
+            let formattedText = text;
+            if (!isUser) {
+                formattedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                formattedText = formattedText.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+                formattedText = formattedText.replace(/\n/g, '<br>');
+            }
+            if (isUser) messageDiv.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon">👤</div>`;
+            else messageDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">${formattedText}</div>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        let assistantTypingDiv = null;
+        function showAssistantTyping() { const chatContainer = document.getElementById('chatContainer'); assistantTypingDiv = document.createElement('div'); assistantTypingDiv.className = 'message message-ai'; assistantTypingDiv.id = 'assistantTyping'; assistantTypingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble"><span class="loading-dots">🤔 <span>.</span><span>.</span><span>.</span></span></div>`; chatContainer.appendChild(assistantTypingDiv); chatContainer.scrollTop = chatContainer.scrollHeight; }
+        function hideAssistantTyping() { if (assistantTypingDiv) { assistantTypingDiv.remove(); assistantTypingDiv = null; } }
+        
+        async function sendAssistantMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            addMessage(message, true);
+            input.value = '';
+            showAssistantTyping();
+            const response = await getAIResponse(message);
+            hideAssistantTyping();
+            addMessage(response);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        // ========== НАСТРОЙКИ ==========
+        document.getElementById('doSearchBtn').onclick = performSearch;
+        document.getElementById('randomTrackBtn').onclick = getRandomTrack;
+        document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') performSearch(); });
+        
+        const voiceBtn = document.getElementById('voiceSearchBtn');
+        if (voiceBtn) voiceBtn.onclick = startVoiceSearch;
+        initVoiceSearch();
+        
+        document.getElementById('generateAIBtn').onclick = () => { const prompt = document.getElementById('aiPrompt').value.trim(); if (!prompt) { showNotification("❌ Введите описание для обложки!"); return; } generateAICover(prompt); };
+        document.getElementById('aiPrompt').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('generateAIBtn').click(); });
+        
+        document.getElementById('sendChatBtn').onclick = sendAssistantMessage;
+        document.getElementById('chatInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendAssistantMessage(); });
+        document.querySelectorAll('.suggestion-btn').forEach(btn => { btn.onclick = () => { const query = btn.getAttribute('data-query'); document.getElementById('chatInput').value = query; sendAssistantMessage(); }; });
 
         // ========== АДМИН ПАНЕЛЬ - УПРАВЛЕНИЕ ==========
         const adminBadge = document.getElementById('adminBadge');
@@ -2365,14 +1959,8 @@
         const closeAdminPanelBtnEl = document.getElementById('closeAdminPanel');
         
         adminBadge.onclick = () => {
-            if (isAdminLoggedIn) {
-                adminPanelEl.classList.remove('hidden');
-                refreshAdminPanel();
-            } else {
-                adminLoginEl.classList.remove('hidden');
-                adminPasswordInput.value = '';
-                loginErrorEl.textContent = '';
-            }
+            if (isAdminLoggedIn) { adminPanelEl.classList.remove('hidden'); refreshAdminPanel(); }
+            else { adminLoginEl.classList.remove('hidden'); adminPasswordInput.value = ''; loginErrorEl.textContent = ''; }
         };
         
         adminLoginBtnEl.onclick = () => {
@@ -2382,18 +1970,11 @@
                 adminPanelEl.classList.remove('hidden');
                 refreshAdminPanel();
                 addAction('Админ', 'Вошёл в админ панель');
-            } else {
-                loginErrorEl.textContent = '❌ Неверный пароль';
-            }
+            } else { loginErrorEl.textContent = '❌ Неверный пароль'; }
         };
         
-        closeAdminPanelBtnEl.onclick = () => {
-            adminPanelEl.classList.add('hidden');
-        };
-        
-        adminPasswordInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') adminLoginBtnEl.click();
-        });
+        closeAdminPanelBtnEl.onclick = () => { adminPanelEl.classList.add('hidden'); };
+        adminPasswordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') adminLoginBtnEl.click(); });
         
         document.getElementById('clearActionsBtn').onclick = clearActions;
         document.getElementById('exportActionsBtn').onclick = exportActions;
@@ -2402,18 +1983,33 @@
         
         loadAdminActions();
 
-        // Telegram user
+        // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
+        const settingsFab = document.getElementById('settingsFab');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        
+        settingsFab.onclick = () => { settingsModal.classList.remove('hidden'); };
+        closeSettingsBtn.onclick = () => { settingsModal.classList.add('hidden'); };
+        settingsModal.onclick = (e) => { if (e.target === settingsModal) settingsModal.classList.add('hidden'); };
+
+        // Инициализация
         const user = tg.initDataUnsafe?.user;
         if(user && user.first_name) document.getElementById('userName').innerText = user.first_name;
-
+        
         loadSavedAppearance();
         loadPopularArtists();
         
-        if (tg.colorScheme === 'dark') {
-            document.body.classList.add('dark-theme');
-        }
+        if (tg.colorScheme === 'dark') document.body.classList.add('dark-theme');
+        changeBackground('menu');
         
-        showWelcome();
+        // Приветствие
+        const welcomeShown = sessionStorage.getItem('welcome_shown');
+        if (!welcomeShown) {
+            setTimeout(() => {
+                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nИщи музыку, играй, создавай AI обложки и общайся с AI ассистентом!", buttons: [{ type: "ok" }] });
+                sessionStorage.setItem('welcome_shown', 'true');
+            }, 500);
+        }
     </script>
 </body>
 </html>
