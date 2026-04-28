@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Music Hub - Полная версия</title>
+    <title>Music Hub - Полноэкранное приложение</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
@@ -15,37 +15,29 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow-x: hidden;
-            padding: 20px;
-        }
-        
-        /* Анимированные фоны для разных экранов */
-        body.main-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
             background-size: 400% 400%;
             animation: gradientShift 12s ease infinite;
+            transition: background 0.5s ease;
         }
         
-        body.music-bg {
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+        /* Кастомные фоны для каждого раздела (можно менять в настройках) */
+        body.music-mode {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
+            animation: none !important;
         }
-        
-        body.game-bg {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6b48ff 100%);
+        body.game-mode {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6b48ff 100%) !important;
+            animation: none !important;
         }
-        
-        body.ai-bg {
-            background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #00d2ff 100%);
+        body.ai-mode {
+            background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #00d2ff 100%) !important;
+            animation: none !important;
         }
-        
-        body.assistant-bg {
-            background: linear-gradient(135deg, #0b8793 0%, #360033 100%);
+        body.assistant-mode {
+            background: linear-gradient(135deg, #0b8793 0%, #360033 100%) !important;
+            animation: none !important;
         }
         
         @keyframes gradientShift {
@@ -56,39 +48,56 @@
             100% { background-position: 0% 0%; }
         }
         
-        .container {
-            max-width: 500px;
+        /* Полноэкранные контейнеры */
+        .fullscreen-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             width: 100%;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
+            height: 100%;
+            overflow-y: auto;
+            padding: 20px;
+            z-index: 10;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         }
         
-        /* Эффект стекла */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.2);
-            transition: all 0.3s ease;
+        .fullscreen-page.active {
+            transform: translateX(0);
         }
         
-        body.dark-theme .glass-card {
-            background: rgba(30, 30, 40, 0.8);
-            border: 1px solid rgba(255,255,255,0.1);
+        /* Главное меню (полноэкранное) */
+        .menu-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            transition: transform 0.4s ease;
         }
         
-        /* Главное меню */
+        .menu-container.hidden-menu {
+            transform: translateX(-100%);
+        }
+        
         .menu-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 24px;
-            min-height: 80vh;
+            width: 100%;
+            max-width: 320px;
             animation: fadeInUp 0.6s ease;
         }
         
@@ -102,12 +111,12 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 80px;
-            padding: 18px 32px;
-            width: 280px;
+            padding: 20px 32px;
+            width: 100%;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         }
         
         .menu-btn:active { transform: scale(0.96); }
@@ -115,29 +124,24 @@
         .menu-title { font-size: 24px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .menu-desc { font-size: 12px; color: rgba(255,255,255,0.9); margin-top: 6px; }
         
-        /* Шапка */
+        /* Шапка внутри разделов */
         .page-header {
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 24px;
-            animation: fadeInDown 0.4s ease;
-        }
-        
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            padding-top: 10px;
         }
         
         .back-btn {
             background: rgba(0,0,0,0.5);
             backdrop-filter: blur(10px);
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 40px;
             color: white;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
@@ -146,6 +150,22 @@
         
         .back-btn:active { transform: scale(0.95); }
         .page-title { font-size: 28px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); flex: 1; }
+        
+        /* Эффект стекла для контента */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        body.dark-theme .glass-card {
+            background: rgba(30, 30, 40, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         
         /* Поиск */
         .search-type-switch { display: flex; gap: 12px; margin-bottom: 20px; }
@@ -174,7 +194,6 @@
         }
         body.dark-theme .search-input { background: rgba(30,30,40,0.9); color: white; }
         .search-input:focus { outline: none; background: white; }
-        body.dark-theme .search-input:focus { background: #2a2a2a; }
         
         .search-btn {
             background: #2481cc;
@@ -239,7 +258,6 @@
             border-radius: 24px;
             padding: 16px;
             margin-top: 20px;
-            animation: fadeInUp 0.4s ease;
         }
         .artist-name { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: white; }
         
@@ -270,7 +288,6 @@
             color: white;
             width: 100%;
         }
-        .qr-btn:active, .ai-btn:active { transform: scale(0.98); }
         .qr-btn { background: #607d8b; }
         .ai-btn { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
         
@@ -289,7 +306,7 @@
         .bio-wiki-link { display: inline-block; margin-top: 12px; color: #4facfe; text-decoration: none; font-size: 13px; }
         
         /* Игра */
-        .game-question { text-align: center; animation: fadeInUp 0.4s ease; }
+        .game-question { text-align: center; }
         .track-name { font-size: 22px; font-weight: 800; margin: 20px 0; color: white; }
         .game-options { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
         .game-option {
@@ -336,7 +353,7 @@
             overflow-y: auto;
             margin-bottom: 16px;
         }
-        .message { margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; animation: fadeInUp 0.3s ease; }
+        .message { margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
         .message-user { justify-content: flex-end; }
         .message-ai { justify-content: flex-start; }
         .message-bubble {
@@ -372,7 +389,6 @@
             font-size: 15px;
             background: rgba(255,255,255,0.9);
         }
-        body.dark-theme .chat-input { background: rgba(30,30,40,0.9); color: white; }
         .send-btn {
             background: #28a745;
             border: none;
@@ -383,7 +399,6 @@
             cursor: pointer;
             font-size: 20px;
         }
-        .send-btn:active { transform: scale(0.95); }
         
         /* Кнопка настроек */
         .settings-fab {
@@ -404,11 +419,42 @@
         }
         .settings-fab:active { transform: scale(0.92); }
         
+        /* Модалка настроек */
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        .settings-modal .modal-card {
+            background: rgba(30, 30, 40, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 24px;
+            width: 90%;
+            max-width: 340px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: white; }
+        .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+        .settings-label { font-size: 14px; font-weight: 500; color: white; }
+        .gradient-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        .gradient-circle { width: 44px; height: 44px; border-radius: 12px; cursor: pointer; border: 2px solid rgba(255,255,255,0.3); }
+        .close-modal { background: rgba(255,255,255,0.2); border: none; padding: 12px; border-radius: 40px; color: white; font-weight: 600; width: 100%; margin-top: 20px; cursor: pointer; }
+        .appearance-btn { background: rgba(255,255,255,0.15); border: none; padding: 8px 14px; border-radius: 25px; color: white; cursor: pointer; font-size: 13px; }
+        
         /* Админ панель */
         .admin-badge {
             position: fixed;
             top: 10px;
-            right: 10px;
+            right: 60px;
             background: rgba(0,0,0,0.6);
             padding: 5px 12px;
             border-radius: 20px;
@@ -486,36 +532,6 @@
         .login-btn { background: #28a745; border: none; padding: 10px 24px; border-radius: 30px; color: white; font-weight: bold; cursor: pointer; width: 100%; }
         .login-error { color: #dc3545; font-size: 12px; margin-top: 8px; }
         
-        .settings-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-        }
-        .settings-modal .modal-card {
-            background: rgba(30, 30, 40, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 24px;
-            width: 90%;
-            max-width: 340px;
-            border: 1px solid rgba(255,255,255,0.15);
-        }
-        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: white; }
-        .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-        .settings-label { font-size: 14px; font-weight: 500; color: white; }
-        .gradient-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-        .gradient-circle { width: 44px; height: 44px; border-radius: 12px; cursor: pointer; border: 2px solid rgba(255,255,255,0.3); }
-        .close-modal { background: rgba(255,255,255,0.2); border: none; padding: 12px; border-radius: 40px; color: white; font-weight: 600; width: 100%; margin-top: 20px; cursor: pointer; }
-        .appearance-btn { background: rgba(255,255,255,0.15); border: none; padding: 8px 14px; border-radius: 25px; color: white; cursor: pointer; font-size: 13px; }
-        
         .qr-modal {
             position: fixed;
             top: 0;
@@ -536,7 +552,6 @@
             max-width: 320px;
             width: 85%;
         }
-        body.dark-theme .qr-content { background: #2a2a2a; color: white; }
         .qr-img { width: 200px; height: 200px; margin: 16px auto; }
         .qr-close { background: #dc3545; border: none; padding: 10px 20px; border-radius: 30px; color: white; cursor: pointer; margin-top: 16px; }
         
@@ -563,8 +578,8 @@
         .hidden { display: none; }
         
         @media (max-width: 480px) {
-            body { padding: 16px; }
-            .menu-btn { width: 260px; padding: 16px 28px; }
+            .fullscreen-page { padding: 16px; }
+            .menu-btn { padding: 16px 24px; }
             .menu-icon { font-size: 42px; }
             .menu-title { font-size: 22px; }
             .page-title { font-size: 24px; }
@@ -572,10 +587,10 @@
         }
     </style>
 </head>
-<body class="main-bg">
-    <div class="container">
-        <!-- ЭКРАН МЕНЮ -->
-        <div id="menuScreen" class="menu-screen">
+<body>
+    <!-- ГЛАВНОЕ МЕНЮ (полноэкранное) -->
+    <div class="menu-container" id="menuContainer">
+        <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <span class="menu-icon">🎵</span>
                 <div class="menu-title">Музыка</div>
@@ -597,93 +612,93 @@
                 <div class="menu-desc">Поможет найти музыку</div>
             </div>
         </div>
+    </div>
 
-        <!-- ЭКРАН МУЗЫКИ -->
-        <div id="musicScreen" class="hidden">
-            <div class="page-header">
-                <button class="back-btn" id="backToMenuFromMusic">← Назад</button>
-                <div class="page-title">🎵 Музыка</div>
-            </div>
-            <div class="glass-card">
-                <div class="search-type-switch">
-                    <div class="search-type-btn active" id="searchArtistBtn" onclick="setSearchMode('artist')">🎤 Исполнитель</div>
-                    <div class="search-type-btn" id="searchTrackBtn" onclick="setSearchMode('track')">🎵 Трек</div>
-                </div>
-                <div class="search-box">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons...">
-                    <button id="voiceSearchBtn" class="voice-btn" title="Голосовой поиск">🎤</button>
-                    <button id="doSearchBtn" class="search-btn">Найти</button>
-                </div>
-                <button class="random-track-btn" id="randomTrackBtn">🎲 Случайный трек</button>
-                <div class="section-title">🔥 Популярные</div>
-                <div class="popular-grid" id="popularGrid"></div>
-                <div id="musicResult"></div>
-            </div>
-            <div class="user-info">👤 <span id="userName">Music</span></div>
+    <!-- МУЗЫКА - полноэкранная страница -->
+    <div class="fullscreen-page" id="musicPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromMusic">← Назад</button>
+            <div class="page-title">🎵 Музыка</div>
         </div>
-
-        <!-- ЭКРАН ИГРЫ -->
-        <div id="gameScreen" class="hidden">
-            <div class="page-header">
-                <button class="back-btn" id="backToMenuFromGame">← Назад</button>
-                <div class="page-title">🎮 Угадай трек</div>
+        <div class="glass-card">
+            <div class="search-type-switch">
+                <div class="search-type-btn active" id="searchArtistBtn" onclick="setSearchMode('artist')">🎤 Исполнитель</div>
+                <div class="search-type-btn" id="searchTrackBtn" onclick="setSearchMode('track')">🎵 Трек</div>
             </div>
-            <div class="glass-card">
-                <div style="text-align: center;">
-                    <button id="startGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); border:none; padding:14px 28px; border-radius:50px; color:white; font-weight:bold; font-size:16px; margin:8px 0; width:100%; cursor:pointer;">▶ Начать игру</button>
-                </div>
-                <div id="gameContent"><div style="text-align:center; padding:40px; color:rgba(255,255,255,0.6);">Нажми «Начать игру»</div></div>
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons...">
+                <button id="voiceSearchBtn" class="voice-btn" title="Голосовой поиск">🎤</button>
+                <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
-            <div class="user-info">🎮 Угадай исполнителя</div>
+            <button class="random-track-btn" id="randomTrackBtn">🎲 Случайный трек</button>
+            <div class="section-title">🔥 Популярные</div>
+            <div class="popular-grid" id="popularGrid"></div>
+            <div id="musicResult"></div>
         </div>
+        <div class="user-info">👤 <span id="userName">Music</span></div>
+    </div>
 
-        <!-- ЭКРАН AI ОБЛОЖЕК -->
-        <div id="aiScreen" class="hidden">
-            <div class="page-header">
-                <button class="back-btn" id="backToMenuFromAI">← Назад</button>
-                <div class="page-title">🤖 AI Обложки</div>
-            </div>
-            <div class="glass-card">
-                <div class="section-title">🎨 AI генератор обложек</div>
-                <div class="search-box">
-                    <input type="text" id="aiPrompt" class="search-input" placeholder="Например: рок группа, гитара, концерт, ночь">
-                    <button id="generateAIBtn" class="search-btn">Создать</button>
-                </div>
-                <div id="aiResult" style="text-align: center; margin-top: 16px;">
-                    <div style="color: rgba(255,255,255,0.7); padding: 30px; text-align: center;">🎨 Введите описание и AI создаст уникальную обложку<br><br><small>Примеры: "электронная музыка, космос, неон" или "джаз, саксофон, вечерний город"</small></div>
-                </div>
-            </div>
-            <div class="user-info">🤖 AI генерация обложек</div>
+    <!-- ИГРА - полноэкранная страница -->
+    <div class="fullscreen-page" id="gamePage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromGame">← Назад</button>
+            <div class="page-title">🎮 Угадай трек</div>
         </div>
-
-        <!-- ЭКРАН AI АССИСТЕНТА (БЕЗ КНОПОК-ПОДСКАЗОК) -->
-        <div id="assistantScreen" class="hidden">
-            <div class="page-header">
-                <button class="back-btn" id="backToMenuFromAssistant">← Назад</button>
-                <div class="page-title">💬 AI Ассистент</div>
+        <div class="glass-card">
+            <div style="text-align: center;">
+                <button id="startGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); border:none; padding:14px 28px; border-radius:50px; color:white; font-weight:bold; font-size:16px; margin:8px 0; width:100%; cursor:pointer;">▶ Начать игру</button>
             </div>
-            <div class="glass-card">
-                <div class="chat-container" id="chatContainer">
-                    <div class="message message-ai">
-                        <div class="message-icon">🤖</div>
-                        <div class="message-bubble">
-                            Привет! Я твой музыкальный AI-ассистент. 🎵<br><br>
-                            <b>Что я умею:</b><br>
-                            • 📖 Расскажу об исполнителе (информация из Википедии)<br>
-                            • 🎵 Посоветую песню по настроению<br>
-                            • 🎲 Дам случайный трек<br><br>
-                            <b>Просто напиши:</b><br>
-                            "грустная песня", "весёлая песня", "Асия", "случайный трек"...
-                        </div>
+            <div id="gameContent"><div style="text-align:center; padding:40px; color:rgba(255,255,255,0.6);">Нажми «Начать игру»</div></div>
+        </div>
+        <div class="user-info">🎮 Угадай исполнителя</div>
+    </div>
+
+    <!-- AI ОБЛОЖКИ - полноэкранная страница -->
+    <div class="fullscreen-page" id="aiPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromAI">← Назад</button>
+            <div class="page-title">🤖 AI Обложки</div>
+        </div>
+        <div class="glass-card">
+            <div class="section-title">🎨 AI генератор обложек</div>
+            <div class="search-box">
+                <input type="text" id="aiPrompt" class="search-input" placeholder="Например: рок группа, гитара, концерт, ночь">
+                <button id="generateAIBtn" class="search-btn">Создать</button>
+            </div>
+            <div id="aiResult" style="text-align: center; margin-top: 16px;">
+                <div style="color: rgba(255,255,255,0.7); padding: 30px; text-align: center;">🎨 Введите описание и AI создаст уникальную обложку<br><br><small>Примеры: "электронная музыка, космос, неон" или "джаз, саксофон, вечерний город"</small></div>
+            </div>
+        </div>
+        <div class="user-info">🤖 AI генерация обложек</div>
+    </div>
+
+    <!-- AI АССИСТЕНТ - полноэкранная страница -->
+    <div class="fullscreen-page" id="assistantPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromAssistant">← Назад</button>
+            <div class="page-title">💬 AI Ассистент</div>
+        </div>
+        <div class="glass-card">
+            <div class="chat-container" id="chatContainer">
+                <div class="message message-ai">
+                    <div class="message-icon">🤖</div>
+                    <div class="message-bubble">
+                        Привет! Я твой музыкальный AI-ассистент. 🎵<br><br>
+                        <b>Что я умею:</b><br>
+                        • 📖 Расскажу об исполнителе (информация из Википедии)<br>
+                        • 🎵 Посоветую песню по настроению<br>
+                        • 🎲 Дам случайный трек<br><br>
+                        <b>Просто напиши:</b><br>
+                        "грустная песня", "весёлая песня", "Асия", "случайный трек"...
                     </div>
                 </div>
-                <div class="input-area">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке... Например: грустная песня">
-                    <button id="sendChatBtn" class="send-btn">📤</button>
-                </div>
             </div>
-            <div class="user-info">💬 AI Ассистент | Информация из Википедии</div>
+            <div class="input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке... Например: грустная песня">
+                <button id="sendChatBtn" class="send-btn">📤</button>
+            </div>
         </div>
+        <div class="user-info">💬 AI Ассистент | Информация из Википедии</div>
     </div>
 
     <!-- КНОПКА НАСТРОЕК -->
@@ -722,7 +737,6 @@
         <div class="admin-section"><div class="admin-section-title">🎮 Статистика игры</div><div id="gameStats"></div><button class="clear-btn" id="resetGameStatsBtn">🔄 Сбросить статистику игры</button></div>
     </div>
 
-    <!-- ОКНО ВХОДА В АДМИНКУ -->
     <div id="adminLogin" class="admin-login">
         <div class="login-box">
             <div style="font-size:48px; margin-bottom:16px;">👑</div>
@@ -746,6 +760,7 @@
         let adminActions = [];
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD = "admin123";
+        let currentMode = 'menu';
 
         // ========== БАЗА ТРЕКОВ ==========
         const tracksDatabase = [
@@ -783,6 +798,58 @@
 
         const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons","Кино","Земфира"];
 
+        // ========== УПРАВЛЕНИЕ ФОНОМ ==========
+        function setBodyMode(mode) {
+            document.body.classList.remove('music-mode', 'game-mode', 'ai-mode', 'assistant-mode');
+            if (mode === 'music') document.body.classList.add('music-mode');
+            else if (mode === 'game') document.body.classList.add('game-mode');
+            else if (mode === 'ai') document.body.classList.add('ai-mode');
+            else if (mode === 'assistant') document.body.classList.add('assistant-mode');
+            else document.body.classList.remove('music-mode', 'game-mode', 'ai-mode', 'assistant-mode');
+            currentMode = mode;
+        }
+
+        // ========== УПРАВЛЕНИЕ СТРАНИЦАМИ ==========
+        const menuContainer = document.getElementById('menuContainer');
+        const musicPage = document.getElementById('musicPage');
+        const gamePage = document.getElementById('gamePage');
+        const aiPage = document.getElementById('aiPage');
+        const assistantPage = document.getElementById('assistantPage');
+
+        function showMenu() {
+            menuContainer.classList.remove('hidden-menu');
+            setTimeout(() => {
+                musicPage.classList.remove('active');
+                gamePage.classList.remove('active');
+                aiPage.classList.remove('active');
+                assistantPage.classList.remove('active');
+            }, 50);
+            setBodyMode('menu');
+        }
+
+        function showPage(page, mode) {
+            menuContainer.classList.add('hidden-menu');
+            setTimeout(() => {
+                musicPage.classList.remove('active');
+                gamePage.classList.remove('active');
+                aiPage.classList.remove('active');
+                assistantPage.classList.remove('active');
+                page.classList.add('active');
+            }, 50);
+            setBodyMode(mode);
+        }
+
+        // Навигация
+        document.getElementById('goToMusicBtn').onclick = () => { showPage(musicPage, 'music'); loadPopularArtists(); addAction('Переход', 'Открыл раздел Музыка'); };
+        document.getElementById('goToGameBtn').onclick = () => { showPage(gamePage, 'game'); addAction('Переход', 'Открыл раздел Игра'); };
+        document.getElementById('goToAIBtn').onclick = () => { showPage(aiPage, 'ai'); addAction('Переход', 'Открыл раздел AI Обложки'); };
+        document.getElementById('goToAssistantBtn').onclick = () => { showPage(assistantPage, 'assistant'); addAction('Переход', 'Открыл раздел AI Ассистент'); };
+        
+        document.getElementById('backFromMusic').onclick = showMenu;
+        document.getElementById('backFromGame').onclick = showMenu;
+        document.getElementById('backFromAI').onclick = showMenu;
+        document.getElementById('backFromAssistant').onclick = showMenu;
+
         // ========== АДМИН ПАНЕЛЬ ==========
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
@@ -796,13 +863,7 @@
         }
         
         window.addAction = function(actionType, details) {
-            const action = {
-                id: Date.now(),
-                type: actionType,
-                details: details,
-                time: new Date().toLocaleString(),
-                timestamp: Date.now()
-            };
+            const action = { id: Date.now(), type: actionType, details: details, time: new Date().toLocaleString(), timestamp: Date.now() };
             adminActions.unshift(action);
             if (adminActions.length > 200) adminActions = adminActions.slice(0, 200);
             saveAdminActions();
@@ -812,32 +873,15 @@
         function updateActionsList() {
             const container = document.getElementById('actionsList');
             if (!container) return;
-            if (adminActions.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Нет действий</div>';
-                return;
-            }
-            container.innerHTML = adminActions.map(action => `
-                <div class="action-item">
-                    <div class="action-time">🕐 ${action.time}</div>
-                    <div class="action-text">📌 ${action.type}: ${escapeHtml(action.details)}</div>
-                </div>
-            `).join('');
+            if (adminActions.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Нет действий</div>'; return; }
+            container.innerHTML = adminActions.map(action => `<div class="action-item"><div class="action-time">🕐 ${action.time}</div><div class="action-text">📌 ${action.type}: ${escapeHtml(action.details)}</div></div>`).join('');
         }
         
         function updateAdminStats() {
             const container = document.getElementById('adminStats');
             if (!container) return;
-            const stats = {
-                searches: adminActions.filter(a => a.type === 'Поиск').length,
-                gamePlays: adminActions.filter(a => a.type === 'Игра').length,
-                totalActions: adminActions.length
-            };
-            container.innerHTML = `
-                <div class="stat-card"><div class="stat-value">${stats.searches}</div><div class="stat-label">🔍 Поисков</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.gamePlays}</div><div class="stat-label">🎮 Игр сыграно</div></div>
-                <div class="stat-card"><div class="stat-value">${stats.totalActions}</div><div class="stat-label">📊 Всего действий</div></div>
-                <div class="stat-card"><div class="stat-value">${adminActions.length > 0 ? Math.round(adminActions.filter(a => a.timestamp > Date.now() - 86400000).length) : 0}</div><div class="stat-label">📅 За 24 часа</div></div>
-            `;
+            const stats = { searches: adminActions.filter(a => a.type === 'Поиск').length, gamePlays: adminActions.filter(a => a.type === 'Игра').length, totalActions: adminActions.length };
+            container.innerHTML = `<div class="stat-card"><div class="stat-value">${stats.searches}</div><div class="stat-label">🔍 Поисков</div></div><div class="stat-card"><div class="stat-value">${stats.gamePlays}</div><div class="stat-label">🎮 Игр сыграно</div></div><div class="stat-card"><div class="stat-value">${stats.totalActions}</div><div class="stat-label">📊 Всего действий</div></div><div class="stat-card"><div class="stat-value">${adminActions.length > 0 ? Math.round(adminActions.filter(a => a.timestamp > Date.now() - 86400000).length) : 0}</div><div class="stat-label">📅 За 24 часа</div></div>`;
         }
         
         function updateAdminHistory() {
@@ -845,16 +889,8 @@
             if (!container) return;
             const saved = localStorage.getItem('search_history');
             const history = saved ? JSON.parse(saved) : [];
-            if (history.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">История пуста</div>';
-                return;
-            }
-            container.innerHTML = history.slice(0, 20).map(item => `
-                <div class="action-item">
-                    <div class="action-time">🕐 ${item.date}</div>
-                    <div class="action-text">${item.type === 'artist' ? '🎤' : '🎵'} ${escapeHtml(item.query)}</div>
-                </div>
-            `).join('');
+            if (history.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">История пуста</div>'; return; }
+            container.innerHTML = history.slice(0, 20).map(item => `<div class="action-item"><div class="action-time">🕐 ${item.date}</div><div class="action-text">${item.type === 'artist' ? '🎤' : '🎵'} ${escapeHtml(item.query)}</div></div>`).join('');
         }
         
         function updateGameStatsAdmin() {
@@ -862,93 +898,15 @@
             if (!container) return;
             const saved = localStorage.getItem('music_game_stats');
             const stats = saved ? JSON.parse(saved) : { gamesPlayed: 0, bestScore: 0 };
-            container.innerHTML = `
-                <div class="action-item"><div class="action-text">🎮 Сыграно игр: ${stats.gamesPlayed}</div></div>
-                <div class="action-item"><div class="action-text">⭐ Лучший счёт: ${stats.bestScore}/8</div></div>
-            `;
+            container.innerHTML = `<div class="action-item"><div class="action-text">🎮 Сыграно игр: ${stats.gamesPlayed}</div></div><div class="action-item"><div class="action-text">⭐ Лучший счёт: ${stats.bestScore}/8</div></div>`;
         }
         
-        function clearActions() {
-            if (confirm('Очистить все записи действий?')) {
-                adminActions = [];
-                saveAdminActions();
-                updateActionsList();
-                updateAdminStats();
-                addAction('Админ', 'Очистил историю действий');
-            }
-        }
-        
-        function exportActions() {
-            const data = JSON.stringify(adminActions, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `admin_actions_${new Date().toISOString().slice(0,19)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            addAction('Админ', 'Экспортировал действия');
-        }
-        
-        function clearAdminHistory() {
-            if (confirm('Очистить всю историю поиска?')) {
-                localStorage.removeItem('search_history');
-                updateAdminHistory();
-                addAction('Админ', 'Очистил историю поиска');
-            }
-        }
-        
-        function resetGameStatsAdmin() {
-            if (confirm('Сбросить статистику игры?')) {
-                localStorage.setItem('music_game_stats', JSON.stringify({ gamesPlayed: 0, bestScore: 0 }));
-                updateGameStatsAdmin();
-                addAction('Админ', 'Сбросил статистику игры');
-            }
-        }
-        
-        function refreshAdminPanel() {
-            updateActionsList();
-            updateAdminStats();
-            updateAdminHistory();
-            updateGameStatsAdmin();
-        }
+        function clearActions() { if (confirm('Очистить все записи действий?')) { adminActions = []; saveAdminActions(); updateActionsList(); updateAdminStats(); addAction('Админ', 'Очистил историю действий'); } }
+        function exportActions() { const data = JSON.stringify(adminActions, null, 2); const blob = new Blob([data], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `admin_actions_${new Date().toISOString().slice(0,19)}.json`; a.click(); URL.revokeObjectURL(url); addAction('Админ', 'Экспортировал действия'); }
+        function clearAdminHistory() { if (confirm('Очистить всю историю поиска?')) { localStorage.removeItem('search_history'); updateAdminHistory(); addAction('Админ', 'Очистил историю поиска'); } }
+        function resetGameStatsAdmin() { if (confirm('Сбросить статистику игры?')) { localStorage.setItem('music_game_stats', JSON.stringify({ gamesPlayed: 0, bestScore: 0 })); updateGameStatsAdmin(); addAction('Админ', 'Сбросил статистику игры'); } }
+        function refreshAdminPanel() { updateActionsList(); updateAdminStats(); updateAdminHistory(); updateGameStatsAdmin(); }
 
-        // ========== СМЕНА ФОНА ==========
-        function changeBackground(screenType) {
-            document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
-            switch(screenType) {
-                case 'menu': document.body.classList.add('main-bg'); break;
-                case 'music': document.body.classList.add('music-bg'); break;
-                case 'game': document.body.classList.add('game-bg'); break;
-                case 'ai': document.body.classList.add('ai-bg'); break;
-                case 'assistant': document.body.classList.add('assistant-bg'); break;
-                default: document.body.classList.add('main-bg');
-            }
-        }
-
-        // ========== УПРАВЛЕНИЕ ЭКРАНАМИ ==========
-        const menuScreen = document.getElementById('menuScreen');
-        const musicScreen = document.getElementById('musicScreen');
-        const gameScreen = document.getElementById('gameScreen');
-        const aiScreen = document.getElementById('aiScreen');
-        const assistantScreen = document.getElementById('assistantScreen');
-
-        function showScreen(screenName) {
-            menuScreen.classList.add('hidden');
-            musicScreen.classList.add('hidden');
-            gameScreen.classList.add('hidden');
-            aiScreen.classList.add('hidden');
-            assistantScreen.classList.add('hidden');
-            document.getElementById(screenName).classList.remove('hidden');
-            
-            if (screenName === 'menuScreen') changeBackground('menu');
-            else if (screenName === 'musicScreen') changeBackground('music');
-            else if (screenName === 'gameScreen') changeBackground('game');
-            else if (screenName === 'aiScreen') changeBackground('ai');
-            else if (screenName === 'assistantScreen') changeBackground('assistant');
-        }
-
-        // ========== АДМИН ПАНЕЛЬ - УПРАВЛЕНИЕ ==========
         function initAdminPanel() {
             const adminBadge = document.getElementById('adminBadge');
             const adminPanelEl = document.getElementById('adminPanel');
@@ -959,18 +917,10 @@
             const closeAdminPanelBtnEl = document.getElementById('closeAdminPanel');
             
             if (!adminBadge) return;
-            
             adminBadge.onclick = () => {
-                if (isAdminLoggedIn) {
-                    adminPanelEl.classList.remove('hidden');
-                    refreshAdminPanel();
-                } else {
-                    adminLoginEl.classList.remove('hidden');
-                    if (adminPasswordInput) adminPasswordInput.value = '';
-                    if (loginErrorEl) loginErrorEl.textContent = '';
-                }
+                if (isAdminLoggedIn) { adminPanelEl.classList.remove('hidden'); refreshAdminPanel(); }
+                else { adminLoginEl.classList.remove('hidden'); if (adminPasswordInput) adminPasswordInput.value = ''; if (loginErrorEl) loginErrorEl.textContent = ''; }
             };
-            
             if (adminLoginBtnEl) {
                 adminLoginBtnEl.onclick = () => {
                     if (adminPasswordInput.value === ADMIN_PASSWORD) {
@@ -979,29 +929,15 @@
                         adminPanelEl.classList.remove('hidden');
                         refreshAdminPanel();
                         addAction('Админ', 'Вошёл в админ панель');
-                    } else {
-                        if (loginErrorEl) loginErrorEl.textContent = '❌ Неверный пароль';
-                    }
+                    } else { if (loginErrorEl) loginErrorEl.textContent = '❌ Неверный пароль'; }
                 };
             }
-            
-            if (closeAdminPanelBtnEl) {
-                closeAdminPanelBtnEl.onclick = () => {
-                    adminPanelEl.classList.add('hidden');
-                };
-            }
-            
-            if (adminPasswordInput) {
-                adminPasswordInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && adminLoginBtnEl) adminLoginBtnEl.click();
-                });
-            }
-            
+            if (closeAdminPanelBtnEl) closeAdminPanelBtnEl.onclick = () => { adminPanelEl.classList.add('hidden'); };
+            if (adminPasswordInput) adminPasswordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && adminLoginBtnEl) adminLoginBtnEl.click(); });
             const clearActionsBtn = document.getElementById('clearActionsBtn');
             const exportActionsBtn = document.getElementById('exportActionsBtn');
             const clearAdminHistoryBtn = document.getElementById('clearAdminHistoryBtn');
             const resetGameStatsBtn = document.getElementById('resetGameStatsBtn');
-            
             if (clearActionsBtn) clearActionsBtn.onclick = clearActions;
             if (exportActionsBtn) exportActionsBtn.onclick = exportActions;
             if (clearAdminHistoryBtn) clearAdminHistoryBtn.onclick = clearAdminHistory;
@@ -1012,122 +948,36 @@
         function loadSavedAppearance() {
             const savedBg = localStorage.getItem('music_bot_background');
             if (savedBg && savedBg !== 'default') {
-                if (savedBg.startsWith('linear-gradient')) {
-                    document.body.style.background = savedBg;
-                    document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
-                } else {
-                    document.body.style.backgroundImage = `url(${savedBg})`;
-                    document.body.style.backgroundSize = 'cover';
-                    document.body.style.backgroundPosition = 'center';
-                    document.body.style.backgroundAttachment = 'fixed';
-                }
+                if (savedBg.startsWith('linear-gradient')) document.body.style.background = savedBg;
+                else { document.body.style.backgroundImage = `url(${savedBg})`; document.body.style.backgroundSize = 'cover'; document.body.style.backgroundPosition = 'center'; }
             }
             const savedButtonColor = localStorage.getItem('music_bot_button_color');
-            if (savedButtonColor) {
-                document.documentElement.style.setProperty('--button-color', savedButtonColor);
-                const picker = document.getElementById('buttonColorPicker');
-                if (picker) picker.value = savedButtonColor;
-            }
+            if (savedButtonColor) { document.documentElement.style.setProperty('--button-color', savedButtonColor); const picker = document.getElementById('buttonColorPicker'); if (picker) picker.value = savedButtonColor; }
             const savedOpacity = localStorage.getItem('music_bot_card_opacity');
-            if (savedOpacity) {
-                document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${savedOpacity})`);
-                const slider = document.getElementById('opacitySlider');
-                if (slider) slider.value = savedOpacity;
-            }
+            if (savedOpacity) { document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${savedOpacity})`); const slider = document.getElementById('opacitySlider'); if (slider) slider.value = savedOpacity; }
             const savedTheme = localStorage.getItem('music_bot_theme');
             if (savedTheme === 'dark') document.body.classList.add('dark-theme');
         }
         
-        window.resetBackground = function() {
-            document.body.style.background = '';
-            document.body.style.backgroundImage = '';
-            changeBackground('menu');
-            localStorage.setItem('music_bot_background', 'default');
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        };
-        
-        window.loadCustomBackground = function(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgUrl = e.target.result;
-                    document.body.style.backgroundImage = `url(${imgUrl})`;
-                    document.body.style.backgroundSize = 'cover';
-                    document.body.style.backgroundPosition = 'center';
-                    document.body.style.backgroundAttachment = 'fixed';
-                    document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
-                    localStorage.setItem('music_bot_background', imgUrl);
-                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        };
-        
-        window.openColorPicker = function() {
-            const colorInput = document.createElement('input');
-            colorInput.type = 'color';
-            colorInput.onchange = function(e) {
-                const color = e.target.value;
-                document.body.style.background = color;
-                document.body.style.backgroundImage = '';
-                document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
-                localStorage.setItem('music_bot_background', color);
-                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            };
-            colorInput.click();
-        };
-        
-        window.setGradient = function(gradient) {
-            document.body.style.background = gradient;
-            document.body.style.backgroundImage = '';
-            document.body.classList.remove('main-bg', 'music-bg', 'game-bg', 'ai-bg', 'assistant-bg');
-            localStorage.setItem('music_bot_background', gradient);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        };
-        
-        window.changeButtonColor = function(color) {
-            document.documentElement.style.setProperty('--button-color', color);
-            localStorage.setItem('music_bot_button_color', color);
-        };
-        
-        window.changeCardOpacity = function(opacity) {
-            document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${opacity})`);
-            localStorage.setItem('music_bot_card_opacity', opacity);
-        };
-        
-        window.toggleDarkTheme = function() {
-            document.body.classList.toggle('dark-theme');
-            const isDark = document.body.classList.contains('dark-theme');
-            localStorage.setItem('music_bot_theme', isDark ? 'dark' : 'light');
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        };
+        window.resetBackground = function() { document.body.style.background = ''; document.body.style.backgroundImage = ''; setBodyMode('menu'); localStorage.setItem('music_bot_background', 'default'); if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); };
+        window.loadCustomBackground = function(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const imgUrl = e.target.result; document.body.style.backgroundImage = `url(${imgUrl})`; document.body.style.backgroundSize = 'cover'; document.body.style.backgroundPosition = 'center'; localStorage.setItem('music_bot_background', imgUrl); if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }; reader.readAsDataURL(input.files[0]); } };
+        window.openColorPicker = function() { const colorInput = document.createElement('input'); colorInput.type = 'color'; colorInput.onchange = function(e) { const color = e.target.value; document.body.style.background = color; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_background', color); if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); }; colorInput.click(); };
+        window.setGradient = function(gradient) { document.body.style.background = gradient; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_background', gradient); if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); };
+        window.changeButtonColor = function(color) { document.documentElement.style.setProperty('--button-color', color); localStorage.setItem('music_bot_button_color', color); };
+        window.changeCardOpacity = function(opacity) { document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${opacity})`); localStorage.setItem('music_bot_card_opacity', opacity); };
+        window.toggleDarkTheme = function() { document.body.classList.toggle('dark-theme'); const isDark = document.body.classList.contains('dark-theme'); localStorage.setItem('music_bot_theme', isDark ? 'dark' : 'light'); if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); };
 
-        // ========== МОДАЛКА НАСТРОЕК ==========
         const settingsFab = document.getElementById('settingsFab');
         const settingsModal = document.getElementById('settingsModal');
         const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-        if (settingsFab) {
-            settingsFab.onclick = () => { if (settingsModal) settingsModal.classList.remove('hidden'); };
-        }
-        if (closeSettingsBtn) {
-            closeSettingsBtn.onclick = () => { if (settingsModal) settingsModal.classList.add('hidden'); };
-        }
-        if (settingsModal) {
-            settingsModal.onclick = (e) => { if (e.target === settingsModal) settingsModal.classList.add('hidden'); };
-        }
+        if (settingsFab) settingsFab.onclick = () => { if (settingsModal) settingsModal.classList.remove('hidden'); };
+        if (closeSettingsBtn) closeSettingsBtn.onclick = () => { if (settingsModal) settingsModal.classList.add('hidden'); };
+        if (settingsModal) settingsModal.onclick = (e) => { if (e.target === settingsModal) settingsModal.classList.add('hidden'); };
 
-        // ========== ВИКИПЕДИЯ ==========
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (ВИКИПЕДИЯ, ПОИСК, ИГРА, AI) ==========
         async function getWikipediaFullBio(artistName) {
             try {
-                const exactMatches = {
-                    "асия": "Асия (певица)",
-                    "big baby tape": "Big Baby Tape",
-                    "instasamka": "Instasamka",
-                    "моргенштерн": "Моргенштерн",
-                    "земфира": "Земфира",
-                    "кино": "Кино (группа)",
-                    "imagine dragons": "Imagine Dragons"
-                };
+                const exactMatches = { "асия": "Асия (певица)", "big baby tape": "Big Baby Tape", "instasamka": "Instasamka", "моргенштерн": "Моргенштерн", "земфира": "Земфира", "кино": "Кино (группа)", "imagine dragons": "Imagine Dragons" };
                 let searchQuery = artistName.toLowerCase().trim();
                 let pageTitle = exactMatches[searchQuery];
                 if (!pageTitle) {
@@ -1151,11 +1001,10 @@
         }
         
         function displayBio(bioData, artistName) {
-            if (!bioData) return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию для "${escapeHtml(artistName)}"</div></div>`;
+            if (!bioData) return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию dla "${escapeHtml(artistName)}"</div></div>`;
             return `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bioData.title)}</div><div class="bio-text">${escapeHtml(bioData.fullText)}</div><a href="${bioData.pageUrl}" target="_blank" class="bio-wiki-link">🔗 Читать полную статью на Википедии →</a></div>`;
         }
 
-        // ========== AI ОБЛОЖКИ ==========
         async function generateAICover(prompt) {
             const resultDiv = document.getElementById('aiResult');
             addAction('AI', `Генерация обложки: "${prompt}"`);
@@ -1175,7 +1024,7 @@
         }
         
         window.downloadAICover = function(imageUrl) { const link = document.createElement('a'); link.href = imageUrl; link.download = `ai_cover_${Date.now()}.jpg`; link.click(); addAction('AI', 'Скачал обложку'); showNotification("💾 Скачивание началось!"); };
-
+        
         function showQR(text, title) {
             const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
             const modal = document.createElement('div'); modal.className = 'qr-modal';
@@ -1214,9 +1063,7 @@
         function loadPopularArtists() {
             const container = document.getElementById('popularGrid');
             if (!container) return;
-            container.innerHTML = popularArtistsList.map(artist => 
-                `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`
-            ).join('');
+            container.innerHTML = popularArtistsList.map(artist => `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`).join('');
         }
 
         window.searchArtist = function(artistName) {
@@ -1232,12 +1079,7 @@
             const query = searchInput.value.trim();
             if (!query) return;
             addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
-            const links = {
-                yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`,
-                youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`,
-                vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`,
-                spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}`
-            };
+            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}` };
             const resultDiv = document.getElementById('musicResult');
             if (!resultDiv) return;
             resultDiv.innerHTML = '<div style="text-align:center; padding:20px; color: rgba(255,255,255,0.8);">🔍 Поиск...</div>';
@@ -1247,23 +1089,7 @@
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
                 const tracksList = artistTracks.map(t => t.track).join(', ');
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <div class="artist-name">🎤 ${escapeHtml(query)}</div>
-                        ${artistTracks.length > 0 ? `<div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px;">🎵 Треки: ${tracksList}</div>` : ''}
-                        <div class="section-title">🎧 Слушать на платформах</div>
-                        <div class="platform-buttons">
-                            <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                            <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                            <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
-                            <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
-                        </div>
-                        ${bioHtml}
-                        <div class="section-title">🔗 Поделиться</div>
-                        <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button>
-                        <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button>
-                    </div>
-                `;
+                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
             } else {
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 if (foundTrack) {
@@ -1272,56 +1098,10 @@
                     const bioHtml = displayBio(bioData, artistName);
                     const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
                     const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
-                    const artistLinks = {
-                        yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`,
-                        youtube: `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`,
-                        vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(artistName)}&c%5Bsection%5D=audio`,
-                        spotify: `https://open.spotify.com/search/${encodeURIComponent(artistName)}`
-                    };
-                    resultDiv.innerHTML = `
-                        <div class="result-card">
-                            <div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div>
-                            <div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: #4facfe; font-size: 16px;">${escapeHtml(artistName)}</strong></div>
-                            <div class="artist-card" style="background: rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; margin-bottom: 12px;">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div style="font-size: 32px;">🎤</div>
-                                    <div><div style="font-weight: 700;">${escapeHtml(artistName)}</div><div style="font-size: 11px; color: rgba(255,255,255,0.6);">📀 ${artistTracks.length} треков в базе</div></div>
-                                </div>
-                                ${otherTracks.length > 0 ? `<div style="font-size: 12px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}
-                            </div>
-                            ${bioHtml}
-                            <div class="section-title">🎧 Слушать трек</div>
-                            <div class="platform-buttons">
-                                <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                                <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                                <button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
-                                <button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
-                            </div>
-                            <div class="section-title">🎤 Страница исполнителя</div>
-                            <div class="platform-buttons">
-                                <button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                                <button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                                <button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
-                                <button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button>
-                            </div>
-                            <div class="section-title">🔗 Поделиться</div>
-                            <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button>
-                            <button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button>
-                        </div>
-                    `;
+                    const artistLinks = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(artistName)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(artistName)}` };
+                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div><div style="margin-bottom: 16px;">🎤 Исполнитель: <strong style="color: #4facfe; font-size: 16px;">${escapeHtml(artistName)}</strong></div><div class="artist-card" style="background: rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; margin-bottom: 12px;"><div style="display: flex; align-items: center; gap: 12px;"><div style="font-size: 32px;">🎤</div><div><div style="font-weight: 700;">${escapeHtml(artistName)}</div><div style="font-size: 11px; color: rgba(255,255,255,0.6);">📀 ${artistTracks.length} треков в базе</div></div></div>${otherTracks.length > 0 ? `<div style="font-size: 12px; margin-top: 8px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}</div>${bioHtml}<div class="section-title">🎧 Слушать трек</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🎤 Страница исполнителя</div><div class="platform-buttons"><button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button></div>`;
                 } else {
-                    resultDiv.innerHTML = `
-                        <div class="result-card">
-                            <div class="artist-name">🎵 "${escapeHtml(query)}"</div>
-                            <div class="info-text">❌ Трек не найден в базе</div>
-                            <div class="platform-buttons">
-                                <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button>
-                                <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                            </div>
-                            <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)}')">📱 QR-код для поиска</button>
-                            <button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} cover')">🤖 Создать AI обложку</button>
-                        </div>
-                    `;
+                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(query)}"</div><div class="info-text">❌ Трек не найден в базе</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)}')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} cover')">🤖 Создать AI обложку</button></div>`;
                 }
             }
         }
@@ -1377,17 +1157,8 @@
             recognition.onend = () => { stopListening(); };
         }
         
-        function startVoiceSearch() {
-            if (!recognition) { initVoiceSearch(); if (!recognition) return; }
-            if (isListening) { stopListening(); return; }
-            try { recognition.start(); } catch (e) { showNotification('❌ Не удалось запустить микрофон'); }
-        }
-        
-        function stopListening() {
-            isListening = false;
-            const voiceBtn = document.getElementById('voiceSearchBtn');
-            if (voiceBtn) voiceBtn.classList.remove('listening');
-        }
+        function startVoiceSearch() { if (!recognition) { initVoiceSearch(); if (!recognition) return; } if (isListening) { stopListening(); return; } try { recognition.start(); } catch (e) { showNotification('❌ Не удалось запустить микрофон'); } }
+        function stopListening() { isListening = false; const voiceBtn = document.getElementById('voiceSearchBtn'); if (voiceBtn) voiceBtn.classList.remove('listening'); }
 
         // ========== ИГРА ==========
         const allArtistsForGame = [...new Set(tracksDatabase.map(t => t.artist))];
@@ -1395,7 +1166,6 @@
 
         function loadGameStats() { const saved = localStorage.getItem('music_game_stats'); if(saved) gameStatsData = JSON.parse(saved); }
         function saveGameStats() { localStorage.setItem('music_game_stats', JSON.stringify(gameStatsData)); }
-
         function generateQuestion() {
             const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)];
             const correctArtist = randomTrack.artist;
@@ -1408,21 +1178,16 @@
             for (let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; }
             return { track: randomTrack.track, correct: correctArtist, options: options };
         }
-
         function startGame() {
             gameQuestions = [];
             for (let i = 0; i < 8; i++) gameQuestions.push(generateQuestion());
             currentQ = 0; gameScore = 0; gameActive = true;
             const startBtn = document.getElementById('startGameBtn');
-            if (startBtn) {
-                startBtn.textContent = '🎮 Игра идёт...';
-                startBtn.style.background = '#28a745';
-            }
+            if (startBtn) { startBtn.textContent = '🎮 Игра идёт...'; startBtn.style.background = '#28a745'; }
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             addAction('Игра', 'Начал новую игру');
             showGameQuestion();
         }
-
         function showGameQuestion() {
             const container = document.getElementById('gameContent');
             if (!container) return;
@@ -1433,7 +1198,6 @@
             q.options.forEach(opt => { const displayOpt = opt === "Неизвестный исполнитель" ? opt : `🎤 ${opt}`; optsHtml += `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(displayOpt)}</div>`; });
             container.innerHTML = `<div class="game-question"><div style="font-size:13px; color:rgba(255,255,255,0.7);">🎵 Вопрос ${currentQ + 1}/${gameQuestions.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div style="color:rgba(255,255,255,0.9);">Кто исполнитель?</div><div class="game-options" id="gameOptions">${optsHtml}</div><div style="margin-top:12px; color:rgba(255,255,255,0.7);">🎯 Счёт: ${gameScore} / ${gameQuestions.length} (${percent}%)</div></div>`;
         }
-
         window.checkAnswer = function(selected, correct) {
             if (!gameActive) return;
             const optsDiv = document.getElementById('gameOptions'); if (!optsDiv) return;
@@ -1443,7 +1207,6 @@
             if (selected === correct) gameScore++;
             setTimeout(() => { currentQ++; gameActive = true; showGameQuestion(); }, 1000);
         };
-
         function endGame() {
             gameActive = false;
             const total = gameQuestions.length;
@@ -1458,10 +1221,7 @@
             const restartBtn = document.getElementById('restartGameBtn');
             if (restartBtn) restartBtn.addEventListener('click', startGame);
             const startBtn = document.getElementById('startGameBtn');
-            if (startBtn) {
-                startBtn.textContent = '▶ Начать игру';
-                startBtn.style.background = 'linear-gradient(135deg, #9b59b6, #8e44ad)';
-            }
+            if (startBtn) { startBtn.textContent = '▶ Начать игру'; startBtn.style.background = 'linear-gradient(135deg, #9b59b6, #8e44ad)'; }
             addAction('Игра', `Закончил игру со счётом ${gameScore}/${total}`);
         }
 
@@ -1503,53 +1263,13 @@
         }
         
         let assistantTypingDiv = null;
-        function showAssistantTyping() { 
-            const chatContainer = document.getElementById('chatContainer');
-            if (!chatContainer) return;
-            assistantTypingDiv = document.createElement('div'); 
-            assistantTypingDiv.className = 'message message-ai'; 
-            assistantTypingDiv.id = 'assistantTyping'; 
-            assistantTypingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble"><span class="loading-dots">🤔 <span>.</span><span>.</span><span>.</span></span></div>`; 
-            chatContainer.appendChild(assistantTypingDiv); 
-            chatContainer.scrollTop = chatContainer.scrollHeight; 
-        }
+        function showAssistantTyping() { const chatContainer = document.getElementById('chatContainer'); if (!chatContainer) return; assistantTypingDiv = document.createElement('div'); assistantTypingDiv.className = 'message message-ai'; assistantTypingDiv.id = 'assistantTyping'; assistantTypingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble"><span class="loading-dots">🤔 <span>.</span><span>.</span><span>.</span></span></div>`; chatContainer.appendChild(assistantTypingDiv); chatContainer.scrollTop = chatContainer.scrollHeight; }
         function hideAssistantTyping() { if (assistantTypingDiv) { assistantTypingDiv.remove(); assistantTypingDiv = null; } }
-        
-        async function sendAssistantMessage() {
-            const input = document.getElementById('chatInput');
-            if (!input) return;
-            const message = input.value.trim();
-            if (!message) return;
-            addMessage(message, true);
-            input.value = '';
-            showAssistantTyping();
-            const response = await getAIResponse(message);
-            hideAssistantTyping();
-            addMessage(response);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
+        async function sendAssistantMessage() { const input = document.getElementById('chatInput'); if (!input) return; const message = input.value.trim(); if (!message) return; addMessage(message, true); input.value = ''; showAssistantTyping(); const response = await getAIResponse(message); hideAssistantTyping(); addMessage(response); if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light'); }
 
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
+        function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
 
-        // ========== НАВИГАЦИЯ ==========
-        document.getElementById('goToMusicBtn').onclick = () => { showScreen('musicScreen'); loadPopularArtists(); addAction('Переход', 'Открыл раздел Музыка'); };
-        document.getElementById('goToGameBtn').onclick = () => { showScreen('gameScreen'); addAction('Переход', 'Открыл раздел Игра'); };
-        document.getElementById('goToAIBtn').onclick = () => { showScreen('aiScreen'); addAction('Переход', 'Открыл раздел AI Обложки'); };
-        document.getElementById('goToAssistantBtn').onclick = () => { showScreen('assistantScreen'); addAction('Переход', 'Открыл раздел AI Ассистент'); };
-        
-        document.getElementById('backToMenuFromMusic').onclick = () => { showScreen('menuScreen'); };
-        document.getElementById('backToMenuFromGame').onclick = () => { showScreen('menuScreen'); };
-        document.getElementById('backToMenuFromAI').onclick = () => { showScreen('menuScreen'); };
-        document.getElementById('backToMenuFromAssistant').onclick = () => { showScreen('menuScreen'); };
-        
+        // ========== ПОДКЛЮЧЕНИЕ СОБЫТИЙ ==========
         document.getElementById('doSearchBtn').onclick = performSearch;
         document.getElementById('randomTrackBtn').onclick = getRandomTrack;
         const searchInputElem = document.getElementById('searchInput');
@@ -1579,9 +1299,7 @@
         
         loadSavedAppearance();
         loadPopularArtists();
-        
         if (tg.colorScheme === 'dark') document.body.classList.add('dark-theme');
-        changeBackground('menu');
         
         initAdminPanel();
         loadAdminActions();
