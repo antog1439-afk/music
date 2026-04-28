@@ -384,17 +384,6 @@
             font-size: 20px;
         }
         .send-btn:active { transform: scale(0.95); }
-        .suggestions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-        .suggestion-btn {
-            background: rgba(255,255,255,0.15);
-            border: none;
-            padding: 8px 14px;
-            border-radius: 30px;
-            font-size: 12px;
-            cursor: pointer;
-            color: white;
-        }
-        .suggestion-btn:active { transform: scale(0.95); }
         
         /* Кнопка настроек */
         .settings-fab {
@@ -667,7 +656,7 @@
             <div class="user-info">🤖 AI генерация обложек</div>
         </div>
 
-        <!-- ЭКРАН AI АССИСТЕНТА -->
+        <!-- ЭКРАН AI АССИСТЕНТА (БЕЗ КНОПОК-ПОДСКАЗОК) -->
         <div id="assistantScreen" class="hidden">
             <div class="page-header">
                 <button class="back-btn" id="backToMenuFromAssistant">← Назад</button>
@@ -677,20 +666,19 @@
                 <div class="chat-container" id="chatContainer">
                     <div class="message message-ai">
                         <div class="message-icon">🤖</div>
-                        <div class="message-bubble">Привет! Я твой музыкальный AI-ассистент. 🎵<br>Могу посоветовать трек или рассказать об исполнителе. Спрашивай!</div>
+                        <div class="message-bubble">
+                            Привет! Я твой музыкальный AI-ассистент. 🎵<br><br>
+                            <b>Что я умею:</b><br>
+                            • 📖 Расскажу об исполнителе (информация из Википедии)<br>
+                            • 🎵 Посоветую песню по настроению<br>
+                            • 🎲 Дам случайный трек<br><br>
+                            <b>Просто напиши:</b><br>
+                            "грустная песня", "весёлая песня", "Асия", "случайный трек"...
+                        </div>
                     </div>
                 </div>
-                <div class="suggestions">
-                    <button class="suggestion-btn" data-query="грустная песня">😢 Грустная</button>
-                    <button class="suggestion-btn" data-query="весёлая песня">😊 Весёлая</button>
-                    <button class="suggestion-btn" data-query="песня для зарядки">💪 Для зарядки</button>
-                    <button class="suggestion-btn" data-query="романтическая песня">💖 Романтичная</button>
-                    <button class="suggestion-btn" data-query="случайный трек">🎲 Случайный</button>
-                    <button class="suggestion-btn" data-query="Асия">📖 Асия</button>
-                    <button class="suggestion-btn" data-query="Imagine Dragons">📖 Imagine Dragons</button>
-                </div>
                 <div class="input-area">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке...">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Спроси меня о музыке... Например: грустная песня">
                     <button id="sendChatBtn" class="send-btn">📤</button>
                 </div>
             </div>
@@ -795,7 +783,7 @@
 
         const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons","Кино","Земфира"];
 
-        // ========== АДМИН ПАНЕЛЬ (ОСНОВНЫЕ ФУНКЦИИ) ==========
+        // ========== АДМИН ПАНЕЛЬ ==========
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
             if (saved) adminActions = JSON.parse(saved);
@@ -960,7 +948,7 @@
             else if (screenName === 'assistantScreen') changeBackground('assistant');
         }
 
-        // ========== АДМИН ПАНЕЛЬ - УПРАВЛЕНИЕ (ГЛОБАЛЬНОЕ) ==========
+        // ========== АДМИН ПАНЕЛЬ - УПРАВЛЕНИЕ ==========
         function initAdminPanel() {
             const adminBadge = document.getElementById('adminBadge');
             const adminPanelEl = document.getElementById('adminPanel');
@@ -1578,9 +1566,6 @@
         document.getElementById('sendChatBtn').onclick = sendAssistantMessage;
         const chatInputElem = document.getElementById('chatInput');
         if (chatInputElem) chatInputElem.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendAssistantMessage(); });
-        
-        const suggestionBtns = document.querySelectorAll('.suggestion-btn');
-        suggestionBtns.forEach(btn => { btn.onclick = () => { const query = btn.getAttribute('data-query'); const chatInput = document.getElementById('chatInput'); if (chatInput) chatInput.value = query; sendAssistantMessage(); }; });
         
         document.getElementById('startGameBtn').onclick = startGame;
         loadGameStats();
