@@ -280,6 +280,7 @@
         .youtube-btn { background: #ff0000; }
         .vk-btn { background: #0077ff; }
         .spotify-btn { background: #1db954; }
+        .ticket-btn { background: #f39c12; margin-top: 4px; }
         
         .qr-btn, .ai-btn {
             margin-top: 10px;
@@ -1007,6 +1008,14 @@
             } catch (error) { return null; }
         }
         
+        // ========== БИЛЕТЫ НА КОНЦЕРТЫ ==========
+        function findTickets(artistName) {
+            const url = `https://afisha.yandex.ru/search?text=${encodeURIComponent(artistName)}&type=concert`;
+            tg.openLink(url);
+            addAction('Билеты', `Поиск концертов: ${artistName}`);
+            showNotification(`🎫 Ищем билеты на ${artistName}...`);
+        }
+        
         function displayBio(bioData, artistName) {
             if (!bioData) return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не удалось найти биографию для "${escapeHtml(artistName)}"</div></div>`;
             return `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bioData.title)}</div><div class="bio-text">${escapeHtml(bioData.fullText)}</div><a href="${bioData.pageUrl}" target="_blank" class="bio-wiki-link">🔗 Читать полную статью на Википедии →</a></div>`;
@@ -1097,7 +1106,9 @@
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
                 const tracksList = artistTracks.map(t => t.track).join(', ');
-                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
+                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>
+                <button onclick="findTickets('${escapeHtml(query)}')" class="platform-btn ticket-btn">🎫 Билеты на концерты</button>
+                ${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
             } else {
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 if (foundTrack) {
