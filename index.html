@@ -22,7 +22,6 @@
             transition: background 0.5s ease;
         }
         
-        /* Кастомные фоны для каждого раздела */
         body.music-mode {
             background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%) !important;
             animation: none !important;
@@ -48,7 +47,6 @@
             100% { background-position: 0% 0%; }
         }
         
-        /* Полноэкранные контейнеры */
         .fullscreen-page {
             position: fixed;
             top: 0;
@@ -70,7 +68,6 @@
             transform: translateX(0);
         }
         
-        /* Главное меню (полноэкранное) */
         .menu-container {
             position: fixed;
             top: 0;
@@ -90,7 +87,6 @@
             transform: translateX(-100%);
         }
         
-        /* КОМПАКТНЫЕ КНОПКИ МЕНЮ */
         .menu-screen {
             display: flex;
             flex-direction: column;
@@ -125,7 +121,6 @@
         .menu-title { font-size: 16px; font-weight: 600; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .menu-desc { font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 2px; }
         
-        /* Шапка внутри разделов */
         .page-header {
             display: flex;
             align-items: center;
@@ -152,7 +147,6 @@
         .back-btn:active { transform: scale(0.95); }
         .page-title { font-size: 24px; font-weight: 700; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.2); flex: 1; }
         
-        /* Эффект стекла для контента */
         .glass-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
@@ -168,7 +162,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* Поиск */
         .search-type-switch { display: flex; gap: 10px; margin-bottom: 16px; }
         .search-type-btn {
             flex: 1;
@@ -297,7 +290,6 @@
         .qr-btn { background: #607d8b; }
         .ai-btn { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
         
-        /* Биография */
         .bio-section {
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
@@ -311,7 +303,6 @@
         .bio-text { font-size: 12px; line-height: 1.4; color: rgba(255,255,255,0.9); }
         .bio-wiki-link { display: inline-block; margin-top: 8px; color: #4facfe; text-decoration: none; font-size: 11px; }
         
-        /* Игра */
         .game-question { text-align: center; }
         .track-name { font-size: 18px; font-weight: 800; margin: 16px 0; color: white; }
         .game-options { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
@@ -330,7 +321,6 @@
         .game-option.correct { background: #28a745; }
         .game-option.wrong { background: #dc3545; }
         
-        /* AI обложки */
         .ai-cover-img {
             width: 100%;
             max-width: 200px;
@@ -350,7 +340,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* Чат ассистента */
         .chat-container {
             background: rgba(0,0,0,0.3);
             backdrop-filter: blur(10px);
@@ -407,7 +396,6 @@
             font-size: 18px;
         }
         
-        /* Кнопка настроек */
         .settings-fab {
             position: fixed;
             bottom: 20px;
@@ -426,7 +414,6 @@
         }
         .settings-fab:active { transform: scale(0.92); }
         
-        /* Модалка настроек */
         .settings-modal {
             position: fixed;
             top: 0;
@@ -457,7 +444,6 @@
         .close-modal { background: rgba(255,255,255,0.2); border: none; padding: 10px; border-radius: 40px; color: white; font-weight: 600; width: 100%; margin-top: 16px; cursor: pointer; }
         .appearance-btn { background: rgba(255,255,255,0.15); border: none; padding: 6px 12px; border-radius: 25px; color: white; cursor: pointer; font-size: 12px; }
         
-        /* Админ панель */
         .admin-badge {
             position: fixed;
             top: 10px;
@@ -599,7 +585,6 @@
     </style>
 </head>
 <body>
-    <!-- ГЛАВНОЕ МЕНЮ (полноэкранное) -->
     <div class="menu-container" id="menuContainer">
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
@@ -625,7 +610,6 @@
         </div>
     </div>
 
-    <!-- МУЗЫКА - полноэкранная страница -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic">← Назад</button>
@@ -649,7 +633,6 @@
         <div class="user-info">👤 <span id="userName">Music</span></div>
     </div>
 
-    <!-- ИГРА - полноэкранная страница -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header">
             <button class="back-btn" id="backFromGame">← Назад</button>
@@ -664,7 +647,6 @@
         <div class="user-info">🎮 Угадай исполнителя</div>
     </div>
 
-    <!-- AI ОБЛОЖКИ - полноэкранная страница -->
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header">
             <button class="back-btn" id="backFromAI">← Назад</button>
@@ -683,7 +665,6 @@
         <div class="user-info">🤖 AI генерация обложек</div>
     </div>
 
-    <!-- AI АССИСТЕНТ - полноэкранная страница -->
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header">
             <button class="back-btn" id="backFromAssistant">← Назад</button>
@@ -712,10 +693,8 @@
         <div class="user-info">💬 AI Ассистент | Информация из Википедии</div>
     </div>
 
-    <!-- КНОПКА НАСТРОЕК -->
     <div class="settings-fab" id="settingsFab"><span>⚙️</span></div>
 
-    <!-- МОДАЛКА НАСТРОЕК -->
     <div id="settingsModal" class="settings-modal hidden">
         <div class="modal-card">
             <div class="modal-title">🎨 Оформление</div>
@@ -739,7 +718,6 @@
         </div>
     </div>
 
-    <!-- АДМИН ПАНЕЛЬ -->
     <div id="adminPanel" class="admin-panel hidden">
         <div class="admin-header"><div class="admin-title">👑 Админ панель</div><button class="admin-close" id="closeAdminPanel">✕ Закрыть</button></div>
         <div class="admin-stats" id="adminStats"></div>
@@ -766,13 +744,11 @@
         tg.ready();
         tg.expand();
 
-        // ========== ПЕРЕМЕННЫЕ ==========
         let currentSearchMode = 'artist';
         let adminActions = [];
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD = "admin123";
 
-        // ========== БАЗА ТРЕКОВ ==========
         const tracksDatabase = [
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
@@ -808,7 +784,6 @@
 
         const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons","Кино","Земфира"];
 
-        // ========== УПРАВЛЕНИЕ ФОНОМ ==========
         function setBodyMode(mode) {
             document.body.classList.remove('music-mode', 'game-mode', 'ai-mode', 'assistant-mode');
             if (mode === 'music') document.body.classList.add('music-mode');
@@ -817,7 +792,6 @@
             else if (mode === 'assistant') document.body.classList.add('assistant-mode');
         }
 
-        // ========== УПРАВЛЕНИЕ СТРАНИЦАМИ ==========
         const menuContainer = document.getElementById('menuContainer');
         const musicPage = document.getElementById('musicPage');
         const gamePage = document.getElementById('gamePage');
@@ -847,7 +821,6 @@
             setBodyMode(mode);
         }
 
-        // Навигация
         document.getElementById('goToMusicBtn').onclick = () => { showPage(musicPage, 'music'); loadPopularArtists(); addAction('Переход', 'Открыл раздел Музыка'); };
         document.getElementById('goToGameBtn').onclick = () => { showPage(gamePage, 'game'); addAction('Переход', 'Открыл раздел Игра'); };
         document.getElementById('goToAIBtn').onclick = () => { showPage(aiPage, 'ai'); addAction('Переход', 'Открыл раздел AI Обложки'); };
@@ -858,7 +831,6 @@
         document.getElementById('backFromAI').onclick = showMenu;
         document.getElementById('backFromAssistant').onclick = showMenu;
 
-        // ========== АДМИН ПАНЕЛЬ ==========
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
             if (saved) adminActions = JSON.parse(saved);
@@ -952,7 +924,6 @@
             if (resetGameStatsBtn) resetGameStatsBtn.onclick = resetGameStatsAdmin;
         }
 
-        // ========== НАСТРОЙКИ ВНЕШНЕГО ВИДА ==========
         function loadSavedAppearance() {
             const savedBg = localStorage.getItem('music_bot_background');
             if (savedBg && savedBg !== 'default') {
@@ -982,7 +953,6 @@
         if (closeSettingsBtn) closeSettingsBtn.onclick = () => { if (settingsModal) settingsModal.classList.add('hidden'); };
         if (settingsModal) settingsModal.onclick = (e) => { if (e.target === settingsModal) settingsModal.classList.add('hidden'); };
 
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
         async function getWikipediaFullBio(artistName) {
             try {
                 const exactMatches = { "асия": "Асия (певица)", "big baby tape": "Big Baby Tape", "instasamka": "Instasamka", "моргенштерн": "Моргенштерн", "земфира": "Земфира", "кино": "Кино (группа)", "imagine dragons": "Imagine Dragons" };
@@ -1008,12 +978,32 @@
             } catch (error) { return null; }
         }
         
-        // ========== БИЛЕТЫ НА КОНЦЕРТЫ ==========
+        // ========== БИЛЕТЫ НА КОНЦЕРТЫ (ВАРИАНТ 3 - С ВЫБОРОМ) ==========
         function findTickets(artistName) {
-            const url = `https://afisha.yandex.ru/search?text=${encodeURIComponent(artistName)}&type=concert`;
-            tg.openLink(url);
-            addAction('Билеты', `Поиск концертов: ${artistName}`);
-            showNotification(`🎫 Ищем билеты на ${artistName}...`);
+            const encoded = encodeURIComponent(artistName);
+            
+            tg.showPopup({
+                title: "🎫 Где искать билеты?",
+                message: `Концерты "${artistName}"`,
+                buttons: [
+                    { id: "kassir", type: "default", text: "🎭 Kassir.ru" },
+                    { id: "afisha", type: "default", text: "📅 Яндекс.Афиша" },
+                    { id: "ticketland", type: "default", text: "🎟️ Ticketland" },
+                    { id: "cancel", type: "cancel", text: "Отмена" }
+                ]
+            }, (buttonId) => {
+                if (buttonId === "kassir") {
+                    tg.openLink(`https://www.kassir.ru/poisk?q=${encoded}&section=show`);
+                    showNotification(`🔍 Ищем на Kassir.ru: ${artistName}`);
+                } else if (buttonId === "afisha") {
+                    tg.openLink(`https://afisha.yandex.ru/search?text=${encoded}&type=concert`);
+                    showNotification(`🔍 Ищем на Яндекс.Афише: ${artistName}`);
+                } else if (buttonId === "ticketland") {
+                    tg.openLink(`https://ticketland.ru/search/?q=${encoded}`);
+                    showNotification(`🔍 Ищем на Ticketland: ${artistName}`);
+                }
+                addAction('Билеты', `Поиск на ${buttonId}: ${artistName}`);
+            });
         }
         
         function displayBio(bioData, artistName) {
@@ -1058,7 +1048,6 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // ========== ПОИСК ==========
         function setSearchMode(mode) {
             currentSearchMode = mode;
             const artistBtn = document.getElementById('searchArtistBtn');
@@ -1136,7 +1125,6 @@
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        // ========== ГОЛОСОВОЙ ПОИСК ==========
         let recognition = null;
         let isListening = false;
         
@@ -1179,7 +1167,6 @@
         function startVoiceSearch() { if (!recognition) { initVoiceSearch(); if (!recognition) return; } if (isListening) { stopListening(); return; } try { recognition.start(); } catch (e) { showNotification('❌ Не удалось запустить микрофон'); } }
         function stopListening() { isListening = false; const voiceBtn = document.getElementById('voiceSearchBtn'); if (voiceBtn) voiceBtn.classList.remove('listening'); }
 
-        // ========== ИГРА ==========
         const allArtistsForGame = [...new Set(tracksDatabase.map(t => t.artist))];
         let gameQuestions = [], currentQ = 0, gameScore = 0, gameActive = false, gameStatsData = { gamesPlayed: 0, bestScore: 0 };
 
@@ -1244,7 +1231,6 @@
             addAction('Игра', `Закончил игру со счётом ${gameScore}/${total}`);
         }
 
-        // ========== AI АССИСТЕНТ ==========
         async function getAIResponse(query) {
             const lowerQuery = query.toLowerCase().trim();
             const isArtistQuery = !lowerQuery.includes("песн") && !lowerQuery.includes("трек") && !lowerQuery.includes("посоветуй") && !lowerQuery.includes("случайн") && !lowerQuery.includes("грустн") && !lowerQuery.includes("весел") && !lowerQuery.includes("зарядк") && !lowerQuery.includes("романтик") && !lowerQuery.includes("привет") && lowerQuery.length > 2;
@@ -1288,7 +1274,6 @@
 
         function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
 
-        // ========== ПОДКЛЮЧЕНИЕ СОБЫТИЙ ==========
         document.getElementById('doSearchBtn').onclick = performSearch;
         document.getElementById('randomTrackBtn').onclick = getRandomTrack;
         const searchInputElem = document.getElementById('searchInput');
@@ -1309,7 +1294,6 @@
         document.getElementById('startGameBtn').onclick = startGame;
         loadGameStats();
         
-        // Инициализация
         const user = tg.initDataUnsafe?.user;
         if(user && user.first_name) {
             const userNameSpan = document.getElementById('userName');
@@ -1323,7 +1307,6 @@
         initAdminPanel();
         loadAdminActions();
         
-        // Приветствие
         const welcomeShown = sessionStorage.getItem('welcome_shown');
         if (!welcomeShown) {
             setTimeout(() => {
