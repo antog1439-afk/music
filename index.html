@@ -189,6 +189,12 @@
         body.dark-theme .search-input { background: rgba(30,30,40,0.9); color: white; }
         .search-input:focus { outline: none; background: white; }
         
+        textarea.search-input {
+            font-family: inherit;
+            line-height: 1.4;
+            resize: vertical;
+        }
+        
         .search-btn {
             background: #2481cc;
             border: none;
@@ -273,7 +279,38 @@
         .youtube-btn { background: #ff0000; }
         .vk-btn { background: #0077ff; }
         .spotify-btn { background: #1db954; }
-        .ticket-btn { background: #f39c12; margin-top: 4px; }
+        
+        .random-artist-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .random-artist-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+        .random-artist-link {
+            background: #ffcc00;
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .random-artist-link:active {
+            transform: scale(0.96);
+        }
         
         .qr-btn, .ai-btn {
             margin-top: 10px;
@@ -607,6 +644,11 @@
                 <div class="menu-title">AI Ассистент</div>
                 <div class="menu-desc">Поможет найти музыку</div>
             </div>
+            <div class="menu-btn" id="goToRandomizerBtn">
+                <span class="menu-icon">🎲</span>
+                <div class="menu-title">Рандомайзер</div>
+                <div class="menu-desc">Выбери случайного исполнителя</div>
+            </div>
         </div>
     </div>
 
@@ -617,8 +659,8 @@
         </div>
         <div class="glass-card">
             <div class="search-type-switch">
-                <div class="search-type-btn active" id="searchArtistBtn" onclick="setSearchMode('artist')">🎤 Исполнитель</div>
-                <div class="search-type-btn" id="searchTrackBtn" onclick="setSearchMode('track')">🎵 Трек</div>
+                <div class="search-type-btn active" id="searchArtistBtn">🎤 Исполнитель</div>
+                <div class="search-type-btn" id="searchTrackBtn">🎵 Трек</div>
             </div>
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons...">
@@ -693,26 +735,52 @@
         <div class="user-info">💬 AI Ассистент | Информация из Википедии</div>
     </div>
 
+    <!-- НОВАЯ СТРАНИЦА: РАНДОМАЙЗЕР -->
+    <div class="fullscreen-page" id="randomizerPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromRandomizer">← Назад</button>
+            <div class="page-title">🎲 Рандомайзер</div>
+        </div>
+        <div class="glass-card">
+            <div class="section-title">📝 Список исполнителей</div>
+            <textarea id="artistListInput" class="search-input" rows="4" placeholder="Введите исполнителей по одному на строку или через запятую&#10;Например:&#10;Асия&#10;Imagine Dragons&#10;Кино, Земфира, Моргенштерн" style="resize: vertical; margin-bottom: 12px;"></textarea>
+            
+            <div class="section-title">⚡ Быстро добавить</div>
+            <div class="popular-grid" id="quickArtistsGrid"></div>
+            
+            <div class="section-title">🔢 Количество исполнителей для выбора</div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <input type="number" id="randomCountInput" class="search-input" value="1" min="1" max="20" style="width: 80px; text-align: center;">
+                <span style="color: white;">из <span id="totalArtistsCount">0</span> исполнителей</span>
+            </div>
+            
+            <button id="doRandomizeBtn" class="search-btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); padding: 12px; width: 100%; margin-bottom: 16px;">🎲 Выбрать случайных</button>
+            
+            <div id="randomizerResult" style="margin-top: 16px;"></div>
+        </div>
+        <div class="user-info">🎲 Введи своих любимых исполнителей и получай случайные рекомендации</div>
+    </div>
+
     <div class="settings-fab" id="settingsFab"><span>⚙️</span></div>
 
     <div id="settingsModal" class="settings-modal hidden">
         <div class="modal-card">
             <div class="modal-title">🎨 Оформление</div>
-            <div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#2481cc" onchange="changeButtonColor(this.value)"></div>
-            <div class="settings-row"><span class="settings-label">🔘 Прозрачность:</span><input type="range" id="opacitySlider" min="0.5" max="1" step="0.01" value="0.95" onchange="changeCardOpacity(this.value)"></div>
+            <div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#2481cc"></div>
+            <div class="settings-row"><span class="settings-label">🔘 Прозрачность:</span><input type="range" id="opacitySlider" min="0.5" max="1" step="0.01" value="0.95"></div>
             <div class="settings-row">
-                <button class="appearance-btn" onclick="resetBackground()">Сбросить фон</button>
-                <button class="appearance-btn" onclick="document.getElementById('bgImageInput').click()">📸 Своё фото</button>
-                <input type="file" id="bgImageInput" accept="image/*" style="display:none;" onchange="loadCustomBackground(this)">
-                <button class="appearance-btn" onclick="openColorPicker()">Цвет фона</button>
-                <button class="appearance-btn" onclick="toggleDarkTheme()">🌙 Тёмная</button>
+                <button class="appearance-btn" id="resetBgBtn">Сбросить фон</button>
+                <button class="appearance-btn" id="uploadBgBtn">📸 Своё фото</button>
+                <button class="appearance-btn" id="colorPickerBtn">Цвет фона</button>
+                <button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button>
+                <input type="file" id="bgImageInput" accept="image/*" style="display:none;">
             </div>
             <div class="gradient-row">
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #667eea, #764ba2);" onclick="setGradient('linear-gradient(135deg, #667eea 0%, #764ba2 100%)')"></div>
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #f093fb, #f5576c);" onclick="setGradient('linear-gradient(135deg, #f093fb 0%, #f5576c 100%)')"></div>
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #4facfe, #00f2fe);" onclick="setGradient('linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)')"></div>
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #43e97b, #38f9d7);" onclick="setGradient('linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)')"></div>
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #fa709a, #fee140);" onclick="setGradient('linear-gradient(135deg, #fa709a 0%, #fee140 100%)')"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div>
+                <div class="gradient-circle" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div>
             </div>
             <button class="close-modal" id="closeSettingsBtn">Закрыть</button>
         </div>
@@ -797,6 +865,7 @@
         const gamePage = document.getElementById('gamePage');
         const aiPage = document.getElementById('aiPage');
         const assistantPage = document.getElementById('assistantPage');
+        const randomizerPage = document.getElementById('randomizerPage');
 
         function showMenu() {
             menuContainer.classList.remove('hidden-menu');
@@ -805,6 +874,7 @@
                 gamePage.classList.remove('active');
                 aiPage.classList.remove('active');
                 assistantPage.classList.remove('active');
+                if (randomizerPage) randomizerPage.classList.remove('active');
             }, 50);
             setBodyMode('');
         }
@@ -816,6 +886,7 @@
                 gamePage.classList.remove('active');
                 aiPage.classList.remove('active');
                 assistantPage.classList.remove('active');
+                if (randomizerPage) randomizerPage.classList.remove('active');
                 page.classList.add('active');
             }, 50);
             setBodyMode(mode);
@@ -831,6 +902,155 @@
         document.getElementById('backFromAI').onclick = showMenu;
         document.getElementById('backFromAssistant').onclick = showMenu;
 
+        // ========== РАНДОМАЙЗЕР ==========
+        const backFromRandomizer = document.getElementById('backFromRandomizer');
+        const goToRandomizerBtn = document.getElementById('goToRandomizerBtn');
+        const artistListInput = document.getElementById('artistListInput');
+        const randomCountInput = document.getElementById('randomCountInput');
+        const doRandomizeBtn = document.getElementById('doRandomizeBtn');
+        const randomizerResult = document.getElementById('randomizerResult');
+        const totalArtistsCountSpan = document.getElementById('totalArtistsCount');
+
+        function parseArtistList(text) {
+            if (!text.trim()) return [];
+            let lines = text.split(/\r?\n/);
+            let artists = [];
+            for (let line of lines) {
+                line = line.trim();
+                if (!line) continue;
+                if (line.includes(',')) {
+                    let parts = line.split(',').map(p => p.trim()).filter(p => p);
+                    artists.push(...parts);
+                } else {
+                    artists.push(line);
+                }
+            }
+            const seen = new Map();
+            const unique = [];
+            for (let artist of artists) {
+                const key = artist.toLowerCase();
+                if (!seen.has(key)) {
+                    seen.set(key, artist);
+                    unique.push(artist);
+                }
+            }
+            return unique;
+        }
+
+        function updateTotalCount() {
+            const text = artistListInput.value;
+            const artists = parseArtistList(text);
+            totalArtistsCountSpan.textContent = artists.length;
+            if (artists.length > 0) {
+                randomCountInput.max = artists.length;
+                if (parseInt(randomCountInput.value) > artists.length) {
+                    randomCountInput.value = artists.length;
+                }
+            } else {
+                randomCountInput.max = 20;
+            }
+        }
+
+        artistListInput.addEventListener('input', updateTotalCount);
+
+        function doRandomize() {
+            const text = artistListInput.value;
+            const artists = parseArtistList(text);
+            
+            if (artists.length === 0) {
+                randomizerResult.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 16px; border-radius: 20px; text-align: center; color: white;">
+                    ❗ Введите хотя бы одного исполнителя
+                </div>`;
+                return;
+            }
+            
+            let count = parseInt(randomCountInput.value);
+            if (isNaN(count) || count < 1) count = 1;
+            if (count > artists.length) count = artists.length;
+            
+            const shuffled = [...artists];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            
+            const selected = shuffled.slice(0, count);
+            
+            let resultHtml = `<div class="section-title">🎲 Вам повезло:</div>`;
+            
+            for (let i = 0; i < selected.length; i++) {
+                const artist = selected[i];
+                const encodedArtist = encodeURIComponent(artist);
+                const yandexLink = `https://music.yandex.ru/search?text=${encodedArtist}`;
+                
+                resultHtml += `
+                    <div class="random-artist-card">
+                        <span class="random-artist-name">${i+1}. ${escapeHtml(artist)}</span>
+                        <a href="${yandexLink}" target="_blank" class="random-artist-link" onclick="if(window.TelegramWebApp) { TelegramWebApp.openLink('${yandexLink}'); return false; }">
+                            🎵 Слушать на Яндекс.Музыке
+                        </a>
+                    </div>
+                `;
+            }
+            
+            resultHtml += `<button onclick="copyArtistsToClipboard('${selected.map(a => escapeHtml(a)).join(', ')}')" style="background: rgba(255,255,255,0.2); border: none; padding: 10px; border-radius: 40px; color: white; margin-top: 12px; width: 100%; cursor: pointer;">
+                📋 Скопировать список
+            </button>`;
+            
+            randomizerResult.innerHTML = resultHtml;
+            
+            addAction('Рандомайзер', `Выбрал ${count} из ${artists.length} исполнителей: ${selected.join(', ')}`);
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        window.copyArtistsToClipboard = function(text) {
+            const plainText = text.replace(/<[^>]*>/g, '');
+            navigator.clipboard.writeText(plainText).then(() => {
+                showNotification(`📋 Скопировано: ${plainText}`);
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }).catch(() => {
+                showNotification('❌ Не удалось скопировать');
+            });
+        };
+
+        function loadQuickArtists() {
+            const container = document.getElementById('quickArtistsGrid');
+            if (!container) return;
+            const quickArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн", "Big Baby Tape", "Дора", "INSTASAMKA"];
+            container.innerHTML = quickArtists.map(artist => 
+                `<span class="popular-tag" onclick="addArtistToInput('${artist.replace(/'/g, "\\'")}')">🎤 + ${artist}</span>`
+            ).join('');
+        }
+
+        window.addArtistToInput = function(artist) {
+            const input = artistListInput;
+            const current = input.value;
+            if (current.trim() === "") {
+                input.value = artist;
+            } else {
+                input.value = current + "\n" + artist;
+            }
+            updateTotalCount();
+            showNotification(`➕ Добавлен: ${artist}`);
+        };
+
+        if (goToRandomizerBtn) {
+            goToRandomizerBtn.onclick = () => { 
+                showPage(randomizerPage, 'music');
+                updateTotalCount();
+                loadQuickArtists();
+                addAction('Переход', 'Открыл раздел Рандомайзер');
+            };
+        }
+        if (backFromRandomizer) {
+            backFromRandomizer.onclick = showMenu;
+        }
+        if (doRandomizeBtn) {
+            doRandomizeBtn.onclick = doRandomize;
+        }
+
+        // ========== ОСТАЛЬНОЙ КОД (без изменений) ==========
+        
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
             if (saved) adminActions = JSON.parse(saved);
@@ -949,9 +1169,31 @@
         const settingsFab = document.getElementById('settingsFab');
         const settingsModal = document.getElementById('settingsModal');
         const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        const resetBgBtn = document.getElementById('resetBgBtn');
+        const uploadBgBtn = document.getElementById('uploadBgBtn');
+        const colorPickerBtn = document.getElementById('colorPickerBtn');
+        const toggleThemeBtn = document.getElementById('toggleThemeBtn');
+        const bgImageInput = document.getElementById('bgImageInput');
+        
         if (settingsFab) settingsFab.onclick = () => { if (settingsModal) settingsModal.classList.remove('hidden'); };
         if (closeSettingsBtn) closeSettingsBtn.onclick = () => { if (settingsModal) settingsModal.classList.add('hidden'); };
         if (settingsModal) settingsModal.onclick = (e) => { if (e.target === settingsModal) settingsModal.classList.add('hidden'); };
+        if (resetBgBtn) resetBgBtn.onclick = resetBackground;
+        if (uploadBgBtn && bgImageInput) uploadBgBtn.onclick = () => bgImageInput.click();
+        if (bgImageInput) bgImageInput.onchange = (e) => loadCustomBackground(e.target);
+        if (colorPickerBtn) colorPickerBtn.onclick = openColorPicker;
+        if (toggleThemeBtn) toggleThemeBtn.onclick = toggleDarkTheme;
+        
+        const gradientCircles = document.querySelectorAll('.gradient-circle');
+        gradientCircles.forEach(circle => {
+            circle.onclick = () => { setGradient(circle.style.background); };
+        });
+        
+        const buttonColorPicker = document.getElementById('buttonColorPicker');
+        if (buttonColorPicker) buttonColorPicker.onchange = (e) => changeButtonColor(e.target.value);
+        
+        const opacitySlider = document.getElementById('opacitySlider');
+        if (opacitySlider) opacitySlider.oninput = (e) => changeCardOpacity(e.target.value);
 
         async function getWikipediaFullBio(artistName) {
             try {
@@ -976,30 +1218,6 @@
                 if (cleanText.length > 3000) cleanText = cleanText.substring(0, 3000) + '...';
                 return { title: pageTitle, fullText: cleanText, pageUrl: `https://ru.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}` };
             } catch (error) { return null; }
-        }
-        
-        // ========== БИЛЕТЫ НА КОНЦЕРТЫ (РАБОЧАЯ ВЕРСИЯ) ==========
-        function findTickets(artistName) {
-            if (!artistName || artistName.trim() === "") {
-                showNotification("❌ Имя исполнителя не указано");
-                return;
-            }
-            
-            const encoded = encodeURIComponent(artistName);
-            const url = `https://yandex.ru/search/?text=${encoded}%20концерт%20билеты`;
-            
-            try {
-                if (tg && tg.openLink) {
-                    tg.openLink(url);
-                    addAction('Билеты', `Поиск концертов: ${artistName}`);
-                    showNotification(`🎫 Ищем билеты на ${artistName}...`);
-                } else {
-                    window.open(url, '_blank');
-                }
-            } catch(e) {
-                console.error("Ошибка:", e);
-                window.open(url, '_blank');
-            }
         }
         
         function displayBio(bioData, artistName) {
@@ -1091,9 +1309,7 @@
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
                 const tracksList = artistTracks.map(t => t.track).join(', ');
-                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>
-                <button onclick="findTickets('${escapeHtml(query)}')" class="platform-btn" style="background: #f39c12; margin-top: 8px;">🎫 Билеты на концерты</button>
-                ${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
+                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
             } else {
                 const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
                 if (foundTrack) {
@@ -1290,6 +1506,11 @@
         document.getElementById('startGameBtn').onclick = startGame;
         loadGameStats();
         
+        const searchArtistBtn = document.getElementById('searchArtistBtn');
+        const searchTrackBtn = document.getElementById('searchTrackBtn');
+        if (searchArtistBtn) searchArtistBtn.onclick = () => setSearchMode('artist');
+        if (searchTrackBtn) searchTrackBtn.onclick = () => setSearchMode('track');
+        
         const user = tg.initDataUnsafe?.user;
         if(user && user.first_name) {
             const userNameSpan = document.getElementById('userName');
@@ -1306,10 +1527,12 @@
         const welcomeShown = sessionStorage.getItem('welcome_shown');
         if (!welcomeShown) {
             setTimeout(() => {
-                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nИщи музыку, играй, создавай AI обложки и общайся с AI ассистентом!", buttons: [{ type: "ok" }] });
+                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом и используй рандомайзер исполнителей!", buttons: [{ type: "ok" }] });
                 sessionStorage.setItem('welcome_shown', 'true');
             }, 500);
         }
+        
+        setTimeout(updateTotalCount, 100);
     </script>
 </body>
 </html>
