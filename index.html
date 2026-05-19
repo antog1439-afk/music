@@ -310,6 +310,38 @@
         }
         .random-artist-link:active { transform: scale(0.96); }
         
+        .subscribe-item {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .subscribe-artist-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .unsubscribe-btn {
+            background: #dc3545;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .unsubscribe-btn:active { transform: scale(0.96); }
+        
         .qr-btn, .ai-btn {
             margin-top: 10px;
             padding: 10px;
@@ -819,9 +851,9 @@
             </div>
             
             <div class="section-title">📋 Мои подписки</div>
-            <div id="subscriptionsList" style="margin-top: 8px;">
+            <div id="subscriptionsList" style="margin-top: 8px; min-height: 100px;">
                 <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">
-                    Загрузка...
+                    🔄 Загрузка подписок...
                 </div>
             </div>
             
@@ -1168,9 +1200,44 @@
         const subscriptionsListDiv = document.getElementById('subscriptionsList');
 
         function loadSubscriptions() {
-            subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 20px;">Загрузка...</div>';
+            subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 20px;">🔄 Загрузка подписок...</div>';
             tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
         }
+
+        function displaySubscriptions(artists) {
+            if (!artists || artists.length === 0) {
+                subscriptionsListDiv.innerHTML = `
+                    <div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.6);">
+                        📭 У вас нет активных подписок.<br><br>
+                        Введите имя исполнителя выше, чтобы подписаться!
+                    </div>`;
+                return;
+            }
+            
+            let html = '';
+            artists.forEach(artist => {
+                html += `
+                    <div class="subscribe-item" data-artist="${escapeHtml(artist.name)}">
+                        <div class="subscribe-artist-name">
+                            🎤 ${escapeHtml(artist.name)}
+                        </div>
+                        <button class="unsubscribe-btn" onclick="unsubscribeArtist('${escapeHtml(artist.name).replace(/'/g, "\\'")}')">
+                            ❌ Отписаться
+                        </button>
+                    </div>
+                `;
+            });
+            subscriptionsListDiv.innerHTML = html;
+        }
+
+        window.unsubscribeArtist = function(artistName) {
+            tg.sendData(JSON.stringify({
+                action: 'unsubscribe_artist',
+                artist: artistName
+            }));
+            showNotification(`❌ Отписка от ${artistName}...`);
+            setTimeout(loadSubscriptions, 1500);
+        };
 
         if (goToSubscriptionsBtn) {
             goToSubscriptionsBtn.onclick = () => {
@@ -1196,7 +1263,7 @@
                 
                 showNotification(`🔔 Подписка на ${artist}...`);
                 subscribeArtistInput.value = '';
-                setTimeout(loadSubscriptions, 1000);
+                setTimeout(loadSubscriptions, 1500);
             };
         }
 
@@ -1230,27 +1297,26 @@
                     }
                 }
                 
-                // Ответ от подписок
+                // Ответ от подписок (список)
                 if (response.type === 'subscriptions_list') {
-                    if (response.artists.length === 0) {
-                        subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">📭 У вас нет подписок.<br><br>Введите имя исполнителя выше, чтобы подписаться!</div>';
-                    } else {
-                        let html = '';
-                        response.artists.forEach(artist => {
-                            html += `
-                                <div class="random-artist-card" style="justify-content: space-between;">
-                                    <span class="random-artist-name">🎤 ${escapeHtml(artist.name)}</span>
-                                </div>
-                            `;
-                        });
-                        subscriptionsListDiv.innerHTML = html;
-                    }
+                    displaySubscriptions(response.artists);
                 }
                 
                 // Ответ от подписки
                 if (response.type === 'subscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
+                        loadSubscriptions();
+                    } else {
+                        showNotification(`❌ ${response.message}`);
+                    }
+                }
+                
+                // Ответ от отписки
+                if (response.type === 'unsubscribe_result') {
+                    if (response.success) {
+                        showNotification(`✅ ${response.message}`);
+                        loadSubscriptions();
                     } else {
                         showNotification(`❌ ${response.message}`);
                     }
@@ -1260,7 +1326,8 @@
             }
         });
 
-        // ========== ОСТАЛЬНОЙ КОД ==========
+        // ========== ОСТАЛЬНОЙ КОД (админка, поиск, игра, ассистент) ==========
+        
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
             if (saved) adminActions = JSON.parse(saved);
