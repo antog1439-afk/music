@@ -308,9 +308,7 @@
             display: inline-block;
             cursor: pointer;
         }
-        .random-artist-link:active {
-            transform: scale(0.96);
-        }
+        .random-artist-link:active { transform: scale(0.96); }
         
         .qr-btn, .ai-btn {
             margin-top: 10px;
@@ -608,6 +606,13 @@
         .user-info { font-size: 10px; text-align: center; margin-top: 12px; color: rgba(255,255,255,0.6); }
         .hidden { display: none; }
         
+        .mood-btn {
+            transition: transform 0.1s ease;
+        }
+        .mood-btn:active {
+            transform: scale(0.96);
+        }
+        
         @media (max-width: 480px) {
             .fullscreen-page { padding: 14px; }
             .menu-screen { max-width: 220px; gap: 12px; }
@@ -649,9 +654,20 @@
                 <div class="menu-title">Рандомайзер</div>
                 <div class="menu-desc">Выбери случайного исполнителя</div>
             </div>
+            <div class="menu-btn" id="goToMoodBtn">
+                <span class="menu-icon">😊</span>
+                <div class="menu-title">По настроению</div>
+                <div class="menu-desc">Музыка под твоё настроение</div>
+            </div>
+            <div class="menu-btn" id="goToSubscriptionsBtn">
+                <span class="menu-icon">🔔</span>
+                <div class="menu-title">Подписки</div>
+                <div class="menu-desc">Узнавай о новых релизах</div>
+            </div>
         </div>
     </div>
 
+    <!-- Страница Музыка -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic">← Назад</button>
@@ -675,6 +691,7 @@
         <div class="user-info">👤 <span id="userName">Music</span></div>
     </div>
 
+    <!-- Страница Игра -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header">
             <button class="back-btn" id="backFromGame">← Назад</button>
@@ -689,6 +706,7 @@
         <div class="user-info">🎮 Угадай исполнителя</div>
     </div>
 
+    <!-- Страница AI Обложки -->
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header">
             <button class="back-btn" id="backFromAI">← Назад</button>
@@ -707,6 +725,7 @@
         <div class="user-info">🤖 AI генерация обложек</div>
     </div>
 
+    <!-- Страница AI Ассистент -->
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header">
             <button class="back-btn" id="backFromAssistant">← Назад</button>
@@ -735,7 +754,7 @@
         <div class="user-info">💬 AI Ассистент | Информация из Википедии</div>
     </div>
 
-    <!-- НОВАЯ СТРАНИЦА: РАНДОМАЙЗЕР -->
+    <!-- Страница Рандомайзер -->
     <div class="fullscreen-page" id="randomizerPage">
         <div class="page-header">
             <button class="back-btn" id="backFromRandomizer">← Назад</button>
@@ -761,6 +780,62 @@
         <div class="user-info">🎲 Введи своих любимых исполнителей и получай случайные рекомендации</div>
     </div>
 
+    <!-- Страница По настроению -->
+    <div class="fullscreen-page" id="moodPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromMood">← Назад</button>
+            <div class="page-title">😊 По настроению</div>
+        </div>
+        <div class="glass-card">
+            <div class="section-title">🎭 Как ты себя чувствуешь?</div>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
+                <button class="mood-btn" data-mood="happy" style="background: #f1c40f; border: none; padding: 15px; border-radius: 50px; color: #333; font-weight: bold; cursor: pointer;">😊 Счастлив</button>
+                <button class="mood-btn" data-mood="sad" style="background: #3498db; border: none; padding: 15px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer;">😢 Грустный</button>
+                <button class="mood-btn" data-mood="energetic" style="background: #e74c3c; border: none; padding: 15px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer;">⚡ Энергичный</button>
+                <button class="mood-btn" data-mood="relax" style="background: #2ecc71; border: none; padding: 15px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer;">😌 Расслабленный</button>
+                <button class="mood-btn" data-mood="romantic" style="background: #e84393; border: none; padding: 15px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer;">💖 Романтичный</button>
+                <button class="mood-btn" data-mood="focus" style="background: #1abc9c; border: none; padding: 15px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer;">📚 Сфокусированный</button>
+            </div>
+            <div id="moodLoading" style="display: none; text-align: center; padding: 20px;">
+                <div class="loading-spinner"></div>
+                <div style="margin-top: 10px;">🎵 Ищу музыку под твоё настроение...</div>
+            </div>
+            <div id="moodResult"></div>
+        </div>
+        <div class="user-info">😊 Выбери настроение и получи музыку</div>
+    </div>
+
+    <!-- Страница Подписки -->
+    <div class="fullscreen-page" id="subscriptionsPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromSubscriptions">← Назад</button>
+            <div class="page-title">🔔 Подписки</div>
+        </div>
+        <div class="glass-card">
+            <div class="section-title">➕ Подписаться на исполнителя</div>
+            <div class="search-box">
+                <input type="text" id="subscribeArtistInput" class="search-input" placeholder="Асия, Imagine Dragons...">
+                <button id="doSubscribeBtn" class="search-btn" style="background: #28a745;">Подписаться</button>
+            </div>
+            
+            <div class="section-title">📋 Мои подписки</div>
+            <div id="subscriptionsList" style="margin-top: 8px;">
+                <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">
+                    Загрузка...
+                </div>
+            </div>
+            
+            <div class="section-title">ℹ️ Как это работает</div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7); padding: 8px;">
+                🔔 Когда у исполнителя выходит новый альбом или сингл, вы получите уведомление от бота.<br><br>
+                📱 Уведомления приходят как обычные сообщения — даже когда Mini App закрыт.<br><br>
+                🎵 Используйте команды в чате с ботом: /subscribe, /unsubscribe, /subscriptions
+            </div>
+        </div>
+        <div class="user-info">🔔 Подпишись на любимых исполнителей</div>
+    </div>
+
+    <!-- Настройки -->
     <div class="settings-fab" id="settingsFab"><span>⚙️</span></div>
 
     <div id="settingsModal" class="settings-modal hidden">
@@ -786,6 +861,7 @@
         </div>
     </div>
 
+    <!-- Админ панель -->
     <div id="adminPanel" class="admin-panel hidden">
         <div class="admin-header"><div class="admin-title">👑 Админ панель</div><button class="admin-close" id="closeAdminPanel">✕ Закрыть</button></div>
         <div class="admin-stats" id="adminStats"></div>
@@ -866,6 +942,8 @@
         const aiPage = document.getElementById('aiPage');
         const assistantPage = document.getElementById('assistantPage');
         const randomizerPage = document.getElementById('randomizerPage');
+        const moodPage = document.getElementById('moodPage');
+        const subscriptionsPage = document.getElementById('subscriptionsPage');
 
         function showMenu() {
             menuContainer.classList.remove('hidden-menu');
@@ -875,6 +953,8 @@
                 aiPage.classList.remove('active');
                 assistantPage.classList.remove('active');
                 if (randomizerPage) randomizerPage.classList.remove('active');
+                if (moodPage) moodPage.classList.remove('active');
+                if (subscriptionsPage) subscriptionsPage.classList.remove('active');
             }, 50);
             setBodyMode('');
         }
@@ -887,6 +967,8 @@
                 aiPage.classList.remove('active');
                 assistantPage.classList.remove('active');
                 if (randomizerPage) randomizerPage.classList.remove('active');
+                if (moodPage) moodPage.classList.remove('active');
+                if (subscriptionsPage) subscriptionsPage.classList.remove('active');
                 page.classList.add('active');
             }, 50);
             setBodyMode(mode);
@@ -1049,8 +1131,136 @@
             doRandomizeBtn.onclick = doRandomize;
         }
 
-        // ========== ОСТАЛЬНОЙ КОД (без изменений) ==========
-        
+        // ========== СТРАНИЦА ПО НАСТРОЕНИЮ ==========
+        const backFromMood = document.getElementById('backFromMood');
+        const goToMoodBtn = document.getElementById('goToMoodBtn');
+        const moodLoading = document.getElementById('moodLoading');
+        const moodResult = document.getElementById('moodResult');
+
+        if (goToMoodBtn) {
+            goToMoodBtn.onclick = () => {
+                showPage(moodPage, 'music');
+                addAction('Переход', 'Открыл раздел По настроению');
+            };
+        }
+        if (backFromMood) backFromMood.onclick = showMenu;
+
+        // Обработчики кнопок настроения
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.onclick = () => {
+                const mood = btn.dataset.mood;
+                
+                moodLoading.style.display = 'block';
+                moodResult.innerHTML = '';
+                
+                tg.sendData(JSON.stringify({
+                    action: 'mood_search',
+                    mood: mood
+                }));
+            };
+        });
+
+        // ========== СТРАНИЦА ПОДПИСОК ==========
+        const backFromSubscriptions = document.getElementById('backFromSubscriptions');
+        const goToSubscriptionsBtn = document.getElementById('goToSubscriptionsBtn');
+        const subscribeArtistInput = document.getElementById('subscribeArtistInput');
+        const doSubscribeBtn = document.getElementById('doSubscribeBtn');
+        const subscriptionsListDiv = document.getElementById('subscriptionsList');
+
+        function loadSubscriptions() {
+            subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 20px;">Загрузка...</div>';
+            tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
+        }
+
+        if (goToSubscriptionsBtn) {
+            goToSubscriptionsBtn.onclick = () => {
+                showPage(subscriptionsPage, 'music');
+                loadSubscriptions();
+                addAction('Переход', 'Открыл раздел Подписки');
+            };
+        }
+        if (backFromSubscriptions) backFromSubscriptions.onclick = showMenu;
+
+        if (doSubscribeBtn) {
+            doSubscribeBtn.onclick = () => {
+                const artist = subscribeArtistInput.value.trim();
+                if (!artist) {
+                    showNotification('❌ Введите имя исполнителя');
+                    return;
+                }
+                
+                tg.sendData(JSON.stringify({
+                    action: 'subscribe_artist',
+                    artist: artist
+                }));
+                
+                showNotification(`🔔 Подписка на ${artist}...`);
+                subscribeArtistInput.value = '';
+                setTimeout(loadSubscriptions, 1000);
+            };
+        }
+
+        // ========== ОБРАБОТКА ОТВЕТОВ ОТ БОТА ==========
+        tg.onEvent('message', (data) => {
+            try {
+                const response = JSON.parse(data);
+                
+                // Ответ от поиска по настроению
+                if (response.type === 'mood_result') {
+                    moodLoading.style.display = 'none';
+                    
+                    if (response.track) {
+                        moodResult.innerHTML = `
+                            <div class="result-card">
+                                <div class="artist-name">🎵 ${escapeHtml(response.track.title)}</div>
+                                <div style="margin-bottom: 8px;">🎤 ${escapeHtml(response.track.artists)}</div>
+                                <div class="platform-buttons">
+                                    <button onclick="tg.openLink('${response.track.yandex_link}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                                    <button onclick="tg.openLink('${response.track.youtube_link}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                                </div>
+                            </div>
+                        `;
+                        addAction('По настроению', `Нашёл трек`);
+                    } else {
+                        moodResult.innerHTML = `
+                            <div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">
+                                ❌ Не удалось найти трек для этого настроения
+                            </div>
+                        `;
+                    }
+                }
+                
+                // Ответ от подписок
+                if (response.type === 'subscriptions_list') {
+                    if (response.artists.length === 0) {
+                        subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">📭 У вас нет подписок.<br><br>Введите имя исполнителя выше, чтобы подписаться!</div>';
+                    } else {
+                        let html = '';
+                        response.artists.forEach(artist => {
+                            html += `
+                                <div class="random-artist-card" style="justify-content: space-between;">
+                                    <span class="random-artist-name">🎤 ${escapeHtml(artist.name)}</span>
+                                </div>
+                            `;
+                        });
+                        subscriptionsListDiv.innerHTML = html;
+                    }
+                }
+                
+                // Ответ от подписки
+                if (response.type === 'subscribe_result') {
+                    if (response.success) {
+                        showNotification(`✅ ${response.message}`);
+                    } else {
+                        showNotification(`❌ ${response.message}`);
+                    }
+                }
+            } catch(e) {
+                console.error('Ошибка парсинга ответа:', e);
+            }
+        });
+
+        // ========== ОСТАЛЬНОЙ КОД ==========
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
             if (saved) adminActions = JSON.parse(saved);
@@ -1527,7 +1737,7 @@
         const welcomeShown = sessionStorage.getItem('welcome_shown');
         if (!welcomeShown) {
             setTimeout(() => {
-                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом и используй рандомайзер исполнителей!", buttons: [{ type: "ok" }] });
+                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом, используй рандомайзер, ищи по настроению и подписывайся на любимых исполнителей!", buttons: [{ type: "ok" }] });
                 sessionStorage.setItem('welcome_shown', 'true');
             }, 500);
         }
