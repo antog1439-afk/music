@@ -837,7 +837,7 @@
         <div class="user-info">😊 Выбери настроение и получи музыку</div>
     </div>
 
-    <!-- Страница Подписки (исправлена) -->
+    <!-- Страница Подписки -->
     <div class="fullscreen-page" id="subscriptionsPage">
         <div class="page-header">
             <button class="back-btn" id="backFromSubscriptions">← Назад</button>
@@ -1099,7 +1099,7 @@
                 resultHtml += `
                     <div class="random-artist-card">
                         <span class="random-artist-name">${i+1}. ${escapeHtml(artist)}</span>
-                        <a href="${yandexLink}" target="_blank" class="random-artist-link" onclick="if(window.TelegramWebApp) { TelegramWebApp.openLink('${yandexLink}'); return false; }">
+                        <a href="${yandexLink}" target="_blank" class="random-artist-link" onclick="tg.openLink('${yandexLink}'); return false;">
                             🎵 Слушать на Яндекс.Музыке
                         </a>
                     </div>
@@ -1185,14 +1185,13 @@
             };
         });
 
-        // ========== ПОДПИСКИ (БЕЗ ЗАГРУЗКИ) ==========
+        // ========== ПОДПИСКИ ==========
         const backFromSubscriptions = document.getElementById('backFromSubscriptions');
         const goToSubscriptionsBtn = document.getElementById('goToSubscriptionsBtn');
         const subscribeArtistInput = document.getElementById('subscribeArtistInput');
         const doSubscribeBtn = document.getElementById('doSubscribeBtn');
         const subscriptionsListDiv = document.getElementById('subscriptionsList');
 
-        // Кэш подписок
         let cachedSubscriptions = null;
 
         function displaySubscriptions(artists) {
@@ -1223,11 +1222,9 @@
         }
 
         function loadSubscriptions() {
-            // Если есть кэш, показываем сразу
             if (cachedSubscriptions !== null) {
                 displaySubscriptions(cachedSubscriptions);
             } else {
-                // Показываем заглушку (короткое "получение", которое быстро исчезнет)
                 subscriptionsListDiv.innerHTML = `<div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.05); border-radius: 20px;">⏳ Получение подписок...</div>`;
             }
             tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
@@ -1266,18 +1263,70 @@
             };
         }
 
+        // ========== ПОИСК МУЗЫКИ ==========
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                showNotification('❌ Введите запрос');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('musicResult');
+            resultDiv.innerHTML = '<div style="text-align:center; padding:16px;">🔍 Поиск...</div>';
+            addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
+            
+            tg.sendData(JSON.stringify({ 
+                action: 'search', 
+                query: query,
+                mode: currentSearchMode 
+            }));
+        }
+
+        function getRandomTrack() {
+            const randomIndex = Math.floor(Math.random() * tracksDatabase.length);
+            const randomTrack = tracksDatabase[randomIndex];
+            document.getElementById('searchInput').value = randomTrack.track;
+            setSearchMode('track');
+            performSearch();
+            addAction('Случайный трек', `Выбран трек: ${randomTrack.track}`);
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
         // ========== ОБРАБОТКА ОТВЕТОВ ОТ БОТА ==========
         tg.onEvent('message', (data) => {
+            console.log('Ответ от бота:', data);
             try {
                 const response = JSON.parse(data);
                 
+                // Обработка результата поиска
+                if (response.type === 'search_result') {
+                    const resultDiv = document.getElementById('musicResult');
+                    if (response.track) {
+                        resultDiv.innerHTML = `
+                            <div class="result-card">
+                                <div class="artist-name">🎵 ${escapeHtml(response.track.title)}</div>
+                                <div style="margin-bottom: 8px;">🎤 ${escapeHtml(response.track.artists)}</div>
+                                <div style="margin-bottom: 8px;">💿 ${escapeHtml(response.track.album)}</div>
+                                <div class="platform-buttons">
+                                    <button onclick="tg.openLink('${response.track.links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                                    <button onclick="tg.openLink('${response.track.links.youtube_music}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                                    <button onclick="tg.openLink('${response.track.links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Трек не найден</div>`;
+                    }
+                }
+                
+                // Обработка поиска по настроению
                 if (response.type === 'mood_result') {
                     moodLoading.style.display = 'none';
                     if (response.track) {
                         moodResult.innerHTML = `
                             <div class="result-card">
                                 <div class="artist-name">🎵 ${escapeHtml(response.track.title)}</div>
-                                <div>🎤 ${escapeHtml(response.track.artists)}</div>
+                                <div style="margin-bottom: 8px;">🎤 ${escapeHtml(response.track.artists)}</div>
                                 <div class="platform-buttons">
                                     <button onclick="tg.openLink('${response.track.yandex_link}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                     <button onclick="tg.openLink('${response.track.youtube_link}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
@@ -1289,10 +1338,12 @@
                     }
                 }
                 
+                // Обработка списка подписок
                 if (response.type === 'subscriptions_list') {
                     displaySubscriptions(response.artists);
                 }
                 
+                // Обработка результата подписки
                 if (response.type === 'subscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1302,6 +1353,7 @@
                     }
                 }
                 
+                // Обработка результата отписки
                 if (response.type === 'unsubscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1315,7 +1367,7 @@
             }
         });
 
-        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ (АДМИНКА, ПОИСК, ИГРА, АССИСТЕНТ) ==========
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
         
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
@@ -1558,50 +1610,6 @@
             if (searchInput) searchInput.value = artistName;
             performSearch();
         };
-
-        async function performSearch() {
-            const searchInput = document.getElementById('searchInput');
-            if (!searchInput) return;
-            const query = searchInput.value.trim();
-            if (!query) return;
-            addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
-            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}` };
-            const resultDiv = document.getElementById('musicResult');
-            if (!resultDiv) return;
-            resultDiv.innerHTML = '<div style="text-align:center; padding:16px; color: rgba(255,255,255,0.8); font-size:13px;">🔍 Поиск...</div>';
-            
-            if (currentSearchMode === 'artist') {
-                const bioData = await getWikipediaFullBio(query);
-                const bioHtml = displayBio(bioData, query);
-                const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
-                const tracksList = artistTracks.map(t => t.track).join(', ');
-                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
-            } else {
-                const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
-                if (foundTrack) {
-                    const artistName = foundTrack.artist;
-                    const bioData = await getWikipediaFullBio(artistName);
-                    const bioHtml = displayBio(bioData, artistName);
-                    const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
-                    const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
-                    const artistLinks = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(artistName)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(artistName)}` };
-                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div><div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: #4facfe; font-size: 14px;">${escapeHtml(artistName)}</strong></div><div class="artist-card" style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 10px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 10px;"><div style="font-size: 28px;">🎤</div><div><div style="font-weight: 700; font-size: 15px;">${escapeHtml(artistName)}</div><div style="font-size: 10px; color: rgba(255,255,255,0.6);">📀 ${artistTracks.length} треков в базе</div></div></div>${otherTracks.length > 0 ? `<div style="font-size: 11px; margin-top: 6px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}</div>${bioHtml}<div class="section-title">🎧 Слушать трек</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🎤 Страница исполнителя</div><div class="platform-buttons"><button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button></div>`;
-                } else {
-                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(query)}"</div><div class="info-text">❌ Трек не найден в базе</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)}')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} cover')">🤖 Создать AI обложку</button></div>`;
-                }
-            }
-        }
-
-        function getRandomTrack() {
-            const randomIndex = Math.floor(Math.random() * tracksDatabase.length);
-            const randomTrack = tracksDatabase[randomIndex];
-            setSearchMode('track');
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) searchInput.value = randomTrack.track;
-            performSearch();
-            addAction('Случайный трек', `Выбран трек: ${randomTrack.track}`);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
 
         let recognition = null;
         let isListening = false;
