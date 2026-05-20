@@ -694,7 +694,7 @@
             <div class="menu-btn" id="goToSubscriptionsBtn">
                 <span class="menu-icon">🔔</span>
                 <div class="menu-title">Подписки</div>
-                <div class="menu-desc">Узнавай о новых релизах</div>
+                <div class="menu-desc">Управляй подписками на артистов</div>
             </div>
         </div>
     </div>
@@ -841,7 +841,7 @@
     <div class="fullscreen-page" id="subscriptionsPage">
         <div class="page-header">
             <button class="back-btn" id="backFromSubscriptions">← Назад</button>
-            <div class="page-title">🔔 Подписки</div>
+            <div class="page-title">🔔 Мои подписки</div>
         </div>
         <div class="glass-card">
             <div class="section-title">➕ Подписаться на исполнителя</div>
@@ -850,10 +850,10 @@
                 <button id="doSubscribeBtn" class="search-btn" style="background: #28a745;">Подписаться</button>
             </div>
             
-            <div class="section-title">📋 Мои подписки</div>
+            <div class="section-title">📋 Список подписок</div>
             <div id="subscriptionsList" style="margin-top: 8px; min-height: 100px;">
-                <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">
-                    🔄 Загрузка подписок...
+                <div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.6);">
+                    🔄 Загрузка ваших подписок...
                 </div>
             </div>
             
@@ -864,7 +864,7 @@
                 🎵 Используйте команды в чате с ботом: /subscribe, /unsubscribe, /subscriptions
             </div>
         </div>
-        <div class="user-info">🔔 Подпишись на любимых исполнителей</div>
+        <div class="user-info">🔔 Управляй подписками и получай уведомления о новых релизах</div>
     </div>
 
     <!-- Настройки -->
@@ -1006,19 +1006,28 @@
             setBodyMode(mode);
         }
 
+        // НАВИГАЦИЯ ПО МЕНЮ
         document.getElementById('goToMusicBtn').onclick = () => { showPage(musicPage, 'music'); loadPopularArtists(); addAction('Переход', 'Открыл раздел Музыка'); };
         document.getElementById('goToGameBtn').onclick = () => { showPage(gamePage, 'game'); addAction('Переход', 'Открыл раздел Игра'); };
         document.getElementById('goToAIBtn').onclick = () => { showPage(aiPage, 'ai'); addAction('Переход', 'Открыл раздел AI Обложки'); };
         document.getElementById('goToAssistantBtn').onclick = () => { showPage(assistantPage, 'assistant'); addAction('Переход', 'Открыл раздел AI Ассистент'); };
+        document.getElementById('goToRandomizerBtn').onclick = () => { showPage(randomizerPage, 'music'); updateTotalCount(); loadQuickArtists(); addAction('Переход', 'Открыл раздел Рандомайзер'); };
+        document.getElementById('goToMoodBtn').onclick = () => { showPage(moodPage, 'music'); addAction('Переход', 'Открыл раздел По настроению'); };
+        document.getElementById('goToSubscriptionsBtn').onclick = () => { 
+            showPage(subscriptionsPage, 'music'); 
+            loadSubscriptions(); 
+            addAction('Переход', 'Открыл раздел Подписки'); 
+        };
         
         document.getElementById('backFromMusic').onclick = showMenu;
         document.getElementById('backFromGame').onclick = showMenu;
         document.getElementById('backFromAI').onclick = showMenu;
         document.getElementById('backFromAssistant').onclick = showMenu;
+        document.getElementById('backFromRandomizer').onclick = showMenu;
+        document.getElementById('backFromMood').onclick = showMenu;
+        document.getElementById('backFromSubscriptions').onclick = showMenu;
 
         // ========== РАНДОМАЙЗЕР ==========
-        const backFromRandomizer = document.getElementById('backFromRandomizer');
-        const goToRandomizerBtn = document.getElementById('goToRandomizerBtn');
         const artistListInput = document.getElementById('artistListInput');
         const randomCountInput = document.getElementById('randomCountInput');
         const doRandomizeBtn = document.getElementById('doRandomizeBtn');
@@ -1148,59 +1157,30 @@
             showNotification(`➕ Добавлен: ${artist}`);
         };
 
-        if (goToRandomizerBtn) {
-            goToRandomizerBtn.onclick = () => { 
-                showPage(randomizerPage, 'music');
-                updateTotalCount();
-                loadQuickArtists();
-                addAction('Переход', 'Открыл раздел Рандомайзер');
-            };
-        }
-        if (backFromRandomizer) {
-            backFromRandomizer.onclick = showMenu;
-        }
         if (doRandomizeBtn) {
             doRandomizeBtn.onclick = doRandomize;
         }
 
-        // ========== СТРАНИЦА ПО НАСТРОЕНИЮ ==========
-        const backFromMood = document.getElementById('backFromMood');
-        const goToMoodBtn = document.getElementById('goToMoodBtn');
+        // ========== ПО НАСТРОЕНИЮ ==========
         const moodLoading = document.getElementById('moodLoading');
         const moodResult = document.getElementById('moodResult');
 
-        if (goToMoodBtn) {
-            goToMoodBtn.onclick = () => {
-                showPage(moodPage, 'music');
-                addAction('Переход', 'Открыл раздел По настроению');
-            };
-        }
-        if (backFromMood) backFromMood.onclick = showMenu;
-
-        // Обработчики кнопок настроения
         document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.onclick = () => {
                 const mood = btn.dataset.mood;
-                
                 moodLoading.style.display = 'block';
                 moodResult.innerHTML = '';
-                
-                tg.sendData(JSON.stringify({
-                    action: 'mood_search',
-                    mood: mood
-                }));
+                tg.sendData(JSON.stringify({ action: 'mood_search', mood: mood }));
             };
         });
 
-        // ========== СТРАНИЦА ПОДПИСОК ==========
-        const backFromSubscriptions = document.getElementById('backFromSubscriptions');
-        const goToSubscriptionsBtn = document.getElementById('goToSubscriptionsBtn');
+        // ========== ПОДПИСКИ ==========
         const subscribeArtistInput = document.getElementById('subscribeArtistInput');
         const doSubscribeBtn = document.getElementById('doSubscribeBtn');
         const subscriptionsListDiv = document.getElementById('subscriptionsList');
 
         function loadSubscriptions() {
-            subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 20px;">🔄 Загрузка подписок...</div>';
+            subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 30px;">🔄 Загрузка ваших подписок...</div>';
             tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
         }
 
@@ -1239,15 +1219,6 @@
             setTimeout(loadSubscriptions, 1500);
         };
 
-        if (goToSubscriptionsBtn) {
-            goToSubscriptionsBtn.onclick = () => {
-                showPage(subscriptionsPage, 'music');
-                loadSubscriptions();
-                addAction('Переход', 'Открыл раздел Подписки');
-            };
-        }
-        if (backFromSubscriptions) backFromSubscriptions.onclick = showMenu;
-
         if (doSubscribeBtn) {
             doSubscribeBtn.onclick = () => {
                 const artist = subscribeArtistInput.value.trim();
@@ -1272,37 +1243,28 @@
             try {
                 const response = JSON.parse(data);
                 
-                // Ответ от поиска по настроению
                 if (response.type === 'mood_result') {
                     moodLoading.style.display = 'none';
-                    
                     if (response.track) {
                         moodResult.innerHTML = `
                             <div class="result-card">
                                 <div class="artist-name">🎵 ${escapeHtml(response.track.title)}</div>
-                                <div style="margin-bottom: 8px;">🎤 ${escapeHtml(response.track.artists)}</div>
+                                <div>🎤 ${escapeHtml(response.track.artists)}</div>
                                 <div class="platform-buttons">
                                     <button onclick="tg.openLink('${response.track.yandex_link}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                     <button onclick="tg.openLink('${response.track.youtube_link}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                                 </div>
                             </div>
                         `;
-                        addAction('По настроению', `Нашёл трек`);
                     } else {
-                        moodResult.innerHTML = `
-                            <div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">
-                                ❌ Не удалось найти трек для этого настроения
-                            </div>
-                        `;
+                        moodResult.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Не удалось найти трек</div>`;
                     }
                 }
                 
-                // Ответ от подписок (список)
                 if (response.type === 'subscriptions_list') {
                     displaySubscriptions(response.artists);
                 }
                 
-                // Ответ от подписки
                 if (response.type === 'subscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1312,7 +1274,6 @@
                     }
                 }
                 
-                // Ответ от отписки
                 if (response.type === 'unsubscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1326,7 +1287,7 @@
             }
         });
 
-        // ========== ОСТАЛЬНОЙ КОД (админка, поиск, игра, ассистент) ==========
+        // ========== АДМИНКА И ОСТАЛЬНЫЕ ФУНКЦИИ ==========
         
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
