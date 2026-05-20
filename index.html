@@ -694,7 +694,7 @@
             <div class="menu-btn" id="goToSubscriptionsBtn">
                 <span class="menu-icon">🔔</span>
                 <div class="menu-title">Подписки</div>
-                <div class="menu-desc">Узнавай о новых релизах</div>
+                <div class="menu-desc">Управляй подписками на артистов</div>
             </div>
         </div>
     </div>
@@ -812,7 +812,7 @@
         <div class="user-info">🎲 Введи своих любимых исполнителей и получай случайные рекомендации</div>
     </div>
 
-    <!-- Страница По настроению -->
+    <!-- Страница По настроению - ИСПРАВЛЕНА -->
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMood">← Назад</button>
@@ -841,7 +841,7 @@
     <div class="fullscreen-page" id="subscriptionsPage">
         <div class="page-header">
             <button class="back-btn" id="backFromSubscriptions">← Назад</button>
-            <div class="page-title">🔔 Подписки</div>
+            <div class="page-title">🔔 Мои подписки</div>
         </div>
         <div class="glass-card">
             <div class="section-title">➕ Подписаться на исполнителя</div>
@@ -850,12 +850,8 @@
                 <button id="doSubscribeBtn" class="search-btn" style="background: #28a745;">Подписаться</button>
             </div>
             
-            <div class="section-title">📋 Мои подписки</div>
-            <div id="subscriptionsList" style="margin-top: 8px; min-height: 100px;">
-                <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">
-                    🔄 Загрузка подписок...
-                </div>
-            </div>
+            <div class="section-title">📋 Список подписок</div>
+            <div id="subscriptionsList" style="margin-top: 8px; min-height: 100px;"></div>
             
             <div class="section-title">ℹ️ Как это работает</div>
             <div style="font-size: 12px; color: rgba(255,255,255,0.7); padding: 8px;">
@@ -864,7 +860,7 @@
                 🎵 Используйте команды в чате с ботом: /subscribe, /unsubscribe, /subscriptions
             </div>
         </div>
-        <div class="user-info">🔔 Подпишись на любимых исполнителей</div>
+        <div class="user-info">🔔 Управляй подписками и получай уведомления о новых релизах</div>
     </div>
 
     <!-- Настройки -->
@@ -923,7 +919,7 @@
         let currentSearchMode = 'artist';
         let adminActions = [];
         let isAdminLoggedIn = false;
-        const ADMIN_PASSWORD = "admin123";
+        const ADMIN_PASSWORD = "Асия0906";
 
         const tracksDatabase = [
             { track: "Останься", artist: "Асия" },
@@ -1006,6 +1002,7 @@
             setBodyMode(mode);
         }
 
+        // НАВИГАЦИЯ ПО МЕНЮ
         document.getElementById('goToMusicBtn').onclick = () => { showPage(musicPage, 'music'); loadPopularArtists(); addAction('Переход', 'Открыл раздел Музыка'); };
         document.getElementById('goToGameBtn').onclick = () => { showPage(gamePage, 'game'); addAction('Переход', 'Открыл раздел Игра'); };
         document.getElementById('goToAIBtn').onclick = () => { showPage(aiPage, 'ai'); addAction('Переход', 'Открыл раздел AI Обложки'); };
@@ -1100,7 +1097,7 @@
                 resultHtml += `
                     <div class="random-artist-card">
                         <span class="random-artist-name">${i+1}. ${escapeHtml(artist)}</span>
-                        <a href="${yandexLink}" target="_blank" class="random-artist-link" onclick="if(window.TelegramWebApp) { TelegramWebApp.openLink('${yandexLink}'); return false; }">
+                        <a href="${yandexLink}" target="_blank" class="random-artist-link" onclick="tg.openLink('${yandexLink}'); return false;">
                             🎵 Слушать на Яндекс.Музыке
                         </a>
                     </div>
@@ -1163,7 +1160,7 @@
             doRandomizeBtn.onclick = doRandomize;
         }
 
-        // ========== СТРАНИЦА ПО НАСТРОЕНИЮ ==========
+        // ========== ПО НАСТРОЕНИЮ - ИСПРАВЛЕНО ==========
         const backFromMood = document.getElementById('backFromMood');
         const goToMoodBtn = document.getElementById('goToMoodBtn');
         const moodLoading = document.getElementById('moodLoading');
@@ -1177,37 +1174,54 @@
         }
         if (backFromMood) backFromMood.onclick = showMenu;
 
-        // Обработчики кнопок настроения
+        // Функция для поиска по настроению
+        function searchByMood(mood) {
+            console.log('🔍 Поиск по настроению:', mood);
+            moodLoading.style.display = 'block';
+            moodResult.innerHTML = '';
+            
+            const moodNames = {
+                happy: 'счастливое',
+                sad: 'грустное',
+                energetic: 'энергичное',
+                relax: 'расслабленное',
+                romantic: 'романтичное',
+                focus: 'сфокусированное'
+            };
+            
+            addAction('Поиск по настроению', `Настроение: ${moodNames[mood] || mood}`);
+            
+            // Отправляем запрос боту
+            tg.sendData(JSON.stringify({ 
+                action: 'mood_search', 
+                mood: mood 
+            }));
+        }
+
+        // Назначаем обработчики кнопок настроения
         document.querySelectorAll('.mood-btn').forEach(btn => {
-            btn.onclick = () => {
-                const mood = btn.dataset.mood;
-                
-                moodLoading.style.display = 'block';
-                moodResult.innerHTML = '';
-                
-                tg.sendData(JSON.stringify({
-                    action: 'mood_search',
-                    mood: mood
-                }));
+            btn.onclick = (e) => {
+                e.preventDefault();
+                const mood = btn.getAttribute('data-mood');
+                console.log('🎵 Нажата кнопка настроения:', mood);
+                searchByMood(mood);
             };
         });
 
-        // ========== СТРАНИЦА ПОДПИСОК ==========
+        // ========== ПОДПИСКИ ==========
         const backFromSubscriptions = document.getElementById('backFromSubscriptions');
         const goToSubscriptionsBtn = document.getElementById('goToSubscriptionsBtn');
         const subscribeArtistInput = document.getElementById('subscribeArtistInput');
         const doSubscribeBtn = document.getElementById('doSubscribeBtn');
         const subscriptionsListDiv = document.getElementById('subscriptionsList');
 
-        function loadSubscriptions() {
-            subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 20px;">🔄 Загрузка подписок...</div>';
-            tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
-        }
+        let cachedSubscriptions = null;
 
         function displaySubscriptions(artists) {
+            cachedSubscriptions = artists;
             if (!artists || artists.length === 0) {
                 subscriptionsListDiv.innerHTML = `
-                    <div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.6);">
+                    <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.05); border-radius: 20px;">
                         📭 У вас нет активных подписок.<br><br>
                         Введите имя исполнителя выше, чтобы подписаться!
                     </div>`;
@@ -1217,7 +1231,7 @@
             let html = '';
             artists.forEach(artist => {
                 html += `
-                    <div class="subscribe-item" data-artist="${escapeHtml(artist.name)}">
+                    <div class="subscribe-item">
                         <div class="subscribe-artist-name">
                             🎤 ${escapeHtml(artist.name)}
                         </div>
@@ -1230,13 +1244,21 @@
             subscriptionsListDiv.innerHTML = html;
         }
 
+        function loadSubscriptions() {
+            if (cachedSubscriptions !== null) {
+                displaySubscriptions(cachedSubscriptions);
+            } else {
+                subscriptionsListDiv.innerHTML = `<div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.05); border-radius: 20px;">⏳ Получение подписок...</div>`;
+            }
+            tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
+        }
+
         window.unsubscribeArtist = function(artistName) {
             tg.sendData(JSON.stringify({
                 action: 'unsubscribe_artist',
                 artist: artistName
             }));
             showNotification(`❌ Отписка от ${artistName}...`);
-            setTimeout(loadSubscriptions, 1500);
         };
 
         if (goToSubscriptionsBtn) {
@@ -1255,27 +1277,75 @@
                     showNotification('❌ Введите имя исполнителя');
                     return;
                 }
-                
                 tg.sendData(JSON.stringify({
                     action: 'subscribe_artist',
                     artist: artist
                 }));
-                
                 showNotification(`🔔 Подписка на ${artist}...`);
                 subscribeArtistInput.value = '';
-                setTimeout(loadSubscriptions, 1500);
             };
+        }
+
+        // ========== ПОИСК МУЗЫКИ ==========
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                showNotification('❌ Введите запрос');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('musicResult');
+            resultDiv.innerHTML = '<div style="text-align:center; padding:16px;">🔍 Поиск...</div>';
+            addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
+            
+            tg.sendData(JSON.stringify({ 
+                action: 'search', 
+                query: query,
+                mode: currentSearchMode 
+            }));
+        }
+
+        function getRandomTrack() {
+            const randomIndex = Math.floor(Math.random() * tracksDatabase.length);
+            const randomTrack = tracksDatabase[randomIndex];
+            document.getElementById('searchInput').value = randomTrack.track;
+            setSearchMode('track');
+            performSearch();
+            addAction('Случайный трек', `Выбран трек: ${randomTrack.track}`);
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         // ========== ОБРАБОТКА ОТВЕТОВ ОТ БОТА ==========
         tg.onEvent('message', (data) => {
+            console.log('📩 Ответ от бота:', data);
             try {
                 const response = JSON.parse(data);
                 
-                // Ответ от поиска по настроению
+                // Обработка результата поиска
+                if (response.type === 'search_result') {
+                    const resultDiv = document.getElementById('musicResult');
+                    if (response.track) {
+                        resultDiv.innerHTML = `
+                            <div class="result-card">
+                                <div class="artist-name">🎵 ${escapeHtml(response.track.title)}</div>
+                                <div style="margin-bottom: 8px;">🎤 ${escapeHtml(response.track.artists)}</div>
+                                <div style="margin-bottom: 8px;">💿 ${escapeHtml(response.track.album)}</div>
+                                <div class="platform-buttons">
+                                    <button onclick="tg.openLink('${response.track.links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                                    <button onclick="tg.openLink('${response.track.links.youtube_music}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                                    <button onclick="tg.openLink('${response.track.links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Трек не найден</div>`;
+                    }
+                }
+                
+                // Обработка поиска по настроению - ИСПРАВЛЕНО
                 if (response.type === 'mood_result') {
+                    console.log('🎵 Получен результат настроения:', response);
                     moodLoading.style.display = 'none';
-                    
                     if (response.track) {
                         moodResult.innerHTML = `
                             <div class="result-card">
@@ -1287,22 +1357,18 @@
                                 </div>
                             </div>
                         `;
-                        addAction('По настроению', `Нашёл трек`);
+                        addAction('Результат настроения', `Найден трек: ${response.track.title} - ${response.track.artists}`);
                     } else {
-                        moodResult.innerHTML = `
-                            <div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">
-                                ❌ Не удалось найти трек для этого настроения
-                            </div>
-                        `;
+                        moodResult.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Не удалось найти трек для этого настроения</div>`;
                     }
                 }
                 
-                // Ответ от подписок (список)
+                // Обработка списка подписок
                 if (response.type === 'subscriptions_list') {
                     displaySubscriptions(response.artists);
                 }
                 
-                // Ответ от подписки
+                // Обработка результата подписки
                 if (response.type === 'subscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1312,7 +1378,7 @@
                     }
                 }
                 
-                // Ответ от отписки
+                // Обработка результата отписки
                 if (response.type === 'unsubscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1322,11 +1388,11 @@
                     }
                 }
             } catch(e) {
-                console.error('Ошибка парсинга ответа:', e);
+                console.error('❌ Ошибка парсинга ответа:', e);
             }
         });
 
-        // ========== ОСТАЛЬНОЙ КОД (админка, поиск, игра, ассистент) ==========
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
         
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
@@ -1569,50 +1635,6 @@
             if (searchInput) searchInput.value = artistName;
             performSearch();
         };
-
-        async function performSearch() {
-            const searchInput = document.getElementById('searchInput');
-            if (!searchInput) return;
-            const query = searchInput.value.trim();
-            if (!query) return;
-            addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
-            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}` };
-            const resultDiv = document.getElementById('musicResult');
-            if (!resultDiv) return;
-            resultDiv.innerHTML = '<div style="text-align:center; padding:16px; color: rgba(255,255,255,0.8); font-size:13px;">🔍 Поиск...</div>';
-            
-            if (currentSearchMode === 'artist') {
-                const bioData = await getWikipediaFullBio(query);
-                const bioHtml = displayBio(bioData, query);
-                const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
-                const tracksList = artistTracks.map(t => t.track).join(', ');
-                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
-            } else {
-                const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
-                if (foundTrack) {
-                    const artistName = foundTrack.artist;
-                    const bioData = await getWikipediaFullBio(artistName);
-                    const bioHtml = displayBio(bioData, artistName);
-                    const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
-                    const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
-                    const artistLinks = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(artistName)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(artistName)}` };
-                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div><div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: #4facfe; font-size: 14px;">${escapeHtml(artistName)}</strong></div><div class="artist-card" style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 10px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 10px;"><div style="font-size: 28px;">🎤</div><div><div style="font-weight: 700; font-size: 15px;">${escapeHtml(artistName)}</div><div style="font-size: 10px; color: rgba(255,255,255,0.6);">📀 ${artistTracks.length} треков в базе</div></div></div>${otherTracks.length > 0 ? `<div style="font-size: 11px; margin-top: 6px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}</div>${bioHtml}<div class="section-title">🎧 Слушать трек</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🎤 Страница исполнителя</div><div class="platform-buttons"><button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button></div>`;
-                } else {
-                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(query)}"</div><div class="info-text">❌ Трек не найден в базе</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)}')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} cover')">🤖 Создать AI обложку</button></div>`;
-                }
-            }
-        }
-
-        function getRandomTrack() {
-            const randomIndex = Math.floor(Math.random() * tracksDatabase.length);
-            const randomTrack = tracksDatabase[randomIndex];
-            setSearchMode('track');
-            const searchInput = document.getElementById('searchInput');
-            if (searchInput) searchInput.value = randomTrack.track;
-            performSearch();
-            addAction('Случайный трек', `Выбран трек: ${randomTrack.track}`);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        }
 
         let recognition = null;
         let isListening = false;
