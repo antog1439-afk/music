@@ -812,7 +812,7 @@
         <div class="user-info">🎲 Введи своих любимых исполнителей и получай случайные рекомендации</div>
     </div>
 
-    <!-- Страница По настроению -->
+    <!-- Страница По настроению - ИСПРАВЛЕНА -->
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMood">← Назад</button>
@@ -851,9 +851,7 @@
             </div>
             
             <div class="section-title">📋 Список подписок</div>
-            <div id="subscriptionsList" style="margin-top: 8px; min-height: 100px;">
-                <!-- Здесь сразу будут показываться подписки -->
-            </div>
+            <div id="subscriptionsList" style="margin-top: 8px; min-height: 100px;"></div>
             
             <div class="section-title">ℹ️ Как это работает</div>
             <div style="font-size: 12px; color: rgba(255,255,255,0.7); padding: 8px;">
@@ -1162,7 +1160,7 @@
             doRandomizeBtn.onclick = doRandomize;
         }
 
-        // ========== ПО НАСТРОЕНИЮ ==========
+        // ========== ПО НАСТРОЕНИЮ - ИСПРАВЛЕНО ==========
         const backFromMood = document.getElementById('backFromMood');
         const goToMoodBtn = document.getElementById('goToMoodBtn');
         const moodLoading = document.getElementById('moodLoading');
@@ -1176,12 +1174,37 @@
         }
         if (backFromMood) backFromMood.onclick = showMenu;
 
+        // Функция для поиска по настроению
+        function searchByMood(mood) {
+            console.log('🔍 Поиск по настроению:', mood);
+            moodLoading.style.display = 'block';
+            moodResult.innerHTML = '';
+            
+            const moodNames = {
+                happy: 'счастливое',
+                sad: 'грустное',
+                energetic: 'энергичное',
+                relax: 'расслабленное',
+                romantic: 'романтичное',
+                focus: 'сфокусированное'
+            };
+            
+            addAction('Поиск по настроению', `Настроение: ${moodNames[mood] || mood}`);
+            
+            // Отправляем запрос боту
+            tg.sendData(JSON.stringify({ 
+                action: 'mood_search', 
+                mood: mood 
+            }));
+        }
+
+        // Назначаем обработчики кнопок настроения
         document.querySelectorAll('.mood-btn').forEach(btn => {
-            btn.onclick = () => {
-                const mood = btn.dataset.mood;
-                moodLoading.style.display = 'block';
-                moodResult.innerHTML = '';
-                tg.sendData(JSON.stringify({ action: 'mood_search', mood: mood }));
+            btn.onclick = (e) => {
+                e.preventDefault();
+                const mood = btn.getAttribute('data-mood');
+                console.log('🎵 Нажата кнопка настроения:', mood);
+                searchByMood(mood);
             };
         });
 
@@ -1294,7 +1317,7 @@
 
         // ========== ОБРАБОТКА ОТВЕТОВ ОТ БОТА ==========
         tg.onEvent('message', (data) => {
-            console.log('Ответ от бота:', data);
+            console.log('📩 Ответ от бота:', data);
             try {
                 const response = JSON.parse(data);
                 
@@ -1319,8 +1342,9 @@
                     }
                 }
                 
-                // Обработка поиска по настроению
+                // Обработка поиска по настроению - ИСПРАВЛЕНО
                 if (response.type === 'mood_result') {
+                    console.log('🎵 Получен результат настроения:', response);
                     moodLoading.style.display = 'none';
                     if (response.track) {
                         moodResult.innerHTML = `
@@ -1333,8 +1357,9 @@
                                 </div>
                             </div>
                         `;
+                        addAction('Результат настроения', `Найден трек: ${response.track.title} - ${response.track.artists}`);
                     } else {
-                        moodResult.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Не удалось найти трек</div>`;
+                        moodResult.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Не удалось найти трек для этого настроения</div>`;
                     }
                 }
                 
@@ -1363,7 +1388,7 @@
                     }
                 }
             } catch(e) {
-                console.error('Ошибка парсинга ответа:', e);
+                console.error('❌ Ошибка парсинга ответа:', e);
             }
         });
 
