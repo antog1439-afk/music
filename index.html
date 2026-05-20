@@ -342,6 +342,90 @@
         }
         .unsubscribe-btn:active { transform: scale(0.96); }
         
+        /* Аудиоплеер */
+        .audio-player {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            padding: 10px 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #28a745;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .play-btn:active { transform: scale(0.95); }
+        
+        .audio-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .audio-title {
+            font-weight: 600;
+            color: white;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .audio-artist {
+            font-size: 10px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .preview-badge {
+            background: #9b59b6;
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 20px;
+            margin-left: 6px;
+        }
+        
+        .progress-container {
+            margin-top: 4px;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 3px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #28a745;
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+        
+        .time {
+            font-size: 9px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
         .qr-btn, .ai-btn {
             margin-top: 10px;
             padding: 10px;
@@ -655,6 +739,8 @@
             .page-title { font-size: 20px; }
             .glass-card { padding: 16px; }
             .chat-container { height: 340px; }
+            .audio-player { padding: 8px 12px; }
+            .play-btn { width: 34px; height: 34px; font-size: 14px; }
         }
     </style>
 </head>
@@ -812,7 +898,7 @@
         <div class="user-info">🎲 Введи своих любимых исполнителей и получай случайные рекомендации</div>
     </div>
 
-    <!-- Страница По настроению - ИСПРАВЛЕНА -->
+    <!-- Страница По настроению -->
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMood">← Назад</button>
@@ -955,6 +1041,116 @@
         ];
 
         const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons","Кино","Земфира"];
+
+        // Аудиоплеер
+        let activeAudio = null;
+        let activePlayerId = null;
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function createAudioPlayer(track, type = 'search') {
+            if (!track.preview_url) {
+                return '<div class="audio-player" style="background: rgba(255,100,100,0.3);"><span style="color: white; font-size: 12px;">🎧 Превью недоступно</span></div>';
+            }
+            
+            const playerId = `player_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
+            const duration = track.duration || '0:30';
+            
+            return `
+                <div class="audio-player" id="${playerId}" data-preview-url="${track.preview_url}">
+                    <button class="play-btn" onclick="togglePlayback('${playerId}', '${track.preview_url}')">▶️</button>
+                    <div class="audio-info">
+                        <div class="audio-title">${escapeHtml(track.title)} <span class="preview-badge">30 сек</span></div>
+                        <div class="audio-artist">${escapeHtml(track.artists)}</div>
+                        <div class="progress-container" onclick="seekAudio(event, '${playerId}')">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress_${playerId}"></div>
+                            </div>
+                            <div class="time">
+                                <span id="current_${playerId}">0:00</span>
+                                <span id="total_${playerId}">${duration}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.togglePlayback = function(playerId, previewUrl) {
+            const playBtn = document.querySelector(`#${playerId} .play-btn`);
+            
+            if (activeAudio && activePlayerId === playerId) {
+                activeAudio.pause();
+                activeAudio.currentTime = 0;
+                activeAudio = null;
+                activePlayerId = null;
+                if (playBtn) playBtn.innerHTML = '▶️';
+                updateProgress(playerId, 0, 0);
+                return;
+            }
+            
+            if (activeAudio) {
+                const oldBtn = document.querySelector(`#${activePlayerId} .play-btn`);
+                if (oldBtn) oldBtn.innerHTML = '▶️';
+                activeAudio.pause();
+                activeAudio = null;
+            }
+            
+            const audio = new Audio(previewUrl);
+            activeAudio = audio;
+            activePlayerId = playerId;
+            if (playBtn) playBtn.innerHTML = '⏸️';
+            
+            const durationSpan = document.getElementById(`total_${playerId}`);
+            audio.addEventListener('loadedmetadata', () => {
+                const totalSecs = Math.min(audio.duration, 30);
+                if (durationSpan) durationSpan.textContent = formatTime(totalSecs);
+            });
+            
+            audio.ontimeupdate = () => {
+                const current = Math.min(audio.currentTime, 30);
+                const percent = (current / 30) * 100;
+                updateProgress(playerId, current, percent);
+                
+                if (audio.currentTime >= 30) {
+                    audio.pause();
+                    if (playBtn) playBtn.innerHTML = '▶️';
+                    activeAudio = null;
+                    activePlayerId = null;
+                }
+            };
+            
+            audio.onended = () => {
+                if (playBtn) playBtn.innerHTML = '▶️';
+                activeAudio = null;
+                activePlayerId = null;
+            };
+            
+            audio.play().catch(e => console.log('Ошибка воспроизведения:', e));
+        };
+
+        function updateProgress(playerId, currentSecs, percent) {
+            const fill = document.getElementById(`progress_${playerId}`);
+            const currentSpan = document.getElementById(`current_${playerId}`);
+            
+            if (fill) fill.style.width = `${percent}%`;
+            if (currentSpan) currentSpan.textContent = formatTime(currentSecs);
+        }
+
+        window.seekAudio = function(event, playerId) {
+            if (!activeAudio || activePlayerId !== playerId) return;
+            
+            const container = event.currentTarget;
+            const rect = container.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percent = Math.min(1, Math.max(0, x / rect.width));
+            const newTime = percent * 30;
+            activeAudio.currentTime = newTime;
+        };
 
         function setBodyMode(mode) {
             document.body.classList.remove('music-mode', 'game-mode', 'ai-mode', 'assistant-mode');
@@ -1160,7 +1356,7 @@
             doRandomizeBtn.onclick = doRandomize;
         }
 
-        // ========== ПО НАСТРОЕНИЮ - ИСПРАВЛЕНО ==========
+        // ========== ПО НАСТРОЕНИЮ ==========
         const backFromMood = document.getElementById('backFromMood');
         const goToMoodBtn = document.getElementById('goToMoodBtn');
         const moodLoading = document.getElementById('moodLoading');
@@ -1174,36 +1370,18 @@
         }
         if (backFromMood) backFromMood.onclick = showMenu;
 
-        // Функция для поиска по настроению
         function searchByMood(mood) {
             console.log('🔍 Поиск по настроению:', mood);
             moodLoading.style.display = 'block';
             moodResult.innerHTML = '';
-            
-            const moodNames = {
-                happy: 'счастливое',
-                sad: 'грустное',
-                energetic: 'энергичное',
-                relax: 'расслабленное',
-                romantic: 'романтичное',
-                focus: 'сфокусированное'
-            };
-            
-            addAction('Поиск по настроению', `Настроение: ${moodNames[mood] || mood}`);
-            
-            // Отправляем запрос боту
-            tg.sendData(JSON.stringify({ 
-                action: 'mood_search', 
-                mood: mood 
-            }));
+            addAction('Поиск по настроению', `Настроение: ${mood}`);
+            tg.sendData(JSON.stringify({ action: 'mood_search', mood: mood }));
         }
 
-        // Назначаем обработчики кнопок настроения
         document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.onclick = (e) => {
                 e.preventDefault();
                 const mood = btn.getAttribute('data-mood');
-                console.log('🎵 Нажата кнопка настроения:', mood);
                 searchByMood(mood);
             };
         });
@@ -1254,10 +1432,7 @@
         }
 
         window.unsubscribeArtist = function(artistName) {
-            tg.sendData(JSON.stringify({
-                action: 'unsubscribe_artist',
-                artist: artistName
-            }));
+            tg.sendData(JSON.stringify({ action: 'unsubscribe_artist', artist: artistName }));
             showNotification(`❌ Отписка от ${artistName}...`);
         };
 
@@ -1277,10 +1452,7 @@
                     showNotification('❌ Введите имя исполнителя');
                     return;
                 }
-                tg.sendData(JSON.stringify({
-                    action: 'subscribe_artist',
-                    artist: artist
-                }));
+                tg.sendData(JSON.stringify({ action: 'subscribe_artist', artist: artist }));
                 showNotification(`🔔 Подписка на ${artist}...`);
                 subscribeArtistInput.value = '';
             };
@@ -1297,12 +1469,7 @@
             const resultDiv = document.getElementById('musicResult');
             resultDiv.innerHTML = '<div style="text-align:center; padding:16px;">🔍 Поиск...</div>';
             addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
-            
-            tg.sendData(JSON.stringify({ 
-                action: 'search', 
-                query: query,
-                mode: currentSearchMode 
-            }));
+            tg.sendData(JSON.stringify({ action: 'search', query: query, mode: currentSearchMode }));
         }
 
         function getRandomTrack() {
@@ -1321,30 +1488,29 @@
             try {
                 const response = JSON.parse(data);
                 
-                // Обработка результата поиска
                 if (response.type === 'search_result') {
                     const resultDiv = document.getElementById('musicResult');
                     if (response.track) {
+                        const track = response.track;
                         resultDiv.innerHTML = `
                             <div class="result-card">
-                                <div class="artist-name">🎵 ${escapeHtml(response.track.title)}</div>
-                                <div style="margin-bottom: 8px;">🎤 ${escapeHtml(response.track.artists)}</div>
-                                <div style="margin-bottom: 8px;">💿 ${escapeHtml(response.track.album)}</div>
+                                <div class="artist-name">🎵 ${escapeHtml(track.title)}</div>
+                                <div style="margin-bottom: 8px;">🎤 ${escapeHtml(track.artists)}</div>
+                                <div style="margin-bottom: 8px;">💿 ${escapeHtml(track.album)}</div>
                                 <div class="platform-buttons">
-                                    <button onclick="tg.openLink('${response.track.links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                                    <button onclick="tg.openLink('${response.track.links.youtube_music}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                                    <button onclick="tg.openLink('${response.track.links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                                    <button onclick="tg.openLink('${track.links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                                    <button onclick="tg.openLink('${track.links.youtube_music}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                                    <button onclick="tg.openLink('${track.links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
                                 </div>
                             </div>
+                            ${createAudioPlayer(track, 'search')}
                         `;
                     } else {
                         resultDiv.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Трек не найден</div>`;
                     }
                 }
                 
-                // Обработка поиска по настроению - ИСПРАВЛЕНО
                 if (response.type === 'mood_result') {
-                    console.log('🎵 Получен результат настроения:', response);
                     moodLoading.style.display = 'none';
                     if (response.track) {
                         moodResult.innerHTML = `
@@ -1356,19 +1522,18 @@
                                     <button onclick="tg.openLink('${response.track.youtube_link}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                                 </div>
                             </div>
+                            ${createAudioPlayer(response.track, 'mood')}
                         `;
-                        addAction('Результат настроения', `Найден трек: ${response.track.title} - ${response.track.artists}`);
+                        addAction('Результат настроения', `Найден трек: ${response.track.title}`);
                     } else {
-                        moodResult.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Не удалось найти трек для этого настроения</div>`;
+                        moodResult.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Не удалось найти трек</div>`;
                     }
                 }
                 
-                // Обработка списка подписок
                 if (response.type === 'subscriptions_list') {
                     displaySubscriptions(response.artists);
                 }
                 
-                // Обработка результата подписки
                 if (response.type === 'subscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1378,7 +1543,6 @@
                     }
                 }
                 
-                // Обработка результата отписки
                 if (response.type === 'unsubscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1826,7 +1990,7 @@
         const welcomeShown = sessionStorage.getItem('welcome_shown');
         if (!welcomeShown) {
             setTimeout(() => {
-                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом, используй рандомайзер, ищи по настроению и подписывайся на любимых исполнителей!", buttons: [{ type: "ok" }] });
+                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nТеперь можно слушать 30-секундные превью треков!\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом, используй рандомайзер, ищи по настроению и подписывайся на любимых исполнителей!", buttons: [{ type: "ok" }] });
                 sessionStorage.setItem('welcome_shown', 'true');
             }, 500);
         }
