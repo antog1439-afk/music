@@ -280,27 +280,6 @@
         .vk-btn { background: #0077ff; }
         .spotify-btn { background: #1db954; }
         
-        /* Стиль для блока с фактом */
-        .fact-box {
-            background: rgba(155,89,182,0.25);
-            backdrop-filter: blur(5px);
-            border-radius: 16px;
-            padding: 12px;
-            margin: 12px 0;
-            border-left: 3px solid #9b59b6;
-        }
-        .fact-text {
-            font-size: 12px;
-            color: #e0b0ff;
-            line-height: 1.4;
-        }
-        .quote-text {
-            font-size: 11px;
-            color: rgba(255,255,255,0.6);
-            margin-top: 8px;
-            font-style: italic;
-        }
-        
         .random-artist-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -666,6 +645,29 @@
             transform: scale(0.96);
         }
         
+        /* Стили для блока с фактами */
+        .fact-box {
+            background: rgba(155,89,182,0.25);
+            backdrop-filter: blur(5px);
+            border-radius: 16px;
+            padding: 12px;
+            margin: 12px 0;
+            border-left: 3px solid #9b59b6;
+        }
+        
+        .fact-text {
+            font-size: 12px;
+            color: #e0b0ff;
+            line-height: 1.4;
+        }
+        
+        .quote-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
         @media (max-width: 480px) {
             .fullscreen-page { padding: 14px; }
             .menu-screen { max-width: 220px; gap: 12px; }
@@ -717,7 +719,7 @@
             <div class="menu-btn" id="goToSubscriptionsBtn">
                 <span class="menu-icon">🔔</span>
                 <div class="menu-title">Подписки</div>
-                <div class="menu-desc">Узнавай о новых релизах</div>
+                <div class="menu-desc">Управляй подписками на артистов</div>
             </div>
         </div>
     </div>
@@ -864,7 +866,7 @@
     <div class="fullscreen-page" id="subscriptionsPage">
         <div class="page-header">
             <button class="back-btn" id="backFromSubscriptions">← Назад</button>
-            <div class="page-title">🔔 Подписки</div>
+            <div class="page-title">🔔 Мои подписки</div>
         </div>
         <div class="glass-card">
             <div class="section-title">➕ Подписаться на исполнителя</div>
@@ -873,12 +875,8 @@
                 <button id="doSubscribeBtn" class="search-btn" style="background: #28a745;">Подписаться</button>
             </div>
             
-            <div class="section-title">📋 Мои подписки</div>
-            <div id="subscriptionsList" style="margin-top: 8px; min-height: 100px;">
-                <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.6);">
-                    🔄 Загрузка подписок...
-                </div>
-            </div>
+            <div class="section-title">📋 Список подписок</div>
+            <div id="subscriptionsList" style="margin-top: 8px; min-height: 100px;"></div>
             
             <div class="section-title">ℹ️ Как это работает</div>
             <div style="font-size: 12px; color: rgba(255,255,255,0.7); padding: 8px;">
@@ -887,7 +885,7 @@
                 🎵 Используйте команды в чате с ботом: /subscribe, /unsubscribe, /subscriptions
             </div>
         </div>
-        <div class="user-info">🔔 Подпишись на любимых исполнителей</div>
+        <div class="user-info">🔔 Управляй подписками и получай уведомления о новых релизах</div>
     </div>
 
     <!-- Настройки -->
@@ -1123,7 +1121,7 @@
                 resultHtml += `
                     <div class="random-artist-card">
                         <span class="random-artist-name">${i+1}. ${escapeHtml(artist)}</span>
-                        <a href="${yandexLink}" target="_blank" class="random-artist-link" onclick="if(window.TelegramWebApp) { TelegramWebApp.openLink('${yandexLink}'); return false; }">
+                        <a href="${yandexLink}" target="_blank" class="random-artist-link" onclick="tg.openLink('${yandexLink}'); return false;">
                             🎵 Слушать на Яндекс.Музыке
                         </a>
                     </div>
@@ -1200,37 +1198,36 @@
         }
         if (backFromMood) backFromMood.onclick = showMenu;
 
-        // Обработчики кнопок настроения
+        function searchByMood(mood) {
+            console.log('🔍 Поиск по настроению:', mood);
+            moodLoading.style.display = 'block';
+            moodResult.innerHTML = '';
+            addAction('Поиск по настроению', `Настроение: ${mood}`);
+            tg.sendData(JSON.stringify({ action: 'mood_search', mood: mood }));
+        }
+
         document.querySelectorAll('.mood-btn').forEach(btn => {
-            btn.onclick = () => {
-                const mood = btn.dataset.mood;
-                
-                moodLoading.style.display = 'block';
-                moodResult.innerHTML = '';
-                
-                tg.sendData(JSON.stringify({
-                    action: 'mood_search',
-                    mood: mood
-                }));
+            btn.onclick = (e) => {
+                e.preventDefault();
+                const mood = btn.getAttribute('data-mood');
+                searchByMood(mood);
             };
         });
 
-        // ========== СТРАНИЦА ПОДПИСОК ==========
+        // ========== ПОДПИСКИ ==========
         const backFromSubscriptions = document.getElementById('backFromSubscriptions');
         const goToSubscriptionsBtn = document.getElementById('goToSubscriptionsBtn');
         const subscribeArtistInput = document.getElementById('subscribeArtistInput');
         const doSubscribeBtn = document.getElementById('doSubscribeBtn');
         const subscriptionsListDiv = document.getElementById('subscriptionsList');
 
-        function loadSubscriptions() {
-            subscriptionsListDiv.innerHTML = '<div style="text-align: center; padding: 20px;">🔄 Загрузка подписок...</div>';
-            tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
-        }
+        let cachedSubscriptions = null;
 
         function displaySubscriptions(artists) {
+            cachedSubscriptions = artists;
             if (!artists || artists.length === 0) {
                 subscriptionsListDiv.innerHTML = `
-                    <div style="text-align: center; padding: 30px; color: rgba(255,255,255,0.6);">
+                    <div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.05); border-radius: 20px;">
                         📭 У вас нет активных подписок.<br><br>
                         Введите имя исполнителя выше, чтобы подписаться!
                     </div>`;
@@ -1240,7 +1237,7 @@
             let html = '';
             artists.forEach(artist => {
                 html += `
-                    <div class="subscribe-item" data-artist="${escapeHtml(artist.name)}">
+                    <div class="subscribe-item">
                         <div class="subscribe-artist-name">
                             🎤 ${escapeHtml(artist.name)}
                         </div>
@@ -1253,13 +1250,18 @@
             subscriptionsListDiv.innerHTML = html;
         }
 
+        function loadSubscriptions() {
+            if (cachedSubscriptions !== null) {
+                displaySubscriptions(cachedSubscriptions);
+            } else {
+                subscriptionsListDiv.innerHTML = `<div style="text-align: center; padding: 30px; background: rgba(255,255,255,0.05); border-radius: 20px;">⏳ Получение подписок...</div>`;
+            }
+            tg.sendData(JSON.stringify({ action: 'get_subscriptions' }));
+        }
+
         window.unsubscribeArtist = function(artistName) {
-            tg.sendData(JSON.stringify({
-                action: 'unsubscribe_artist',
-                artist: artistName
-            }));
+            tg.sendData(JSON.stringify({ action: 'unsubscribe_artist', artist: artistName }));
             showNotification(`❌ Отписка от ${artistName}...`);
-            setTimeout(loadSubscriptions, 1500);
         };
 
         if (goToSubscriptionsBtn) {
@@ -1278,31 +1280,26 @@
                     showNotification('❌ Введите имя исполнителя');
                     return;
                 }
-                
-                tg.sendData(JSON.stringify({
-                    action: 'subscribe_artist',
-                    artist: artist
-                }));
-                
+                tg.sendData(JSON.stringify({ action: 'subscribe_artist', artist: artist }));
                 showNotification(`🔔 Подписка на ${artist}...`);
                 subscribeArtistInput.value = '';
-                setTimeout(loadSubscriptions, 1500);
             };
         }
 
         // ========== ПОИСК МУЗЫКИ ==========
         function performSearch() {
             const query = document.getElementById('searchInput').value.trim();
-            if (!query) return;
+            if (!query) {
+                showNotification('❌ Введите запрос');
+                return;
+            }
             
             const resultDiv = document.getElementById('musicResult');
             resultDiv.innerHTML = '<div style="text-align:center; padding:16px;">🔍 Поиск...</div>';
             addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
             
-            tg.sendData(JSON.stringify({ 
-                action: 'search', 
-                query: query 
-            }));
+            console.log('🔍 Отправляем поиск:', query);
+            tg.sendData(JSON.stringify({ action: 'search', query: query, mode: currentSearchMode }));
         }
 
         function getRandomTrack() {
@@ -1317,25 +1314,25 @@
 
         // ========== ОБРАБОТКА ОТВЕТОВ ОТ БОТА ==========
         tg.onEvent('message', (data) => {
+            console.log('📩 Ответ от бота:', data);
             try {
                 const response = JSON.parse(data);
+                console.log('📩 Тип ответа:', response.type);
                 
-                // Обработка поиска трека
                 if (response.type === 'search_result') {
                     const resultDiv = document.getElementById('musicResult');
                     if (response.track) {
                         const track = response.track;
+                        console.log('✅ Трек найден:', track.title);
                         resultDiv.innerHTML = `
                             <div class="result-card">
                                 <div class="artist-name">🎵 ${escapeHtml(track.title)}</div>
                                 <div style="margin-bottom: 8px;">🎤 ${escapeHtml(track.artists)}</div>
                                 <div style="margin-bottom: 8px;">💿 ${escapeHtml(track.album)}</div>
-                                ${track.fact ? `
                                 <div class="fact-box">
-                                    <div class="fact-text">✨ ${escapeHtml(track.fact)}</div>
+                                    <div class="fact-text">✨ ${escapeHtml(track.fact || 'Интересный факт о музыке...')}</div>
                                     <div class="quote-text">💬 ${escapeHtml(track.quote || 'Наслаждайтесь музыкой!')}</div>
                                 </div>
-                                ` : ''}
                                 <div class="platform-buttons">
                                     <button onclick="tg.openLink('${track.links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                     <button onclick="tg.openLink('${track.links.youtube_music}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
@@ -1345,42 +1342,39 @@
                             </div>
                         `;
                     } else {
+                        console.log('❌ Трек не найден');
                         resultDiv.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Трек не найден</div>`;
                     }
                 }
                 
-                // Обработка поиска по настроению
                 if (response.type === 'mood_result') {
                     moodLoading.style.display = 'none';
                     if (response.track) {
+                        console.log('✅ Трек по настроению найден:', response.track.title);
                         moodResult.innerHTML = `
                             <div class="result-card">
                                 <div class="artist-name">🎵 ${escapeHtml(response.track.title)}</div>
                                 <div style="margin-bottom: 8px;">🎤 ${escapeHtml(response.track.artists)}</div>
-                                ${response.track.fact ? `
                                 <div class="fact-box">
-                                    <div class="fact-text">✨ ${escapeHtml(response.track.fact)}</div>
+                                    <div class="fact-text">✨ ${escapeHtml(response.track.fact || 'Интересный факт о музыке...')}</div>
                                     <div class="quote-text">💬 ${escapeHtml(response.track.quote || 'Наслаждайтесь музыкой!')}</div>
                                 </div>
-                                ` : ''}
                                 <div class="platform-buttons">
                                     <button onclick="tg.openLink('${response.track.yandex_link}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                     <button onclick="tg.openLink('${response.track.youtube_link}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                                 </div>
                             </div>
                         `;
-                        addAction('По настроению', `Нашёл трек: ${response.track.title}`);
+                        addAction('Результат настроения', `Найден трек: ${response.track.title}`);
                     } else {
                         moodResult.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Не удалось найти трек</div>`;
                     }
                 }
                 
-                // Обработка списка подписок
                 if (response.type === 'subscriptions_list') {
                     displaySubscriptions(response.artists);
                 }
                 
-                // Обработка результата подписки
                 if (response.type === 'subscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1390,7 +1384,6 @@
                     }
                 }
                 
-                // Обработка результата отписки
                 if (response.type === 'unsubscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1400,11 +1393,11 @@
                     }
                 }
             } catch(e) {
-                console.error('Ошибка парсинга ответа:', e);
+                console.error('❌ Ошибка парсинга ответа:', e);
             }
         });
 
-        // ========== ОСТАЛЬНОЙ КОД ==========
+        // ========== ОСТАЛЬНЫЕ ФУНКЦИИ ==========
         
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
@@ -1838,7 +1831,7 @@
         const welcomeShown = sessionStorage.getItem('welcome_shown');
         if (!welcomeShown) {
             setTimeout(() => {
-                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nТеперь под каждым треком — интересные факты о музыке!\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом, используй рандомайзер, ищи по настроению и подписывайся на любимых исполнителей!", buttons: [{ type: "ok" }] });
+                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\n✨ Теперь под каждым треком — интересные факты о музыке!\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом, используй рандомайзер, ищи по настроению и подписывайся на любимых исполнителей!", buttons: [{ type: "ok" }] });
                 sessionStorage.setItem('welcome_shown', 'true');
             }, 500);
         }
