@@ -263,6 +263,61 @@
         }
         .artist-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: white; }
         
+        /* Стиль для ИИ-факта (как в Яндекс.Музыке) */
+        .ai-fact-card {
+            background: linear-gradient(135deg, rgba(155,89,182,0.25), rgba(142,68,173,0.2));
+            border-left: 4px solid #9b59b6;
+            border-radius: 16px;
+            padding: 14px;
+            margin: 12px 0;
+            transition: all 0.3s ease;
+        }
+        .ai-fact-header {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .ai-fact-icon {
+            font-size: 24px;
+            background: rgba(155,89,182,0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ai-fact-content {
+            flex: 1;
+        }
+        .ai-fact-label {
+            font-size: 10px;
+            color: #9b59b6;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .ai-fact-text {
+            font-size: 13px;
+            line-height: 1.45;
+            color: rgba(255,255,255,0.95);
+        }
+        .ai-fact-refresh {
+            background: rgba(155,89,182,0.3);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 40px;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ai-fact-refresh:active { transform: scale(0.96); }
+        
         .platform-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
         .platform-btn {
             padding: 10px;
@@ -664,7 +719,7 @@
             <div class="menu-btn" id="goToMusicBtn">
                 <span class="menu-icon">🎵</span>
                 <div class="menu-title">Музыка</div>
-                <div class="menu-desc">Поиск треков и исполнителей</div>
+                <div class="menu-desc">Поиск треков и исполнителей с ИИ-фактами</div>
             </div>
             <div class="menu-btn" id="goToGameBtn">
                 <span class="menu-icon">🎮</span>
@@ -689,7 +744,7 @@
             <div class="menu-btn" id="goToMoodBtn">
                 <span class="menu-icon">😊</span>
                 <div class="menu-title">По настроению</div>
-                <div class="menu-desc">Музыка под твоё настроение</div>
+                <div class="menu-desc">Музыка под твоё настроение с ИИ-фактами</div>
             </div>
             <div class="menu-btn" id="goToSubscriptionsBtn">
                 <span class="menu-icon">🔔</span>
@@ -720,7 +775,7 @@
             <div class="popular-grid" id="popularGrid"></div>
             <div id="musicResult"></div>
         </div>
-        <div class="user-info">👤 <span id="userName">Music</span></div>
+        <div class="user-info">👤 <span id="userName">Music</span> | 🤖 ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
     <!-- Страница Игра -->
@@ -772,7 +827,8 @@
                         <b>Что я умею:</b><br>
                         • 📖 Расскажу об исполнителе (информация из Википедии)<br>
                         • 🎵 Посоветую песню по настроению<br>
-                        • 🎲 Дам случайный трек<br><br>
+                        • 🎲 Дам случайный трек<br>
+                        • 🤖 Покажу ИИ-факты об исполнителях<br><br>
                         <b>Просто напиши:</b><br>
                         "грустная песня", "весёлая песня", "Асия", "случайный трек"...
                     </div>
@@ -783,7 +839,7 @@
                 <button id="sendChatBtn" class="send-btn">📤</button>
             </div>
         </div>
-        <div class="user-info">💬 AI Ассистент | Информация из Википедии</div>
+        <div class="user-info">💬 AI Ассистент | Информация из Википедии + ИИ-факты</div>
     </div>
 
     <!-- Страница Рандомайзер -->
@@ -834,7 +890,7 @@
             </div>
             <div id="moodResult"></div>
         </div>
-        <div class="user-info">😊 Выбери настроение и получи музыку</div>
+        <div class="user-info">😊 Выбери настроение и получи музыку с ИИ-фактами</div>
     </div>
 
     <!-- Страница Подписки -->
@@ -925,6 +981,7 @@
         let isAdminLoggedIn = false;
         const ADMIN_PASSWORD = "admin123";
 
+        // === РАСШИРЕННАЯ БАЗА ТРЕКОВ ===
         const tracksDatabase = [
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
@@ -942,6 +999,7 @@
             { track: "Дом", artist: "Асия" },
             { track: "Амур", artist: "Асия" },
             { track: "Сильно так", artist: "Асия" },
+            { track: "Лампочка", artist: "Асия" },
             { track: "Случилась осень", artist: "Мари Краймбрери" },
             { track: "За деньги да", artist: "INSTASAMKA" },
             { track: "Силиконовый гном", artist: "Мэйби Бэйби" },
@@ -958,7 +1016,147 @@
             { track: "Искала", artist: "Земфира" }
         ];
 
+        // === ИСПРАВЛЕННАЯ БАЗА ИИ-ФАКТОВ ===
+        const aiFactsDatabase = {
+            "асия": [
+                "🎤 Настоящее имя Асии — Анастасия Вячеславовна Алентьева",
+                "📍 Родилась 1 сентября 1997 года в городе Белово Кемеровской области",
+                "🎓 В 2015 году уехала в Москву и поступила в Институт современного искусства на факультет эстрадно-джазового пения",
+                "🎵 Первый успех пришёл после того, как Максим Фадеев заметил её кавер",
+                "📺 Широкую известность принесло участие во 2-м сезоне шоу «Песни» на ТНТ в 2019 году",
+                "🎤 В 2022 году Асия стала артисткой лейбла Effective Records",
+                "🎬 Песня «Лампочка» стала саундтреком 7-го сезона реалити-шоу «Пацанки»",
+                "🎶 В 2025 году записала совместный трек «Тихий океан» с певцом EMIN",
+                "💔 Самый популярный трек — «Останься» с 100+ млн прослушиваний",
+                "🎸 Вдохновляется: Земфира, Billie Eilish, Rammstein"
+            ],
+            "big baby tape": [
+                "🇺🇸 Big Baby Tape (Егор Ракитин) родился в Лос-Анджелесе",
+                "💰 Трек «Gimme The Loot» собрал 50+ млн прослушиваний",
+                "🎤 Участник лейбла Sony Music Russia с 2018 года",
+                "🔥 Популярность пришла после «Hoodrich Boys» с Kizaru",
+                "🌍 Переехал в Россию в подростковом возрасте",
+                "🎵 Вдохновляется: Future, Playboi Carti, Gunna"
+            ],
+            "моргенштерн": [
+                "🎤 Алишер Моргенштерн родился в Уфе 17 февраля 1998 года",
+                "💰 Самый молодой миллионер в российском шоу-бизнесе (в 22 года)",
+                "📀 «Cadillac» — первый трек с 100 млн просмотров на YouTube",
+                "🏆 Премия «MTV Europe Music Awards» 2021",
+                "🎵 Покинул Россию в 2022 году, получив статус иноагента",
+                "💸 Состояние оценивается в 10+ млн долларов"
+            ],
+            "кино": [
+                "🎸 Группа «Кино» основана в 1981 году в Ленинграде",
+                "👤 Виктор Цой — легендарный лидер и основатель группы",
+                "📀 «Чёрный альбом» вышел уже после смерти Цоя в 1990 году",
+                "🎵 «Группа крови» — гимн поколения 90-х",
+                "🏛 Группа введена в Зал славы российской музыки",
+                "🎸 Последний концерт прошёл 24 июня 1990 года в Лужниках"
+            ],
+            "земфира": [
+                "🎤 Земфира Рамазанова родилась в Уфе 26 августа 1976 года",
+                "🏆 Первая женщина, собравшая сольный концерт в «Олимпийском»",
+                "📀 Дебютный альбом разошёлся тиражом 700 000 копий",
+                "🎸 Вдохновлялась «Агатой Кристи» и «Наутилусом Помпилиус»",
+                "✍️ Пишет стихи и прозу с 7 лет",
+                "🏆 5 премий «Муз-ТВ» и «Золотой граммофон»"
+            ],
+            "imagine dragons": [
+                "🏆 3 премии Grammy и 10 Billboard Music Awards",
+                "📀 «Radioactive» — самый долгоиграющий сингл в истории Billboard",
+                "🎤 Вокалист Дэн Рейнольдс борется с анкилозирующим спондилитом",
+                "🎮 Трек «Believer» использован в рекламе FIFA и Need for Speed",
+                "🌍 Группа основана в Лас-Вегасе в 2008 году",
+                "🎵 Самый популярный трек на Spotify — «Believer» с 2 млрд прослушиваний"
+            ],
+            "дора": [
+                "🎤 Настоящее имя — Дарья Сергеевна Шиханова",
+                "📍 Родилась в Саратове 21 декабря 1999 года",
+                "🎵 Прославилась треком «Втюрилась» в 2020 году",
+                "🎸 Вдохновляется рок-музыкой и альтернативой",
+                "📀 Выпустила альбом «Miss» в 2022 году",
+                "🎤 Участница лейбла Labelcom"
+            ],
+            "instasamka": [
+                "🎤 Настоящее имя — Дарья Евгеньевна Зотеева",
+                "📍 Родилась в Тобольске 8 июня 2000 года",
+                "🎵 Прославилась треком «За деньги да» в 2021 году",
+                "💰 Трек «За деньги да» собрал 100+ млн просмотров",
+                "🎤 Бывшая участница лейбла Haunted Family",
+                "💃 Экс-участница группы Cream Soda"
+            ]
+        };
+
         const popularArtistsList = ["Асия","Big Baby Tape","Моргенштерн","INSTASAMKA","Дора","Imagine Dragons","Кино","Земфира"];
+
+        // === ФУНКЦИЯ ПОЛУЧЕНИЯ ИИ-ФАКТА ===
+        function getAIFact(artistName, trackName = null) {
+            const artistLower = artistName.toLowerCase();
+            
+            // Поиск в базе
+            for (const [key, facts] of Object.entries(aiFactsDatabase)) {
+                if (artistLower.includes(key) || key.includes(artistLower)) {
+                    return facts[Math.floor(Math.random() * facts.length)];
+                }
+            }
+            
+            // Динамический факт
+            const dynamicFacts = [
+                `🎤 ${artistName} — один из самых ярких исполнителей года!`,
+                `🔥 Треки ${artistName} набирают миллионы прослушиваний`,
+                `⭐ Подпишись на ${artistName}, чтобы не пропустить новые релизы!`,
+                `🎵 ${artistName} — открытие года по версии слушателей`,
+                `📀 ${artistName} ворвался в чарты в этом месяце`
+            ];
+            
+            if (trackName) {
+                dynamicFacts.push(`🎧 «${trackName}» — в топе этой недели!`);
+                dynamicFacts.push(`⭐ «${trackName}» добавляют в плейлисты каждый день`);
+            }
+            
+            return dynamicFacts[Math.floor(Math.random() * dynamicFacts.length)];
+        }
+
+        // === ФУНКЦИЯ ОТОБРАЖЕНИЯ ИИ-ФАКТА ===
+        function renderAIFact(fact, artistName, trackName = null) {
+            return `
+                <div class="ai-fact-card" id="aiFactCard">
+                    <div class="ai-fact-header">
+                        <div class="ai-fact-icon">🤖</div>
+                        <div class="ai-fact-content">
+                            <div class="ai-fact-label">ИИ ФАКТ • КАК В ЯНДЕКС МУЗЫКЕ</div>
+                            <div class="ai-fact-text">${escapeHtml(fact)}</div>
+                            <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(artistName)}', '${escapeHtml(trackName || '')}')">
+                                🔄 Новый факт
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // === ОБНОВЛЕНИЕ ИИ-ФАКТА ===
+        window.refreshFact = function(artistName, trackName) {
+            const newFact = getAIFact(artistName, trackName);
+            const factCard = document.getElementById('aiFactCard');
+            if (factCard) {
+                factCard.innerHTML = `
+                    <div class="ai-fact-header">
+                        <div class="ai-fact-icon">🤖</div>
+                        <div class="ai-fact-content">
+                            <div class="ai-fact-label">ИИ ФАКТ • КАК В ЯНДЕКС МУЗЫКЕ</div>
+                            <div class="ai-fact-text">${escapeHtml(newFact)}</div>
+                            <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(artistName)}', '${escapeHtml(trackName)}')">
+                                🔄 Новый факт
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            addAction('ИИ-факт', `Обновил факт для ${artistName}`);
+        };
 
         function setBodyMode(mode) {
             document.body.classList.remove('music-mode', 'game-mode', 'ai-mode', 'assistant-mode');
@@ -1177,7 +1375,6 @@
         }
         if (backFromMood) backFromMood.onclick = showMenu;
 
-        // Обработчики кнопок настроения
         document.querySelectorAll('.mood-btn').forEach(btn => {
             btn.onclick = () => {
                 const mood = btn.dataset.mood;
@@ -1272,22 +1469,23 @@
             try {
                 const response = JSON.parse(data);
                 
-                // Ответ от поиска по настроению
                 if (response.type === 'mood_result') {
                     moodLoading.style.display = 'none';
                     
                     if (response.track) {
+                        const aiFact = response.track.ai_fact || getAIFact(response.track.artists, response.track.title);
                         moodResult.innerHTML = `
                             <div class="result-card">
                                 <div class="artist-name">🎵 ${escapeHtml(response.track.title)}</div>
                                 <div style="margin-bottom: 8px;">🎤 ${escapeHtml(response.track.artists)}</div>
+                                ${renderAIFact(aiFact, response.track.artists, response.track.title)}
                                 <div class="platform-buttons">
                                     <button onclick="tg.openLink('${response.track.yandex_link}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                                     <button onclick="tg.openLink('${response.track.youtube_link}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                                 </div>
                             </div>
                         `;
-                        addAction('По настроению', `Нашёл трек`);
+                        addAction('По настроению', `Нашёл трек: ${response.track.title}`);
                     } else {
                         moodResult.innerHTML = `
                             <div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">
@@ -1297,12 +1495,31 @@
                     }
                 }
                 
-                // Ответ от подписок (список)
+                if (response.type === 'search_result') {
+                    const resultDiv = document.getElementById('musicResult');
+                    if (response.track) {
+                        const aiFact = response.track.ai_fact || getAIFact(response.track.artists, response.track.title);
+                        resultDiv.innerHTML = `
+                            <div class="result-card">
+                                <div class="artist-name">🎵 "${escapeHtml(response.track.title)}"</div>
+                                <div style="margin-bottom: 12px;">🎤 Исполнитель: <strong>${escapeHtml(response.track.artists)}</strong></div>
+                                ${renderAIFact(aiFact, response.track.artists, response.track.title)}
+                                <div class="platform-buttons">
+                                    <button onclick="tg.openLink('${response.track.links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                                    <button onclick="tg.openLink('${response.track.links.youtube_music}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                                    <button onclick="tg.openLink('${response.track.links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        resultDiv.innerHTML = `<div style="background: rgba(255,100,100,0.3); padding: 20px; border-radius: 20px; text-align: center;">❌ Трек не найден</div>`;
+                    }
+                }
+                
                 if (response.type === 'subscriptions_list') {
                     displaySubscriptions(response.artists);
                 }
                 
-                // Ответ от подписки
                 if (response.type === 'subscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
@@ -1312,13 +1529,19 @@
                     }
                 }
                 
-                // Ответ от отписки
                 if (response.type === 'unsubscribe_result') {
                     if (response.success) {
                         showNotification(`✅ ${response.message}`);
                         loadSubscriptions();
                     } else {
                         showNotification(`❌ ${response.message}`);
+                    }
+                }
+                
+                if (response.type === 'ai_fact') {
+                    const factDiv = document.getElementById('aiFactCard');
+                    if (factDiv) {
+                        factDiv.querySelector('.ai-fact-text').innerHTML = escapeHtml(response.fact);
                     }
                 }
             } catch(e) {
@@ -1553,8 +1776,6 @@
                 if (trackBtn) trackBtn.classList.add('active');
                 if (searchInput) searchInput.placeholder = "Останься, Believer, Детство...";
             }
-            const musicResult = document.getElementById('musicResult');
-            if (musicResult) musicResult.innerHTML = '';
         }
 
         function loadPopularArtists() {
@@ -1576,30 +1797,27 @@
             const query = searchInput.value.trim();
             if (!query) return;
             addAction('Поиск', `${currentSearchMode === 'artist' ? 'Исполнитель' : 'Трек'}: "${query}"`);
-            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}` };
-            const resultDiv = document.getElementById('musicResult');
-            if (!resultDiv) return;
-            resultDiv.innerHTML = '<div style="text-align:center; padding:16px; color: rgba(255,255,255,0.8); font-size:13px;">🔍 Поиск...</div>';
             
-            if (currentSearchMode === 'artist') {
+            if (currentSearchMode === 'track') {
+                tg.sendData(JSON.stringify({
+                    action: 'search',
+                    query: query
+                }));
+                const resultDiv = document.getElementById('musicResult');
+                if (resultDiv) resultDiv.innerHTML = '<div style="text-align:center; padding:16px; color: rgba(255,255,255,0.8); font-size:13px;">🔍 Поиск...</div>';
+            } else {
+                const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(query)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(query)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(query)}` };
+                const resultDiv = document.getElementById('musicResult');
+                if (!resultDiv) return;
+                resultDiv.innerHTML = '<div style="text-align:center; padding:16px; color: rgba(255,255,255,0.8); font-size:13px;">🔍 Поиск...</div>';
+                
                 const bioData = await getWikipediaFullBio(query);
                 const bioHtml = displayBio(bioData, query);
                 const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(query.toLowerCase()));
                 const tracksList = artistTracks.map(t => t.track).join(', ');
-                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
-            } else {
-                const foundTrack = tracksDatabase.find(t => t.track.toLowerCase().includes(query.toLowerCase()));
-                if (foundTrack) {
-                    const artistName = foundTrack.artist;
-                    const bioData = await getWikipediaFullBio(artistName);
-                    const bioHtml = displayBio(bioData, artistName);
-                    const artistTracks = tracksDatabase.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
-                    const otherTracks = artistTracks.filter(t => t.track !== foundTrack.track).map(t => t.track).slice(0, 5);
-                    const artistLinks = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(artistName)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(artistName)}&c%5Bsection%5D=audio`, spotify: `https://open.spotify.com/search/${encodeURIComponent(artistName)}` };
-                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(foundTrack.track)}"</div><div style="margin-bottom: 12px;">🎤 Исполнитель: <strong style="color: #4facfe; font-size: 14px;">${escapeHtml(artistName)}</strong></div><div class="artist-card" style="background: rgba(255,255,255,0.1); border-radius: 14px; padding: 10px; margin-bottom: 10px;"><div style="display: flex; align-items: center; gap: 10px;"><div style="font-size: 28px;">🎤</div><div><div style="font-weight: 700; font-size: 15px;">${escapeHtml(artistName)}</div><div style="font-size: 10px; color: rgba(255,255,255,0.6);">📀 ${artistTracks.length} треков в базе</div></div></div>${otherTracks.length > 0 ? `<div style="font-size: 11px; margin-top: 6px;">🎵 Другие треки: ${otherTracks.join(', ')}</div>` : ''}</div>${bioHtml}<div class="section-title">🎧 Слушать трек</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🎤 Страница исполнителя</div><div class="platform-buttons"><button onclick="tg.openLink('${artistLinks.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${artistLinks.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${artistLinks.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${artistLinks.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div><div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(foundTrack.track)}', '${escapeHtml(foundTrack.track)}')">📱 QR-код для трека</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(artistName)} ${escapeHtml(foundTrack.track)} cover')">🤖 Создать AI обложку</button></div>`;
-                } else {
-                    resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎵 "${escapeHtml(query)}"</div><div class="info-text">❌ Трек не найден в базе</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Поиск на Яндекс.Музыке</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)}')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} cover')">🤖 Создать AI обложку</button></div>`;
-                }
+                const aiFact = getAIFact(query);
+                
+                resultDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(query)}</div>${artistTracks.length > 0 ? `<div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">🎵 Треки: ${tracksList}</div>` : ''}${renderAIFact(aiFact, query)}<div class="section-title">🎧 Слушать на платформах</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK Музыка</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${bioHtml}<div class="section-title">🔗 Поделиться</div><button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(query)}', '${escapeHtml(query)} - поиск')">📱 QR-код для поиска</button><button class="ai-btn" onclick="generateAICover('${escapeHtml(query)} music cover')">🤖 Создать AI обложку</button></div>`;
             }
         }
 
@@ -1726,16 +1944,22 @@
             if (isArtistQuery) {
                 showAssistantTyping();
                 const bioData = await getWikipediaFullBio(query);
+                const aiFact = getAIFact(query);
                 hideAssistantTyping();
-                if (bioData && bioData.fullText) return `📖 **${bioData.title}**\n\n${bioData.fullText}\n\n🔗 [Читать полную статью на Википедии](${bioData.pageUrl})`;
-                else return `❌ Не удалось найти информацию об исполнителе "${query}" в Википедии.\n\nПопробуй написать имя на русском или английском языке.`;
+                let response = "";
+                if (bioData && bioData.fullText) {
+                    response = `📖 **${bioData.title}**\n\n${bioData.fullText}\n\n🤖 **ИИ-факт:** ${aiFact}\n\n🔗 [Читать полную статью на Википедии](${bioData.pageUrl})`;
+                } else {
+                    response = `❌ Не удалось найти информацию об исполнителе "${query}" в Википедии.\n\n🤖 **ИИ-факт:** ${aiFact}`;
+                }
+                return response;
             }
-            if (lowerQuery.includes("грустн")) return `😢 **Грустные треки:**\n\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира`;
-            if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) return `😊 **Весёлые треки:**\n\n"Believer" - Imagine Dragons\n"Blinding Lights" - The Weeknd`;
-            if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) return `💪 **Для зарядки:**\n\n"Believer" - Imagine Dragons\n"Cadillac" - Моргенштерн`;
-            if (lowerQuery.includes("романтик")) return `💖 **Романтичные треки:**\n\n"Твой поцелуй" - Асия\n"Останься" - Асия`;
-            if (lowerQuery.includes("случайный") || lowerQuery.includes("рандом")) { const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)]; return `🎲 **Случайный трек:**\n\n"${randomTrack.track}" - ${randomTrack.artist}\n\nПопробуй найти его в разделе "Музыка"!`; }
-            if (lowerQuery.includes("привет")) return `Привет! 👋 Я твой музыкальный помощник.\n\n**Что я могу:**\n• Напиши имя исполнителя — получу биографию из Википедии\n• "грустная песня" — посоветую треки\n• "случайный трек" — выберу случайный трек\n\nСпрашивай!`;
+            if (lowerQuery.includes("грустн")) return `😢 **Грустные треки:**\n\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира\n\n🤖 Асия: «Останься» — самый прослушиваемый трек с 100+ млн!`;
+            if (lowerQuery.includes("весел") || lowerQuery.includes("радост")) return `😊 **Весёлые треки:**\n\n"Believer" - Imagine Dragons\n"Blinding Lights" - The Weeknd\n\n🤖 Imagine Dragons: 3 премии Grammy и 10 Billboard Music Awards!`;
+            if (lowerQuery.includes("зарядк") || lowerQuery.includes("спорт")) return `💪 **Для зарядки:**\n\n"Believer" - Imagine Dragons\n"Cadillac" - Моргенштерн\n\n🤖 Моргенштерн — самый молодой миллионер в шоу-бизнесе!`;
+            if (lowerQuery.includes("романтик")) return `💖 **Романтичные треки:**\n\n"Твой поцелуй" - Асия\n"Останься" - Асия\n\n🤖 Асия: настоящая фамилия — Алентьева, родилась в Белово!`;
+            if (lowerQuery.includes("случайный") || lowerQuery.includes("рандом")) { const randomTrack = tracksDatabase[Math.floor(Math.random() * tracksDatabase.length)]; return `🎲 **Случайный трек:**\n\n"${randomTrack.track}" - ${randomTrack.artist}\n\n🤖 ${getAIFact(randomTrack.artist, randomTrack.track)}\n\nПопробуй найти его в разделе "Музыка"!`; }
+            if (lowerQuery.includes("привет")) return `Привет! 👋 Я твой музыкальный помощник.\n\n**Что я могу:**\n• Напиши имя исполнителя — получу биографию из Википедии + ИИ-факт\n• "грустная песня" — посоветую треки\n• "случайный трек" — выберу случайный трек\n\nСпрашивай!`;
             return `🎶 Я не совсем понял запрос. Попробуй:\n\n• Напиши имя исполнителя (например, "Асия")\n• "грустная песня"\n• "случайный трек"`;
         }
         
@@ -1804,7 +2028,7 @@
         const welcomeShown = sessionStorage.getItem('welcome_shown');
         if (!welcomeShown) {
             setTimeout(() => {
-                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом, используй рандомайзер, ищи по настроению и подписывайся на любимых исполнителей!", buttons: [{ type: "ok" }] });
+                tg.showPopup({ title: "🎵 Music Hub", message: "Добро пожаловать! 🎶\n\nНовая функция: ИИ-ФАКТЫ как в Яндекс.Музыке!\n\nИщи музыку, играй, создавай AI обложки, общайся с AI ассистентом, используй рандомайзер, ищи по настроению и подписывайся на любимых исполнителей!", buttons: [{ type: "ok" }] });
                 sessionStorage.setItem('welcome_shown', 'true');
             }, 500);
         }
