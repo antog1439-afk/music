@@ -116,7 +116,7 @@
         .menu-title { font-size: 15px; font-weight: 600; color: white; margin-bottom: 4px; }
         .menu-desc { font-size: 10px; color: rgba(255,255,255,0.55); }
 
-        /* Стиль для блока курса валют внизу меню */
+        /* Стиль для блока курса валют внизу меню (увеличенные значки) */
         .currency-bar {
             position: fixed;
             bottom: 20px;
@@ -125,27 +125,30 @@
             background: rgba(0,0,0,0.5);
             backdrop-filter: blur(20px);
             border-radius: 60px;
-            padding: 10px 16px;
+            padding: 12px 20px;
             display: flex;
             justify-content: center;
-            gap: 16px;
+            gap: 24px;
             z-index: 6;
             border: 1px solid rgba(255,255,255,0.1);
         }
         .currency-item {
             background: rgba(255,255,255,0.1);
-            padding: 6px 16px;
+            padding: 8px 20px;
             border-radius: 40px;
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 600;
             color: white;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
+        }
+        .currency-item .currency-icon {
+            font-size: 24px;
         }
         .currency-loading {
             color: rgba(255,255,255,0.5);
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .page-header {
@@ -519,8 +522,9 @@
             .page-title { font-size: 24px; }
             .artist-avatar { width: 55px; height: 55px; }
             .artist-name-large { font-size: 18px; }
-            .currency-bar { bottom: 10px; left: 10px; right: 10px; padding: 6px 12px; }
-            .currency-item { padding: 4px 12px; font-size: 11px; }
+            .currency-bar { bottom: 10px; left: 10px; right: 10px; padding: 8px 12px; gap: 12px; }
+            .currency-item { padding: 6px 12px; font-size: 13px; }
+            .currency-item .currency-icon { font-size: 18px; }
         }
     </style>
 </head>
@@ -742,8 +746,14 @@
             const rates = await getExchangeRates();
             if (rates) {
                 container.innerHTML = `
-                    <div class="currency-item">🇺🇸 USD ${rates.usd} ₽</div>
-                    <div class="currency-item">🇪🇺 EUR ${rates.eur} ₽</div>
+                    <div class="currency-item">
+                        <span class="currency-icon">🇺🇸</span>
+                        <span>USD ${rates.usd} ₽</span>
+                    </div>
+                    <div class="currency-item">
+                        <span class="currency-icon">🇪🇺</span>
+                        <span>EUR ${rates.eur} ₽</span>
+                    </div>
                 `;
             } else {
                 container.innerHTML = '<div class="currency-loading">❌ Не удалось загрузить курс</div>';
