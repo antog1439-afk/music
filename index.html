@@ -44,10 +44,6 @@
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
 
         .fullscreen-page {
             position: fixed;
@@ -204,7 +200,7 @@
         }
         .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
 
-        /* Стиль для портрета исполнителя — только реальные фото */
+        /* Стиль для портрета исполнителя */
         .artist-profile {
             display: flex;
             align-items: center;
@@ -635,7 +631,7 @@
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
 
-        // === МУЗЫКА (РЕАЛЬНЫЕ ПОРТРЕТЫ ОТ БОТА) ===
+        // === МУЗЫКА (ФОТО ИЗ ВИКИПЕДИИ) ===
         function loadPopular() { 
             document.getElementById('popularGrid').innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
         }
@@ -643,14 +639,6 @@
         window.searchArtist = function(a) { 
             document.getElementById('searchInput').value = a; 
             search(); 
-        };
-        
-        // Функция обновления портрета от бота (реальное фото)
-        window.updateArtistAvatar = function(avatarUrl) {
-            const avatarImg = document.getElementById('artistAvatar');
-            if (avatarImg && avatarUrl) {
-                avatarImg.src = avatarUrl;
-            }
         };
         
         async function search() {
@@ -665,7 +653,6 @@
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             
-            // Показываем результат с пустым местом под фото (без букв!)
             resDiv.innerHTML = `
                 <div class="result-card">
                     <div class="artist-profile">
@@ -692,7 +679,8 @@
                 </div>
             `;
             
-            // Запрашиваем у бота реальный портрет исполнителя
+            // Запрашиваем фото из Wikipedia через бота
+            console.log('📤 Запрос фото для:', q);
             tg.sendData(JSON.stringify({
                 action: 'get_artist_avatar',
                 artist: q
@@ -737,7 +725,7 @@
             document.body.appendChild(m); 
         }
 
-        // === ОСТАЛЬНЫЕ ФУНКЦИИ (ИГРА, AI, АССИСТЕНТ, РАНДОМАЙЗЕР, НАСТРОЕНИЕ) ===
+        // === ИГРА ===
         let gameQ = [], gameIdx = 0, gameScore = 0, gameActive = false;
         function genQ() { const t = tracks[Math.floor(Math.random() * tracks.length)]; const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); let opts = [t.artist, ...others]; for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; } return { track: t.track, correct: t.artist, options: opts }; }
         function startGame() { gameQ = []; for (let i = 0; i < 6; i++) gameQ.push(genQ()); gameIdx = 0; gameScore = 0; gameActive = true; document.getElementById('startGameBtn').textContent = '🎮 Игра...'; showGame(); }
@@ -746,6 +734,7 @@
         function endGame() { gameActive = false; document.getElementById('gameContent').innerHTML = `<div style="text-align:center; padding:20px;"><div style="font-size:48px;">🎉</div><div style="font-size:28px; font-weight:bold;">${gameScore}/${gameQ.length}</div><button onclick="startGame()" style="background:#9b59b6; border:none; padding:12px 24px; border-radius:60px; color:white; margin-top:16px;">🔄 Сыграть снова</button></div>`; document.getElementById('startGameBtn').textContent = '▶ Начать игру'; }
         document.getElementById('startGameBtn').onclick = startGame;
 
+        // === AI ОБЛОЖКИ ===
         async function genCover(p) {
             const div = document.getElementById('aiResult');
             div.innerHTML = `<div class="loading-spinner"></div><div>✨ Создаём...</div>`;
@@ -758,6 +747,7 @@
         window.downloadImg = (url) => { const a = document.createElement('a'); a.href = url; a.download = `cover_${Date.now()}.jpg`; a.click(); showNote('💾 Скачивание'); };
         document.getElementById('generateAIBtn').onclick = () => { const p = document.getElementById('aiPrompt').value.trim(); if (p) genCover(p); };
 
+        // === АССИСТЕНТ ===
         async function askBot(q) {
             const low = q.toLowerCase();
             if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
@@ -794,6 +784,7 @@
         document.getElementById('sendChatBtn').onclick = sendMsg;
         document.getElementById('chatInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
 
+        // === РАНДОМАЙЗЕР ===
         function parseArtists(t) { if (!t.trim()) return []; const lines = t.split(/\r?\n/); let a = []; for (let l of lines) { l = l.trim(); if (!l) continue; a.push(...l.split(',').map(p => p.trim())); } return [...new Map(a.map(v => [v.toLowerCase(), v])).values()]; }
         function updateTotal() { const a = parseArtists(document.getElementById('artistListInput').value); document.getElementById('totalArtistsCount').textContent = a.length; }
         document.getElementById('artistListInput').addEventListener('input', updateTotal);
@@ -812,9 +803,11 @@
         window.addArtist = function(a) { const inp = document.getElementById('artistListInput'); inp.value = inp.value + (inp.value ? "\n" : "") + a; updateTotal(); showNote(`➕ Добавлен: ${a}`); };
         document.getElementById('doRandomizeBtn').onclick = doRandom;
 
+        // === НАСТРОЕНИЕ ===
         const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Инструментальная музыка"] };
         document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const mood = btn.dataset.mood; const track = moodTracks[mood][0]; const yandex = `https://music.yandex.ru/search?text=${encodeURIComponent(track)}`; const youtube = `https://music.youtube.com/search?q=${encodeURIComponent(track)}`; document.getElementById('moodResult').innerHTML = `<div class="result-card"><div class="artist-name">🎵 ${escapeHtml(track)}</div><div class="platform-buttons"><button onclick="tg.openLink('${yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div></div>`; }; });
 
+        // === НАСТРОЙКИ ===
         function loadAppearance() {
             const bg = localStorage.getItem('music_bot_bg');
             if (bg && bg !== 'default') { if (bg.startsWith('linear')) document.body.style.background = bg; else { document.body.style.backgroundImage = `url(${bg})`; document.body.style.backgroundSize = 'cover'; } }
@@ -837,22 +830,26 @@
         document.getElementById('colorPickerBtn').onclick = () => { const inp = document.createElement('input'); inp.type = 'color'; inp.onchange = (e) => { document.body.style.background = e.target.value; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', e.target.value); }; inp.click(); };
         document.getElementById('buttonColorPicker').onchange = (e) => { document.documentElement.style.setProperty('--button-color', e.target.value); localStorage.setItem('music_bot_btn_color', e.target.value); };
 
-        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА (РЕАЛЬНЫЕ ФОТО) ===
+        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА ===
         tg.onEvent('message', (data) => {
             try {
+                console.log('📩 Получен ответ:', data);
                 const response = JSON.parse(data);
-                console.log('Ответ от бота:', response);
                 
                 if (response.type === 'artist_avatar') {
+                    console.log('🖼️ Получен портрет:', response.avatar_url);
                     if (response.avatar_url) {
                         const avatarImg = document.getElementById('artistAvatar');
                         if (avatarImg) {
                             avatarImg.src = response.avatar_url;
+                            console.log('✅ Фото установлено!');
                         }
+                    } else {
+                        console.log('⚠️ Фото не найдено для исполнителя');
                     }
                 }
             } catch(e) {
-                console.log('Ошибка обработки ответа:', e);
+                console.error('Ошибка:', e);
             }
         });
 
