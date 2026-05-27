@@ -536,13 +536,13 @@
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Rammstein...">
                 <button id="voiceSearchBtn" class="voice-btn"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
-                <button id="doSearchBtn" class="search-btn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0 24px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">Найти</button>
+                <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
             <div class="section-title">Популярные</div>
             <div class="popular-grid" id="popularGrid"></div>
             <div id="musicResult"></div>
         </div>
-        <div class="user-info">ИИ-факты как в Яндекс.Музыке</div>
+        <div class="user-info">💵 Курс валют | 🎸 Похожие по жанру | 🤖 ИИ-факты</div>
     </div>
 
     <!-- Остальные страницы (компактно) -->
@@ -552,11 +552,11 @@
     </div>
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI Обложки</div></div>
-        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0 24px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
+        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
     </div>
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Ассистент</div></div>
-        <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0 24px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">📤</button></div></div>
+        <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
     <div class="fullscreen-page" id="randomizerPage">
         <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Рандомайзер</div></div>
@@ -592,6 +592,126 @@
         };
         
         const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира"];
+
+        // === БАЗА ЖАНРОВ ДЛЯ ПОХОЖИХ ИСПОЛНИТЕЛЕЙ ===
+        const artistsGenres = {
+            "асия": ["pop", "russian pop", "indie pop"],
+            "кино": ["rock", "post-punk", "russian rock"],
+            "земфира": ["rock", "alternative", "russian rock"],
+            "моргенштерн": ["hip-hop", "rap", "pop"],
+            "imagine dragons": ["alternative rock", "indie rock", "pop rock"],
+            "big baby tape": ["hip-hop", "trap", "rap"],
+            "дора": ["pop", "indie pop", "russian pop"],
+            "instasamka": ["hip-hop", "pop", "russian rap"],
+            "rammstein": ["industrial metal", "hard rock", "metal"],
+            "metallica": ["thrash metal", "heavy metal", "rock"],
+            "billie eilish": ["pop", "alternative pop", "electropop"],
+            "the weeknd": ["r&b", "pop", "synthwave"],
+            "coldplay": ["alternative rock", "pop rock", "britpop"],
+            "агата кристи": ["rock", "post-punk", "russian rock"],
+            "наутилус помпилиус": ["rock", "post-punk", "russian rock"],
+            "ддт": ["rock", "russian rock", "folk rock"],
+            "сплин": ["rock", "alternative", "russian rock"],
+            "би-2": ["rock", "pop rock", "russian rock"]
+        };
+
+        // === ПОЛУЧЕНИЕ ПОХОЖИХ ПО ЖАНРАМ ===
+        function getSimilarByGenre(currentArtist, count = 4) {
+            const currentLower = currentArtist.toLowerCase();
+            const currentGenres = artistsGenres[currentLower] || [];
+            
+            if (currentGenres.length === 0) {
+                const defaultArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
+                const filtered = defaultArtists.filter(a => a.toLowerCase() !== currentLower);
+                const shuffled = [...filtered];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled.slice(0, count);
+            }
+            
+            const similar = [];
+            for (const [artist, genres] of Object.entries(artistsGenres)) {
+                if (artist.toLowerCase() === currentLower) continue;
+                const hasCommonGenre = genres.some(g => currentGenres.includes(g));
+                if (hasCommonGenre) {
+                    similar.push(artist);
+                }
+            }
+            
+            for (let i = similar.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [similar[i], similar[j]] = [similar[j], similar[i]];
+            }
+            
+            while (similar.length < count) {
+                const popular = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
+                const addArtist = popular.find(p => p.toLowerCase() !== currentLower && !similar.includes(p));
+                if (addArtist) similar.push(addArtist);
+                else break;
+            }
+            
+            return similar.slice(0, count);
+        }
+
+        function addSimilarArtistsToResult(artistName) {
+            const resultCard = document.querySelector('#musicResult .result-card');
+            if (!resultCard) return;
+            
+            const oldSection = resultCard.querySelector('.similar-artists-section');
+            if (oldSection) oldSection.remove();
+            
+            const similarArtists = getSimilarByGenre(artistName, 4);
+            
+            if (similarArtists.length > 0) {
+                const similarHtml = `
+                    <div class="similar-artists-section" style="margin-top: 16px;">
+                        <div class="section-title">🎸 Похожие по жанру</div>
+                        <div class="popular-grid" style="margin-bottom: 16px;">
+                            ${similarArtists.map(artist => `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                resultCard.insertAdjacentHTML('beforeend', similarHtml);
+            }
+        }
+
+        // === КУРС ВАЛЮТ ===
+        async function getExchangeRates() {
+            try {
+                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const data = await response.json();
+                const usdToRub = data.rates.RUB;
+                const eurToRub = data.rates.RUB / data.rates.EUR;
+                return {
+                    usd: Math.round(usdToRub),
+                    eur: Math.round(eurToRub),
+                    updated: new Date().toLocaleTimeString()
+                };
+            } catch(e) {
+                console.log('Ошибка получения курса:', e);
+                return null;
+            }
+        }
+
+        async function loadExchangeRates() {
+            const container = document.getElementById('exchangeRates');
+            if (!container) return;
+            const rates = await getExchangeRates();
+            if (rates) {
+                container.innerHTML = `
+                    <div style="background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 40px;">
+                        🇺🇸 USD: ${rates.usd} ₽
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 40px;">
+                        🇪🇺 EUR: ${rates.eur} ₽
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '<span>❌ Не удалось загрузить курс</span>';
+            }
+        }
 
         function getFact(artist) {
             const key = artist.toLowerCase();
@@ -646,7 +766,7 @@
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
 
-        // === МУЗЫКА С РЕАЛЬНЫМИ ФОТО ИЗ ВИКИПЕДИИ ===
+        // === МУЗЫКА ===
         function loadPopular() { 
             document.getElementById('popularGrid').innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
         }
@@ -656,29 +776,8 @@
             search(); 
         };
         
-        // Функция получения фото из Википедии
         async function getArtistImageFromWiki(artistName) {
             try {
-                // Сначала пробуем прямой поиск страницы
-                const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
-                const searchRes = await fetch(searchUrl);
-                const searchData = await searchRes.json();
-                
-                if (searchData.query?.search?.length > 0) {
-                    const pageTitle = searchData.query.search[0].title;
-                    const imageUrl = `https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=pageimages&pithumbsize=300&format=json&origin=*`;
-                    const imageRes = await fetch(imageUrl);
-                    const imageData = await imageRes.json();
-                    
-                    const pages = imageData.query?.pages || {};
-                    for (const pageId in pages) {
-                        if (pages[pageId].thumbnail?.source) {
-                            return pages[pageId].thumbnail.source;
-                        }
-                    }
-                }
-                
-                // Пробуем прямой поиск по названию страницы
                 const directUrl = `https://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(artistName)}&pithumbsize=300&format=json&origin=*`;
                 const directRes = await fetch(directUrl);
                 const directData = await directRes.json();
@@ -688,10 +787,8 @@
                         return directPages[pageId].thumbnail.source;
                     }
                 }
-                
                 return null;
             } catch(e) {
-                console.log('Ошибка получения фото:', e);
                 return null;
             }
         }
@@ -708,14 +805,13 @@
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             
-            // Показываем заглушку с буквой
-            const placeholderAvatar = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+            const avatarUrl = await getArtistImageFromWiki(q);
+            const finalAvatarUrl = avatarUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             
-            // Сразу показываем результат с заглушкой
             resDiv.innerHTML = `
                 <div class="result-card">
                     <div class="artist-profile">
-                        <img id="artistAvatar" class="artist-avatar" src="${placeholderAvatar}" alt="${escapeHtml(q)}">
+                        <img id="artistAvatar" class="artist-avatar" src="${finalAvatarUrl}" alt="${escapeHtml(q)}">
                         <div class="artist-info">
                             <div class="artist-name-large">${escapeHtml(q)}</div>
                             <div class="artist-role">🎤 Исполнитель</div>
@@ -738,18 +834,8 @@
                 </div>
             `;
             
-            // Загружаем реальное фото в фоне
-            try {
-                const avatarUrl = await getArtistImageFromWiki(q);
-                if (avatarUrl) {
-                    const avatarImg = document.getElementById('artistAvatar');
-                    if (avatarImg) {
-                        avatarImg.src = avatarUrl;
-                    }
-                }
-            } catch(e) {
-                console.log('Ошибка загрузки фото:', e);
-            }
+            // Добавляем похожих исполнителей
+            addSimilarArtistsToResult(q);
         }
         
         window.refreshFact = function(artistName) {
@@ -817,8 +903,8 @@
             const low = q.toLowerCase();
             if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
                 const bio = await getWiki(q);
-                if (bio) return `📖 **${bio.title}**\n\n${bio.text}\n\n🤖 ИИ-факт: ${getFact(q)}\n\n🔗 [Читать](${bio.url})`;
-                return `❌ Не нашёл "${q}"\n\n🤖 ИИ-факт: ${getFact(q)}`;
+                if (bio) return `📖 **${bio.title}**\n\n${bio.text}\n\n🔗 [Читать](${bio.url})`;
+                return `❌ Не нашёл "${q}"`;
             }
             if (low.includes("грустн")) return `😢 **Грустные:**\n"Останься" - Асия\n"Группа крови" - Кино`;
             if (low.includes("весел")) return `😊 **Весёлые:**\n"Believer" - Imagine Dragons`;
@@ -831,7 +917,7 @@
             d.className = `message message-${isUser ? 'user' : 'ai'}`;
             let html = text;
             if (!isUser) html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>').replace(/\n/g, '<br>');
-            d.innerHTML = isUser ? `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>` : `<div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">${html}</div>`;
+            d.innerHTML = isUser ? `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon">👤</div>` : `<div class="message-icon">🤖</div><div class="message-bubble">${html}</div>`;
             cont.appendChild(d); cont.scrollTop = cont.scrollHeight;
         }
         let typing = null;
@@ -840,7 +926,7 @@
             const msg = inp.value.trim();
             if (!msg) return;
             addMsg(msg, true); inp.value = '';
-            typing = document.createElement('div'); typing.className = 'message message-ai'; typing.innerHTML = `<div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">🤔 ...</div>`;
+            typing = document.createElement('div'); typing.className = 'message message-ai'; typing.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">🤔 ...</div>`;
             document.getElementById('chatContainer').appendChild(typing);
             const resp = await askBot(msg);
             if (typing) typing.remove();
