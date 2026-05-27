@@ -220,6 +220,11 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
+        .artist-avatar-loading {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
         .artist-info {
             flex: 1;
         }
@@ -646,7 +651,7 @@
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
 
-        // === МУЗЫКА С РЕАЛЬНЫМИ ФОТО ИЗ ВИКИПЕДИИ ===
+        // === МУЗЫКА ===
         function loadPopular() { 
             document.getElementById('popularGrid').innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
         }
@@ -655,46 +660,6 @@
             document.getElementById('searchInput').value = a; 
             search(); 
         };
-        
-        // Функция получения фото из Википедии
-        async function getArtistImageFromWiki(artistName) {
-            try {
-                // Сначала пробуем прямой поиск страницы
-                const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artistName)}&format=json&origin=*`;
-                const searchRes = await fetch(searchUrl);
-                const searchData = await searchRes.json();
-                
-                if (searchData.query?.search?.length > 0) {
-                    const pageTitle = searchData.query.search[0].title;
-                    const imageUrl = `https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=pageimages&pithumbsize=300&format=json&origin=*`;
-                    const imageRes = await fetch(imageUrl);
-                    const imageData = await imageRes.json();
-                    
-                    const pages = imageData.query?.pages || {};
-                    for (const pageId in pages) {
-                        if (pages[pageId].thumbnail?.source) {
-                            return pages[pageId].thumbnail.source;
-                        }
-                    }
-                }
-                
-                // Пробуем прямой поиск по названию страницы
-                const directUrl = `https://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(artistName)}&pithumbsize=300&format=json&origin=*`;
-                const directRes = await fetch(directUrl);
-                const directData = await directRes.json();
-                const directPages = directData.query?.pages || {};
-                for (const pageId in directPages) {
-                    if (directPages[pageId].thumbnail?.source) {
-                        return directPages[pageId].thumbnail.source;
-                    }
-                }
-                
-                return null;
-            } catch(e) {
-                console.log('Ошибка получения фото:', e);
-                return null;
-            }
-        }
         
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
@@ -708,14 +673,10 @@
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             
-            // Показываем заглушку с буквой
-            const placeholderAvatar = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
-            
-            // Сразу показываем результат с заглушкой
             resDiv.innerHTML = `
                 <div class="result-card">
                     <div class="artist-profile">
-                        <img id="artistAvatar" class="artist-avatar" src="${placeholderAvatar}" alt="${escapeHtml(q)}">
+                        <img id="artistAvatar" class="artist-avatar artist-avatar-loading" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E" alt="${escapeHtml(q)}">
                         <div class="artist-info">
                             <div class="artist-name-large">${escapeHtml(q)}</div>
                             <div class="artist-role">🎤 Исполнитель</div>
@@ -738,18 +699,10 @@
                 </div>
             `;
             
-            // Загружаем реальное фото в фоне
-            try {
-                const avatarUrl = await getArtistImageFromWiki(q);
-                if (avatarUrl) {
-                    const avatarImg = document.getElementById('artistAvatar');
-                    if (avatarImg) {
-                        avatarImg.src = avatarUrl;
-                    }
-                }
-            } catch(e) {
-                console.log('Ошибка загрузки фото:', e);
-            }
+            tg.sendData(JSON.stringify({
+                action: 'get_artist_avatar',
+                artist: q
+            }));
         }
         
         window.refreshFact = function(artistName) {
@@ -894,6 +847,26 @@
         document.getElementById('bgImageInput').onchange = (e) => { if (e.target.files[0]) { const r = new FileReader(); r.onload = (ev) => { document.body.style.backgroundImage = `url(${ev.target.result})`; document.body.style.backgroundSize = 'cover'; localStorage.setItem('music_bot_bg', ev.target.result); }; r.readAsDataURL(e.target.files[0]); } };
         document.getElementById('colorPickerBtn').onclick = () => { const inp = document.createElement('input'); inp.type = 'color'; inp.onchange = (e) => { document.body.style.background = e.target.value; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', e.target.value); }; inp.click(); };
         document.getElementById('buttonColorPicker').onchange = (e) => { document.documentElement.style.setProperty('--button-color', e.target.value); localStorage.setItem('music_bot_btn_color', e.target.value); };
+
+        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА ===
+        tg.onEvent('message', (data) => {
+            try {
+                const response = JSON.parse(data);
+                console.log('Ответ от бота:', response);
+                
+                if (response.type === 'artist_avatar') {
+                    if (response.avatar_url) {
+                        const avatarImg = document.getElementById('artistAvatar');
+                        if (avatarImg) {
+                            avatarImg.src = response.avatar_url;
+                            avatarImg.classList.remove('artist-avatar-loading');
+                        }
+                    }
+                }
+            } catch(e) {
+                console.log('Ошибка обработки ответа:', e);
+            }
+        });
 
         // === ОСНОВНЫЕ ОБРАБОТЧИКИ ===
         document.getElementById('doSearchBtn').onclick = search;
