@@ -44,6 +44,10 @@
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
 
         .fullscreen-page {
             position: fixed;
@@ -200,6 +204,7 @@
         }
         .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
 
+        /* ===== СТИЛЬ ДЛЯ ПОРТРЕТА ИСПОЛНИТЕЛЯ ===== */
         .artist-profile {
             display: flex;
             align-items: center;
@@ -216,9 +221,26 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .artist-info { flex: 1; }
-        .artist-name-large { font-size: 22px; font-weight: 700; color: white; margin-bottom: 4px; letter-spacing: -0.3px; }
-        .artist-role { font-size: 12px; color: rgba(255,255,255,0.6); }
+        .artist-avatar-loading {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        .artist-info {
+            flex: 1;
+        }
+        .artist-name-large {
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
+        }
+        .artist-role {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+        /* ===== КОНЕЦ СТИЛЯ ===== */
 
         .result-card {
             background: rgba(255,255,255,0.08);
@@ -478,12 +500,36 @@
 <body>
     <div class="menu-container" id="menuContainer">
         <div class="menu-screen">
-            <div class="menu-btn" id="goToMusicBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div><div class="menu-title">Музыка</div><div class="menu-desc">Поиск исполнителей</div></div>
-            <div class="menu-btn" id="goToGameBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div><div class="menu-title">Игра</div><div class="menu-desc">Угадай трек</div></div>
-            <div class="menu-btn" id="goToAIBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="white"/></svg></div><div class="menu-title">AI Обложки</div><div class="menu-desc">Генерация</div></div>
-            <div class="menu-btn" id="goToAssistantBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div><div class="menu-title">Ассистент</div><div class="menu-desc">Помощник</div></div>
-            <div class="menu-btn" id="goToRandomizerBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div><div class="menu-title">Рандомайзер</div><div class="menu-desc">Случайный выбор</div></div>
-            <div class="menu-btn" id="goToMoodBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="white"/><circle cx="15" cy="9" r="1" fill="white"/></svg></div><div class="menu-title">Настроение</div><div class="menu-desc">Подбор музыки</div></div>
+            <div class="menu-btn" id="goToMusicBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
+                <div class="menu-title">Музыка</div>
+                <div class="menu-desc">Поиск исполнителей</div>
+            </div>
+            <div class="menu-btn" id="goToGameBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
+                <div class="menu-title">Игра</div>
+                <div class="menu-desc">Угадай трек</div>
+            </div>
+            <div class="menu-btn" id="goToAIBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="white"/></svg></div>
+                <div class="menu-title">AI Обложки</div>
+                <div class="menu-desc">Генерация</div>
+            </div>
+            <div class="menu-btn" id="goToAssistantBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
+                <div class="menu-title">Ассистент</div>
+                <div class="menu-desc">Помощник</div>
+            </div>
+            <div class="menu-btn" id="goToRandomizerBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
+                <div class="menu-title">Рандомайзер</div>
+                <div class="menu-desc">Случайный выбор</div>
+            </div>
+            <div class="menu-btn" id="goToMoodBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="white"/><circle cx="15" cy="9" r="1" fill="white"/></svg></div>
+                <div class="menu-title">Настроение</div>
+                <div class="menu-desc">Подбор музыки</div>
+            </div>
         </div>
     </div>
 
@@ -506,23 +552,31 @@
         <div class="user-info">ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
-    <!-- Другие страницы (компактно) -->
+    <!-- Страница Игра -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
         <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
     </div>
+
+    <!-- Страница AI Обложки -->
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI Обложки</div></div>
         <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
     </div>
+
+    <!-- Страница Ассистент -->
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Ассистент</div></div>
         <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
+
+    <!-- Страница Рандомайзер -->
     <div class="fullscreen-page" id="randomizerPage">
         <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Рандомайзер</div></div>
         <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
+
+    <!-- Страница Настроение -->
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Настроение</div></div>
         <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
@@ -545,11 +599,11 @@
         ];
         
         const facts = {
-            "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний"],
-            "кино": ["Группа основана в 1981 в Ленинграде", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения 90-х"],
-            "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA", "Группа из Лас-Вегаса"],
-            "моргенштерн": ["Родился в Уфе 17 февраля 1998", "Самый молодой миллионер", "«Cadillac» — 100 млн просмотров"],
-            "земфира": ["Родилась в Уфе 26 августа 1976", "Первая женщина в Олимпийском", "Дебютный альбом — 700 000 копий"]
+            "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства", "В 2022 стала артисткой Effective Records"],
+            "кино": ["Группа основана в 1981 в Ленинграде", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения 90-х", "«Чёрный альбом» вышел после смерти Цоя", "Введены в Зал славы российской музыки"],
+            "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA и Need for Speed", "Группа из Лас-Вегаса", "«Radioactive» — самый долгоиграющий сингл Billboard", "Вокалист борется с анкилозирующим спондилитом"],
+            "моргенштерн": ["Родился в Уфе 17 февраля 1998", "Самый молодой миллионер в шоу-бизнесе (в 22 года)", "«Cadillac» — 100 млн просмотров", "Премия MTV Europe Music Awards 2021", "Состояние оценивается в 10+ млн долларов"],
+            "земфира": ["Родилась в Уфе 26 августа 1976", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий", "5 премий «Муз-ТВ» и «Золотой граммофон»", "Пишет стихи с 7 лет"]
         };
         
         const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира"];
@@ -595,7 +649,9 @@
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
 
-        // === МУЗЫКА С РЕАЛЬНЫМИ ФОТО ИЗ ВИКИПЕДИИ ===
+        // === МУЗЫКА (С РЕАЛЬНЫМИ ПОРТРЕТАМИ ОТ БОТА) ===
+        let currentArtist = '';
+        
         function loadPopular() { 
             document.getElementById('popularGrid').innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
         }
@@ -605,9 +661,22 @@
             search(); 
         };
         
+        function updateArtistAvatar(avatarUrl) {
+            const avatarImg = document.getElementById('artistAvatar');
+            if (avatarImg) {
+                if (avatarUrl) {
+                    avatarImg.src = avatarUrl;
+                    avatarImg.classList.remove('artist-avatar-loading');
+                } else {
+                    avatarImg.classList.add('artist-avatar-loading');
+                }
+            }
+        }
+        
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
             if (!q) return;
+            currentArtist = q;
             
             const resDiv = document.getElementById('musicResult');
             resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🔍 Поиск...</div>';
@@ -617,10 +686,11 @@
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             
+            // Показываем результат с заглушкой, затем запрашиваем фото у бота
             resDiv.innerHTML = `
                 <div class="result-card">
                     <div class="artist-profile">
-                        <img id="artistAvatar" class="artist-avatar" src="" alt="${escapeHtml(q)}">
+                        <img id="artistAvatar" class="artist-avatar artist-avatar-loading" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E" alt="${escapeHtml(q)}">
                         <div class="artist-info">
                             <div class="artist-name-large">${escapeHtml(q)}</div>
                             <div class="artist-role">🎤 Исполнитель</div>
@@ -643,7 +713,7 @@
                 </div>
             `;
             
-            // Запрашиваем фото у бота (Википедия или Яндекс)
+            // Запрашиваем реальный портрет у бота
             tg.sendData(JSON.stringify({
                 action: 'get_artist_avatar',
                 artist: q
@@ -793,25 +863,23 @@
         document.getElementById('colorPickerBtn').onclick = () => { const inp = document.createElement('input'); inp.type = 'color'; inp.onchange = (e) => { document.body.style.background = e.target.value; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', e.target.value); }; inp.click(); };
         document.getElementById('buttonColorPicker').onchange = (e) => { document.documentElement.style.setProperty('--button-color', e.target.value); localStorage.setItem('music_bot_btn_color', e.target.value); };
 
-        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА (РЕАЛЬНЫЕ ФОТО) ===
+        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА (РЕАЛЬНЫЕ ПОРТРЕТЫ) ===
         tg.onEvent('message', (data) => {
             try {
                 const response = JSON.parse(data);
-                console.log('📩 Ответ от бота:', response);
+                console.log('Ответ от бота:', response);
                 
                 if (response.type === 'artist_avatar') {
                     if (response.avatar_url) {
                         const avatarImg = document.getElementById('artistAvatar');
                         if (avatarImg) {
                             avatarImg.src = response.avatar_url;
-                            console.log('✅ Фото установлено:', response.avatar_url);
+                            avatarImg.classList.remove('artist-avatar-loading');
                         }
-                    } else {
-                        console.log('⚠️ Фото не найдено');
                     }
                 }
             } catch(e) {
-                console.error('Ошибка:', e);
+                console.log('Ошибка обработки ответа:', e);
             }
         });
 
