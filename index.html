@@ -236,8 +236,6 @@
         .platform-btn:active { transform: scale(0.97); }
         .yandex-btn { background: #ffcc00; color: #1a1a2e; }
         .youtube-btn { background: #ff0000; color: white; }
-        .vk-btn { background: #0077ff; color: white; }
-        .spotify-btn { background: #1db954; color: white; }
 
         .bio-section {
             background: rgba(0,0,0,0.25);
@@ -250,6 +248,20 @@
         .bio-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #7b68ee; }
         .bio-text { font-size: 12px; line-height: 1.4; color: rgba(255,255,255,0.85); }
         .bio-wiki-link { color: #b983ff; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
+
+        .qr-btn {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            font-size: 14px;
+            background: #607d8b;
+            color: white;
+        }
 
         .track-name { font-size: 22px; font-weight: 800; margin: 20px 0; color: white; text-align: center; }
         .game-options { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
@@ -325,7 +337,7 @@
             font-size: 12px;
         }
 
-        .qr-btn, .ai-gen-btn {
+        .ai-gen-btn {
             margin-top: 12px;
             padding: 12px;
             border-radius: 60px;
@@ -335,9 +347,9 @@
             border: none;
             width: 100%;
             font-size: 14px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
         }
-        .qr-btn { background: #607d8b; color: white; }
-        .ai-gen-btn { background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; }
 
         .settings-fab {
             position: fixed;
@@ -434,7 +446,7 @@
     </style>
 </head>
 <body>
-    <!-- Главное меню с SVG иконками -->
+    <!-- Главное меню -->
     <div class="menu-container" id="menuContainer">
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
@@ -724,10 +736,10 @@
             if (!q) return;
             const resDiv = document.getElementById('musicResult');
             resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🔍 Поиск...</div>';
-            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}`, vk: `https://vk.com/search?c%5Bq%5D=${encodeURIComponent(q)}`, spotify: `https://open.spotify.com/search/${encodeURIComponent(q)}` };
+            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
             const bio = await getWiki(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
-            resDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(q)}</div>${artistTracks.length ? `<div style="font-size:12px; margin-bottom:10px;">🎵 ${artistTracks.map(t => t.track).join(', ')}</div>` : ''}<div class="ai-fact-card"><div class="ai-fact-header"><div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" stroke-width="1.5" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div><div><div class="ai-fact-label">ИИ ФАКТ</div><div class="ai-fact-text">${escapeHtml(getFact(q))}</div></div></div></div><div class="section-title">🎧 Слушать</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button onclick="tg.openLink('${links.vk}')" class="platform-btn vk-btn">📱 VK</button><button onclick="tg.openLink('${links.spotify}')" class="platform-btn spotify-btn">🎧 Spotify</button></div>${showBio(bio, q)}<button class="qr-btn" onclick="showQR('${links.yandex}', '${escapeHtml(q)}')">📱 QR-код</button><button class="ai-gen-btn" onclick="genCover('${escapeHtml(q)} music cover')">✨ AI обложку</button></div>`;
+            resDiv.innerHTML = `<div class="result-card"><div class="artist-name">🎤 ${escapeHtml(q)}</div>${artistTracks.length ? `<div style="font-size:12px; margin-bottom:10px;">🎵 ${artistTracks.map(t => t.track).join(', ')}</div>` : ''}<div class="ai-fact-card"><div class="ai-fact-header"><div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" stroke-width="1.5" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div><div><div class="ai-fact-label">ИИ ФАКТ</div><div class="ai-fact-text">${escapeHtml(getFact(q))}</div></div></div></div><div class="section-title">🎧 Слушать</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div>${showBio(bio, q)}<button class="qr-btn" onclick="showQR('${links.yandex}', '${escapeHtml(q)}')">📱 QR-код</button></div>`;
         }
         async function getWiki(artist) {
             try {
