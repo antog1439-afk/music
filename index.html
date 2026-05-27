@@ -44,6 +44,10 @@
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
 
         .fullscreen-page {
             position: fixed;
@@ -200,7 +204,7 @@
         }
         .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
 
-        /* ===== НОВЫЙ СТИЛЬ ДЛЯ ПОРТРЕТА ИСПОЛНИТЕЛЯ ===== */
+        /* ===== СТИЛЬ ДЛЯ ПОРТРЕТА ИСПОЛНИТЕЛЯ ===== */
         .artist-profile {
             display: flex;
             align-items: center;
@@ -217,6 +221,11 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
+        .artist-avatar-loading {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
         .artist-info {
             flex: 1;
         }
@@ -231,7 +240,7 @@
             font-size: 12px;
             color: rgba(255,255,255,0.6);
         }
-        /* ===== КОНЕЦ НОВОГО СТИЛЯ ===== */
+        /* ===== КОНЕЦ СТИЛЯ ===== */
 
         .result-card {
             background: rgba(255,255,255,0.08);
@@ -252,6 +261,16 @@
         .ai-fact-icon svg { width: 28px; height: 28px; stroke: #b983ff; stroke-width: 1.5; fill: none; }
         .ai-fact-label { font-size: 10px; color: #b983ff; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
         .ai-fact-text { font-size: 13px; line-height: 1.4; color: rgba(255,255,255,0.9); }
+        .ai-fact-refresh {
+            background: rgba(155,89,182,0.3);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 40px;
+            color: white;
+            font-size: 11px;
+            margin-top: 8px;
+            cursor: pointer;
+        }
 
         .platform-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
         .platform-btn {
@@ -479,74 +498,35 @@
     </style>
 </head>
 <body>
-    <!-- Главное меню -->
     <div class="menu-container" id="menuContainer">
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
-                <div class="menu-icon">
-                    <svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5">
-                        <path d="M9 18V5L21 3V16" stroke="white" fill="none"/>
-                        <circle cx="6" cy="18" r="3" stroke="white" fill="none"/>
-                        <circle cx="18" cy="16" r="3" stroke="white" fill="none"/>
-                        <path d="M9 12L21 10" stroke="white" stroke-linecap="round"/>
-                    </svg>
-                </div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
                 <div class="menu-title">Музыка</div>
                 <div class="menu-desc">Поиск исполнителей</div>
             </div>
             <div class="menu-btn" id="goToGameBtn">
-                <div class="menu-icon">
-                    <svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5">
-                        <path d="M6 11h4M8 9v4" stroke="white" stroke-linecap="round"/>
-                        <path d="M15 12h.01M18 10h.01" stroke="white" stroke-linecap="round"/>
-                        <path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="white" fill="none"/>
-                    </svg>
-                </div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
                 <div class="menu-title">Игра</div>
                 <div class="menu-desc">Угадай трек</div>
             </div>
             <div class="menu-btn" id="goToAIBtn">
-                <div class="menu-icon">
-                    <svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5">
-                        <path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z" stroke="white" fill="none"/>
-                        <circle cx="12" cy="7" r="1.5" fill="white" stroke="none"/>
-                    </svg>
-                </div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="white"/></svg></div>
                 <div class="menu-title">AI Обложки</div>
                 <div class="menu-desc">Генерация</div>
             </div>
             <div class="menu-btn" id="goToAssistantBtn">
-                <div class="menu-icon">
-                    <svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5">
-                        <path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4" stroke="white" fill="none"/>
-                        <path d="M17 3.5L3 13" stroke="white" stroke-linecap="round"/>
-                        <path d="M17 3.5a4.5 4.5 0 0 1 4 4" stroke="white" stroke-linecap="round"/>
-                    </svg>
-                </div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
                 <div class="menu-title">Ассистент</div>
                 <div class="menu-desc">Помощник</div>
             </div>
             <div class="menu-btn" id="goToRandomizerBtn">
-                <div class="menu-icon">
-                    <svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5">
-                        <path d="M18 4L21 7L18 10" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M18 14L21 17L18 20" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5" stroke="white" stroke-linecap="round"/>
-                        <path d="M3 17h5" stroke="white" stroke-linecap="round"/>
-                    </svg>
-                </div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
                 <div class="menu-title">Рандомайзер</div>
                 <div class="menu-desc">Случайный выбор</div>
             </div>
             <div class="menu-btn" id="goToMoodBtn">
-                <div class="menu-icon">
-                    <svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5">
-                        <circle cx="12" cy="12" r="9" stroke="white" fill="none"/>
-                        <path d="M8 14c1 2 2.5 3 4 3s3-1 4-3" stroke="white" stroke-linecap="round"/>
-                        <circle cx="9" cy="9" r="1" fill="white" stroke="none"/>
-                        <circle cx="15" cy="9" r="1" fill="white" stroke="none"/>
-                    </svg>
-                </div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="white"/><circle cx="15" cy="9" r="1" fill="white"/></svg></div>
                 <div class="menu-title">Настроение</div>
                 <div class="menu-desc">Подбор музыки</div>
             </div>
@@ -556,22 +536,13 @@
     <!-- Страница Музыка -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
-            <button class="back-btn" id="backFromMusic">
-                <svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2" fill="none"><path d="M15 18L9 12L15 6" stroke="white" stroke-linecap="round"/></svg>
-                Назад
-            </button>
+            <button class="back-btn" id="backFromMusic"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
             <div class="page-title">Музыка</div>
         </div>
         <div class="glass-card">
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons...">
-                <button id="voiceSearchBtn" class="voice-btn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" stroke="white" stroke-width="1.5" fill="none">
-                        <path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z" stroke="white" fill="none"/>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="white" stroke-linecap="round"/>
-                        <path d="M12 19v3" stroke="white" stroke-linecap="round"/>
-                    </svg>
-                </button>
+                <button id="voiceSearchBtn" class="voice-btn"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
                 <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
             <div class="section-title">Популярные</div>
@@ -583,140 +554,37 @@
 
     <!-- Страница Игра -->
     <div class="fullscreen-page" id="gamePage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromGame">
-                <svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2" fill="none"><path d="M15 18L9 12L15 6" stroke="white" stroke-linecap="round"/></svg>
-                Назад
-            </button>
-            <div class="page-title">Игра</div>
-        </div>
-        <div class="glass-card">
-            <button id="startGameBtn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button>
-            <div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
+        <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
     </div>
 
     <!-- Страница AI Обложки -->
     <div class="fullscreen-page" id="aiPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromAI">
-                <svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2" fill="none"><path d="M15 18L9 12L15 6" stroke="white" stroke-linecap="round"/></svg>
-                Назад
-            </button>
-            <div class="page-title">AI Обложки</div>
-        </div>
-        <div class="glass-card">
-            <div class="search-box">
-                <input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара...">
-                <button id="generateAIBtn" class="search-btn">Создать</button>
-            </div>
-            <div id="aiResult" style="text-align:center; margin-top:12px;">
-                <div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div>
-            </div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI Обложки</div></div>
+        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
     </div>
 
     <!-- Страница Ассистент -->
     <div class="fullscreen-page" id="assistantPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromAssistant">
-                <svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2" fill="none"><path d="M15 18L9 12L15 6" stroke="white" stroke-linecap="round"/></svg>
-                Назад
-            </button>
-            <div class="page-title">Ассистент</div>
-        </div>
-        <div class="glass-card">
-            <div class="chat-container" id="chatContainer">
-                <div class="message message-ai">
-                    <div class="message-icon">
-                        <svg width="20" height="20" viewBox="0 0 24 24" stroke="white" stroke-width="1.5" fill="none">
-                            <path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4" stroke="white" fill="none"/>
-                        </svg>
-                    </div>
-                    <div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div>
-                </div>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="chatInput" class="search-input" placeholder="Спроси меня...">
-                <button id="sendChatBtn" class="search-btn">📤</button>
-            </div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Ассистент</div></div>
+        <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
 
     <!-- Страница Рандомайзер -->
     <div class="fullscreen-page" id="randomizerPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromRandomizer">
-                <svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2" fill="none"><path d="M15 18L9 12L15 6" stroke="white" stroke-linecap="round"/></svg>
-                Назад
-            </button>
-            <div class="page-title">Рандомайзер</div>
-        </div>
-        <div class="glass-card">
-            <textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea>
-            <div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div>
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-                <input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;">
-                <span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span>
-            </div>
-            <button id="doRandomizeBtn" class="search-btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); width:100%; padding:14px;">🎲 Выбрать</button>
-            <div id="randomizerResult" style="margin-top:16px;"></div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Рандомайзер</div></div>
+        <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
 
     <!-- Страница Настроение -->
     <div class="fullscreen-page" id="moodPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromMood">
-                <svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2" fill="none"><path d="M15 18L9 12L15 6" stroke="white" stroke-linecap="round"/></svg>
-                Назад
-            </button>
-            <div class="page-title">Настроение</div>
-        </div>
-        <div class="glass-card">
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
-                <button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button>
-                <button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button>
-                <button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button>
-                <button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button>
-                <button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button>
-                <button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button>
-            </div>
-            <div id="moodResult"></div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Настроение</div></div>
+        <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
     </div>
 
     <!-- Настройки -->
-    <div class="settings-fab" id="settingsFab">
-        <svg viewBox="0 0 24 24" stroke="white" stroke-width="1.5" fill="none">
-            <circle cx="12" cy="12" r="3" stroke="white" fill="none"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z" stroke="white" fill="none"/>
-            <path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z" stroke="white" fill="none"/>
-        </svg>
-    </div>
-    <div id="settingsModal" class="settings-modal hidden">
-        <div class="modal-card">
-            <div class="modal-title">Оформление</div>
-            <div class="settings-row">
-                <span class="settings-label">🎨 Цвет кнопок:</span>
-                <input type="color" id="buttonColorPicker" value="#667eea">
-            </div>
-            <div class="settings-row">
-                <button class="appearance-btn" id="resetBgBtn">Сбросить</button>
-                <button class="appearance-btn" id="uploadBgBtn">📸 Фото</button>
-                <button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button>
-                <button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button>
-                <input type="file" id="bgImageInput" accept="image/*" style="display:none;">
-            </div>
-            <div class="gradient-row">
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
-                <div class="gradient-circle" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div>
-            </div>
-            <button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button>
-        </div>
-    </div>
+    <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
+    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -730,7 +598,6 @@
             { track: "Cadillac", artist: "Моргенштерн" }, { track: "Искала", artist: "Земфира" }
         ];
         
-        // === РАСШИРЕННАЯ БАЗА ИИ-ФАКТОВ ===
         const facts = {
             "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства", "В 2022 стала артисткой Effective Records"],
             "кино": ["Группа основана в 1981 в Ленинграде", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения 90-х", "«Чёрный альбом» вышел после смерти Цоя", "Введены в Зал славы российской музыки"],
@@ -770,26 +637,9 @@
             randomizer: document.getElementById('randomizerPage'), mood: document.getElementById('moodPage')
         };
         
-        function showMenu() { 
-            menu.classList.remove('hidden-menu'); 
-            Object.values(pages).forEach(p => p.classList.remove('active')); 
-            setMode(''); 
-        }
-        
-        function showPage(page, mode) { 
-            menu.classList.add('hidden-menu'); 
-            Object.values(pages).forEach(p => p.classList.remove('active')); 
-            page.classList.add('active'); 
-            setMode(mode); 
-        }
-        
-        function setMode(m) { 
-            document.body.className = ''; 
-            if (m === 'music') document.body.classList.add('music-mode'); 
-            else if (m === 'game') document.body.classList.add('game-mode'); 
-            else if (m === 'ai') document.body.classList.add('ai-mode'); 
-            else if (m === 'assistant') document.body.classList.add('assistant-mode'); 
-        }
+        function showMenu() { menu.classList.remove('hidden-menu'); Object.values(pages).forEach(p => p.classList.remove('active')); setMode(''); }
+        function showPage(page, mode) { menu.classList.add('hidden-menu'); Object.values(pages).forEach(p => p.classList.remove('active')); page.classList.add('active'); setMode(mode); }
+        function setMode(m) { document.body.className = ''; if (m === 'music') document.body.classList.add('music-mode'); else if (m === 'game') document.body.classList.add('game-mode'); else if (m === 'ai') document.body.classList.add('ai-mode'); else if (m === 'assistant') document.body.classList.add('assistant-mode'); }
         
         document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); };
         document.getElementById('goToGameBtn').onclick = () => showPage(pages.game, 'game');
@@ -799,7 +649,9 @@
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
 
-        // === МУЗЫКА (С ПОРТРЕТАМИ) ===
+        // === МУЗЫКА (С РЕАЛЬНЫМИ ПОРТРЕТАМИ ОТ БОТА) ===
+        let currentArtist = '';
+        
         function loadPopular() { 
             document.getElementById('popularGrid').innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
         }
@@ -809,53 +661,47 @@
             search(); 
         };
         
+        function updateArtistAvatar(avatarUrl) {
+            const avatarImg = document.getElementById('artistAvatar');
+            if (avatarImg) {
+                if (avatarUrl) {
+                    avatarImg.src = avatarUrl;
+                    avatarImg.classList.remove('artist-avatar-loading');
+                } else {
+                    avatarImg.classList.add('artist-avatar-loading');
+                }
+            }
+        }
+        
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
             if (!q) return;
+            currentArtist = q;
             
             const resDiv = document.getElementById('musicResult');
             resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🔍 Поиск...</div>';
             
-            const links = { 
-                yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, 
-                youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` 
-            };
-            
+            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
             const bio = await getWiki(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             
-            // Формируем HTML с портретом (аватар - заглушка, бот будет присылать реальный)
-            // Реальный портрет будет через бота, сейчас локальная заглушка с первой буквой
-            const firstLetter = q.charAt(0).toUpperCase();
-            const placeholderAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(firstLetter)}&background=667eea&color=fff&size=70&rounded=true&bold=true&font-size=30`;
-            
+            // Показываем результат с заглушкой, затем запрашиваем фото у бота
             resDiv.innerHTML = `
                 <div class="result-card">
-                    <!-- НОВЫЙ БЛОК С ПОРТРЕТОМ ИСПОЛНИТЕЛЯ -->
                     <div class="artist-profile">
-                        <img id="artistAvatar" class="artist-avatar" src="${placeholderAvatar}" alt="${escapeHtml(q)}" onerror="this.src='${placeholderAvatar}'">
+                        <img id="artistAvatar" class="artist-avatar artist-avatar-loading" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E" alt="${escapeHtml(q)}">
                         <div class="artist-info">
                             <div class="artist-name-large">${escapeHtml(q)}</div>
                             <div class="artist-role">🎤 Исполнитель</div>
                         </div>
                     </div>
-                    
                     <div class="ai-fact-card">
                         <div class="ai-fact-header">
-                            <div class="ai-fact-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" stroke-width="1.5" fill="none">
-                                    <path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="ai-fact-label">ИИ ФАКТ • КАК В ЯНДЕКС МУЗЫКЕ</div>
-                                <div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div>
-                                <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')" style="background:rgba(155,89,182,0.3); border:none; padding:6px 12px; border-radius:40px; color:white; font-size:11px; margin-top:8px; cursor:pointer;">🔄 Новый факт</button>
-                            </div>
+                            <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
+                            <div><div class="ai-fact-label">ИИ ФАКТ • КАК В ЯНДЕКС МУЗЫКЕ</div><div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div><button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">🔄 Новый факт</button></div>
                         </div>
                     </div>
-                    
                     <div class="section-title">🎧 Слушать</div>
                     <div class="platform-buttons">
                         <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -867,27 +713,18 @@
                 </div>
             `;
             
-            // Запрашиваем у бота реальный портрет
+            // Запрашиваем реальный портрет у бота
             tg.sendData(JSON.stringify({
                 action: 'get_artist_avatar',
                 artist: q
             }));
         }
         
-        // Функция обновления ИИ-факта
         window.refreshFact = function(artistName) {
             const newFact = getFact(artistName);
             const factTextDiv = document.getElementById('aiFactText');
             if (factTextDiv) factTextDiv.innerHTML = escapeHtml(newFact);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-        };
-        
-        // Функция обновления портрета от бота
-        window.updateArtistAvatar = function(avatarUrl, artistName) {
-            const avatarImg = document.getElementById('artistAvatar');
-            if (avatarImg && avatarUrl) {
-                avatarImg.src = avatarUrl;
-            }
         };
         
         async function getWiki(artist) {
@@ -923,40 +760,11 @@
 
         // === ИГРА ===
         let gameQ = [], gameIdx = 0, gameScore = 0, gameActive = false;
-        function genQ() { 
-            const t = tracks[Math.floor(Math.random() * tracks.length)]; 
-            const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); 
-            let opts = [t.artist, ...others]; 
-            for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; } 
-            return { track: t.track, correct: t.artist, options: opts }; 
-        }
-        
-        function startGame() { 
-            gameQ = []; 
-            for (let i = 0; i < 6; i++) gameQ.push(genQ()); 
-            gameIdx = 0; gameScore = 0; gameActive = true; 
-            document.getElementById('startGameBtn').textContent = '🎮 Игра...'; 
-            showGame(); 
-        }
-        
-        function showGame() { 
-            if (gameIdx >= gameQ.length) { endGame(); return; } 
-            const q = gameQ[gameIdx]; 
-            document.getElementById('gameContent').innerHTML = `<div style="text-align:center;"><div style="font-size:12px; opacity:0.6;">Вопрос ${gameIdx+1}/${gameQ.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div>Кто исполнитель?</div><div class="game-options">${q.options.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(opt)}</div>`).join('')}</div><div style="margin-top:12px;">🎯 Счёт: ${gameScore}/${gameQ.length}</div></div>`; 
-        }
-        
-        window.checkAnswer = function(sel, cor) { 
-            if (!gameActive) return; 
-            if (sel === cor) gameScore++; 
-            gameIdx++; 
-            showGame(); 
-        };
-        
-        function endGame() { 
-            gameActive = false; 
-            document.getElementById('gameContent').innerHTML = `<div style="text-align:center; padding:20px;"><div style="font-size:48px;">🎉</div><div style="font-size:28px; font-weight:bold;">${gameScore}/${gameQ.length}</div><button onclick="startGame()" style="background:#9b59b6; border:none; padding:12px 24px; border-radius:60px; color:white; margin-top:16px;">🔄 Сыграть снова</button></div>`; 
-            document.getElementById('startGameBtn').textContent = '▶ Начать игру'; 
-        }
+        function genQ() { const t = tracks[Math.floor(Math.random() * tracks.length)]; const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); let opts = [t.artist, ...others]; for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; } return { track: t.track, correct: t.artist, options: opts }; }
+        function startGame() { gameQ = []; for (let i = 0; i < 6; i++) gameQ.push(genQ()); gameIdx = 0; gameScore = 0; gameActive = true; document.getElementById('startGameBtn').textContent = '🎮 Игра...'; showGame(); }
+        function showGame() { if (gameIdx >= gameQ.length) { endGame(); return; } const q = gameQ[gameIdx]; document.getElementById('gameContent').innerHTML = `<div style="text-align:center;"><div style="font-size:12px; opacity:0.6;">Вопрос ${gameIdx+1}/${gameQ.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div>Кто исполнитель?</div><div class="game-options">${q.options.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(opt)}</div>`).join('')}</div><div style="margin-top:12px;">🎯 Счёт: ${gameScore}/${gameQ.length}</div></div>`; }
+        window.checkAnswer = function(sel, cor) { if (!gameActive) return; if (sel === cor) gameScore++; gameIdx++; showGame(); };
+        function endGame() { gameActive = false; document.getElementById('gameContent').innerHTML = `<div style="text-align:center; padding:20px;"><div style="font-size:48px;">🎉</div><div style="font-size:28px; font-weight:bold;">${gameScore}/${gameQ.length}</div><button onclick="startGame()" style="background:#9b59b6; border:none; padding:12px 24px; border-radius:60px; color:white; margin-top:16px;">🔄 Сыграть снова</button></div>`; document.getElementById('startGameBtn').textContent = '▶ Начать игру'; }
         document.getElementById('startGameBtn').onclick = startGame;
 
         // === AI ОБЛОЖКИ ===
@@ -985,24 +793,22 @@
             if (low.includes("случайный")) { const t = tracks[Math.floor(Math.random() * tracks.length)]; return `🎲 **Случайный трек:**\n"${t.track}" - ${t.artist}`; }
             return `🎶 Напиши имя исполнителя или "грустная песня"`;
         }
-        
         function addMsg(text, isUser = false) {
             const cont = document.getElementById('chatContainer');
             const d = document.createElement('div');
             d.className = `message message-${isUser ? 'user' : 'ai'}`;
             let html = text;
             if (!isUser) html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>').replace(/\n/g, '<br>');
-            d.innerHTML = isUser ? `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" stroke-width="1.5" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>` : `<div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" stroke-width="1.5" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">${html}</div>`;
+            d.innerHTML = isUser ? `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>` : `<div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">${html}</div>`;
             cont.appendChild(d); cont.scrollTop = cont.scrollHeight;
         }
-        
         let typing = null;
         async function sendMsg() {
             const inp = document.getElementById('chatInput');
             const msg = inp.value.trim();
             if (!msg) return;
             addMsg(msg, true); inp.value = '';
-            typing = document.createElement('div'); typing.className = 'message message-ai'; typing.innerHTML = `<div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" stroke-width="1.5" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">🤔 ...</div>`;
+            typing = document.createElement('div'); typing.className = 'message message-ai'; typing.innerHTML = `<div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">🤔 ...</div>`;
             document.getElementById('chatContainer').appendChild(typing);
             const resp = await askBot(msg);
             if (typing) typing.remove();
@@ -1015,7 +821,6 @@
         function parseArtists(t) { if (!t.trim()) return []; const lines = t.split(/\r?\n/); let a = []; for (let l of lines) { l = l.trim(); if (!l) continue; a.push(...l.split(',').map(p => p.trim())); } return [...new Map(a.map(v => [v.toLowerCase(), v])).values()]; }
         function updateTotal() { const a = parseArtists(document.getElementById('artistListInput').value); document.getElementById('totalArtistsCount').textContent = a.length; }
         document.getElementById('artistListInput').addEventListener('input', updateTotal);
-        
         function doRandom() {
             const artists = parseArtists(document.getElementById('artistListInput').value);
             if (!artists.length) { document.getElementById('randomizerResult').innerHTML = '<div style="padding:20px; text-align:center;">❌ Введите исполнителей</div>'; return; }
@@ -1027,7 +832,6 @@
             selected.forEach((a, i) => { html += `<div class="random-artist-card"><span class="random-artist-name">${i+1}. ${escapeHtml(a)}</span><button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(a)}')" class="random-artist-link">🎵 Слушать</button></div>`; });
             document.getElementById('randomizerResult').innerHTML = html;
         }
-        
         function loadQuick() { const q = ["Асия", "Imagine Dragons", "Кино", "Земфира"]; document.getElementById('quickArtistsGrid').innerHTML = q.map(a => `<span class="popular-tag" onclick="addArtist('${a}')">+ ${a}</span>`).join(''); }
         window.addArtist = function(a) { const inp = document.getElementById('artistListInput'); inp.value = inp.value + (inp.value ? "\n" : "") + a; updateTotal(); showNote(`➕ Добавлен: ${a}`); };
         document.getElementById('doRandomizeBtn').onclick = doRandom;
@@ -1059,7 +863,7 @@
         document.getElementById('colorPickerBtn').onclick = () => { const inp = document.createElement('input'); inp.type = 'color'; inp.onchange = (e) => { document.body.style.background = e.target.value; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', e.target.value); }; inp.click(); };
         document.getElementById('buttonColorPicker').onchange = (e) => { document.documentElement.style.setProperty('--button-color', e.target.value); localStorage.setItem('music_bot_btn_color', e.target.value); };
 
-        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА ===
+        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА (РЕАЛЬНЫЕ ПОРТРЕТЫ) ===
         tg.onEvent('message', (data) => {
             try {
                 const response = JSON.parse(data);
@@ -1067,13 +871,11 @@
                 
                 if (response.type === 'artist_avatar') {
                     if (response.avatar_url) {
-                        updateArtistAvatar(response.avatar_url, response.artist);
-                    }
-                }
-                
-                if (response.type === 'search_artist_result') {
-                    if (response.cover_url) {
-                        updateArtistAvatar(response.cover_url, response.artist_name);
+                        const avatarImg = document.getElementById('artistAvatar');
+                        if (avatarImg) {
+                            avatarImg.src = response.avatar_url;
+                            avatarImg.classList.remove('artist-avatar-loading');
+                        }
                     }
                 }
             } catch(e) {
@@ -1098,11 +900,6 @@
         loadAppearance();
         loadPopular();
         updateTotal();
-        const user = tg.initDataUnsafe?.user;
-        if (user?.first_name) {
-            const userNameSpan = document.getElementById('userName');
-            if (userNameSpan) userNameSpan.innerText = user.first_name;
-        }
     </script>
 </body>
 </html>
