@@ -1455,9 +1455,20 @@
         tg.onEvent('message', (data) => {
             try {
                 console.log('📩 Получено от бота:', data);
-                const response = JSON.parse(data);
                 
-                // === ПОИСК ТРЕКА (ГЛАВНОЕ, ЧТО НУЖНО) ===
+                let response;
+                if (typeof data === 'string') {
+                    response = JSON.parse(data);
+                } else if (typeof data === 'object') {
+                    response = data;
+                } else {
+                    console.error('Неизвестный тип данных:', typeof data);
+                    return;
+                }
+                
+                console.log('📦 Распарсенный ответ:', response);
+                
+                // === ПОИСК ТРЕКА ===
                 if (response.type === 'search_result') {
                     const resultDiv = document.getElementById('musicResult');
                     if (!resultDiv) return;
@@ -1559,12 +1570,12 @@
                 }
                 
             } catch(e) {
-                console.error('Ошибка парсинга ответа:', e);
+                console.error('❌ Ошибка обработки ответа:', e);
                 console.log('Сырые данные:', data);
             }
         });
 
-        // ========== ОСТАЛЬНОЙ КОД (админка, поиск, игра, ассистент) ==========
+        // ========== ОСТАЛЬНОЙ КОД ==========
         
         function loadAdminActions() {
             const saved = localStorage.getItem('admin_actions');
