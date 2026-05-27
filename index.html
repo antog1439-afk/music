@@ -204,7 +204,6 @@
         }
         .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
 
-        /* ===== СТИЛЬ ДЛЯ ПОРТРЕТА ИСПОЛНИТЕЛЯ ===== */
         .artist-profile {
             display: flex;
             align-items: center;
@@ -240,7 +239,6 @@
             font-size: 12px;
             color: rgba(255,255,255,0.6);
         }
-        /* ===== КОНЕЦ СТИЛЯ ===== */
 
         .result-card {
             background: rgba(255,255,255,0.08);
@@ -541,9 +539,9 @@
         </div>
         <div class="glass-card">
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons...">
+                <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Rammstein...">
                 <button id="voiceSearchBtn" class="voice-btn"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
-                <button id="doSearchBtn" class="search-btn">Найти</button>
+                <button id="doSearchBtn" class="search-btn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0 24px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">Найти</button>
             </div>
             <div class="section-title">Популярные</div>
             <div class="popular-grid" id="popularGrid"></div>
@@ -552,31 +550,23 @@
         <div class="user-info">ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
-    <!-- Страница Игра -->
+    <!-- Остальные страницы (компактно) -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
         <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
     </div>
-
-    <!-- Страница AI Обложки -->
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI Обложки</div></div>
-        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
+        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0 24px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
     </div>
-
-    <!-- Страница Ассистент -->
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Ассистент</div></div>
-        <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
+        <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0 24px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">📤</button></div></div>
     </div>
-
-    <!-- Страница Рандомайзер -->
     <div class="fullscreen-page" id="randomizerPage">
         <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Рандомайзер</div></div>
         <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
-
-    <!-- Страница Настроение -->
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Настроение</div></div>
         <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
@@ -613,7 +603,19 @@
             for (const [k, f] of Object.entries(facts)) {
                 if (key.includes(k) || k.includes(key)) return f[Math.floor(Math.random() * f.length)];
             }
-            return `${artist} — яркий исполнитель года!`;
+            const dynamicFacts = [
+                `🎤 ${artist} — один из самых ярких исполнителей года!`,
+                `🔥 Треки ${artist} набирают миллионы прослушиваний`,
+                `⭐ Подпишись на ${artist}, чтобы не пропустить новые релизы!`,
+                `🎵 ${artist} — открытие года по версии слушателей`,
+                `📀 ${artist} ворвался в чарты в этом месяце`,
+                `🎸 У ${artist} уникальный стиль, который покоряет сердца`,
+                `💿 Дискография ${artist} пополняется новыми хитами`,
+                `🎧 ${artist} — в топе рекомендаций этой недели`,
+                `🌟 ${artist} набирает популярность с каждым днём`,
+                `🎶 ${artist} — это музыка, которая остаётся в сердце`
+            ];
+            return dynamicFacts[Math.floor(Math.random() * dynamicFacts.length)];
         }
         
         function escapeHtml(s) { 
@@ -649,9 +651,7 @@
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
 
-        // === МУЗЫКА (С РЕАЛЬНЫМИ ПОРТРЕТАМИ ОТ БОТА) ===
-        let currentArtist = '';
-        
+        // === МУЗЫКА ===
         function loadPopular() { 
             document.getElementById('popularGrid').innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
         }
@@ -661,22 +661,9 @@
             search(); 
         };
         
-        function updateArtistAvatar(avatarUrl) {
-            const avatarImg = document.getElementById('artistAvatar');
-            if (avatarImg) {
-                if (avatarUrl) {
-                    avatarImg.src = avatarUrl;
-                    avatarImg.classList.remove('artist-avatar-loading');
-                } else {
-                    avatarImg.classList.add('artist-avatar-loading');
-                }
-            }
-        }
-        
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
             if (!q) return;
-            currentArtist = q;
             
             const resDiv = document.getElementById('musicResult');
             resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🔍 Поиск...</div>';
@@ -686,7 +673,6 @@
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             
-            // Показываем результат с заглушкой, затем запрашиваем фото у бота
             resDiv.innerHTML = `
                 <div class="result-card">
                     <div class="artist-profile">
@@ -713,7 +699,6 @@
                 </div>
             `;
             
-            // Запрашиваем реальный портрет у бота
             tg.sendData(JSON.stringify({
                 action: 'get_artist_avatar',
                 artist: q
@@ -863,7 +848,7 @@
         document.getElementById('colorPickerBtn').onclick = () => { const inp = document.createElement('input'); inp.type = 'color'; inp.onchange = (e) => { document.body.style.background = e.target.value; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', e.target.value); }; inp.click(); };
         document.getElementById('buttonColorPicker').onchange = (e) => { document.documentElement.style.setProperty('--button-color', e.target.value); localStorage.setItem('music_bot_btn_color', e.target.value); };
 
-        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА (РЕАЛЬНЫЕ ПОРТРЕТЫ) ===
+        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА ===
         tg.onEvent('message', (data) => {
             try {
                 const response = JSON.parse(data);
@@ -883,6 +868,15 @@
             }
         });
 
+        // === ОСНОВНЫЕ ОБРАБОТЧИКИ ===
+        document.getElementById('doSearchBtn').onclick = search;
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') search();
+        });
+        document.getElementById('voiceSearchBtn').onclick = function() {
+            if (recognition) recognition.start();
+        };
+
         // === ГОЛОСОВОЙ ПОИСК ===
         let recognition = null;
         const vBtn = document.getElementById('voiceSearchBtn');
@@ -893,7 +887,6 @@
             recognition.onresult = (e) => { document.getElementById('searchInput').value = e.results[0][0].transcript; search(); };
             recognition.onerror = () => showNote('❌ Не распознано');
             recognition.onend = () => vBtn.classList.remove('listening');
-            vBtn.onclick = () => recognition.start();
         } else vBtn.style.opacity = '0.5';
 
         // === ЗАПУСК ===
