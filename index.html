@@ -44,10 +44,6 @@
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
 
         .fullscreen-page {
             position: fixed;
@@ -65,7 +61,6 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* === МИНИМАЛИСТИЧНОЕ МЕНЮ (ТОЛЬКО ИКОНКИ) === */
         .menu-container {
             position: fixed;
             top: 0;
@@ -114,15 +109,7 @@
             stroke-width: 1.5;
             fill: none;
         }
-        /* Скрываем текст */
-        .menu-title {
-            display: none;
-        }
-        .menu-desc {
-            display: none;
-        }
 
-        /* === АНИМИРОВАННАЯ ДИАГРАММА КУРСА ВАЛЮТ (КОМПАКТНАЯ) === */
         .currency-chart {
             position: fixed;
             bottom: 20px;
@@ -151,19 +138,14 @@
             color: #4facfe;
             font-weight: normal;
         }
-        .currency-item {
-            margin-bottom: 6px;
-        }
+        .currency-item { margin-bottom: 6px; }
         .currency-row {
             display: flex;
             align-items: center;
             gap: 6px;
             margin-bottom: 3px;
         }
-        .currency-icon {
-            font-size: 16px;
-            min-width: 30px;
-        }
+        .currency-icon { font-size: 16px; min-width: 30px; }
         .currency-value {
             font-size: 12px;
             font-weight: 700;
@@ -176,21 +158,14 @@
             padding: 1px 5px;
             border-radius: 12px;
         }
-        .change-up {
-            background: rgba(46,204,113,0.2);
-            color: #2ecc71;
-        }
-        .change-down {
-            background: rgba(231,76,60,0.2);
-            color: #e74c3c;
-        }
+        .change-up { background: rgba(46,204,113,0.2); color: #2ecc71; }
+        .change-down { background: rgba(231,76,60,0.2); color: #e74c3c; }
         .bar-container {
             flex: 1;
             height: 16px;
             background: rgba(255,255,255,0.08);
             border-radius: 8px;
             overflow: hidden;
-            position: relative;
         }
         .bar-fill {
             height: 100%;
@@ -204,12 +179,8 @@
             font-weight: 600;
             color: white;
         }
-        .usd-fill {
-            background: linear-gradient(90deg, #3498db, #2980b9);
-        }
-        .eur-fill {
-            background: linear-gradient(90deg, #2ecc71, #27ae60);
-        }
+        .usd-fill { background: linear-gradient(90deg, #3498db, #2980b9); }
+        .eur-fill { background: linear-gradient(90deg, #2ecc71, #27ae60); }
         .currency-stats {
             display: flex;
             justify-content: space-between;
@@ -324,9 +295,7 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .artist-info {
-            flex: 1;
-        }
+        .artist-info { flex: 1; }
         .artist-name-large {
             font-size: 22px;
             font-weight: 700;
@@ -334,10 +303,7 @@
             margin-bottom: 4px;
             letter-spacing: -0.3px;
         }
-        .artist-role {
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
-        }
+        .artist-role { font-size: 12px; color: rgba(255,255,255,0.6); }
 
         .result-card {
             background: rgba(255,255,255,0.08);
@@ -605,7 +571,6 @@
 </head>
 <body>
     <div class="menu-container" id="menuContainer">
-        <!-- Анимированная диаграмма курса валют (компактная) -->
         <div class="currency-chart" id="currencyChart">
             <div class="currency-title">
                 <span>💵 КУРС</span>
@@ -616,7 +581,6 @@
             </div>
         </div>
 
-        <!-- Минималистичное меню (только иконки) + кнопка Билеты -->
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
@@ -636,14 +600,13 @@
             <div class="menu-btn" id="goToMoodBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="white"/><circle cx="15" cy="9" r="1" fill="white"/></svg></div>
             </div>
-            <!-- НОВАЯ КНОПКА БИЛЕТЫ -->
             <div class="menu-btn" id="goToTicketsBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="white" stroke="none"/><circle cx="18" cy="12" r="1" fill="white" stroke="none"/></svg></div>
             </div>
         </div>
     </div>
 
-    <!-- Страница Музыка -->
+    <!-- Страницы (оставлены без изменений) -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -662,29 +625,31 @@
         <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
-    <!-- Остальные страницы (компактно) -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
         <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
     </div>
+
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI Обложки</div></div>
         <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
     </div>
+
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Ассистент</div></div>
         <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/></svg></div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
+
     <div class="fullscreen-page" id="randomizerPage">
         <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Рандомайзер</div></div>
         <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
+
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Настроение</div></div>
         <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
     </div>
 
-    <!-- Настройки -->
     <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
     <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
@@ -710,7 +675,6 @@
         
         const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира"];
 
-        // === БАЗА ЖАНРОВ ДЛЯ ПОХОЖИХ ИСПОЛНИТЕЛЕЙ ===
         const artistsGenres = {
             "асия": ["pop", "russian pop", "indie pop"],
             "кино": ["rock", "post-punk", "russian rock"],
@@ -732,7 +696,6 @@
             "би-2": ["rock", "pop rock", "russian rock"]
         };
 
-        // === ПОЛУЧЕНИЕ ПОХОЖИХ ПО ЖАНРАМ ===
         function getSimilarByGenre(currentArtist, count = 4) {
             const currentLower = currentArtist.toLowerCase();
             const currentGenres = artistsGenres[currentLower] || [];
@@ -794,11 +757,7 @@
             }
         }
 
-        // === АНИМИРОВАННАЯ ДИАГРАММА КУРСА ВАЛЮТ ===
-        let historicalRates = {
-            usd: [],
-            eur: []
-        };
+        let historicalRates = { usd: [], eur: [] };
         let currencyInterval = null;
 
         async function getExchangeRates() {
@@ -807,11 +766,7 @@
                 const data = await response.json();
                 const usdToRub = data.rates.RUB;
                 const eurToRub = data.rates.RUB / data.rates.EUR;
-                return {
-                    usd: usdToRub,
-                    eur: eurToRub,
-                    timestamp: Date.now()
-                };
+                return { usd: usdToRub, eur: eurToRub, timestamp: Date.now() };
             } catch(e) {
                 console.log('Ошибка получения курса:', e);
                 return null;
@@ -822,11 +777,9 @@
             if (historicalRates.usd.length < 2) return { usd: 0, eur: 0 };
             const oldUsd = historicalRates.usd[0];
             const oldEur = historicalRates.eur[0];
-            const newUsd = rates.usd;
-            const newEur = rates.eur;
             return {
-                usd: ((newUsd - oldUsd) / oldUsd * 100).toFixed(2),
-                eur: ((newEur - oldEur) / oldEur * 100).toFixed(2)
+                usd: ((rates.usd - oldUsd) / oldUsd * 100).toFixed(2),
+                eur: ((rates.eur - oldEur) / oldEur * 100).toFixed(2)
             };
         }
 
@@ -841,9 +794,7 @@
 
         function getMinMax(ratesArray) {
             if (ratesArray.length === 0) return { min: 0, max: 100 };
-            const min = Math.min(...ratesArray);
-            const max = Math.max(...ratesArray);
-            return { min, max };
+            return { min: Math.min(...ratesArray), max: Math.max(...ratesArray) };
         }
 
         function getBarPercentage(value, min, max) {
@@ -915,9 +866,7 @@
         function startCurrencyUpdates() {
             updateCurrencyChart();
             if (currencyInterval) clearInterval(currencyInterval);
-            currencyInterval = setInterval(() => {
-                updateCurrencyChart();
-            }, 1000);
+            currencyInterval = setInterval(() => updateCurrencyChart(), 30000); // 30 секунд вместо 1
         }
 
         function getFact(artist) {
@@ -961,55 +910,92 @@
             randomizer: document.getElementById('randomizerPage'), mood: document.getElementById('moodPage')
         };
         
-        function showMenu() { menu.classList.remove('hidden-menu'); Object.values(pages).forEach(p => p.classList.remove('active')); setMode(''); }
-        function showPage(page, mode) { menu.classList.add('hidden-menu'); Object.values(pages).forEach(p => p.classList.remove('active')); page.classList.add('active'); setMode(mode); }
-        function setMode(m) { document.body.className = ''; if (m === 'music') document.body.classList.add('music-mode'); else if (m === 'game') document.body.classList.add('game-mode'); else if (m === 'ai') document.body.classList.add('ai-mode'); else if (m === 'assistant') document.body.classList.add('assistant-mode'); }
+        function showMenu() { 
+            menu.classList.remove('hidden-menu'); 
+            Object.values(pages).forEach(p => p && p.classList.remove('active')); 
+            setMode(''); 
+        }
         
-        document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); };
-        document.getElementById('goToGameBtn').onclick = () => showPage(pages.game, 'game');
-        document.getElementById('goToAIBtn').onclick = () => showPage(pages.ai, 'ai');
-        document.getElementById('goToAssistantBtn').onclick = () => showPage(pages.assistant, 'assistant');
-        document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); };
-        document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
-        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
+        function showPage(page, mode) { 
+            menu.classList.add('hidden-menu'); 
+            Object.values(pages).forEach(p => p && p.classList.remove('active')); 
+            if (page) page.classList.add('active'); 
+            setMode(mode); 
+        }
+        
+        function setMode(m) { 
+            document.body.className = ''; 
+            if (m === 'music') document.body.classList.add('music-mode'); 
+            else if (m === 'game') document.body.classList.add('game-mode'); 
+            else if (m === 'ai') document.body.classList.add('ai-mode'); 
+            else if (m === 'assistant') document.body.classList.add('assistant-mode'); 
+        }
+        
+        // Проверяем существование элементов перед назначением обработчиков
+        const musicBtn = document.getElementById('goToMusicBtn');
+        const gameBtn = document.getElementById('goToGameBtn');
+        const aiBtn = document.getElementById('goToAIBtn');
+        const assistantBtn = document.getElementById('goToAssistantBtn');
+        const randomizerBtn = document.getElementById('goToRandomizerBtn');
+        const moodBtn = document.getElementById('goToMoodBtn');
+        const ticketsBtn = document.getElementById('goToTicketsBtn');
+        
+        if (musicBtn) musicBtn.onclick = () => { showPage(pages.music, 'music'); loadPopular(); };
+        if (gameBtn) gameBtn.onclick = () => showPage(pages.game, 'game');
+        if (aiBtn) aiBtn.onclick = () => showPage(pages.ai, 'ai');
+        if (assistantBtn) assistantBtn.onclick = () => showPage(pages.assistant, 'assistant');
+        if (randomizerBtn) randomizerBtn.onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); };
+        if (moodBtn) moodBtn.onclick = () => showPage(pages.mood, 'music');
+        
+        // ГЛАВНОЕ: обработчик для кнопки БИЛЕТЫ с проверкой
+        if (ticketsBtn) {
+            ticketsBtn.onclick = () => {
+                console.log('Кнопка билетов нажата!'); // Для отладки
+                tg.showPopup({
+                    title: "🎫 Билеты на концерты",
+                    message: "Выберите исполнителя:",
+                    buttons: [
+                        { type: "default", text: "🎤 Асия" },
+                        { type: "default", text: "🎸 Imagine Dragons" },
+                        { type: "default", text: "🎵 Кино" },
+                        { type: "default", text: "🔥 Моргенштерн" },
+                        { type: "default", text: "🎤 Земфира" },
+                        { type: "default", text: "🤘 Rammstein" },
+                        { type: "default", text: "📅 Вся афиша" },
+                        { type: "cancel", text: "Отмена" }
+                    ]
+                }, (buttonId) => {
+                    const artists = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein"];
+                    
+                    if (buttonId >= 0 && buttonId < artists.length) {
+                        const artist = artists[buttonId];
+                        tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(artist)}`);
+                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                    } 
+                    else if (buttonId === 6) {
+                        tg.openLink('https://afisha.yandex.ru/concerts');
+                        if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                    }
+                });
+            };
+        } else {
+            console.error('Кнопка goToTicketsBtn не найдена в DOM!');
+        }
+        
+        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => {
+            const btn = document.getElementById(`backFrom${p}`);
+            if (btn) btn.onclick = showMenu;
+        });
 
-        // === НОВАЯ КНОПКА БИЛЕТЫ ===
-        document.getElementById('goToTicketsBtn').onclick = () => {
-            tg.showPopup({
-                title: "🎫 Билеты на концерты",
-                message: "Выберите исполнителя:",
-                buttons: [
-                    { type: "default", text: "🎤 Асия" },
-                    { type: "default", text: "🎸 Imagine Dragons" },
-                    { type: "default", text: "🎵 Кино" },
-                    { type: "default", text: "🔥 Моргенштерн" },
-                    { type: "default", text: "🎤 Земфира" },
-                    { type: "default", text: "🤘 Rammstein" },
-                    { type: "default", text: "📅 Вся афиша" },
-                    { type: "cancel", text: "Отмена" }
-                ]
-            }, (buttonId) => {
-                const artists = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein"];
-                
-                if (buttonId >= 0 && buttonId < artists.length) {
-                    const artist = artists[buttonId];
-                    tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(artist)}`);
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-                } 
-                else if (buttonId === 6) {
-                    tg.openLink('https://afisha.yandex.ru/concerts');
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                }
-            });
-        };
-
-        // === МУЗЫКА ===
+        // === ОСТАЛЬНОЙ КОД (МУЗЫКА, ИГРА, AI, АССИСТЕНТ И Т.Д.) ===
         function loadPopular() { 
-            document.getElementById('popularGrid').innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
+            const grid = document.getElementById('popularGrid');
+            if (grid) grid.innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
         }
         
         window.searchArtist = function(a) { 
-            document.getElementById('searchInput').value = a; 
+            const input = document.getElementById('searchInput');
+            if (input) input.value = a; 
             search(); 
         };
         
@@ -1035,6 +1021,7 @@
             if (!q) return;
             
             const resDiv = document.getElementById('musicResult');
+            if (!resDiv) return;
             resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🔍 Поиск...</div>';
             
             const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
@@ -1108,22 +1095,61 @@
             const qr = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`; 
             const m = document.createElement('div'); 
             m.className = 'qr-modal'; 
-            m.innerHTML = `<div style="background:white; border-radius:28px; padding:20px; text-align:center; max-width:260px; margin:auto; margin-top:30%;"><div style="font-size:16px; font-weight:bold;">📱 ${escapeHtml(title)}</div><img src="${qr}" style="width:160px; margin:12px;"><button onclick="this.parentElement.parentElement.remove()" style="background:#dc3545; border:none; padding:8px 20px; border-radius:40px; color:white;">✕ Закрыть</button></div>`; 
-            document.body.appendChild(m); 
+            m.innerHTML = `<div style="background:white; border-radius:28px; padding:20px; text-align:center; max-width:260px; margin:auto; margin-top:30%;"><div style="font-size:16px; font-weight:bold;">📱 ${escapeHtml(title)}</div><img src="${qr}" style="width:160px; margin:12px;"><button id="closeQrBtn" style="background:#dc3545; border:none; padding:8px 20px; border-radius:40px; color:white;">✕ Закрыть</button></div>`; 
+            document.body.appendChild(m);
+            const closeBtn = m.querySelector('#closeQrBtn');
+            if (closeBtn) closeBtn.onclick = () => m.remove();
         }
 
         // === ИГРА ===
         let gameQ = [], gameIdx = 0, gameScore = 0, gameActive = false;
-        function genQ() { const t = tracks[Math.floor(Math.random() * tracks.length)]; const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); let opts = [t.artist, ...others]; for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; } return { track: t.track, correct: t.artist, options: opts }; }
-        function startGame() { gameQ = []; for (let i = 0; i < 6; i++) gameQ.push(genQ()); gameIdx = 0; gameScore = 0; gameActive = true; document.getElementById('startGameBtn').textContent = '🎮 Игра...'; showGame(); }
-        function showGame() { if (gameIdx >= gameQ.length) { endGame(); return; } const q = gameQ[gameIdx]; document.getElementById('gameContent').innerHTML = `<div style="text-align:center;"><div style="font-size:12px; opacity:0.6;">Вопрос ${gameIdx+1}/${gameQ.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div>Кто исполнитель?</div><div class="game-options">${q.options.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(opt)}</div>`).join('')}</div><div style="margin-top:12px;">🎯 Счёт: ${gameScore}/${gameQ.length}</div></div>`; }
-        window.checkAnswer = function(sel, cor) { if (!gameActive) return; if (sel === cor) gameScore++; gameIdx++; showGame(); };
-        function endGame() { gameActive = false; document.getElementById('gameContent').innerHTML = `<div style="text-align:center; padding:20px;"><div style="font-size:48px;">🎉</div><div style="font-size:28px; font-weight:bold;">${gameScore}/${gameQ.length}</div><button onclick="startGame()" style="background:#9b59b6; border:none; padding:12px 24px; border-radius:60px; color:white; margin-top:16px;">🔄 Сыграть снова</button></div>`; document.getElementById('startGameBtn').textContent = '▶ Начать игру'; }
-        document.getElementById('startGameBtn').onclick = startGame;
+        function genQ() { 
+            const t = tracks[Math.floor(Math.random() * tracks.length)]; 
+            const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); 
+            let opts = [t.artist, ...others]; 
+            for (let i = opts.length - 1; i > 0; i--) { 
+                const j = Math.floor(Math.random() * (i + 1)); 
+                [opts[i], opts[j]] = [opts[j], opts[i]]; 
+            } 
+            return { track: t.track, correct: t.artist, options: opts }; 
+        }
+        function startGame() { 
+            gameQ = []; 
+            for (let i = 0; i < 6; i++) gameQ.push(genQ()); 
+            gameIdx = 0; gameScore = 0; gameActive = true; 
+            const startBtn = document.getElementById('startGameBtn');
+            if (startBtn) startBtn.textContent = '🎮 Игра...'; 
+            showGame(); 
+        }
+        function showGame() { 
+            if (gameIdx >= gameQ.length) { endGame(); return; } 
+            const q = gameQ[gameIdx]; 
+            const content = document.getElementById('gameContent');
+            if (!content) return;
+            content.innerHTML = `<div style="text-align:center;"><div style="font-size:12px; opacity:0.6;">Вопрос ${gameIdx+1}/${gameQ.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div>Кто исполнитель?</div><div class="game-options">${q.options.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(opt)}</div>`).join('')}</div><div style="margin-top:12px;">🎯 Счёт: ${gameScore}/${gameQ.length}</div></div>`; 
+        }
+        window.checkAnswer = function(sel, cor) { 
+            if (!gameActive) return; 
+            if (sel === cor) gameScore++; 
+            gameIdx++; 
+            showGame(); 
+        };
+        function endGame() { 
+            gameActive = false; 
+            const content = document.getElementById('gameContent');
+            if (content) {
+                content.innerHTML = `<div style="text-align:center; padding:20px;"><div style="font-size:48px;">🎉</div><div style="font-size:28px; font-weight:bold;">${gameScore}/${gameQ.length}</div><button onclick="startGame()" style="background:#9b59b6; border:none; padding:12px 24px; border-radius:60px; color:white; margin-top:16px;">🔄 Сыграть снова</button></div>`;
+            }
+            const startBtn = document.getElementById('startGameBtn');
+            if (startBtn) startBtn.textContent = '▶ Начать игру'; 
+        }
+        const startGameBtn = document.getElementById('startGameBtn');
+        if (startGameBtn) startGameBtn.onclick = startGame;
 
         // === AI ОБЛОЖКИ ===
         async function genCover(p) {
             const div = document.getElementById('aiResult');
+            if (!div) return;
             div.innerHTML = `<div class="loading-spinner"></div><div>✨ Создаём...</div>`;
             const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=512&height=512&nologo=true`;
             const img = new Image();
@@ -1131,8 +1157,20 @@
             img.onerror = () => div.innerHTML = `<div style="padding:20px;">❌ Ошибка</div>`;
             img.src = url;
         }
-        window.downloadImg = (url) => { const a = document.createElement('a'); a.href = url; a.download = `cover_${Date.now()}.jpg`; a.click(); showNote('💾 Скачивание'); };
-        document.getElementById('generateAIBtn').onclick = () => { const p = document.getElementById('aiPrompt').value.trim(); if (p) genCover(p); };
+        window.downloadImg = (url) => { 
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.download = `cover_${Date.now()}.jpg`; 
+            a.click(); 
+            showNote('💾 Скачивание'); 
+        };
+        const generateBtn = document.getElementById('generateAIBtn');
+        if (generateBtn) {
+            generateBtn.onclick = () => { 
+                const p = document.getElementById('aiPrompt').value.trim(); 
+                if (p) genCover(p); 
+            };
+        }
 
         // === АССИСТЕНТ ===
         async function askBot(q) {
@@ -1149,101 +1187,223 @@
         }
         function addMsg(text, isUser = false) {
             const cont = document.getElementById('chatContainer');
+            if (!cont) return;
             const d = document.createElement('div');
             d.className = `message message-${isUser ? 'user' : 'ai'}`;
             let html = text;
             if (!isUser) html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>').replace(/\n/g, '<br>');
             d.innerHTML = isUser ? `<div class="message-bubble">${escapeHtml(text)}</div><div class="message-icon">👤</div>` : `<div class="message-icon">🤖</div><div class="message-bubble">${html}</div>`;
-            cont.appendChild(d); cont.scrollTop = cont.scrollHeight;
+            cont.appendChild(d); 
+            cont.scrollTop = cont.scrollHeight;
         }
         let typing = null;
         async function sendMsg() {
             const inp = document.getElementById('chatInput');
+            if (!inp) return;
             const msg = inp.value.trim();
             if (!msg) return;
-            addMsg(msg, true); inp.value = '';
-            typing = document.createElement('div'); typing.className = 'message message-ai'; typing.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">🤔 ...</div>`;
-            document.getElementById('chatContainer').appendChild(typing);
+            addMsg(msg, true); 
+            inp.value = '';
+            typing = document.createElement('div'); 
+            typing.className = 'message message-ai'; 
+            typing.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">🤔 ...</div>`;
+            const chatContainer = document.getElementById('chatContainer');
+            if (chatContainer) chatContainer.appendChild(typing);
             const resp = await askBot(msg);
             if (typing) typing.remove();
             addMsg(resp);
         }
-        document.getElementById('sendChatBtn').onclick = sendMsg;
-        document.getElementById('chatInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
+        const sendBtn = document.getElementById('sendChatBtn');
+        if (sendBtn) sendBtn.onclick = sendMsg;
+        const chatInput = document.getElementById('chatInput');
+        if (chatInput) chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
 
         // === РАНДОМАЙЗЕР ===
-        function parseArtists(t) { if (!t.trim()) return []; const lines = t.split(/\r?\n/); let a = []; for (let l of lines) { l = l.trim(); if (!l) continue; a.push(...l.split(',').map(p => p.trim())); } return [...new Map(a.map(v => [v.toLowerCase(), v])).values()]; }
-        function updateTotal() { const a = parseArtists(document.getElementById('artistListInput').value); document.getElementById('totalArtistsCount').textContent = a.length; }
-        document.getElementById('artistListInput').addEventListener('input', updateTotal);
+        function parseArtists(t) { 
+            if (!t.trim()) return []; 
+            const lines = t.split(/\r?\n/); 
+            let a = []; 
+            for (let l of lines) { 
+                l = l.trim(); 
+                if (!l) continue; 
+                a.push(...l.split(',').map(p => p.trim())); 
+            } 
+            return [...new Map(a.map(v => [v.toLowerCase(), v])).values()]; 
+        }
+        function updateTotal() { 
+            const input = document.getElementById('artistListInput');
+            if (!input) return;
+            const a = parseArtists(input.value); 
+            const totalSpan = document.getElementById('totalArtistsCount');
+            if (totalSpan) totalSpan.textContent = a.length; 
+        }
+        const artistInput = document.getElementById('artistListInput');
+        if (artistInput) artistInput.addEventListener('input', updateTotal);
         function doRandom() {
-            const artists = parseArtists(document.getElementById('artistListInput').value);
-            if (!artists.length) { document.getElementById('randomizerResult').innerHTML = '<div style="padding:20px; text-align:center;">❌ Введите исполнителей</div>'; return; }
+            const input = document.getElementById('artistListInput');
+            if (!input) return;
+            const artists = parseArtists(input.value);
+            if (!artists.length) { 
+                const resultDiv = document.getElementById('randomizerResult');
+                if (resultDiv) resultDiv.innerHTML = '<div style="padding:20px; text-align:center;">❌ Введите исполнителей</div>'; 
+                return; 
+            }
             let cnt = parseInt(document.getElementById('randomCountInput').value) || 1;
             cnt = Math.min(cnt, artists.length);
-            const shuffled = [...artists]; for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
+            const shuffled = [...artists]; 
+            for (let i = shuffled.length - 1; i > 0; i--) { 
+                const j = Math.floor(Math.random() * (i + 1)); 
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; 
+            }
             const selected = shuffled.slice(0, cnt);
             let html = '<div class="section-title">🎲 Вам повезло:</div>';
             selected.forEach((a, i) => { html += `<div class="random-artist-card"><span class="random-artist-name">${i+1}. ${escapeHtml(a)}</span><button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(a)}')" class="random-artist-link">🎵 Слушать</button></div>`; });
-            document.getElementById('randomizerResult').innerHTML = html;
+            const resultDiv = document.getElementById('randomizerResult');
+            if (resultDiv) resultDiv.innerHTML = html;
         }
-        function loadQuick() { const q = ["Асия", "Imagine Dragons", "Кино", "Земфира"]; document.getElementById('quickArtistsGrid').innerHTML = q.map(a => `<span class="popular-tag" onclick="addArtist('${a}')">+ ${a}</span>`).join(''); }
-        window.addArtist = function(a) { const inp = document.getElementById('artistListInput'); inp.value = inp.value + (inp.value ? "\n" : "") + a; updateTotal(); showNote(`➕ Добавлен: ${a}`); };
-        document.getElementById('doRandomizeBtn').onclick = doRandom;
+        function loadQuick() { 
+            const q = ["Асия", "Imagine Dragons", "Кино", "Земфира"]; 
+            const grid = document.getElementById('quickArtistsGrid');
+            if (grid) grid.innerHTML = q.map(a => `<span class="popular-tag" onclick="addArtist('${a}')">+ ${a}</span>`).join(''); 
+        }
+        window.addArtist = function(a) { 
+            const inp = document.getElementById('artistListInput');
+            if (inp) {
+                inp.value = inp.value + (inp.value ? "\n" : "") + a; 
+                updateTotal(); 
+                showNote(`➕ Добавлен: ${a}`);
+            }
+        };
+        const randomizeBtn = document.getElementById('doRandomizeBtn');
+        if (randomizeBtn) randomizeBtn.onclick = doRandom;
 
         // === НАСТРОЕНИЕ ===
         const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Инструментальная музыка"] };
-        document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const mood = btn.dataset.mood; const track = moodTracks[mood][0]; const yandex = `https://music.yandex.ru/search?text=${encodeURIComponent(track)}`; const youtube = `https://music.youtube.com/search?q=${encodeURIComponent(track)}`; document.getElementById('moodResult').innerHTML = `<div class="result-card"><div class="artist-name">🎵 ${escapeHtml(track)}</div><div class="platform-buttons"><button onclick="tg.openLink('${yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div></div>`; }; });
+        document.querySelectorAll('.mood-btn').forEach(btn => { 
+            btn.onclick = () => { 
+                const mood = btn.dataset.mood; 
+                const track = moodTracks[mood][0]; 
+                const yandex = `https://music.yandex.ru/search?text=${encodeURIComponent(track)}`; 
+                const youtube = `https://music.youtube.com/search?q=${encodeURIComponent(track)}`; 
+                const moodResult = document.getElementById('moodResult');
+                if (moodResult) {
+                    moodResult.innerHTML = `<div class="result-card"><div class="artist-name">🎵 ${escapeHtml(track)}</div><div class="platform-buttons"><button onclick="tg.openLink('${yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button></div></div>`;
+                }
+            }; 
+        });
 
         // === НАСТРОЙКИ ===
         function loadAppearance() {
             const bg = localStorage.getItem('music_bot_bg');
-            if (bg && bg !== 'default') { if (bg.startsWith('linear')) document.body.style.background = bg; else { document.body.style.backgroundImage = `url(${bg})`; document.body.style.backgroundSize = 'cover'; } }
-            const theme = localStorage.getItem('music_bot_theme');
-            if (theme === 'dark') document.body.classList.add('dark-theme');
+            if (bg && bg !== 'default') { 
+                if (bg.startsWith('linear')) document.body.style.background = bg; 
+                else { 
+                    document.body.style.backgroundImage = `url(${bg})`; 
+                    document.body.style.backgroundSize = 'cover'; 
+                } 
+            }
         }
-        window.setGrad = (g) => { document.body.style.background = g; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', g); };
-        window.toggleTheme = () => { document.body.classList.toggle('dark-theme'); localStorage.setItem('music_bot_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light'); };
-        window.resetBg = () => { document.body.style.background = ''; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', 'default'); };
+        window.setGrad = (g) => { 
+            document.body.style.background = g; 
+            document.body.style.backgroundImage = ''; 
+            localStorage.setItem('music_bot_bg', g); 
+        };
+        window.toggleTheme = () => { 
+            document.body.classList.toggle('dark-theme'); 
+            localStorage.setItem('music_bot_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light'); 
+        };
+        window.resetBg = () => { 
+            document.body.style.background = ''; 
+            document.body.style.backgroundImage = ''; 
+            localStorage.setItem('music_bot_bg', 'default'); 
+        };
         
-        const fab = document.getElementById('settingsFab'), modal = document.getElementById('settingsModal'), closeModal = document.getElementById('closeSettingsBtn');
-        fab.onclick = () => modal.classList.remove('hidden');
-        closeModal.onclick = () => modal.classList.add('hidden');
-        modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+        const fab = document.getElementById('settingsFab');
+        const modal = document.getElementById('settingsModal');
+        const closeModalBtn = document.getElementById('closeSettingsBtn');
+        if (fab) fab.onclick = () => { if (modal) modal.classList.remove('hidden'); };
+        if (closeModalBtn) closeModalBtn.onclick = () => { if (modal) modal.classList.add('hidden'); };
+        if (modal) modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+        
         document.querySelectorAll('.gradient-circle').forEach(c => c.onclick = () => setGrad(c.style.background));
-        document.getElementById('toggleThemeBtn').onclick = toggleTheme;
-        document.getElementById('resetBgBtn').onclick = resetBg;
-        document.getElementById('uploadBgBtn').onclick = () => document.getElementById('bgImageInput').click();
-        document.getElementById('bgImageInput').onchange = (e) => { if (e.target.files[0]) { const r = new FileReader(); r.onload = (ev) => { document.body.style.backgroundImage = `url(${ev.target.result})`; document.body.style.backgroundSize = 'cover'; localStorage.setItem('music_bot_bg', ev.target.result); }; r.readAsDataURL(e.target.files[0]); } };
-        document.getElementById('colorPickerBtn').onclick = () => { const inp = document.createElement('input'); inp.type = 'color'; inp.onchange = (e) => { document.body.style.background = e.target.value; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', e.target.value); }; inp.click(); };
-        document.getElementById('buttonColorPicker').onchange = (e) => { document.documentElement.style.setProperty('--button-color', e.target.value); localStorage.setItem('music_bot_btn_color', e.target.value); };
+        const toggleThemeBtn = document.getElementById('toggleThemeBtn');
+        if (toggleThemeBtn) toggleThemeBtn.onclick = toggleTheme;
+        const resetBgBtn = document.getElementById('resetBgBtn');
+        if (resetBgBtn) resetBgBtn.onclick = resetBg;
+        const uploadBgBtn = document.getElementById('uploadBgBtn');
+        const bgImageInput = document.getElementById('bgImageInput');
+        if (uploadBgBtn && bgImageInput) {
+            uploadBgBtn.onclick = () => bgImageInput.click();
+            bgImageInput.onchange = (e) => { 
+                if (e.target.files[0]) { 
+                    const r = new FileReader(); 
+                    r.onload = (ev) => { 
+                        document.body.style.backgroundImage = `url(${ev.target.result})`; 
+                        document.body.style.backgroundSize = 'cover'; 
+                        localStorage.setItem('music_bot_bg', ev.target.result); 
+                    }; 
+                    r.readAsDataURL(e.target.files[0]); 
+                } 
+            };
+        }
+        const colorPickerBtn = document.getElementById('colorPickerBtn');
+        if (colorPickerBtn) {
+            colorPickerBtn.onclick = () => { 
+                const inp = document.createElement('input'); 
+                inp.type = 'color'; 
+                inp.onchange = (e) => { 
+                    document.body.style.background = e.target.value; 
+                    document.body.style.backgroundImage = ''; 
+                    localStorage.setItem('music_bot_bg', e.target.value); 
+                }; 
+                inp.click(); 
+            };
+        }
+        const buttonColorPicker = document.getElementById('buttonColorPicker');
+        if (buttonColorPicker) {
+            buttonColorPicker.onchange = (e) => { 
+                document.documentElement.style.setProperty('--button-color', e.target.value); 
+                localStorage.setItem('music_bot_btn_color', e.target.value); 
+            };
+        }
 
         // === ОСНОВНЫЕ ОБРАБОТЧИКИ ===
-        document.getElementById('doSearchBtn').onclick = search;
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') search();
-        });
-        document.getElementById('voiceSearchBtn').onclick = function() {
-            if (recognition) recognition.start();
-        };
-
+        const doSearchBtn = document.getElementById('doSearchBtn');
+        if (doSearchBtn) doSearchBtn.onclick = search;
+        const searchInputField = document.getElementById('searchInput');
+        if (searchInputField) {
+            searchInputField.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') search();
+            });
+        }
+        
         // === ГОЛОСОВОЙ ПОИСК ===
         let recognition = null;
         const vBtn = document.getElementById('voiceSearchBtn');
-        if ('webkitSpeechRecognition' in window) {
-            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SR(); recognition.lang = 'ru-RU';
-            recognition.onstart = () => { vBtn.classList.add('listening'); showNote('🎤 Говорите...'); };
-            recognition.onresult = (e) => { document.getElementById('searchInput').value = e.results[0][0].transcript; search(); };
-            recognition.onerror = () => showNote('❌ Не распознано');
-            recognition.onend = () => vBtn.classList.remove('listening');
-        } else vBtn.style.opacity = '0.5';
+        if (vBtn) {
+            if ('webkitSpeechRecognition' in window) {
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SR(); 
+                recognition.lang = 'ru-RU';
+                recognition.onstart = () => { vBtn.classList.add('listening'); showNote('🎤 Говорите...'); };
+                recognition.onresult = (e) => { 
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) searchInput.value = e.results[0][0].transcript; 
+                    search(); 
+                };
+                recognition.onerror = () => showNote('❌ Не распознано');
+                recognition.onend = () => vBtn.classList.remove('listening');
+                vBtn.onclick = function() { if (recognition) recognition.start(); };
+            } else {
+                vBtn.style.opacity = '0.5';
+            }
+        }
 
         // === ЗАПУСК ===
         loadAppearance();
         loadPopular();
         updateTotal();
         
-        // Запускаем анимированную диаграмму курса валют
         setTimeout(() => {
             startCurrencyUpdates();
         }, 500);
