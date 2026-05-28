@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Music Hub | Музыкальный центр</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Leaflet CSS и JS для карты -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
         * {
@@ -26,6 +29,7 @@
         body.game-mode { background: radial-gradient(circle at 70% 20%, #1e3c72, #2a5298, #0f2027); }
         body.ai-mode { background: radial-gradient(circle at 30% 70%, #4a00e0, #8e2de2, #1a0033); }
         body.assistant-mode { background: radial-gradient(circle at 50% 50%, #0b8793, #360033, #1a0033); }
+        body.map-mode { background: radial-gradient(circle at 50% 50%, #1a472a, #2d5a3f, #0f2c1a); }
 
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
@@ -253,6 +257,40 @@
             margin-bottom: 16px;
             border: 1px solid rgba(255,255,255,0.1);
         }
+
+        /* Стили для карты */
+        .map-container {
+            height: 400px;
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        #concertMap {
+            height: 100%;
+            width: 100%;
+            background: #1a1a2e;
+        }
+        .venue-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .venue-card:active { transform: scale(0.98); background: rgba(255,255,255,0.15); }
+        .venue-name { font-weight: 600; color: white; font-size: 14px; }
+        .venue-address { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+        .venue-distance { background: rgba(46,204,113,0.2); padding: 4px 8px; border-radius: 20px; font-size: 10px; color: #2ecc71; }
+        .info-window { background: white; border-radius: 12px; padding: 8px 12px; min-width: 160px; }
+        .info-window h4 { margin-bottom: 4px; color: #1a1a2e; font-size: 14px; }
+        .info-window p { font-size: 11px; color: #666; margin: 2px 0; }
+        .info-window button { margin-top: 6px; background: #667eea; border: none; padding: 4px 12px; border-radius: 20px; color: white; font-size: 11px; cursor: pointer; }
 
         .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
         .search-input {
@@ -600,6 +638,7 @@
             .currency-title { font-size: 7px; margin-bottom: 4px; }
             .currency-item { margin-bottom: 4px; }
             .currency-row { gap: 4px; }
+            .map-container { height: 300px; }
         }
     </style>
 </head>
@@ -636,6 +675,10 @@
             <div class="menu-btn" id="goToMoodBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="white"/><circle cx="15" cy="9" r="1" fill="white"/></svg></div>
             </div>
+            <!-- НОВАЯ КНОПКА КАРТЫ -->
+            <div class="menu-btn" id="goToMapBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            </div>
         </div>
     </div>
 
@@ -658,7 +701,7 @@
         <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
-    <!-- Остальные страницы (компактно) -->
+    <!-- Остальные страницы -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
         <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
@@ -678,6 +721,23 @@
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Настроение</div></div>
         <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
+    </div>
+
+    <!-- НОВАЯ СТРАНИЦА: КАРТА КОНЦЕРТНЫХ ПЛОЩАДОК -->
+    <div class="fullscreen-page" id="mapPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromMap"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
+            <div class="page-title">Концертные площадки</div>
+        </div>
+        <div class="glass-card" style="padding: 0; overflow: hidden;">
+            <div class="map-container">
+                <div id="concertMap" style="height: 100%; width: 100%;"></div>
+            </div>
+        </div>
+        <div class="glass-card">
+            <div class="section-title">📍 Концертные залы</div>
+            <div id="venuesList"></div>
+        </div>
     </div>
 
     <!-- Настройки -->
@@ -705,6 +765,17 @@
         };
         
         const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира"];
+
+        // === КОНЦЕРТНЫЕ ПЛОЩАДКИ ===
+        const venues = [
+            { name: "Крокус Сити Холл", lat: 55.825, lng: 37.388, address: "Москва, ул. Международная, 20", capacity: "6 000 мест", metro: "Мякинино" },
+            { name: "Главклуб", lat: 55.751, lng: 37.632, address: "Москва, Шлюзовая наб., 2/1", capacity: "1 500 мест", metro: "Павелецкая" },
+            { name: "Stadium Live", lat: 55.798, lng: 37.700, address: "Москва, ул. Стромынка, 20", capacity: "3 000 мест", metro: "Сокольники" },
+            { name: "VK Stadium", lat: 55.734, lng: 37.600, address: "Москва, Ленинградский пр-т, 80к11", capacity: "3 500 мест", metro: "Динамо" },
+            { name: "Gipsy", lat: 55.764, lng: 37.595, address: "Москва, Большая Садовая, 8", capacity: "800 мест", metro: "Маяковская" },
+            { name: "16 тонн", lat: 55.768, lng: 37.592, address: "Москва, ул. Пресненский Вал, 6/1", capacity: "400 мест", metro: "Улица 1905 года" },
+            { name: "Клуб А2 (СПб)", lat: 59.935, lng: 30.336, address: "Санкт-Петербург, пр. Медиков, 3", capacity: "2 500 мест", metro: "Петроградская" }
+        ];
 
         // === БАЗА ЖАНРОВ ДЛЯ ПОХОЖИХ ИСПОЛНИТЕЛЕЙ ===
         const artistsGenres = {
@@ -949,17 +1020,82 @@
             setTimeout(() => t.remove(), 2000); 
         }
 
+        // === КАРТА ===
+        let map = null;
+        let mapMarkers = [];
+        
+        function initMap() {
+            const mapContainer = document.getElementById('concertMap');
+            if (!mapContainer) return;
+            
+            map = L.map('concertMap').setView([55.751244, 37.618423], 11);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+            }).addTo(map);
+            
+            venues.forEach(venue => {
+                const popupContent = `
+                    <div class="info-window">
+                        <h4>🎵 ${venue.name}</h4>
+                        <p>📍 ${venue.address}</p>
+                        <p>🏟 ${venue.capacity}</p>
+                        <p>🚇 ${venue.metro || '—'}</p>
+                        <button onclick="window.buyTickets('${venue.name.replace(/'/g, "\\'")}')">🎫 Билеты →</button>
+                    </div>
+                `;
+                
+                const marker = L.marker([venue.lat, venue.lng]).addTo(map);
+                marker.bindPopup(popupContent);
+                mapMarkers.push(marker);
+            });
+            
+            updateVenuesList();
+        }
+        
+        function updateVenuesList() {
+            const listContainer = document.getElementById('venuesList');
+            if (!listContainer) return;
+            
+            listContainer.innerHTML = venues.map(venue => `
+                <div class="venue-card" onclick="window.flyToVenue(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')">
+                    <div>
+                        <div class="venue-name">🎤 ${escapeHtml(venue.name)}</div>
+                        <div class="venue-address">📍 ${escapeHtml(venue.address)}</div>
+                        <div class="venue-address">🚇 ${escapeHtml(venue.metro || '—')}</div>
+                    </div>
+                    <div class="venue-distance">${venue.capacity}</div>
+                </div>
+            `).join('');
+        }
+        
+        window.flyToVenue = function(lat, lng, name) {
+            if (map) {
+                map.flyTo([lat, lng], 15);
+                showNote(`📍 ${name}`);
+            }
+        };
+        
+        window.buyTickets = function(venueName) {
+            tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(venueName)}`);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+        };
+
         // === НАВИГАЦИЯ ===
         const menu = document.getElementById('menuContainer');
         const pages = {
-            music: document.getElementById('musicPage'), game: document.getElementById('gamePage'),
-            ai: document.getElementById('aiPage'), assistant: document.getElementById('assistantPage'),
-            randomizer: document.getElementById('randomizerPage'), mood: document.getElementById('moodPage')
+            music: document.getElementById('musicPage'), 
+            game: document.getElementById('gamePage'),
+            ai: document.getElementById('aiPage'), 
+            assistant: document.getElementById('assistantPage'),
+            randomizer: document.getElementById('randomizerPage'), 
+            mood: document.getElementById('moodPage'),
+            map: document.getElementById('mapPage')
         };
         
         function showMenu() { menu.classList.remove('hidden-menu'); Object.values(pages).forEach(p => p.classList.remove('active')); setMode(''); }
         function showPage(page, mode) { menu.classList.add('hidden-menu'); Object.values(pages).forEach(p => p.classList.remove('active')); page.classList.add('active'); setMode(mode); }
-        function setMode(m) { document.body.className = ''; if (m === 'music') document.body.classList.add('music-mode'); else if (m === 'game') document.body.classList.add('game-mode'); else if (m === 'ai') document.body.classList.add('ai-mode'); else if (m === 'assistant') document.body.classList.add('assistant-mode'); }
+        function setMode(m) { document.body.className = ''; if (m === 'music') document.body.classList.add('music-mode'); else if (m === 'game') document.body.classList.add('game-mode'); else if (m === 'ai') document.body.classList.add('ai-mode'); else if (m === 'assistant') document.body.classList.add('assistant-mode'); else if (m === 'map') document.body.classList.add('map-mode'); }
         
         document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); };
         document.getElementById('goToGameBtn').onclick = () => showPage(pages.game, 'game');
@@ -967,7 +1103,9 @@
         document.getElementById('goToAssistantBtn').onclick = () => showPage(pages.assistant, 'assistant');
         document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); };
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
-        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
+        document.getElementById('goToMapBtn').onclick = () => { showPage(pages.map, 'map'); if (!map) setTimeout(() => initMap(), 100); };
+        
+        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
 
         // === МУЗЫКА ===
         function loadPopular() { 
