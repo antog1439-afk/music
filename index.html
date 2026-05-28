@@ -48,10 +48,6 @@
             0% { background-position: -200% 0; }
             100% { background-position: 200% 0; }
         }
-        @keyframes fillWidth {
-            from { width: 0%; }
-            to { width: var(--target-width); }
-        }
 
         .fullscreen-page {
             position: fixed;
@@ -120,7 +116,7 @@
         .menu-title { font-size: 15px; font-weight: 600; color: white; margin-bottom: 4px; }
         .menu-desc { font-size: 10px; color: rgba(255,255,255,0.55); }
 
-        /* === АНИМИРОВАННАЯ ДИАГРАММА КУРСА ВАЛЮТ === */
+        /* === АНИМИРОВАННАЯ ДИАГРАММА КУРСА ВАЛЮТ (КОМПАКТНАЯ) === */
         .currency-chart {
             position: fixed;
             bottom: 20px;
@@ -128,51 +124,51 @@
             right: 20px;
             background: rgba(0,0,0,0.5);
             backdrop-filter: blur(20px);
-            border-radius: 28px;
-            padding: 16px;
+            border-radius: 20px;
+            padding: 10px 14px;
             z-index: 6;
             border: 1px solid rgba(255,255,255,0.1);
         }
         .currency-title {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 600;
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.5);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .currency-update-time {
-            font-size: 9px;
+            font-size: 8px;
             color: #4facfe;
             font-weight: normal;
         }
         .currency-item {
-            margin-bottom: 14px;
+            margin-bottom: 8px;
         }
         .currency-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
+            gap: 8px;
+            margin-bottom: 4px;
         }
         .currency-icon {
-            font-size: 22px;
-            min-width: 50px;
+            font-size: 14px;
+            min-width: 38px;
         }
         .currency-value {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 700;
             color: white;
-            min-width: 75px;
+            min-width: 65px;
         }
         .currency-change {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 20px;
+            padding: 2px 6px;
+            border-radius: 16px;
         }
         .change-up {
             background: rgba(46,204,113,0.2);
@@ -184,21 +180,21 @@
         }
         .bar-container {
             flex: 1;
-            height: 28px;
+            height: 20px;
             background: rgba(255,255,255,0.08);
-            border-radius: 14px;
+            border-radius: 10px;
             overflow: hidden;
             position: relative;
         }
         .bar-fill {
             height: 100%;
-            border-radius: 14px;
+            border-radius: 10px;
             transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding-right: 8px;
-            font-size: 10px;
+            padding-right: 6px;
+            font-size: 9px;
             font-weight: 600;
             color: white;
         }
@@ -211,11 +207,11 @@
         .currency-stats {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            font-size: 10px;
-            color: rgba(255,255,255,0.5);
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            font-size: 8px;
+            color: rgba(255,255,255,0.4);
         }
 
         .page-header {
@@ -589,24 +585,26 @@
             .page-title { font-size: 24px; }
             .artist-avatar { width: 55px; height: 55px; }
             .artist-name-large { font-size: 18px; }
-            .currency-chart { bottom: 10px; left: 10px; right: 10px; padding: 12px; }
-            .currency-icon { font-size: 18px; min-width: 40px; }
-            .currency-value { font-size: 13px; min-width: 65px; }
-            .bar-container { height: 24px; }
-            .currency-stats { font-size: 8px; }
+            .currency-chart { bottom: 10px; left: 10px; right: 10px; padding: 8px 12px; }
+            .currency-icon { font-size: 12px; min-width: 34px; }
+            .currency-value { font-size: 11px; min-width: 55px; }
+            .bar-container { height: 16px; }
+            .currency-stats { font-size: 7px; }
+            .currency-title { font-size: 8px; margin-bottom: 6px; }
+            .currency-item { margin-bottom: 6px; }
         }
     </style>
 </head>
 <body>
     <div class="menu-container" id="menuContainer">
-        <!-- Анимированная диаграмма курса валют -->
+        <!-- Анимированная диаграмма курса валют (компактная) -->
         <div class="currency-chart" id="currencyChart">
             <div class="currency-title">
                 <span>💵 КУРС ВАЛЮТ</span>
                 <span class="currency-update-time" id="updateTime">🔄 загрузка...</span>
             </div>
             <div id="currencyContent">
-                <div style="text-align:center; padding:20px;">🔄 Загрузка курса...</div>
+                <div style="text-align:center; padding:10px; font-size:11px;">🔄 Загрузка курса...</div>
             </div>
         </div>
 
@@ -859,7 +857,7 @@
             
             const rates = await getExchangeRates();
             if (!rates) {
-                container.innerHTML = '<div style="text-align:center; padding:20px;">❌ Не удалось загрузить курс</div>';
+                container.innerHTML = '<div style="text-align:center; padding:15px; font-size:11px;">❌ Не удалось загрузить курс</div>';
                 if (timeElement) timeElement.textContent = 'ошибка';
                 return;
             }
@@ -919,13 +917,6 @@
             currencyInterval = setInterval(() => {
                 updateCurrencyChart();
             }, 1000);
-        }
-
-        function stopCurrencyUpdates() {
-            if (currencyInterval) {
-                clearInterval(currencyInterval);
-                currencyInterval = null;
-            }
         }
 
         function getFact(artist) {
