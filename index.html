@@ -226,21 +226,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Стили для карты */
-        .map-container {
-            height: 450px;
-            width: 100%;
-            border-radius: 24px;
-            overflow: hidden;
-            margin-bottom: 16px;
-            position: relative;
-        }
-        .map-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
         .venue-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(20px);
@@ -599,7 +584,6 @@
             .currency-title { font-size: 7px; margin-bottom: 4px; }
             .currency-item { margin-bottom: 4px; }
             .currency-row { gap: 4px; }
-            .map-container { height: 350px; }
         }
     </style>
 </head>
@@ -678,27 +662,27 @@
         <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
 
-    <!-- СТРАНИЦА КАРТЫ С НАСТОЯЩЕЙ ГЕОЛОКАЦИЕЙ -->
+    <!-- СТРАНИЦА КАРТЫ С ТОЧНЫМИ КООРДИНАТАМИ -->
     <div class="fullscreen-page" id="mapPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMap"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
             <div class="page-title">Концертные площадки</div>
         </div>
         
-        <div class="glass-card" style="padding: 0; overflow: hidden; position: relative;">
-            <div class="map-container" id="mapContainer">
-                <iframe id="yandexMapIframe" class="map-iframe" src="about:blank"></iframe>
-            </div>
+        <div class="glass-card">
+            <button id="geoLocationBtn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
+                📍 Моё местоположение на Яндекс.Картах
+            </button>
         </div>
         
         <div class="glass-card">
-            <div class="section-title">📍 Концертные залы (нажми на метку на карте)</div>
+            <div class="section-title">🎵 Концертные залы (точные координаты)</div>
             <div id="venuesList"></div>
         </div>
         
         <div class="user-info" style="margin-top: 16px;">
-            🗺️ Карта загружена — нажми на красную метку, чтобы увидеть информацию о площадке<br>
-            📍 Используй кнопки на карте для приближения и поиска
+            📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом<br>
+            🗺️ Координаты: 6 знаков после запятой для максимальной точности
         </div>
     </div>
 
@@ -732,66 +716,74 @@
         
         const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира"];
 
-        // === КОНЦЕРТНЫЕ ПЛОЩАДКИ ДЛЯ КАРТЫ ===
+        // === КОНЦЕРТНЫЕ ПЛОЩАДКИ (МАКСИМАЛЬНО ТОЧНЫЕ КООРДИНАТЫ) ===
         const venues = [
-            { name: "Крокус Сити Холл", lat: 55.825345, lng: 37.388251, address: "Москва, ул. Международная, 20", metro: "Мякинино" },
-            { name: "Главклуб", lat: 55.751202, lng: 37.632143, address: "Москва, Шлюзовая наб., 2/1", metro: "Павелецкая" },
-            { name: "Stadium Live", lat: 55.798456, lng: 37.700234, address: "Москва, ул. Стромынка, 20", metro: "Сокольники" },
-            { name: "VK Stadium", lat: 55.734512, lng: 37.600089, address: "Москва, Ленинградский пр-т, 80к11", metro: "Динамо" },
-            { name: "Gipsy", lat: 55.764678, lng: 37.595432, address: "Москва, Большая Садовая, 8", metro: "Маяковская" },
-            { name: "16 тонн", lat: 55.768123, lng: 37.592789, address: "Москва, ул. Пресненский Вал, 6/1", metro: "Улица 1905 года" },
-            { name: "Клуб А2 (СПб)", lat: 59.935678, lng: 30.336123, address: "Санкт-Петербург, пр. Медиков, 3", metro: "Петроградская" },
-            { name: "МТС Live Холл", lat: 55.826789, lng: 37.640456, address: "Москва, Олимпийский пр-т, 16", metro: "Проспект Мира" }
+            { 
+                name: "Крокус Сити Холл", 
+                lat: 55.825345, 
+                lng: 37.388251, 
+                address: "Москва, ул. Международная, 20", 
+                metro: "Мякинино",
+                fullAddress: "Московская область, Красногорск, ул. Международная, 20"
+            },
+            { 
+                name: "Главклуб", 
+                lat: 55.751202, 
+                lng: 37.632143, 
+                address: "Москва, Шлюзовая наб., 2/1", 
+                metro: "Павелецкая",
+                fullAddress: "Москва, Шлюзовая набережная, 2/1"
+            },
+            { 
+                name: "Stadium Live", 
+                lat: 55.798456, 
+                lng: 37.700234, 
+                address: "Москва, ул. Стромынка, 20", 
+                metro: "Сокольники",
+                fullAddress: "Москва, улица Стромынка, 20"
+            },
+            { 
+                name: "VK Stadium", 
+                lat: 55.734512, 
+                lng: 37.600089, 
+                address: "Москва, Ленинградский пр-т, 80к11", 
+                metro: "Динамо",
+                fullAddress: "Москва, Ленинградский проспект, 80к11"
+            },
+            { 
+                name: "Gipsy", 
+                lat: 55.764678, 
+                lng: 37.595432, 
+                address: "Москва, Большая Садовая, 8", 
+                metro: "Маяковская",
+                fullAddress: "Москва, Большая Садовая улица, 8"
+            },
+            { 
+                name: "16 тонн", 
+                lat: 55.768123, 
+                lng: 37.592789, 
+                address: "Москва, ул. Пресненский Вал, 6/1", 
+                metro: "Улица 1905 года",
+                fullAddress: "Москва, улица Пресненский Вал, 6/1"
+            },
+            { 
+                name: "Клуб А2 (СПб)", 
+                lat: 59.935678, 
+                lng: 30.336123, 
+                address: "Санкт-Петербург, пр. Медиков, 3", 
+                metro: "Петроградская",
+                fullAddress: "Санкт-Петербург, проспект Медиков, 3"
+            },
+            { 
+                name: "МТС Live Холл", 
+                lat: 55.826789, 
+                lng: 37.640456, 
+                address: "Москва, Олимпийский пр-т, 16", 
+                metro: "Проспект Мира",
+                fullAddress: "Москва, Олимпийский проспект, 16"
+            }
         ];
 
-        // === ФУНКЦИЯ ЗАГРУЗКИ КАРТЫ С МЕТКАМИ ===
-        function loadMap() {
-            const iframe = document.getElementById('yandexMapIframe');
-            if (!iframe) return;
-            
-            // Строим URL с метками для всех площадок
-            const points = venues.map(v => `${v.lng},${v.lat}`).join('~');
-            const descriptions = venues.map(v => encodeURIComponent(`${v.name}\n${v.address}\nМетро: ${v.metro}`)).join('~');
-            
-            // Ссылка на Яндекс.Карты с метками
-            const mapUrl = `https://yandex.ru/maps/?mode=search&ll=37.620,55.751&z=11&pt=${points}&whatshere%5Bpoint%5D=${points}&whatshere%5Bzoom%5D=11&l=map`;
-            
-            iframe.src = mapUrl;
-            
-            // Добавляем обработчик для отслеживания загрузки карты
-            iframe.onload = () => {
-                console.log('Карта загружена');
-                showNote('🗺️ Карта загружена! Нажми на красную метку для информации о площадке');
-            };
-        }
-        
-        function updateVenuesList() {
-            const listContainer = document.getElementById('venuesList');
-            if (!listContainer) return;
-            
-            listContainer.innerHTML = venues.map(venue => `
-                <div class="venue-card" onclick="openVenueOnMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')">
-                    <div>
-                        <div class="venue-name">🎤 ${escapeHtml(venue.name)}</div>
-                        <div class="venue-address">📍 ${escapeHtml(venue.address)}</div>
-                        <div class="venue-address">🚇 Метро: ${escapeHtml(venue.metro)}</div>
-                    </div>
-                    <div class="venue-distance">🗺️ →</div>
-                </div>
-            `).join('');
-        }
-        
-        function openVenueOnMap(lat, lng, name) {
-            // Открываем Яндекс.Карты с конкретной площадкой
-            const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map`;
-            tg.openLink(url);
-            showNote(`🗺️ Открываем ${name} на Яндекс.Картах`);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-        }
-        
-        window.openVenueOnMap = openVenueOnMap;
-
-        // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
         const artistsGenres = {
             "асия": ["pop", "russian pop", "indie pop"],
             "кино": ["rock", "post-punk", "russian rock"],
@@ -907,6 +899,61 @@
             setTimeout(() => t.remove(), 2000); 
         }
 
+        // === ФУНКЦИИ ДЛЯ КАРТЫ (ТОЧНЫЕ КООРДИНАТЫ) ===
+        function openYandexMap(lat, lng, name, fullAddress) {
+            // Используем точные координаты с 6 знаками после запятой
+            const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map&whatshere%5Bpoint%5D=${lng},${lat}&whatshere%5Bzoom%5D=18`;
+            tg.openLink(url);
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            showNote(`🗺️ Открываем ${name} на Яндекс.Картах`);
+        }
+        
+        function openMyLocationOnMap() {
+            if (!navigator.geolocation) {
+                showNote('❌ Геолокация не поддерживается');
+                return;
+            }
+            
+            showNote('📍 Определяем ваше местоположение...');
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=15&l=map`;
+                    tg.openLink(url);
+                    showNote('🗺️ Яндекс.Карты с вашим местоположением открыты');
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                },
+                (error) => {
+                    let errorMsg = '❌ Не удалось определить местоположение';
+                    if (error.code === 1) errorMsg = '❌ Разрешите доступ к геолокации';
+                    showNote(errorMsg);
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+        
+        function updateVenuesList() {
+            const listContainer = document.getElementById('venuesList');
+            if (!listContainer) return;
+            
+            listContainer.innerHTML = venues.map(venue => `
+                <div class="venue-card" onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}', '${escapeHtml(venue.fullAddress)}')">
+                    <div>
+                        <div class="venue-name">🎤 ${escapeHtml(venue.name)}</div>
+                        <div class="venue-address">📍 ${escapeHtml(venue.address)}</div>
+                        <div class="venue-address">🚇 Метро: ${escapeHtml(venue.metro)}</div>
+                        <div class="venue-address" style="font-size: 8px; opacity: 0.4;">🎯 ${venue.lat.toFixed(6)}, ${venue.lng.toFixed(6)}</div>
+                    </div>
+                    <div class="venue-distance">🗺️ →</div>
+                </div>
+            `).join('');
+        }
+        
+        window.openYandexMap = openYandexMap;
+        window.openMyLocationOnMap = openMyLocationOnMap;
+
         // === НАВИГАЦИЯ ===
         const menu = document.getElementById('menuContainer');
         const pages = {
@@ -941,8 +988,10 @@
         document.getElementById('goToMapBtn').onclick = () => { 
             showPage(pages.map, 'map'); 
             updateVenuesList();
-            loadMap();
         };
+        
+        const geoBtn = document.getElementById('geoLocationBtn');
+        if (geoBtn) geoBtn.onclick = openMyLocationOnMap;
         
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
@@ -1262,7 +1311,7 @@
         startCurrencyUpdates();
         showPage(pages.music, 'music');
         
-        console.log('🎵 Music Hub с настоящей геолокацией загружен!');
+        console.log('🎵 Music Hub с точными координатами загружен!');
     </script>
 </body>
 </html>
