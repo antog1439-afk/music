@@ -65,6 +65,7 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
+        /* === МИНИМАЛИСТИЧНОЕ МЕНЮ (ТОЛЬКО ИКОНКИ) === */
         .menu-container {
             position: fixed;
             top: 0;
@@ -81,9 +82,9 @@
         .menu-screen {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: 20px;
             width: 100%;
-            max-width: 340px;
+            max-width: 280px;
             padding: 20px;
             animation: fadeInUp 0.5s ease;
         }
@@ -91,32 +92,37 @@
             background: rgba(255,255,255,0.08);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 24px;
-            padding: 20px 12px;
+            border-radius: 28px;
+            padding: 24px 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.25s ease;
         }
         .menu-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
         .menu-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 10px;
+            width: 56px;
+            height: 56px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .menu-icon svg {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             stroke: white;
             stroke-width: 1.5;
             fill: none;
         }
-        .menu-title { font-size: 15px; font-weight: 600; color: white; margin-bottom: 4px; }
-        .menu-desc { font-size: 10px; color: rgba(255,255,255,0.55); }
+        /* Скрываем текст */
+        .menu-title {
+            display: none;
+        }
+        .menu-desc {
+            display: none;
+        }
 
-        /* === АНИМИРОВАННАЯ ДИАГРАММА КУРСА ВАЛЮТ === */
+        /* === АНИМИРОВАННАЯ ДИАГРАММА КУРСА ВАЛЮТ (КОМПАКТНАЯ) === */
         .currency-chart {
             position: fixed;
             bottom: 20px;
@@ -377,7 +383,6 @@
         .platform-btn:active { transform: scale(0.97); }
         .yandex-btn { background: #ffcc00; color: #1a1a2e; }
         .youtube-btn { background: #ff0000; color: white; }
-        .ticket-btn { background: #28a745; color: white; }
 
         .bio-section {
             background: rgba(0,0,0,0.25);
@@ -580,9 +585,10 @@
 
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
-            .menu-screen { gap: 12px; }
-            .menu-btn { padding: 16px 8px; }
-            .menu-icon svg { width: 28px; height: 28px; }
+            .menu-screen { gap: 16px; max-width: 240px; }
+            .menu-btn { padding: 18px 8px; }
+            .menu-icon { width: 48px; height: 48px; }
+            .menu-icon svg { width: 30px; height: 30px; }
             .page-title { font-size: 24px; }
             .artist-avatar { width: 55px; height: 55px; }
             .artist-name-large { font-size: 18px; }
@@ -599,7 +605,7 @@
 </head>
 <body>
     <div class="menu-container" id="menuContainer">
-        <!-- Анимированная диаграмма курса валют -->
+        <!-- Анимированная диаграмма курса валют (компактная) -->
         <div class="currency-chart" id="currencyChart">
             <div class="currency-title">
                 <span>💵 КУРС</span>
@@ -610,41 +616,30 @@
             </div>
         </div>
 
+        <!-- Минималистичное меню (только иконки) -->
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
-                <div class="menu-title">Музыка</div>
-                <div class="menu-desc">Поиск исполнителей</div>
             </div>
             <div class="menu-btn" id="goToGameBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
-                <div class="menu-title">Игра</div>
-                <div class="menu-desc">Угадай трек</div>
             </div>
             <div class="menu-btn" id="goToAIBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="white"/></svg></div>
-                <div class="menu-title">AI Обложки</div>
-                <div class="menu-desc">Генерация</div>
             </div>
             <div class="menu-btn" id="goToAssistantBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
-                <div class="menu-title">Ассистент</div>
-                <div class="menu-desc">Помощник</div>
             </div>
             <div class="menu-btn" id="goToRandomizerBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
-                <div class="menu-title">Рандомайзер</div>
-                <div class="menu-desc">Случайный выбор</div>
             </div>
             <div class="menu-btn" id="goToMoodBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="white"/><circle cx="15" cy="9" r="1" fill="white"/></svg></div>
-                <div class="menu-title">Настроение</div>
-                <div class="menu-desc">Подбор музыки</div>
             </div>
         </div>
     </div>
 
-    <!-- Страница Музыка (только поиск исполнителей) -->
+    <!-- Страница Музыка -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -652,7 +647,7 @@
         </div>
         <div class="glass-card">
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Кино...">
+                <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Rammstein...">
                 <button id="voiceSearchBtn" class="voice-btn"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
                 <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
@@ -660,10 +655,10 @@
             <div class="popular-grid" id="popularGrid"></div>
             <div id="musicResult"></div>
         </div>
-        <div class="user-info">🎫 Билеты на концерты | 🤖 ИИ-факты</div>
+        <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
-    <!-- Остальные страницы -->
+    <!-- Остальные страницы (компактно) -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
         <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
@@ -702,14 +697,224 @@
         ];
         
         const facts = {
-            "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний"],
-            "кино": ["Группа основана в 1981 в Ленинграде", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения 90-х"],
-            "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA и Need for Speed", "Группа из Лас-Вегаса"],
-            "моргенштерн": ["Родился в Уфе 17 февраля 1998", "Самый молодой миллионер в шоу-бизнесе", "«Cadillac» — 100 млн просмотров"],
-            "земфира": ["Родилась в Уфе 26 августа 1976", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий"]
+            "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства", "В 2022 стала артисткой Effective Records"],
+            "кино": ["Группа основана в 1981 в Ленинграде", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения 90-х", "«Чёрный альбом» вышел после смерти Цоя", "Введены в Зал славы российской музыки"],
+            "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA и Need for Speed", "Группа из Лас-Вегаса", "«Radioactive» — самый долгоиграющий сингл Billboard", "Вокалист борется с анкилозирующим спондилитом"],
+            "моргенштерн": ["Родился в Уфе 17 февраля 1998", "Самый молодой миллионер в шоу-бизнесе (в 22 года)", "«Cadillac» — 100 млн просмотров", "Премия MTV Europe Music Awards 2021", "Состояние оценивается в 10+ млн долларов"],
+            "земфира": ["Родилась в Уфе 26 августа 1976", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий", "5 премий «Муз-ТВ» и «Золотой граммофон»", "Пишет стихи с 7 лет"]
         };
         
         const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира"];
+
+        // === БАЗА ЖАНРОВ ДЛЯ ПОХОЖИХ ИСПОЛНИТЕЛЕЙ ===
+        const artistsGenres = {
+            "асия": ["pop", "russian pop", "indie pop"],
+            "кино": ["rock", "post-punk", "russian rock"],
+            "земфира": ["rock", "alternative", "russian rock"],
+            "моргенштерн": ["hip-hop", "rap", "pop"],
+            "imagine dragons": ["alternative rock", "indie rock", "pop rock"],
+            "big baby tape": ["hip-hop", "trap", "rap"],
+            "дора": ["pop", "indie pop", "russian pop"],
+            "instasamka": ["hip-hop", "pop", "russian rap"],
+            "rammstein": ["industrial metal", "hard rock", "metal"],
+            "metallica": ["thrash metal", "heavy metal", "rock"],
+            "billie eilish": ["pop", "alternative pop", "electropop"],
+            "the weeknd": ["r&b", "pop", "synthwave"],
+            "coldplay": ["alternative rock", "pop rock", "britpop"],
+            "агата кристи": ["rock", "post-punk", "russian rock"],
+            "наутилус помпилиус": ["rock", "post-punk", "russian rock"],
+            "ддт": ["rock", "russian rock", "folk rock"],
+            "сплин": ["rock", "alternative", "russian rock"],
+            "би-2": ["rock", "pop rock", "russian rock"]
+        };
+
+        // === ПОЛУЧЕНИЕ ПОХОЖИХ ПО ЖАНРАМ ===
+        function getSimilarByGenre(currentArtist, count = 4) {
+            const currentLower = currentArtist.toLowerCase();
+            const currentGenres = artistsGenres[currentLower] || [];
+            
+            if (currentGenres.length === 0) {
+                const defaultArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
+                const filtered = defaultArtists.filter(a => a.toLowerCase() !== currentLower);
+                const shuffled = [...filtered];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled.slice(0, count);
+            }
+            
+            const similar = [];
+            for (const [artist, genres] of Object.entries(artistsGenres)) {
+                if (artist.toLowerCase() === currentLower) continue;
+                const hasCommonGenre = genres.some(g => currentGenres.includes(g));
+                if (hasCommonGenre) {
+                    similar.push(artist);
+                }
+            }
+            
+            for (let i = similar.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [similar[i], similar[j]] = [similar[j], similar[i]];
+            }
+            
+            while (similar.length < count) {
+                const popularArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
+                const addArtist = popularArtists.find(p => p.toLowerCase() !== currentLower && !similar.includes(p));
+                if (addArtist) similar.push(addArtist);
+                else break;
+            }
+            
+            return similar.slice(0, count);
+        }
+
+        function addSimilarArtistsToResult(artistName) {
+            const resultCard = document.querySelector('#musicResult .result-card');
+            if (!resultCard) return;
+            
+            const oldSection = resultCard.querySelector('.similar-artists-section');
+            if (oldSection) oldSection.remove();
+            
+            const similarArtists = getSimilarByGenre(artistName, 4);
+            
+            if (similarArtists.length > 0) {
+                const similarHtml = `
+                    <div class="similar-artists-section" style="margin-top: 16px;">
+                        <div class="section-title">🎸 Похожие по жанру</div>
+                        <div class="popular-grid" style="margin-bottom: 16px;">
+                            ${similarArtists.map(artist => `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+                resultCard.insertAdjacentHTML('beforeend', similarHtml);
+            }
+        }
+
+        // === АНИМИРОВАННАЯ ДИАГРАММА КУРСА ВАЛЮТ ===
+        let historicalRates = {
+            usd: [],
+            eur: []
+        };
+        let currencyInterval = null;
+
+        async function getExchangeRates() {
+            try {
+                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const data = await response.json();
+                const usdToRub = data.rates.RUB;
+                const eurToRub = data.rates.RUB / data.rates.EUR;
+                return {
+                    usd: usdToRub,
+                    eur: eurToRub,
+                    timestamp: Date.now()
+                };
+            } catch(e) {
+                console.log('Ошибка получения курса:', e);
+                return null;
+            }
+        }
+
+        function calculateChange(rates) {
+            if (historicalRates.usd.length < 2) return { usd: 0, eur: 0 };
+            const oldUsd = historicalRates.usd[0];
+            const oldEur = historicalRates.eur[0];
+            const newUsd = rates.usd;
+            const newEur = rates.eur;
+            return {
+                usd: ((newUsd - oldUsd) / oldUsd * 100).toFixed(2),
+                eur: ((newEur - oldEur) / oldEur * 100).toFixed(2)
+            };
+        }
+
+        function updateHistoricalRates(rates) {
+            historicalRates.usd.push(rates.usd);
+            historicalRates.eur.push(rates.eur);
+            if (historicalRates.usd.length > 60) {
+                historicalRates.usd.shift();
+                historicalRates.eur.shift();
+            }
+        }
+
+        function getMinMax(ratesArray) {
+            if (ratesArray.length === 0) return { min: 0, max: 100 };
+            const min = Math.min(...ratesArray);
+            const max = Math.max(...ratesArray);
+            return { min, max };
+        }
+
+        function getBarPercentage(value, min, max) {
+            if (min === max) return 50;
+            return ((value - min) / (max - min)) * 100;
+        }
+
+        async function updateCurrencyChart() {
+            const container = document.getElementById('currencyContent');
+            const timeElement = document.getElementById('updateTime');
+            if (!container) return;
+            
+            const rates = await getExchangeRates();
+            if (!rates) {
+                container.innerHTML = '<div style="text-align:center; padding:15px; font-size:11px;">❌ Не удалось загрузить курс</div>';
+                if (timeElement) timeElement.textContent = 'ошибка';
+                return;
+            }
+            
+            updateHistoricalRates(rates);
+            const change = calculateChange(rates);
+            const usdRange = getMinMax(historicalRates.usd);
+            const eurRange = getMinMax(historicalRates.eur);
+            
+            const usdPercent = getBarPercentage(rates.usd, usdRange.min, usdRange.max);
+            const eurPercent = getBarPercentage(rates.eur, eurRange.min, eurRange.max);
+            
+            const changeUsdClass = parseFloat(change.usd) >= 0 ? 'change-up' : 'change-down';
+            const changeUsdSign = parseFloat(change.usd) >= 0 ? '+' : '';
+            const changeEurClass = parseFloat(change.eur) >= 0 ? 'change-up' : 'change-down';
+            const changeEurSign = parseFloat(change.eur) >= 0 ? '+' : '';
+            
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            if (timeElement) timeElement.textContent = `🔄 ${timeString}`;
+            
+            container.innerHTML = `
+                <div class="currency-item">
+                    <div class="currency-row">
+                        <span class="currency-icon">🇺🇸</span>
+                        <span class="currency-value">${rates.usd.toFixed(2)} ₽</span>
+                        <span class="currency-change ${changeUsdClass}">${changeUsdSign}${change.usd}%</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill usd-fill" style="width: ${Math.min(usdPercent, 100)}%;">
+                            ${Math.round(usdPercent)}%
+                        </div>
+                    </div>
+                </div>
+                <div class="currency-item">
+                    <div class="currency-row">
+                        <span class="currency-icon">🇪🇺</span>
+                        <span class="currency-value">${rates.eur.toFixed(2)} ₽</span>
+                        <span class="currency-change ${changeEurClass}">${changeEurSign}${change.eur}%</span>
+                    </div>
+                    <div class="bar-container">
+                        <div class="bar-fill eur-fill" style="width: ${Math.min(eurPercent, 100)}%;">
+                            ${Math.round(eurPercent)}%
+                        </div>
+                    </div>
+                </div>
+                <div class="currency-stats">
+                    <span>📊 USD: ${usdRange.min.toFixed(2)}-${usdRange.max.toFixed(2)}</span>
+                    <span>📊 EUR: ${eurRange.min.toFixed(2)}-${eurRange.max.toFixed(2)}</span>
+                </div>
+            `;
+        }
+
+        function startCurrencyUpdates() {
+            updateCurrencyChart();
+            if (currencyInterval) clearInterval(currencyInterval);
+            currencyInterval = setInterval(() => {
+                updateCurrencyChart();
+            }, 1000);
+        }
 
         function getFact(artist) {
             const key = artist.toLowerCase();
@@ -764,177 +969,106 @@
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood'].forEach(p => document.getElementById(`backFrom${p}`).onclick = showMenu);
 
-        // === МУЗЫКА (ПОИСК ИСПОЛНИТЕЛЕЙ С БИЛЕТАМИ) ===
+        // === МУЗЫКА ===
         function loadPopular() { 
             document.getElementById('popularGrid').innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
         }
         
         window.searchArtist = function(a) { 
             document.getElementById('searchInput').value = a; 
-            searchArtistRequest(a);
+            search(); 
         };
         
-        function searchArtistRequest(artistName) {
-            const resultDiv = document.getElementById('musicResult');
-            resultDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🔍 Поиск исполнителя...</div>';
-            
-            tg.sendData(JSON.stringify({
-                action: 'search_artist',
-                artist: artistName
-            }));
+        async function getArtistImageFromWiki(artistName) {
+            try {
+                const directUrl = `https://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(artistName)}&pithumbsize=300&format=json&origin=*`;
+                const directRes = await fetch(directUrl);
+                const directData = await directRes.json();
+                const directPages = directData.query?.pages || {};
+                for (const pageId in directPages) {
+                    if (directPages[pageId].thumbnail?.source) {
+                        return directPages[pageId].thumbnail.source;
+                    }
+                }
+                return null;
+            } catch(e) {
+                return null;
+            }
         }
         
-        function search() {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) return;
-            searchArtistRequest(query);
-        }
-
-        // === КУРС ВАЛЮТ ===
-        let historicalRates = { usd: [], eur: [] };
-        let currencyInterval = null;
-
-        async function getExchangeRates() {
-            try {
-                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-                const data = await response.json();
-                const usdToRub = data.rates.RUB;
-                const eurToRub = data.rates.RUB / data.rates.EUR;
-                return { usd: usdToRub, eur: eurToRub };
-            } catch(e) { return null; }
-        }
-
-        function calculateChange(rates) {
-            if (historicalRates.usd.length < 2) return { usd: 0, eur: 0 };
-            return {
-                usd: ((rates.usd - historicalRates.usd[0]) / historicalRates.usd[0] * 100).toFixed(2),
-                eur: ((rates.eur - historicalRates.eur[0]) / historicalRates.eur[0] * 100).toFixed(2)
-            };
-        }
-
-        function updateHistoricalRates(rates) {
-            historicalRates.usd.push(rates.usd);
-            historicalRates.eur.push(rates.eur);
-            if (historicalRates.usd.length > 60) {
-                historicalRates.usd.shift();
-                historicalRates.eur.shift();
-            }
-        }
-
-        function getMinMax(arr) {
-            if (arr.length === 0) return { min: 0, max: 100 };
-            return { min: Math.min(...arr), max: Math.max(...arr) };
-        }
-
-        async function updateCurrencyChart() {
-            const container = document.getElementById('currencyContent');
-            const timeElement = document.getElementById('updateTime');
-            if (!container) return;
+        async function search() {
+            const q = document.getElementById('searchInput').value.trim();
+            if (!q) return;
             
-            const rates = await getExchangeRates();
-            if (!rates) {
-                container.innerHTML = '<div style="text-align:center; padding:15px;">❌ Ошибка</div>';
-                return;
-            }
+            const resDiv = document.getElementById('musicResult');
+            resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🔍 Поиск...</div>';
             
-            updateHistoricalRates(rates);
-            const change = calculateChange(rates);
-            const usdRange = getMinMax(historicalRates.usd);
-            const eurRange = getMinMax(historicalRates.eur);
+            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
+            const bio = await getWiki(q);
+            const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
+            const aiFact = getFact(q);
             
-            const usdPercent = usdRange.min === usdRange.max ? 50 : ((rates.usd - usdRange.min) / (usdRange.max - usdRange.min)) * 100;
-            const eurPercent = eurRange.min === eurRange.max ? 50 : ((rates.eur - eurRange.min) / (eurRange.max - eurRange.min)) * 100;
+            const avatarUrl = await getArtistImageFromWiki(q);
+            const finalAvatarUrl = avatarUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             
-            const now = new Date();
-            if (timeElement) timeElement.textContent = `🔄 ${now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
-            
-            container.innerHTML = `
-                <div class="currency-item">
-                    <div class="currency-row">
-                        <span class="currency-icon">🇺🇸</span>
-                        <span class="currency-value">${rates.usd.toFixed(2)} ₽</span>
-                        <span class="currency-change ${parseFloat(change.usd) >= 0 ? 'change-up' : 'change-down'}">${parseFloat(change.usd) >= 0 ? '+' : ''}${change.usd}%</span>
+            resDiv.innerHTML = `
+                <div class="result-card">
+                    <div class="artist-profile">
+                        <img id="artistAvatar" class="artist-avatar" src="${finalAvatarUrl}" alt="${escapeHtml(q)}">
+                        <div class="artist-info">
+                            <div class="artist-name-large">${escapeHtml(q)}</div>
+                            <div class="artist-role">🎤 Исполнитель</div>
+                        </div>
                     </div>
-                    <div class="bar-container"><div class="bar-fill usd-fill" style="width: ${Math.min(usdPercent, 100)}%;">${Math.round(usdPercent)}%</div></div>
-                </div>
-                <div class="currency-item">
-                    <div class="currency-row">
-                        <span class="currency-icon">🇪🇺</span>
-                        <span class="currency-value">${rates.eur.toFixed(2)} ₽</span>
-                        <span class="currency-change ${parseFloat(change.eur) >= 0 ? 'change-up' : 'change-down'}">${parseFloat(change.eur) >= 0 ? '+' : ''}${change.eur}%</span>
+                    <div class="ai-fact-card">
+                        <div class="ai-fact-header">
+                            <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
+                            <div><div class="ai-fact-label">ИИ ФАКТ • КАК В ЯНДЕКС МУЗЫКЕ</div><div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div><button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">🔄 Новый факт</button></div>
+                        </div>
                     </div>
-                    <div class="bar-container"><div class="bar-fill eur-fill" style="width: ${Math.min(eurPercent, 100)}%;">${Math.round(eurPercent)}%</div></div>
-                </div>
-                <div class="currency-stats">
-                    <span>📊 USD: ${usdRange.min.toFixed(2)}-${usdRange.max.toFixed(2)}</span>
-                    <span>📊 EUR: ${eurRange.min.toFixed(2)}-${eurRange.max.toFixed(2)}</span>
+                    <div class="section-title">🎧 Слушать</div>
+                    <div class="platform-buttons">
+                        <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                        <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                    </div>
+                    ${artistTracks.length ? `<div style="font-size:12px; margin:12px 0; color:rgba(255,255,255,0.6);">🎵 Популярные треки: ${artistTracks.map(t => t.track).join(', ')}</div>` : ''}
+                    ${showBio(bio, q)}
+                    <button class="qr-btn" onclick="showQR('${links.yandex}', '${escapeHtml(q)}')">📱 QR-код</button>
                 </div>
             `;
+            
+            addSimilarArtistsToResult(q);
         }
-
-        function startCurrencyUpdates() {
-            updateCurrencyChart();
-            if (currencyInterval) clearInterval(currencyInterval);
-            currencyInterval = setInterval(updateCurrencyChart, 1000);
-        }
-
-        // === ОБРАБОТЧИК ОТВЕТОВ ОТ БОТА ===
-        tg.onEvent('message', (data) => {
-            try {
-                const response = JSON.parse(data);
-                console.log('Ответ от бота:', response);
-                
-                if (response.type === 'search_artist_result') {
-                    const resultDiv = document.getElementById('musicResult');
-                    const placeholderAvatar = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${response.artist_name.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
-                    
-                    const ticketsHtml = response.ticket_url ? `
-                        <div style="margin-top: 12px;">
-                            <button onclick="tg.openLink('${response.ticket_url}')" class="platform-btn ticket-btn" style="width: 100%; margin-bottom: 8px;">
-                                🎫 Билеты на концерты ${escapeHtml(response.artist_name)}
-                            </button>
-                            ${response.concerts_url ? `<button onclick="tg.openLink('${response.concerts_url}')" class="platform-btn" style="background: #ffcc00; color: #000; width: 100%;">
-                                🎸 Все концерты на Яндекс.Музыке
-                            </button>` : ''}
-                        </div>
-                    ` : '';
-                    
-                    resultDiv.innerHTML = `
-                        <div class="result-card">
-                            <div class="artist-profile">
-                                <img class="artist-avatar" src="${response.cover_url || placeholderAvatar}" alt="${escapeHtml(response.artist_name)}">
-                                <div class="artist-info">
-                                    <div class="artist-name-large">${escapeHtml(response.artist_name)}</div>
-                                    <div class="artist-role">🎤 Исполнитель</div>
-                                </div>
-                            </div>
-                            <div class="ai-fact-card">
-                                <div class="ai-fact-header">
-                                    <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
-                                    <div><div class="ai-fact-label">ИИ ФАКТ • КАК В ЯНДЕКС МУЗЫКЕ</div><div class="ai-fact-text">${escapeHtml(response.ai_fact)}</div><button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(response.artist_name)}')">🔄 Новый факт</button></div>
-                                </div>
-                            </div>
-                            <div class="section-title">🎧 Слушать</div>
-                            <div class="platform-buttons">
-                                <button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(response.artist_name)}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                                <button onclick="tg.openLink('https://music.youtube.com/search?q=${encodeURIComponent(response.artist_name)}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                            </div>
-                            ${ticketsHtml}
-                            <button class="qr-btn" onclick="showQR('https://music.yandex.ru/search?text=${encodeURIComponent(response.artist_name)}', '${escapeHtml(response.artist_name)}')">📱 QR-код</button>
-                        </div>
-                    `;
-                }
-            } catch(e) {
-                console.error('Ошибка:', e);
-            }
-        });
         
         window.refreshFact = function(artistName) {
             const newFact = getFact(artistName);
-            const factTextDiv = document.querySelector('#musicResult .ai-fact-text');
+            const factTextDiv = document.getElementById('aiFactText');
             if (factTextDiv) factTextDiv.innerHTML = escapeHtml(newFact);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         };
+        
+        async function getWiki(artist) {
+            try {
+                const match = { "асия":"Асия (певица)", "кино":"Кино (группа)", "imagine dragons":"Imagine Dragons", "моргенштерн":"Моргенштерн", "земфира":"Земфира" };
+                let title = match[artist.toLowerCase()];
+                if (!title) {
+                    const s = await fetch(`https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artist)}&format=json&origin=*`);
+                    const d = await s.json();
+                    if (!d.query?.search?.length) return null;
+                    title = d.query.search[0].title;
+                }
+                const c = await fetch(`https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`);
+                const d = await c.json();
+                const text = d.query.pages[Object.keys(d.query.pages)[0]]?.extract || "";
+                if (!text) return null;
+                return { title, text: text.slice(0, 1200) + (text.length > 1200 ? '...' : ''), url: `https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}` };
+            } catch { return null; }
+        }
+        
+        function showBio(b, a) { 
+            if (!b) return `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не найдено</div></div>`; 
+            return `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(b.title)}</div><div class="bio-text">${escapeHtml(b.text)}</div><a href="${b.url}" target="_blank" class="bio-wiki-link">🔗 Читать полностью →</a></div>`; 
+        }
         
         function showQR(url, title) { 
             const qr = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`; 
@@ -978,23 +1112,6 @@
             if (low.includes("весел")) return `😊 **Весёлые:**\n"Believer" - Imagine Dragons`;
             if (low.includes("случайный")) { const t = tracks[Math.floor(Math.random() * tracks.length)]; return `🎲 **Случайный трек:**\n"${t.track}" - ${t.artist}`; }
             return `🎶 Напиши имя исполнителя или "грустная песня"`;
-        }
-        async function getWiki(artist) {
-            try {
-                const match = { "асия":"Асия (певица)", "кино":"Кино (группа)", "imagine dragons":"Imagine Dragons" };
-                let title = match[artist.toLowerCase()];
-                if (!title) {
-                    const s = await fetch(`https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artist)}&format=json&origin=*`);
-                    const d = await s.json();
-                    if (!d.query?.search?.length) return null;
-                    title = d.query.search[0].title;
-                }
-                const c = await fetch(`https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`);
-                const d = await c.json();
-                const text = d.query.pages[Object.keys(d.query.pages)[0]]?.extract || "";
-                if (!text) return null;
-                return { title, text: text.slice(0, 800) + (text.length > 800 ? '...' : ''), url: `https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}` };
-            } catch { return null; }
         }
         function addMsg(text, isUser = false) {
             const cont = document.getElementById('chatContainer');
@@ -1092,7 +1209,10 @@
         loadPopular();
         updateTotal();
         
-        setTimeout(() => { startCurrencyUpdates(); }, 500);
+        // Запускаем анимированную диаграмму курса валют
+        setTimeout(() => {
+            startCurrencyUpdates();
+        }, 500);
     </script>
 </body>
 </html>
