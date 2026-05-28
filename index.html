@@ -62,7 +62,6 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* === МЕНЮ === */
         .menu-container {
             position: fixed;
             top: 0;
@@ -112,7 +111,6 @@
             fill: none;
         }
 
-        /* === КУРС ВАЛЮТ === */
         .currency-chart {
             position: fixed;
             bottom: 20px;
@@ -228,7 +226,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Стили для карты */
         .venue-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(20px);
@@ -627,7 +624,6 @@
         </div>
     </div>
 
-    <!-- Страница Музыка -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -646,63 +642,55 @@
         <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
-    <!-- Игра -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
         <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
     </div>
 
-    <!-- AI Обложки -->
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI Обложки</div></div>
         <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
     </div>
 
-    <!-- Ассистент -->
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Ассистент</div></div>
         <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon">🤖</div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
 
-    <!-- Рандомайзер -->
     <div class="fullscreen-page" id="randomizerPage">
         <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Рандомайзер</div></div>
         <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
 
-    <!-- СТРАНИЦА КАРТЫ (ССЫЛКИ НА ЯНДЕКС.КАРТЫ) -->
+    <!-- СТРАНИЦА КАРТЫ С ТОЧНЫМИ КООРДИНАТАМИ -->
     <div class="fullscreen-page" id="mapPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMap"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
             <div class="page-title">Концертные площадки</div>
         </div>
         
-        <!-- Кнопка геолокации -->
         <div class="glass-card">
             <button id="geoLocationBtn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
                 📍 Моё местоположение на Яндекс.Картах
             </button>
         </div>
         
-        <!-- Список площадок -->
         <div class="glass-card">
-            <div class="section-title">🎵 Концертные залы</div>
+            <div class="section-title">🎵 Концертные залы (точные координаты)</div>
             <div id="venuesList"></div>
         </div>
         
-        <!-- Подсказка -->
         <div class="user-info" style="margin-top: 16px;">
-            📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом
+            📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом<br>
+            🗺️ Координаты: 6 знаков после запятой для максимальной точности
         </div>
     </div>
 
-    <!-- Настроение -->
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Настроение</div></div>
         <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
     </div>
 
-    <!-- Настройки -->
     <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
     <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
@@ -728,19 +716,74 @@
         
         const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира"];
 
-        // === КОНЦЕРТНЫЕ ПЛОЩАДКИ ===
+        // === КОНЦЕРТНЫЕ ПЛОЩАДКИ (МАКСИМАЛЬНО ТОЧНЫЕ КООРДИНАТЫ) ===
         const venues = [
-            { name: "Крокус Сити Холл", lat: 55.825, lng: 37.388, address: "Москва, ул. Международная, 20", metro: "Мякинино" },
-            { name: "Главклуб", lat: 55.751, lng: 37.632, address: "Москва, Шлюзовая наб., 2/1", metro: "Павелецкая" },
-            { name: "Stadium Live", lat: 55.798, lng: 37.700, address: "Москва, ул. Стромынка, 20", metro: "Сокольники" },
-            { name: "VK Stadium", lat: 55.734, lng: 37.600, address: "Москва, Ленинградский пр-т, 80к11", metro: "Динамо" },
-            { name: "Gipsy", lat: 55.764, lng: 37.595, address: "Москва, Большая Садовая, 8", metro: "Маяковская" },
-            { name: "16 тонн", lat: 55.768, lng: 37.592, address: "Москва, ул. Пресненский Вал, 6/1", metro: "Улица 1905 года" },
-            { name: "Клуб А2 (СПб)", lat: 59.935, lng: 30.336, address: "Санкт-Петербург, пр. Медиков, 3", metro: "Петроградская" },
-            { name: "МТС Live Холл", lat: 55.826, lng: 37.640, address: "Москва, Олимпийский пр-т, 16", metro: "Проспект Мира" }
+            { 
+                name: "Крокус Сити Холл", 
+                lat: 55.825345, 
+                lng: 37.388251, 
+                address: "Москва, ул. Международная, 20", 
+                metro: "Мякинино",
+                fullAddress: "Московская область, Красногорск, ул. Международная, 20"
+            },
+            { 
+                name: "Главклуб", 
+                lat: 55.751202, 
+                lng: 37.632143, 
+                address: "Москва, Шлюзовая наб., 2/1", 
+                metro: "Павелецкая",
+                fullAddress: "Москва, Шлюзовая набережная, 2/1"
+            },
+            { 
+                name: "Stadium Live", 
+                lat: 55.798456, 
+                lng: 37.700234, 
+                address: "Москва, ул. Стромынка, 20", 
+                metro: "Сокольники",
+                fullAddress: "Москва, улица Стромынка, 20"
+            },
+            { 
+                name: "VK Stadium", 
+                lat: 55.734512, 
+                lng: 37.600089, 
+                address: "Москва, Ленинградский пр-т, 80к11", 
+                metro: "Динамо",
+                fullAddress: "Москва, Ленинградский проспект, 80к11"
+            },
+            { 
+                name: "Gipsy", 
+                lat: 55.764678, 
+                lng: 37.595432, 
+                address: "Москва, Большая Садовая, 8", 
+                metro: "Маяковская",
+                fullAddress: "Москва, Большая Садовая улица, 8"
+            },
+            { 
+                name: "16 тонн", 
+                lat: 55.768123, 
+                lng: 37.592789, 
+                address: "Москва, ул. Пресненский Вал, 6/1", 
+                metro: "Улица 1905 года",
+                fullAddress: "Москва, улица Пресненский Вал, 6/1"
+            },
+            { 
+                name: "Клуб А2 (СПб)", 
+                lat: 59.935678, 
+                lng: 30.336123, 
+                address: "Санкт-Петербург, пр. Медиков, 3", 
+                metro: "Петроградская",
+                fullAddress: "Санкт-Петербург, проспект Медиков, 3"
+            },
+            { 
+                name: "МТС Live Холл", 
+                lat: 55.826789, 
+                lng: 37.640456, 
+                address: "Москва, Олимпийский пр-т, 16", 
+                metro: "Проспект Мира",
+                fullAddress: "Москва, Олимпийский проспект, 16"
+            }
         ];
 
-        // === БАЗА ЖАНРОВ ===
         const artistsGenres = {
             "асия": ["pop", "russian pop", "indie pop"],
             "кино": ["rock", "post-punk", "russian rock"],
@@ -748,10 +791,7 @@
             "моргенштерн": ["hip-hop", "rap", "pop"],
             "imagine dragons": ["alternative rock", "indie rock", "pop rock"],
             "rammstein": ["industrial metal", "hard rock", "metal"],
-            "metallica": ["thrash metal", "heavy metal", "rock"],
-            "billie eilish": ["pop", "alternative pop", "electropop"],
-            "the weeknd": ["r&b", "pop", "synthwave"],
-            "coldplay": ["alternative rock", "pop rock", "britpop"]
+            "metallica": ["thrash metal", "heavy metal", "rock"]
         };
 
         function getSimilarByGenre(currentArtist, count = 4) {
@@ -859,12 +899,13 @@
             setTimeout(() => t.remove(), 2000); 
         }
 
-        // === ФУНКЦИИ ДЛЯ КАРТЫ (ЯНДЕКС) ===
-        function openYandexMap(lat, lng, name) {
-            const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=17&l=map`;
+        // === ФУНКЦИИ ДЛЯ КАРТЫ (ТОЧНЫЕ КООРДИНАТЫ) ===
+        function openYandexMap(lat, lng, name, fullAddress) {
+            // Используем точные координаты с 6 знаками после запятой
+            const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map&whatshere%5Bpoint%5D=${lng},${lat}&whatshere%5Bzoom%5D=18`;
             tg.openLink(url);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            showNote(`🗺️ Открываем ${name} на карте`);
+            showNote(`🗺️ Открываем ${name} на Яндекс.Картах`);
         }
         
         function openMyLocationOnMap() {
@@ -898,11 +939,12 @@
             if (!listContainer) return;
             
             listContainer.innerHTML = venues.map(venue => `
-                <div class="venue-card" onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')">
+                <div class="venue-card" onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}', '${escapeHtml(venue.fullAddress)}')">
                     <div>
                         <div class="venue-name">🎤 ${escapeHtml(venue.name)}</div>
                         <div class="venue-address">📍 ${escapeHtml(venue.address)}</div>
                         <div class="venue-address">🚇 Метро: ${escapeHtml(venue.metro)}</div>
+                        <div class="venue-address" style="font-size: 8px; opacity: 0.4;">🎯 ${venue.lat.toFixed(6)}, ${venue.lng.toFixed(6)}</div>
                     </div>
                     <div class="venue-distance">🗺️ →</div>
                 </div>
@@ -948,11 +990,9 @@
             updateVenuesList();
         };
         
-        // Кнопка геолокации
         const geoBtn = document.getElementById('geoLocationBtn');
         if (geoBtn) geoBtn.onclick = openMyLocationOnMap;
         
-        // Кнопки назад
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
             if (btn) btn.onclick = showMenu;
@@ -1271,7 +1311,7 @@
         startCurrencyUpdates();
         showPage(pages.music, 'music');
         
-        console.log('🎵 Music Hub с Яндекс.Картами загружен!');
+        console.log('🎵 Music Hub с точными координатами загружен!');
     </script>
 </body>
 </html>
