@@ -243,6 +243,23 @@
         .venue-address { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
         .venue-distance { background: rgba(46,204,113,0.2); padding: 4px 8px; border-radius: 20px; font-size: 10px; color: #2ecc71; }
 
+        /* Стили для билетов */
+        .concert-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .concert-card:active { transform: scale(0.98); background: rgba(255,255,255,0.15); }
+        .concert-name { font-size: 18px; font-weight: 700; color: white; margin-bottom: 8px; }
+        .concert-details { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .concert-date { background: rgba(46,204,113,0.3); padding: 4px 10px; border-radius: 20px; font-size: 12px; color: #2ecc71; }
+        .concert-venue { color: #ffcc00; }
+        .buy-ticket-btn { margin-top: 12px; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 8px 16px; border-radius: 30px; color: white; font-weight: 600; cursor: pointer; width: 100%; }
+
         .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
         .search-input {
             flex: 1;
@@ -618,6 +635,9 @@
             <div class="menu-btn" id="goToMoodBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="white"/><circle cx="15" cy="9" r="1" fill="white"/></svg></div>
             </div>
+            <div class="menu-btn" id="goToTicketsBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="white" stroke="none"/><circle cx="18" cy="12" r="1" fill="white" stroke="none"/></svg></div>
+            </div>
             <div class="menu-btn" id="goToMapBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
             </div>
@@ -642,6 +662,19 @@
         <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
+    <!-- СТРАНИЦА БИЛЕТЫ -->
+    <div class="fullscreen-page" id="ticketsPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromTickets"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
+            <div class="page-title">Билеты на концерты</div>
+        </div>
+        <div class="glass-card">
+            <div class="section-title">🎫 Выбери исполнителя</div>
+            <div id="ticketsArtistsList"></div>
+        </div>
+        <div class="user-info">🎤 Нажми на исполнителя — узнаешь где и когда концерт</div>
+    </div>
+
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
         <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
@@ -662,7 +695,7 @@
         <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
 
-    <!-- СТРАНИЦА КАРТЫ С ТОЧНЫМИ КООРДИНАТАМИ -->
+    <!-- СТРАНИЦА КАРТЫ -->
     <div class="fullscreen-page" id="mapPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMap"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -676,13 +709,12 @@
         </div>
         
         <div class="glass-card">
-            <div class="section-title">🎵 Концертные залы (точные координаты)</div>
+            <div class="section-title">🎵 Концертные залы</div>
             <div id="venuesList"></div>
         </div>
         
         <div class="user-info" style="margin-top: 16px;">
-            📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом<br>
-            🗺️ Координаты: 6 знаков после запятой для максимальной точности
+            📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом
         </div>
     </div>
 
@@ -715,30 +747,47 @@
         };
         
         const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира"];
-   // === КОНЦЕРТНЫЕ ПЛОЩАДКИ (ВСЕ ТОЧНЫЕ КООРДИНАТЫ) ===
-const venues = [
-    { 
-        name: "Gipsy", 
-        lat: 55.740117, 
-        lng: 37.609712, 
-        address: "Москва, Болотная наб., 3, стр. 4", 
-        metro: "Кропоткинская"
-    },
-    { 
-        name: "16 тонн", 
-        lat: 55.764279, 
-        lng: 37.564399, 
-        address: "Москва, ул. Пресненский Вал, 6, стр. 1", 
-        metro: "Улица 1905 года"
-    },
-    { 
-        name: "МТС Live Холл", 
-        lat: 55.749461, 
-        lng: 37.696446, 
-        address: "Москва, ш. Энтузиастов, 5, стр. 2", 
-        metro: "Площадь Ильича / Римская"
-    }
-];
+
+        // === КОНЦЕРТЫ (ДАННЫЕ ПО КОНЦЕРТАМ) ===
+        const concerts = [
+            { artist: "Асия", venue: "Крокус Сити Холл", date: "15 марта 2025", time: "20:00", price: "от 2500 ₽", url: "https://afisha.yandex.ru/search?text=Асия" },
+            { artist: "Imagine Dragons", venue: "VK Stadium", date: "22 июня 2025", time: "19:00", price: "от 4500 ₽", url: "https://afisha.yandex.ru/search?text=Imagine%20Dragons" },
+            { artist: "Кино", venue: "МТС Live Холл", date: "10 апреля 2025", time: "20:30", price: "от 3500 ₽", url: "https://afisha.yandex.ru/search?text=Кино" },
+            { artist: "Моргенштерн", venue: "Stadium Live", date: "5 мая 2025", time: "21:00", price: "от 5000 ₽", url: "https://afisha.yandex.ru/search?text=Моргенштерн" },
+            { artist: "Земфира", venue: "16 тонн", date: "18 июля 2025", time: "20:00", price: "от 4000 ₽", url: "https://afisha.yandex.ru/search?text=Земфира" }
+        ];
+
+        // === КОНЦЕРТНЫЕ ПЛОЩАДКИ (ТОЧНЫЕ КООРДИНАТЫ) ===
+        const venues = [
+            { 
+                name: "Gipsy", 
+                lat: 55.740117, 
+                lng: 37.609712, 
+                address: "Москва, Болотная наб., 3, стр. 4", 
+                metro: "Кропоткинская"
+            },
+            { 
+                name: "16 тонн", 
+                lat: 55.764279, 
+                lng: 37.564399, 
+                address: "Москва, ул. Пресненский Вал, 6, стр. 1", 
+                metro: "Улица 1905 года"
+            },
+            { 
+                name: "МТС Live Холл", 
+                lat: 55.749461, 
+                lng: 37.696446, 
+                address: "Москва, ш. Энтузиастов, 5, стр. 2", 
+                metro: "Площадь Ильича / Римская"
+            },
+            { 
+                name: "VK Stadium", 
+                lat: 55.796169, 
+                lng: 37.560462, 
+                address: "Москва, Ленинградский пр-т, 80, корп. 17", 
+                metro: "Сокол"
+            }
+        ];
 
         const artistsGenres = {
             "асия": ["pop", "russian pop", "indie pop"],
@@ -855,10 +904,65 @@ const venues = [
             setTimeout(() => t.remove(), 2000); 
         }
 
-        // === ФУНКЦИИ ДЛЯ КАРТЫ (ТОЧНЫЕ КООРДИНАТЫ) ===
-        function openYandexMap(lat, lng, name, fullAddress) {
-            // Используем точные координаты с 6 знаками после запятой
-            const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map&whatshere%5Bpoint%5D=${lng},${lat}&whatshere%5Bzoom%5D=18`;
+        // === ФУНКЦИЯ ДЛЯ БИЛЕТОВ ===
+        function showArtistConcerts(artistName) {
+            const artistConcerts = concerts.filter(c => c.artist.toLowerCase() === artistName.toLowerCase());
+            
+            if (artistConcerts.length === 0) {
+                tg.showPopup({
+                    title: `🎫 ${artistName}`,
+                    message: `Ближайших концертов ${artistName} не найдено. Хотите поискать на Яндекс.Афише?`,
+                    buttons: [
+                        { type: "default", text: "🔍 Поискать" },
+                        { type: "cancel", text: "Отмена" }
+                    ]
+                }, (buttonId) => {
+                    if (buttonId === 0) {
+                        tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(artistName)}`);
+                    }
+                });
+                return;
+            }
+            
+            const concert = artistConcerts[0];
+            tg.showPopup({
+                title: `🎫 ${artistName}`,
+                message: `📍 ${concert.venue}\n📅 ${concert.date} в ${concert.time}\n💰 ${concert.price}`,
+                buttons: [
+                    { type: "default", text: "🎟 Купить билет" },
+                    { type: "cancel", text: "Закрыть" }
+                ]
+            }, (buttonId) => {
+                if (buttonId === 0) {
+                    tg.openLink(concert.url);
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+                }
+            });
+        }
+        
+        // === ЗАГРУЗКА СПИСКА ИСПОЛНИТЕЛЕЙ ДЛЯ БИЛЕТОВ ===
+        function loadTicketsArtists() {
+            const container = document.getElementById('ticketsArtistsList');
+            if (!container) return;
+            
+            const allArtists = [...new Set([...concerts.map(c => c.artist), ...popular])];
+            
+            container.innerHTML = allArtists.map(artist => `
+                <div class="concert-card" onclick="showArtistConcerts('${escapeHtml(artist)}')">
+                    <div class="concert-name">🎤 ${escapeHtml(artist)}</div>
+                    <div class="concert-details">
+                        <span class="concert-date">🎫 Нажми для информации</span>
+                    </div>
+                    <button class="buy-ticket-btn" onclick="event.stopPropagation(); showArtistConcerts('${escapeHtml(artist)}')">🎟 Купить билет</button>
+                </div>
+            `).join('');
+        }
+        
+        window.showArtistConcerts = showArtistConcerts;
+
+        // === ФУНКЦИИ ДЛЯ КАРТЫ ===
+        function openYandexMap(lat, lng, name) {
+            const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map`;
             tg.openLink(url);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             showNote(`🗺️ Открываем ${name} на Яндекс.Картах`);
@@ -895,12 +999,11 @@ const venues = [
             if (!listContainer) return;
             
             listContainer.innerHTML = venues.map(venue => `
-                <div class="venue-card" onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}', '${escapeHtml(venue.fullAddress)}')">
+                <div class="venue-card" onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')">
                     <div>
                         <div class="venue-name">🎤 ${escapeHtml(venue.name)}</div>
                         <div class="venue-address">📍 ${escapeHtml(venue.address)}</div>
                         <div class="venue-address">🚇 Метро: ${escapeHtml(venue.metro)}</div>
-                        <div class="venue-address" style="font-size: 8px; opacity: 0.4;">🎯 ${venue.lat.toFixed(6)}, ${venue.lng.toFixed(6)}</div>
                     </div>
                     <div class="venue-distance">🗺️ →</div>
                 </div>
@@ -919,6 +1022,7 @@ const venues = [
             assistant: document.getElementById('assistantPage'),
             randomizer: document.getElementById('randomizerPage'), 
             mood: document.getElementById('moodPage'),
+            tickets: document.getElementById('ticketsPage'),
             map: document.getElementById('mapPage')
         };
         
@@ -941,6 +1045,7 @@ const venues = [
         document.getElementById('goToAssistantBtn').onclick = () => showPage(pages.assistant, 'assistant');
         document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); };
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
+        document.getElementById('goToTicketsBtn').onclick = () => { showPage(pages.tickets, 'music'); loadTicketsArtists(); };
         document.getElementById('goToMapBtn').onclick = () => { 
             showPage(pages.map, 'map'); 
             updateVenuesList();
@@ -949,7 +1054,7 @@ const venues = [
         const geoBtn = document.getElementById('geoLocationBtn');
         if (geoBtn) geoBtn.onclick = openMyLocationOnMap;
         
-        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map'].forEach(p => {
+        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Tickets', 'Map'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
             if (btn) btn.onclick = showMenu;
         });
@@ -1034,6 +1139,7 @@ const venues = [
                     </div>
                     ${artistTracks.length ? `<div style="font-size:12px; margin:12px 0; color:rgba(255,255,255,0.6);">🎵 Популярные треки: ${artistTracks.map(t => t.track).join(', ')}</div>` : ''}
                     ${bio ? `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bio.title)}</div><div class="bio-text">${escapeHtml(bio.text)}</div><a href="${bio.url}" target="_blank" class="bio-wiki-link">🔗 Читать →</a></div>` : '<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Не найдено</div></div>'}
+                    <button class="search-btn" style="margin-top: 16px; background: linear-gradient(135deg, #2ecc71, #27ae60);" onclick="showArtistConcerts('${escapeHtml(q)}')">🎫 Купить билеты на концерт</button>
                 </div>
             `;
             addSimilarArtistsToResult(q);
@@ -1267,7 +1373,7 @@ const venues = [
         startCurrencyUpdates();
         showPage(pages.music, 'music');
         
-        console.log('🎵 Music Hub с точными координатами загружен!');
+        console.log('🎵 Music Hub с билетами и картой загружен!');
     </script>
 </body>
 </html>
