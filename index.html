@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
-        /* ========== ОСНОВНЫЕ СТИЛИ ========== */
         * {
             margin: 0;
             padding: 0;
@@ -23,7 +22,7 @@
             transition: all 0.3s ease;
         }
 
-        /* Градиентные фоны для разных режимов */
+        /* Режимы фона */
         body.music-mode { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
         body.game-mode { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f2027 100%); }
         body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
@@ -87,7 +86,7 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* Меню */
+        /* МЕНЮ - ТОЛЬКО ИКОНКИ (БЕЗ ТЕКСТА) */
         .menu-container {
             position: fixed;
             top: 0;
@@ -106,19 +105,19 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             width: 100%;
-            max-width: 320px;
-            padding: 24px;
+            max-width: 280px;
+            padding: 20px;
             animation: fadeInUp 0.6s ease;
         }
         .menu-btn {
             background: rgba(255,255,255,0.08);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 32px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 28px;
             padding: 24px 12px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            transition: all 0.25s ease;
             position: relative;
             overflow: hidden;
         }
@@ -137,28 +136,24 @@
         .menu-icon {
             width: 56px;
             height: 56px;
-            margin: 0 auto 8px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.05);
-            border-radius: 28px;
-            transition: all 0.3s;
         }
-        .menu-btn:active .menu-icon { transform: scale(0.95); }
         .menu-icon svg {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             stroke: white;
             stroke-width: 1.5;
             fill: none;
         }
+        /* Скрываем текст */
         .menu-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.8);
-            margin-top: 6px;
-            letter-spacing: 0.5px;
+            display: none;
+        }
+        .menu-desc {
+            display: none;
         }
 
         /* Курс валют */
@@ -167,79 +162,96 @@
             bottom: 20px;
             left: 20px;
             right: 20px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 12px 16px;
+            border-radius: 20px;
+            padding: 8px 12px;
             z-index: 6;
             border: 1px solid rgba(255,255,255,0.1);
             animation: slideUp 0.5s ease;
         }
         .currency-title {
-            font-size: 10px;
+            font-size: 8px;
             font-weight: 600;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.4);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 8px;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
-        .currency-update-time { font-size: 9px; color: #667eea; }
-        .currency-item { margin-bottom: 8px; }
+        .currency-update-time {
+            font-size: 7px;
+            color: #4facfe;
+            font-weight: normal;
+        }
+        .currency-item { margin-bottom: 6px; }
         .currency-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
+            margin-bottom: 3px;
         }
-        .currency-icon { font-size: 18px; min-width: 36px; }
-        .currency-value { font-size: 14px; font-weight: 700; color: white; min-width: 70px; }
+        .currency-icon { font-size: 16px; min-width: 30px; }
+        .currency-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            min-width: 55px;
+        }
         .currency-change {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 20px;
+            padding: 1px 5px;
+            border-radius: 12px;
         }
         .change-up { background: rgba(46,204,113,0.2); color: #2ecc71; }
         .change-down { background: rgba(231,76,60,0.2); color: #e74c3c; }
         .bar-container {
             flex: 1;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
+            height: 16px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px;
             overflow: hidden;
         }
         .bar-fill {
             height: 100%;
-            border-radius: 3px;
-            transition: width 0.5s;
+            border-radius: 8px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 4px;
+            font-size: 8px;
+            font-weight: 600;
+            color: white;
         }
-        .usd-fill { background: linear-gradient(90deg, #3498db, #2980b9); width: 50%; }
-        .eur-fill { background: linear-gradient(90deg, #2ecc71, #27ae60); width: 50%; }
+        .usd-fill { background: linear-gradient(90deg, #3498db, #2980b9); }
+        .eur-fill { background: linear-gradient(90deg, #2ecc71, #27ae60); }
         .currency-stats {
             display: flex;
             justify-content: space-between;
-            margin-top: 8px;
-            padding-top: 8px;
+            margin-top: 4px;
+            padding-top: 4px;
             border-top: 1px solid rgba(255,255,255,0.05);
-            font-size: 9px;
-            color: rgba(255,255,255,0.4);
+            font-size: 7px;
+            color: rgba(255,255,255,0.35);
         }
 
-        /* Шапка страниц */
         .page-header {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            padding-top: 12px;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-top: 8px;
         }
         .back-btn {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px 18px;
-            border-radius: 40px;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 30px;
             color: white;
             font-weight: 500;
             font-size: 14px;
@@ -249,17 +261,16 @@
             gap: 6px;
             transition: all 0.2s;
         }
-        .back-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
+        .back-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.2); }
         .page-title {
             font-size: 28px;
-            font-weight: 800;
+            font-weight: 700;
             color: white;
             letter-spacing: -0.5px;
             flex: 1;
             text-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* Стеклянные карточки */
         .glass-card {
             background: rgba(255,255,255,0.06);
             backdrop-filter: blur(20px);
@@ -271,15 +282,14 @@
         }
         .glass-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.08); }
 
-        /* Поиск */
-        .search-box { display: flex; gap: 12px; margin-bottom: 20px; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
         .search-input {
             flex: 1;
-            padding: 14px 20px;
+            padding: 14px 18px;
             border-radius: 60px;
             border: none;
             font-size: 15px;
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.92);
             font-weight: 500;
             transition: all 0.3s;
         }
@@ -287,7 +297,7 @@
         .search-btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
-            padding: 0 28px;
+            padding: 0 24px;
             border-radius: 60px;
             color: white;
             font-weight: 600;
@@ -296,28 +306,25 @@
         }
         .search-btn:active { transform: scale(0.96); opacity: 0.9; }
         .voice-btn {
-            background: rgba(102,126,234,0.7);
+            background: rgba(155,89,182,0.7);
             border: none;
-            width: 52px;
+            width: 48px;
             border-radius: 60px;
             color: white;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .voice-btn:active { transform: scale(0.96); }
         .voice-btn.listening { background: #e74c3c; animation: pulseGlow 1.5s infinite; }
 
-        /* Секции */
         .section-title {
             font-size: 12px;
             font-weight: 600;
-            margin: 16px 0 12px;
+            margin: 16px 0 10px;
             color: rgba(255,255,255,0.6);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
         }
         .popular-grid { display: flex; flex-wrap: wrap; gap: 10px; }
         .popular-tag {
@@ -332,7 +339,6 @@
         }
         .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
 
-        /* Профиль артиста */
         .artist-profile {
             display: flex;
             align-items: center;
@@ -350,6 +356,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             border: 2px solid rgba(255,255,255,0.2);
         }
+        .artist-info { flex: 1; }
         .artist-name-large {
             font-size: 22px;
             font-weight: 700;
@@ -359,7 +366,6 @@
         }
         .artist-role { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
 
-        /* Карточка результата */
         .result-card {
             background: rgba(255,255,255,0.08);
             border-radius: 24px;
@@ -369,19 +375,19 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* AI факт карточка */
         .ai-fact-card {
-            background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.1));
-            border-left: 3px solid #667eea;
+            background: linear-gradient(135deg, rgba(155,89,182,0.2), rgba(142,68,173,0.15));
+            border-left: 3px solid #9b59b6;
             border-radius: 16px;
             padding: 14px;
             margin: 16px 0;
         }
         .ai-fact-header { display: flex; gap: 12px; }
-        .ai-fact-label { font-size: 10px; color: #667eea; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; }
+        .ai-fact-icon svg { width: 28px; height: 28px; stroke: #b983ff; stroke-width: 1.5; fill: none; }
+        .ai-fact-label { font-size: 10px; color: #b983ff; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; }
         .ai-fact-text { font-size: 13px; line-height: 1.4; color: rgba(255,255,255,0.9); }
         .ai-fact-refresh {
-            background: rgba(102,126,234,0.3);
+            background: rgba(155,89,182,0.3);
             border: none;
             padding: 6px 12px;
             border-radius: 40px;
@@ -391,7 +397,6 @@
             cursor: pointer;
         }
 
-        /* Платформенные кнопки */
         .platform-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
         .platform-btn {
             padding: 12px;
@@ -407,20 +412,32 @@
         .yandex-btn { background: #ffcc00; color: #1a1a2e; }
         .youtube-btn { background: #ff0000; color: white; }
 
-        /* Биография */
         .bio-section {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.25);
             border-radius: 16px;
             padding: 14px;
             margin-top: 16px;
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
         }
-        .bio-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #667eea; }
+        .bio-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: #7b68ee; }
         .bio-text { font-size: 12px; line-height: 1.4; color: rgba(255,255,255,0.85); }
-        .bio-wiki-link { color: #667eea; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
+        .bio-wiki-link { color: #b983ff; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
 
-        /* Игра */
+        .qr-btn {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            font-size: 14px;
+            background: #607d8b;
+            color: white;
+        }
+
         .track-name { font-size: 22px; font-weight: 800; margin: 20px 0; color: white; text-align: center; }
         .game-options { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
         .game-option {
@@ -434,14 +451,13 @@
         }
         .game-option:active { transform: scale(0.97); background: rgba(255,255,255,0.2); }
 
-        /* AI обложки */
         .ai-cover-img {
             width: 100%;
             max-width: 200px;
             border-radius: 24px;
             margin: 12px auto;
             display: block;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         .loading-spinner {
             width: 40px;
@@ -449,13 +465,12 @@
             margin: 20px auto;
             border: 3px solid rgba(255,255,255,0.2);
             border-radius: 50%;
-            border-top-color: #667eea;
+            border-top-color: #9b59b6;
             animation: spin 1s ease infinite;
         }
 
-        /* Чат ассистента */
         .chat-container {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.25);
             border-radius: 24px;
             padding: 14px;
             height: 360px;
@@ -472,10 +487,10 @@
             font-size: 13px;
             line-height: 1.4;
         }
-        .message-user .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-bottom-right-radius: 6px; }
+        .message-user .message-bubble { background: #667eea; color: white; border-bottom-right-radius: 6px; }
         .message-ai .message-bubble { background: rgba(255,255,255,0.12); color: white; border-bottom-left-radius: 6px; }
+        .message-icon svg { width: 20px; height: 20px; stroke: white; stroke-width: 1.5; fill: none; }
 
-        /* Рандомайзер */
         .random-artist-card {
             background: rgba(255,255,255,0.08);
             border-radius: 20px;
@@ -485,7 +500,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .random-artist-name { font-size: 15px; font-weight: 600; color: white; }
+        .random-artist-name { font-size: 16px; font-weight: 600; color: white; }
         .random-artist-link {
             background: #ffcc00;
             border: none;
@@ -496,31 +511,27 @@
             font-size: 12px;
         }
 
-        /* Карта площадок */
-        .venue-card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 16px;
+        .ai-gen-btn {
+            margin-top: 12px;
             padding: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-radius: 60px;
+            text-align: center;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            border: none;
+            width: 100%;
+            font-size: 14px;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
         }
-        .venue-card:active { transform: scale(0.98); background: rgba(255,255,255,0.15); }
-        .venue-name { font-weight: 600; color: white; font-size: 14px; }
-        .venue-address { font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 2px; }
-        .venue-distance { background: rgba(46,204,113,0.2); padding: 4px 8px; border-radius: 20px; font-size: 10px; color: #2ecc71; }
 
-        /* Настройки */
         .settings-fab {
             position: fixed;
             bottom: 22px;
             right: 22px;
             width: 52px;
             height: 52px;
-            border-radius: 26px;
+            border-radius: 52px;
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(16px);
             display: flex;
@@ -540,8 +551,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(24px);
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -549,26 +560,28 @@
             animation: fadeInScale 0.3s ease;
         }
         .modal-card {
-            background: rgba(20,20,40,0.98);
-            backdrop-filter: blur(32px);
-            border-radius: 40px;
+            background: rgba(20,20,30,0.96);
+            backdrop-filter: blur(24px);
+            border-radius: 32px;
             padding: 24px;
             width: 90%;
-            max-width: 340px;
+            max-width: 320px;
             border: 1px solid rgba(255,255,255,0.1);
         }
         .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center; color: white; }
-        .gradient-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+        .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+        .settings-label { font-size: 14px; font-weight: 500; color: white; }
+        .gradient-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
         .gradient-circle {
             width: 48px;
             height: 48px;
-            border-radius: 24px;
+            border-radius: 48px;
             cursor: pointer;
             border: 2px solid rgba(255,255,255,0.3);
             transition: all 0.2s;
         }
         .gradient-circle:active { transform: scale(0.95); }
-        .close-modal {
+        .close-modal, .appearance-btn {
             background: rgba(255,255,255,0.12);
             border: none;
             padding: 12px;
@@ -576,18 +589,16 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
         }
+        .appearance-btn { padding: 8px 14px; font-size: 13px; }
 
-        /* Уведомления */
         .notification-toast {
             position: fixed;
             bottom: 90px;
             left: 20px;
             right: 20px;
             background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(20px);
+            backdrop-filter: blur(16px);
             border-radius: 60px;
             padding: 12px 20px;
             text-align: center;
@@ -601,186 +612,142 @@
         .user-info { font-size: 11px; text-align: center; margin-top: 12px; color: rgba(255,255,255,0.4); }
         .hidden { display: none; }
 
-        /* Мобильная адаптация */
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
-            .menu-screen { gap: 16px; max-width: 280px; padding: 16px; }
+            .menu-screen { gap: 16px; max-width: 240px; }
             .menu-btn { padding: 18px 8px; }
             .menu-icon { width: 48px; height: 48px; }
-            .menu-icon svg { width: 28px; height: 28px; }
+            .menu-icon svg { width: 30px; height: 30px; }
             .page-title { font-size: 24px; }
             .artist-avatar { width: 55px; height: 55px; }
             .artist-name-large { font-size: 18px; }
-            .currency-chart { bottom: 10px; left: 10px; right: 10px; padding: 8px 12px; }
-            .currency-icon { font-size: 14px; min-width: 28px; }
-            .currency-value { font-size: 12px; min-width: 60px; }
+            .currency-chart { bottom: 10px; left: 10px; right: 10px; padding: 6px 10px; }
+            .currency-icon { font-size: 14px; min-width: 26px; }
+            .currency-value { font-size: 10px; min-width: 48px; }
+            .bar-container { height: 12px; }
+            .currency-stats { font-size: 6px; }
+            .currency-title { font-size: 7px; margin-bottom: 4px; }
+            .currency-item { margin-bottom: 4px; }
+            .currency-row { gap: 4px; }
         }
     </style>
 </head>
 <body>
-    <!-- МЕНЮ -->
     <div class="menu-container" id="menuContainer">
         <div class="currency-chart" id="currencyChart">
             <div class="currency-title">
-                <span>💱 КУРС ВАЛЮТ</span>
-                <span class="currency-update-time" id="updateTime">загрузка...</span>
+                <span>💵 КУРС</span>
+                <span class="currency-update-time" id="updateTime">🔄 загрузка...</span>
             </div>
             <div id="currencyContent">
-                <div style="text-align:center; padding:10px;">🌀 Загрузка...</div>
+                <div style="text-align:center; padding:10px; font-size:11px;">🔄 Загрузка...</div>
             </div>
         </div>
 
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
-                <div class="menu-title">МУЗЫКА</div>
             </div>
             <div class="menu-btn" id="goToGameBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
-                <div class="menu-title">ИГРА</div>
             </div>
             <div class="menu-btn" id="goToAIBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="white"/></svg></div>
-                <div class="menu-title">AI АРТ</div>
             </div>
             <div class="menu-btn" id="goToAssistantBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
-                <div class="menu-title">АССИСТЕНТ</div>
             </div>
             <div class="menu-btn" id="goToRandomizerBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
-                <div class="menu-title">РАНДОМ</div>
             </div>
             <div class="menu-btn" id="goToMoodBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="white"/><circle cx="15" cy="9" r="1" fill="white"/></svg></div>
-                <div class="menu-title">НАСТРОЕНИЕ</div>
             </div>
             <div class="menu-btn" id="goToMapBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-                <div class="menu-title">КАРТА</div>
             </div>
             <div class="menu-btn" id="goToTicketsBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="white" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="white" stroke="none"/><circle cx="18" cy="12" r="1" fill="white" stroke="none"/></svg></div>
-                <div class="menu-title">БИЛЕТЫ</div>
             </div>
         </div>
     </div>
 
-    <!-- СТРАНИЦА МУЗЫКА -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
-            <button class="back-btn" id="backFromMusic">← Назад</button>
+            <button class="back-btn" id="backFromMusic"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
             <div class="page-title">Музыка</div>
         </div>
         <div class="glass-card">
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Rammstein...">
-                <button id="voiceSearchBtn" class="voice-btn">🎤</button>
+                <button id="voiceSearchBtn" class="voice-btn"><svg width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
                 <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
-            <div class="section-title">⭐ ПОПУЛЯРНЫЕ</div>
+            <div class="section-title">Популярные</div>
             <div class="popular-grid" id="popularGrid"></div>
             <div id="musicResult"></div>
         </div>
         <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке</div>
     </div>
 
-    <!-- СТРАНИЦА ИГРА -->
     <div class="fullscreen-page" id="gamePage">
-        <div class="page-header"><button class="back-btn" id="backFromGame">← Назад</button><div class="page-title">Игра</div></div>
-        <div class="glass-card">
-            <button id="startGameBtn" class="search-btn" style="width:100%; margin-bottom:16px;">▶ Начать игру</button>
-            <div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">✨ Нажми «Начать игру»</div></div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Игра</div></div>
+        <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.5);">Нажми «Начать игру»</div></div></div>
     </div>
 
-    <!-- СТРАНИЦА AI АРТ -->
     <div class="fullscreen-page" id="aiPage">
-        <div class="page-header"><button class="back-btn" id="backFromAI">← Назад</button><div class="page-title">AI Арт</div></div>
-        <div class="glass-card">
-            <div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div>
-            <div id="aiResult"><div style="text-align:center; padding:40px; color:rgba(255,255,255,0.4);">✨ Опиши свою идею для обложки</div></div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI Обложки</div></div>
+        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:20px; color:rgba(255,255,255,0.5);">✨ Введите описание</div></div></div>
     </div>
 
-    <!-- СТРАНИЦА АССИСТЕНТ -->
     <div class="fullscreen-page" id="assistantPage">
-        <div class="page-header"><button class="back-btn" id="backFromAssistant">← Назад</button><div class="page-title">Ассистент</div></div>
-        <div class="glass-card">
-            <div class="chat-container" id="chatContainer">
-                <div class="message message-ai">
-                    <div class="message-icon">🤖</div>
-                    <div class="message-bubble">Привет! Я музыкальный ассистент. Спроси меня о любом исполнителе или песне 🎵</div>
-                </div>
-            </div>
-            <div class="search-box"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Ассистент</div></div>
+        <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon">🤖</div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
 
-    <!-- СТРАНИЦА РАНДОМАЙЗЕР -->
     <div class="fullscreen-page" id="randomizerPage">
-        <div class="page-header"><button class="back-btn" id="backFromRandomizer">← Назад</button><div class="page-title">Рандомайзер</div></div>
-        <div class="glass-card">
-            <textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px; border-radius:20px;"></textarea>
-            <div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div>
-            <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
-                <input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;">
-                <span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span>
-            </div>
-            <button id="doRandomizeBtn" class="search-btn" style="width:100%;">🎲 Выбрать</button>
-            <div id="randomizerResult" style="margin-top:20px;"></div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Рандомайзер</div></div>
+        <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
 
-    <!-- СТРАНИЦА КАРТА -->
     <div class="fullscreen-page" id="mapPage">
-        <div class="page-header"><button class="back-btn" id="backFromMap">← Назад</button><div class="page-title">Концертные площадки</div></div>
+        <div class="page-header">
+            <button class="back-btn" id="backFromMap"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
+            <div class="page-title">Концертные площадки</div>
+        </div>
+        
         <div class="glass-card">
-            <button id="geoLocationBtn" style="background:linear-gradient(135deg,#2ecc71,#27ae60); border:none; padding:14px; border-radius:60px; color:white; font-weight:700; width:100%; margin-bottom:16px;">📍 Моё местоположение</button>
-            <div class="section-title">🎵 КОНЦЕРТНЫЕ ЗАЛЫ</div>
+            <button id="geoLocationBtn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
+                📍 Моё местоположение на Яндекс.Картах
+            </button>
+        </div>
+        
+        <div class="glass-card">
+            <div class="section-title">🎵 Концертные залы (точные координаты)</div>
             <div id="venuesList"></div>
         </div>
-        <div class="user-info">📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом</div>
+        
+        <div class="user-info" style="margin-top: 16px;">
+            📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом<br>
+            🗺️ Координаты: 6 знаков после запятой для максимальной точности
+        </div>
     </div>
 
-    <!-- СТРАНИЦА НАСТРОЕНИЕ -->
     <div class="fullscreen-page" id="moodPage">
-        <div class="page-header"><button class="back-btn" id="backFromMood">← Назад</button><div class="page-title">Настроение</div></div>
-        <div class="glass-card">
-            <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;">
-                <button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button>
-                <button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button>
-                <button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button>
-                <button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button>
-                <button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button>
-                <button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button>
-            </div>
-            <div id="moodResult"></div>
-        </div>
+        <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">Настроение</div></div>
+        <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:700;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; font-weight:700; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
     </div>
 
-    <!-- НАСТРОЙКИ -->
     <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
-    <div id="settingsModal" class="settings-modal hidden">
-        <div class="modal-card">
-            <div class="modal-title">✨ Оформление</div>
-            <div class="gradient-row">
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div>
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div>
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div>
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div>
-            </div>
-            <button class="close-modal" id="closeSettingsBtn">Закрыть</button>
-        </div>
-    </div>
+    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
     <script>
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        // ========== ИНИЦИАЛИЗАЦИЯ TELEGRAM ==========
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // ========== ДАННЫЕ ==========
+        // ========== ОСНОВНЫЕ ДАННЫЕ ==========
         const tracks = [
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
@@ -790,29 +757,29 @@
             { track: "Искала", artist: "Земфира" },
             { track: "Radioactive", artist: "Imagine Dragons" },
             { track: "Звезда по имени Солнце", artist: "Кино" },
-            { track: "Плачу на техно", artist: "Асия" }
+            { track: "Плачу на техно", artist: "Асия" },
+            { track: "El Problema", artist: "Моргенштерн" }
         ];
         
         const facts = {
-            "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства"],
-            "кино": ["Группа основана в 1981 в Ленинграде", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения 90-х", "«Чёрный альбом» вышел после смерти Цоя"],
-            "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA", "Группа из Лас-Вегаса", "«Radioactive» — самый долгоиграющий сингл Billboard"],
-            "моргенштерн": ["Родился в Уфе 17 февраля 1998", "Самый молодой миллионер", "«Cadillac» — 100 млн просмотров", "Премия MTV Europe Music Awards 2021"],
-            "земфира": ["Родилась в Уфе 26 августа 1976", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий", "5 премий «Муз-ТВ»"]
+            "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства", "В 2022 стала артисткой Effective Records"],
+            "кино": ["Группа основана в 1981 в Ленинграде", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения 90-х", "«Чёрный альбом» вышел после смерти Цоя", "Введены в Зал славы российской музыки"],
+            "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA", "Группа из Лас-Вегаса", "«Radioactive» — самый долгоиграющий сингл Billboard", "Вокалист борется с анкилозирующим спондилитом"],
+            "моргенштерн": ["Родился в Уфе 17 февраля 1998", "Самый молодой миллионер в шоу-бизнесе", "«Cadillac» — 100 млн просмотров", "Премия MTV Europe Music Awards 2021", "Состояние оценивается в 10+ млн долларов"],
+            "земфира": ["Родилась в Уфе 26 августа 1976", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий", "5 премий «Муз-ТВ»", "Пишет стихи с 7 лет"]
         };
         
-        const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein", "Billie Eilish"];
+        const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein", "Billie Eilish", "The Weeknd"];
         
-        // Концертные площадки с точными координатами
         const venues = [
             { name: "Gipsy", lat: 55.740117, lng: 37.609712, address: "Москва, Болотная наб., 3, стр. 4", metro: "Кропоткинская" },
             { name: "16 тонн", lat: 55.764279, lng: 37.564399, address: "Москва, ул. Пресненский Вал, 6, стр. 1", metro: "Улица 1905 года" },
             { name: "МТС Live Холл", lat: 55.749461, lng: 37.696446, address: "Москва, ш. Энтузиастов, 5, стр. 2", metro: "Площадь Ильича / Римская" },
             { name: "Крокус Сити Холл", lat: 55.825345, lng: 37.388251, address: "Москва, ул. Международная, 20", metro: "Мякинино" },
-            { name: "VK Stadium", lat: 55.796169, lng: 37.560462, address: "Москва, Ленинградский пр-т, 80, корп. 17", metro: "Сокол" }
+            { name: "VK Stadium", lat: 55.796169, lng: 37.560462, address: "Москва, Ленинградский пр-т, 80, корп. 17", metro: "Сокол" },
+            { name: "Stadium Live", lat: 55.798456, lng: 37.700234, address: "Москва, ул. Стромынка, 20", metro: "Сокольники" }
         ];
 
-        // Жанры для похожих исполнителей
         const artistsGenres = {
             "асия": ["pop", "russian pop", "indie pop"],
             "кино": ["rock", "post-punk", "russian rock"],
@@ -822,6 +789,7 @@
             "rammstein": ["industrial metal", "hard rock", "metal"],
             "metallica": ["thrash metal", "heavy metal", "rock"],
             "billie eilish": ["pop", "alternative pop", "electropop"],
+            "the weeknd": ["r&b", "pop", "synthwave"],
             "coldplay": ["alternative rock", "pop rock", "britpop"]
         };
 
@@ -856,7 +824,11 @@
                 `⭐ Подпишись на ${artist}, чтобы не пропустить новые релизы!`,
                 `🎵 ${artist} — открытие года по версии слушателей`,
                 `📀 ${artist} ворвался в чарты в этом месяце`,
-                `🎸 У ${artist} уникальный стиль, который покоряет сердца`
+                `🎸 У ${artist} уникальный стиль, который покоряет сердца`,
+                `💿 Дискография ${artist} пополняется новыми хитами`,
+                `🎧 ${artist} — в топе рекомендаций этой недели`,
+                `🌟 ${artist} набирает популярность с каждым днём`,
+                `🎶 ${artist} — это музыка, которая остаётся в сердце`
             ];
             return dynamicFacts[Math.floor(Math.random() * dynamicFacts.length)];
         }
@@ -881,9 +853,28 @@
             const timeElement = document.getElementById('updateTime');
             if (timeElement) timeElement.textContent = `🔄 ${new Date().toLocaleTimeString('ru-RU')}`;
             container.innerHTML = `
-                <div class="currency-item"><div class="currency-row"><span class="currency-icon">🇺🇸 USD</span><span class="currency-value">${rates.usd.toFixed(2)} ₽</span><div class="bar-container"><div class="bar-fill usd-fill"></div></div></div></div>
-                <div class="currency-item"><div class="currency-row"><span class="currency-icon">🇪🇺 EUR</span><span class="currency-value">${rates.eur.toFixed(2)} ₽</span><div class="bar-container"><div class="bar-fill eur-fill"></div></div></div></div>
-                <div class="currency-stats"><span>📊 Курс ЦБ РФ</span><span>обновлено: ${new Date().toLocaleTimeString('ru-RU')}</span></div>
+                <div class="currency-item">
+                    <div class="currency-row">
+                        <span class="currency-icon">🇺🇸</span>
+                        <span class="currency-value">${rates.usd.toFixed(2)} ₽</span>
+                        <div class="bar-container">
+                            <div class="bar-fill usd-fill" style="width: ${Math.min(50 + (rates.usd - 90), 100)}%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="currency-item">
+                    <div class="currency-row">
+                        <span class="currency-icon">🇪🇺</span>
+                        <span class="currency-value">${rates.eur.toFixed(2)} ₽</span>
+                        <div class="bar-container">
+                            <div class="bar-fill eur-fill" style="width: ${Math.min(50 + (rates.eur - 90), 100)}%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="currency-stats">
+                    <span>📊 По данным биржи</span>
+                    <span>обновлено: ${new Date().toLocaleTimeString('ru-RU')}</span>
+                </div>
             `;
         }
 
@@ -989,7 +980,7 @@
                     <div>
                         <div class="venue-name">🎤 ${escapeHtml(venue.name)}</div>
                         <div class="venue-address">📍 ${escapeHtml(venue.address)}</div>
-                        <div class="venue-address">🚇 ${escapeHtml(venue.metro)}</div>
+                        <div class="venue-address">🚇 Метро: ${escapeHtml(venue.metro)}</div>
                     </div>
                     <div class="venue-distance">🗺️ →</div>
                 </div>
@@ -1024,7 +1015,6 @@
             document.body.className = mode + '-mode';
         }
         
-        // Обработчики навигации
         document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); };
         document.getElementById('goToGameBtn').onclick = () => showPage(pages.game, 'game');
         document.getElementById('goToAIBtn').onclick = () => showPage(pages.ai, 'ai');
@@ -1033,7 +1023,6 @@
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         document.getElementById('goToMapBtn').onclick = () => { showPage(pages.map, 'map'); updateVenuesList(); };
         
-        // КНОПКА БИЛЕТЫ
         document.getElementById('goToTicketsBtn').onclick = () => {
             if (lastSearchedArtist) {
                 tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(lastSearchedArtist)}`);
@@ -1048,15 +1037,13 @@
             }
         };
         
-        // Кнопки "Назад"
+        const geoBtn = document.getElementById('geoLocationBtn');
+        if (geoBtn) geoBtn.onclick = openMyLocationOnMap;
+        
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
             if (btn) btn.onclick = showMenu;
         });
-        
-        // Кнопка геолокации
-        const geoBtn = document.getElementById('geoLocationBtn');
-        if (geoBtn) geoBtn.onclick = openMyLocationOnMap;
 
         // ========== МУЗЫКА ==========
         function loadPopular() { 
@@ -1117,7 +1104,6 @@
             const q = document.getElementById('searchInput').value.trim();
             if (!q) return;
             
-            // Сохраняем последнего найденного артиста для кнопки билетов
             lastSearchedArtist = q;
             
             const resDiv = document.getElementById('musicResult');
@@ -1280,14 +1266,14 @@
             const low = q.toLowerCase();
             if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
                 const bio = await getWiki(q);
-                if (bio) return `📖 ${bio.title}\n\n${bio.text}`;
+                if (bio) return `📖 **${bio.title}**\n\n${bio.text}\n\n🔗 [Читать полностью](${bio.url})`;
                 return `❌ Не нашёл "${q}"`;
             }
-            if (low.includes("грустн")) return `😢 Грустные песни:\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира`;
-            if (low.includes("весел")) return `😊 Весёлые песни:\n"Believer" - Imagine Dragons\n"Твой поцелуй" - Асия`;
+            if (low.includes("грустн")) return `😢 **Грустные песни:**\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира`;
+            if (low.includes("весел")) return `😊 **Весёлые песни:**\n"Believer" - Imagine Dragons\n"Твой поцелуй" - Асия\n"Cadillac" - Моргенштерн`;
             if (low.includes("случайный")) { 
                 const t = tracks[Math.floor(Math.random() * tracks.length)]; 
-                return `🎲 Случайный трек:\n"${t.track}" - ${t.artist}`; 
+                return `🎲 **Случайный трек:**\n"${t.track}" - ${t.artist}`; 
             }
             return `🎶 Напиши имя исполнителя или "грустная песня"`;
         }
@@ -1297,22 +1283,25 @@
             const d = document.createElement('div');
             d.className = `message message-${isUser ? 'user' : 'ai'}`;
             let html = text;
-            if (!isUser) html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            if (!isUser) html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>').replace(/\n/g, '<br>');
             d.innerHTML = isUser ? `<div class="message-bubble">${escapeHtml(text)}</div>` : `<div class="message-icon">🤖</div><div class="message-bubble">${html}</div>`;
             cont.appendChild(d); 
             cont.scrollTop = cont.scrollHeight;
         }
         
+        let typing = null;
         async function sendMsg() {
             const inp = document.getElementById('chatInput');
             const msg = inp.value.trim();
             if (!msg) return;
             addMsg(msg, true); 
             inp.value = '';
-            addMsg('🤔 Думаю...');
+            typing = document.createElement('div'); 
+            typing.className = 'message message-ai'; 
+            typing.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">🤔 Думаю...</div>`;
+            document.getElementById('chatContainer').appendChild(typing);
             const resp = await askBot(msg);
-            const lastMsg = document.querySelector('#chatContainer .message:last-child');
-            if (lastMsg) lastMsg.remove();
+            if (typing) typing.remove();
             addMsg(resp);
         }
         
@@ -1389,7 +1378,7 @@
             energetic: ["Believer - Imagine Dragons"], 
             relax: ["Твой поцелуй - Асия"], 
             romantic: ["Твой поцелуй - Асия"], 
-            focus: ["Инструментальная музыка"] 
+            focus: ["Lo-Fi Hip Hop Instrumental"] 
         };
         
         document.querySelectorAll('.mood-btn').forEach(btn => { 
@@ -1420,7 +1409,26 @@
                     document.body.style.backgroundSize = 'cover'; 
                 } 
             }
+            const theme = localStorage.getItem('music_bot_theme');
+            if (theme === 'dark') document.body.classList.add('dark-theme');
         }
+        
+        window.setGrad = (g) => { 
+            document.body.style.background = g; 
+            document.body.style.backgroundImage = ''; 
+            localStorage.setItem('music_bot_bg', g); 
+        };
+        
+        window.toggleTheme = () => { 
+            document.body.classList.toggle('dark-theme'); 
+            localStorage.setItem('music_bot_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light'); 
+        };
+        
+        window.resetBg = () => { 
+            document.body.style.background = ''; 
+            document.body.style.backgroundImage = ''; 
+            localStorage.setItem('music_bot_bg', 'default'); 
+        };
         
         const fab = document.getElementById('settingsFab');
         const modal = document.getElementById('settingsModal');
@@ -1430,10 +1438,52 @@
         if (closeModalBtn) closeModalBtn.onclick = () => modal.classList.add('hidden');
         if (modal) modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
         
-        document.querySelectorAll('.gradient-circle').forEach(c => c.onclick = () => { 
-            document.body.style.background = c.style.background; 
-            localStorage.setItem('music_bot_bg', c.style.background); 
-        });
+        document.querySelectorAll('.gradient-circle').forEach(c => c.onclick = () => setGrad(c.style.background));
+        
+        const resetBgBtn = document.getElementById('resetBgBtn');
+        if (resetBgBtn) resetBgBtn.onclick = resetBg;
+        
+        const uploadBgBtn = document.getElementById('uploadBgBtn');
+        const bgImageInput = document.getElementById('bgImageInput');
+        if (uploadBgBtn && bgImageInput) {
+            uploadBgBtn.onclick = () => bgImageInput.click();
+            bgImageInput.onchange = (e) => { 
+                if (e.target.files[0]) { 
+                    const r = new FileReader(); 
+                    r.onload = (ev) => { 
+                        document.body.style.backgroundImage = `url(${ev.target.result})`; 
+                        document.body.style.backgroundSize = 'cover'; 
+                        localStorage.setItem('music_bot_bg', ev.target.result); 
+                    }; 
+                    r.readAsDataURL(e.target.files[0]); 
+                } 
+            };
+        }
+        
+        const toggleThemeBtn = document.getElementById('toggleThemeBtn');
+        if (toggleThemeBtn) toggleThemeBtn.onclick = toggleTheme;
+        
+        const colorPickerBtn = document.getElementById('colorPickerBtn');
+        if (colorPickerBtn) {
+            colorPickerBtn.onclick = () => { 
+                const inp = document.createElement('input'); 
+                inp.type = 'color'; 
+                inp.onchange = (e) => { 
+                    document.body.style.background = e.target.value; 
+                    document.body.style.backgroundImage = ''; 
+                    localStorage.setItem('music_bot_bg', e.target.value); 
+                }; 
+                inp.click(); 
+            };
+        }
+        
+        const buttonColorPicker = document.getElementById('buttonColorPicker');
+        if (buttonColorPicker) {
+            buttonColorPicker.onchange = (e) => { 
+                document.documentElement.style.setProperty('--button-color', e.target.value); 
+                localStorage.setItem('music_bot_btn_color', e.target.value); 
+            };
+        }
 
         // ========== ГОЛОСОВОЙ ПОИСК ==========
         const vBtn = document.getElementById('voiceSearchBtn');
@@ -1447,6 +1497,7 @@
                 if (searchInputField) searchInputField.value = e.results[0][0].transcript; 
                 search(); 
             };
+            recognition.onerror = () => showNote('❌ Не распознано');
             recognition.onend = () => vBtn.classList.remove('listening');
             vBtn.onclick = () => recognition.start();
         } else if (vBtn) vBtn.style.opacity = '0.5';
@@ -1459,8 +1510,8 @@
         startCurrencyUpdates();
         showPage(pages.music, 'music');
         
-        console.log('🎵 Music Hub с красивым интерфейсом загружен!');
-        console.log('📱 Версия 2.0 | Все функции активны');
+        console.log('🎵 Music Hub с красивым интерфейсом и кнопками без текста загружен!');
+        console.log('📱 Версия 2.0 | Все функции активны | 1500+ строк кода');
     </script>
 </body>
 </html>
