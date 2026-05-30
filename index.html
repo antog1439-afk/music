@@ -747,6 +747,93 @@
         tg.ready();
         tg.expand();
 
+        // ========== DEEZER ФОТО ИСПОЛНИТЕЛЕЙ ==========
+        const deezerImageCache = new Map();
+
+        function loadDeezerCache() {
+            try {
+                const saved = localStorage.getItem('deezer_artist_cache');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    parsed.forEach(([key, value]) => deezerImageCache.set(key, value));
+                    console.log(`📦 Загружено ${deezerImageCache.size} фото из кэша`);
+                }
+            } catch(e) {}
+        }
+
+        function saveDeezerCache() {
+            try {
+                const toSave = Array.from(deezerImageCache.entries());
+                localStorage.setItem('deezer_artist_cache', JSON.stringify(toSave));
+            } catch(e) {}
+        }
+
+        setInterval(saveDeezerCache, 60000);
+
+        async function getArtistImageFromDeezer(artistName) {
+            const cacheKey = artistName.toLowerCase().trim();
+            if (deezerImageCache.has(cacheKey)) {
+                return deezerImageCache.get(cacheKey);
+            }
+            
+            try {
+                const searchUrl = `https://api.deezer.com/search/artist?q=${encodeURIComponent(artistName)}&limit=5`;
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
+                
+                if (searchData.data && searchData.data.length > 0) {
+                    const exactMatch = searchData.data.find(artist => 
+                        artist.name.toLowerCase() === artistName.toLowerCase()
+                    );
+                    const bestMatch = exactMatch || searchData.data[0];
+                    
+                    const artistUrl = `https://api.deezer.com/artist/${bestMatch.id}`;
+                    const artistResponse = await fetch(artistUrl);
+                    const artistData = await artistResponse.json();
+                    
+                    let imageUrl = null;
+                    if (artistData.picture_xl && !artistData.picture_xl.includes('default')) {
+                        imageUrl = artistData.picture_xl;
+                    } else if (artistData.picture_big && !artistData.picture_big.includes('default')) {
+                        imageUrl = artistData.picture_big;
+                    } else if (artistData.picture_medium && !artistData.picture_medium.includes('default')) {
+                        imageUrl = artistData.picture_medium;
+                    }
+                    
+                    if (imageUrl) {
+                        deezerImageCache.set(cacheKey, imageUrl);
+                        console.log(`✅ Deezer: ${artistName} → фото найдено`);
+                        return imageUrl;
+                    }
+                }
+                console.log(`❌ Deezer: ${artistName} → фото не найдено`);
+                return null;
+            } catch(e) {
+                console.error('Deezer ошибка:', e);
+                return null;
+            }
+        }
+
+        async function getArtistImage(artistName) {
+            let imageUrl = await getArtistImageFromDeezer(artistName);
+            if (!imageUrl && typeof getArtistImageFromWiki === 'function') {
+                imageUrl = await getArtistImageFromWiki(artistName);
+            }
+            return imageUrl;
+        }
+
+        async function preloadPopularArtistsImages() {
+            const popularList = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein", "Billie Eilish", "The Weeknd"];
+            console.log('🔄 Предзагрузка фото популярных исполнителей...');
+            for (const artist of popularList) {
+                await getArtistImageFromDeezer(artist);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            console.log('✅ Предзагрузка завершена');
+        }
+
+        loadDeezerCache();
+
         // ========== ОСНОВНЫЕ ДАННЫЕ ==========
         const tracks = [
             { track: "Останься", artist: "Асия" },
@@ -1116,8 +1203,9 @@
             const bio = await getWiki(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
-            const avatarUrl = await getArtistImageFromWiki(q);
-            const finalAvatarUrl = avatarUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+            // === DEEZER ФОТО ВМЕСТО WIKIPEDIA ===
+            const artistImageUrl = await getArtistImage(q);
+            const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             
             resDiv.innerHTML = `
                 <div class="result-card">
@@ -1510,8 +1598,13 @@
         startCurrencyUpdates();
         showPage(pages.music, 'music');
         
+        // Запускаем предзагрузку фото через 2 секунды после старта
+        setTimeout(() => {
+            preloadPopularArtistsImages();
+        }, 2000);
+        
         console.log('🎵 Music Hub с красивым интерфейсом и кнопками без текста загружен!');
-        console.log('📱 Версия 2.0 | Все функции активны | 1500+ строк кода');
+        console.log('📱 Версия 2.0 | Все функции активны | 1500+ строк кода | Deezer фото активны');
     </script>
 </body>
 </html>
