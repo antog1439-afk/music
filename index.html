@@ -22,19 +22,16 @@
             transition: all 0.3s ease;
         }
 
-        /* Режимы фона */
         body.music-mode { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
         body.game-mode { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f2027 100%); }
         body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
         body.assistant-mode { background: linear-gradient(135deg, #0b8793 0%, #360033 50%, #1a0033 100%); }
         body.map-mode { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
 
-        /* Стильный скроллбар */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; }
 
-        /* Анимации */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
@@ -48,29 +45,12 @@
             70% { box-shadow: 0 0 0 15px rgba(102,126,234,0); }
             100% { box-shadow: 0 0 0 0 rgba(102,126,234,0); }
         }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        @keyframes slideDown {
-            from { transform: translateY(-100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
 
-        /* Страницы */
         .fullscreen-page {
             position: fixed;
             top: 0;
@@ -86,7 +66,6 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* МЕНЮ - ТОЛЬКО ИКОНКИ (БЕЗ ТЕКСТА) */
         .menu-container {
             position: fixed;
             top: 0;
@@ -148,15 +127,8 @@
             stroke-width: 1.5;
             fill: none;
         }
-        /* Скрываем текст */
-        .menu-title {
-            display: none;
-        }
-        .menu-desc {
-            display: none;
-        }
+        .menu-title, .menu-desc { display: none; }
 
-        /* Курс валют */
         .currency-chart {
             position: fixed;
             bottom: 20px;
@@ -181,11 +153,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .currency-update-time {
-            font-size: 7px;
-            color: #4facfe;
-            font-weight: normal;
-        }
+        .currency-update-time { font-size: 7px; color: #4facfe; }
         .currency-item { margin-bottom: 6px; }
         .currency-row {
             display: flex;
@@ -200,14 +168,6 @@
             color: white;
             min-width: 55px;
         }
-        .currency-change {
-            font-size: 9px;
-            font-weight: 600;
-            padding: 1px 5px;
-            border-radius: 12px;
-        }
-        .change-up { background: rgba(46,204,113,0.2); color: #2ecc71; }
-        .change-down { background: rgba(231,76,60,0.2); color: #e74c3c; }
         .bar-container {
             flex: 1;
             height: 16px;
@@ -219,13 +179,6 @@
             height: 100%;
             border-radius: 8px;
             transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 4px;
-            font-size: 8px;
-            font-weight: 600;
-            color: white;
         }
         .usd-fill { background: linear-gradient(90deg, #3498db, #2980b9); }
         .eur-fill { background: linear-gradient(90deg, #2ecc71, #27ae60); }
@@ -259,7 +212,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s;
         }
         .back-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.2); }
         .page-title {
@@ -291,9 +243,8 @@
             font-size: 15px;
             background: rgba(255,255,255,0.92);
             font-weight: 500;
-            transition: all 0.3s;
         }
-        .search-input:focus { outline: none; background: white; transform: scale(1.01); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .search-input:focus { outline: none; background: white; transform: scale(1.01); }
         .search-btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
@@ -302,7 +253,6 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .search-btn:active { transform: scale(0.96); opacity: 0.9; }
         .voice-btn {
@@ -335,7 +285,6 @@
             font-weight: 500;
             color: white;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
 
@@ -362,9 +311,8 @@
             font-weight: 700;
             color: white;
             margin-bottom: 4px;
-            letter-spacing: -0.3px;
         }
-        .artist-role { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+        .artist-role { font-size: 12px; color: rgba(255,255,255,0.5); }
 
         .result-card {
             background: rgba(255,255,255,0.08);
@@ -406,7 +354,6 @@
             cursor: pointer;
             border: none;
             font-size: 14px;
-            transition: all 0.2s;
         }
         .platform-btn:active { transform: scale(0.97); }
         .yandex-btn { background: #ffcc00; color: #1a1a2e; }
@@ -424,20 +371,6 @@
         .bio-text { font-size: 12px; line-height: 1.4; color: rgba(255,255,255,0.85); }
         .bio-wiki-link { color: #b983ff; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
 
-        .qr-btn {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 60px;
-            text-align: center;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            width: 100%;
-            font-size: 14px;
-            background: #607d8b;
-            color: white;
-        }
-
         .track-name { font-size: 22px; font-weight: 800; margin: 20px 0; color: white; text-align: center; }
         .game-options { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
         .game-option {
@@ -447,7 +380,6 @@
             text-align: center;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
         }
         .game-option:active { transform: scale(0.97); background: rgba(255,255,255,0.2); }
 
@@ -489,7 +421,6 @@
         }
         .message-user .message-bubble { background: #667eea; color: white; border-bottom-right-radius: 6px; }
         .message-ai .message-bubble { background: rgba(255,255,255,0.12); color: white; border-bottom-left-radius: 6px; }
-        .message-icon svg { width: 20px; height: 20px; stroke: white; stroke-width: 1.5; fill: none; }
 
         .random-artist-card {
             background: rgba(255,255,255,0.08);
@@ -511,20 +442,6 @@
             font-size: 12px;
         }
 
-        .ai-gen-btn {
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 60px;
-            text-align: center;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            width: 100%;
-            font-size: 14px;
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            color: white;
-        }
-
         .settings-fab {
             position: fixed;
             bottom: 22px;
@@ -539,7 +456,6 @@
             justify-content: center;
             cursor: pointer;
             z-index: 100;
-            transition: all 0.2s;
             border: 1px solid rgba(255,255,255,0.2);
         }
         .settings-fab:active { transform: scale(0.92); }
@@ -578,7 +494,6 @@
             border-radius: 48px;
             cursor: pointer;
             border: 2px solid rgba(255,255,255,0.3);
-            transition: all 0.2s;
         }
         .gradient-circle:active { transform: scale(0.95); }
         .close-modal, .appearance-btn {
@@ -612,13 +527,6 @@
         .user-info { font-size: 11px; text-align: center; margin-top: 12px; color: rgba(255,255,255,0.4); }
         .hidden { display: none; }
 
-        /* Стили для плеера */
-        .music-player {
-            transition: all 0.3s ease;
-        }
-        .play-preview-btn:active {
-            transform: scale(0.95);
-        }
         .preview-track-item {
             transition: all 0.2s ease;
         }
@@ -640,10 +548,6 @@
             .currency-icon { font-size: 14px; min-width: 26px; }
             .currency-value { font-size: 10px; min-width: 48px; }
             .bar-container { height: 12px; }
-            .currency-stats { font-size: 6px; }
-            .currency-title { font-size: 7px; margin-bottom: 4px; }
-            .currency-item { margin-bottom: 4px; }
-            .currency-row { gap: 4px; }
         }
     </style>
 </head>
@@ -702,7 +606,7 @@
             <div class="popular-grid" id="popularGrid"></div>
             <div id="musicResult"></div>
         </div>
-        <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке | 🎵 Нажмите на песню, чтобы послушать 30-секундное превью</div>
+        <div class="user-info">🎵 Нажмите на кнопку Play рядом с треком — если превью нет, откроется Яндекс.Музыка</div>
     </div>
 
     <div class="fullscreen-page" id="gamePage">
@@ -730,22 +634,16 @@
             <button class="back-btn" id="backFromMap"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
             <div class="page-title">Концертные площадки</div>
         </div>
-        
         <div class="glass-card">
             <button id="geoLocationBtn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
                 📍 Моё местоположение на Яндекс.Картах
             </button>
         </div>
-        
         <div class="glass-card">
             <div class="section-title">🎵 Концертные залы (точные координаты)</div>
             <div id="venuesList"></div>
         </div>
-        
-        <div class="user-info" style="margin-top: 16px;">
-            📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом<br>
-            🗺️ Координаты: 6 знаков после запятой для максимальной точности
-        </div>
+        <div class="user-info">📌 Нажми на площадку — откроется Яндекс.Карты с точным адресом</div>
     </div>
 
     <div class="fullscreen-page" id="moodPage">
@@ -757,7 +655,6 @@
     <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
     <script>
-        // ========== ИНИЦИАЛИЗАЦИЯ TELEGRAM ==========
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
@@ -771,7 +668,6 @@
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     parsed.forEach(([key, value]) => deezerImageCache.set(key, value));
-                    console.log(`📦 Загружено ${deezerImageCache.size} фото из кэша`);
                 }
             } catch(e) {}
         }
@@ -787,9 +683,7 @@
 
         async function getArtistImageFromDeezer(artistName) {
             const cacheKey = artistName.toLowerCase().trim();
-            if (deezerImageCache.has(cacheKey)) {
-                return deezerImageCache.get(cacheKey);
-            }
+            if (deezerImageCache.has(cacheKey)) return deezerImageCache.get(cacheKey);
             
             try {
                 const searchUrl = `https://api.deezer.com/search/artist?q=${encodeURIComponent(artistName)}&limit=5`;
@@ -797,34 +691,24 @@
                 const searchData = await searchResponse.json();
                 
                 if (searchData.data && searchData.data.length > 0) {
-                    const exactMatch = searchData.data.find(artist => 
-                        artist.name.toLowerCase() === artistName.toLowerCase()
-                    );
+                    const exactMatch = searchData.data.find(artist => artist.name.toLowerCase() === artistName.toLowerCase());
                     const bestMatch = exactMatch || searchData.data[0];
-                    
                     const artistUrl = `https://api.deezer.com/artist/${bestMatch.id}`;
                     const artistResponse = await fetch(artistUrl);
                     const artistData = await artistResponse.json();
                     
                     let imageUrl = null;
-                    if (artistData.picture_xl && !artistData.picture_xl.includes('default')) {
-                        imageUrl = artistData.picture_xl;
-                    } else if (artistData.picture_big && !artistData.picture_big.includes('default')) {
-                        imageUrl = artistData.picture_big;
-                    } else if (artistData.picture_medium && !artistData.picture_medium.includes('default')) {
-                        imageUrl = artistData.picture_medium;
-                    }
+                    if (artistData.picture_xl && !artistData.picture_xl.includes('default')) imageUrl = artistData.picture_xl;
+                    else if (artistData.picture_big && !artistData.picture_big.includes('default')) imageUrl = artistData.picture_big;
+                    else if (artistData.picture_medium && !artistData.picture_medium.includes('default')) imageUrl = artistData.picture_medium;
                     
                     if (imageUrl) {
                         deezerImageCache.set(cacheKey, imageUrl);
-                        console.log(`✅ Deezer: ${artistName} → фото найдено`);
                         return imageUrl;
                     }
                 }
-                console.log(`❌ Deezer: ${artistName} → фото не найдено`);
                 return null;
             } catch(e) {
-                console.error('Deezer ошибка:', e);
                 return null;
             }
         }
@@ -838,44 +722,48 @@
         }
 
         async function preloadPopularArtistsImages() {
-            const popularList = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein", "Billie Eilish", "The Weeknd"];
-            console.log('🔄 Предзагрузка фото популярных исполнителей...');
+            const popularList = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein"];
             for (const artist of popularList) {
                 await getArtistImageFromDeezer(artist);
                 await new Promise(resolve => setTimeout(resolve, 100));
             }
-            console.log('✅ Предзагрузка завершена');
         }
 
         loadDeezerCache();
 
-        // ========== DEEZER ПЛЕЕР (ПРЕВЬЮ 30 СЕКУНД) ==========
+        // ========== DEEZER ПЛЕЕР С FALLBACK ==========
         const trackIdCache = new Map();
 
         async function getDeezerTrackId(artistName, trackName) {
             const cacheKey = `${artistName.toLowerCase()}_${trackName.toLowerCase()}`;
-            if (trackIdCache.has(cacheKey)) {
-                return trackIdCache.get(cacheKey);
-            }
+            if (trackIdCache.has(cacheKey)) return trackIdCache.get(cacheKey);
             
             try {
-                const searchQuery = `${artistName} ${trackName}`;
-                const url = `https://api.deezer.com/search?q=${encodeURIComponent(searchQuery)}&limit=3`;
-                const response = await fetch(url);
-                const data = await response.json();
+                const searchQueries = [
+                    `${artistName} ${trackName}`,
+                    trackName,
+                    `${artistName} - ${trackName}`
+                ];
                 
-                if (data.data && data.data.length > 0) {
-                    const bestMatch = data.data.find(track => 
-                        track.artist.name.toLowerCase() === artistName.toLowerCase() &&
-                        track.title.toLowerCase().includes(trackName.toLowerCase())
-                    ) || data.data[0];
+                for (const query of searchQueries) {
+                    const url = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=5`;
+                    const response = await fetch(url);
+                    const data = await response.json();
                     
-                    trackIdCache.set(cacheKey, bestMatch.id);
-                    return bestMatch.id;
+                    if (data.data && data.data.length > 0) {
+                        const bestMatch = data.data.find(track => 
+                            track.artist.name.toLowerCase() === artistName.toLowerCase() ||
+                            track.title.toLowerCase().includes(trackName.toLowerCase())
+                        ) || data.data[0];
+                        
+                        if (bestMatch.preview) {
+                            trackIdCache.set(cacheKey, bestMatch.id);
+                            return bestMatch.id;
+                        }
+                    }
                 }
                 return null;
             } catch(e) {
-                console.error('Deezer поиск трека ошибка:', e);
                 return null;
             }
         }
@@ -883,16 +771,21 @@
         async function getTrackPreviewUrl(artistName, trackName) {
             const trackId = await getDeezerTrackId(artistName, trackName);
             if (!trackId) return null;
-            
             try {
                 const url = `https://api.deezer.com/track/${trackId}`;
                 const response = await fetch(url);
                 const data = await response.json();
                 return data.preview || null;
             } catch(e) {
-                console.error('Deezer превью ошибка:', e);
                 return null;
             }
+        }
+
+        function playAlternativePreview(artistName, trackName, buttonElement) {
+            const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(`${artistName} ${trackName}`)}`;
+            buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+            tg.openLink(yandexUrl);
+            showNote(`🎵 Открываем "${trackName}" в Яндекс.Музыке`);
         }
 
         let currentAudio = null;
@@ -927,8 +820,7 @@
             const previewUrl = await getTrackPreviewUrl(artistName, trackName);
             
             if (!previewUrl) {
-                buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
-                showNote(`❌ Превью для "${trackName}" не найдено`);
+                playAlternativePreview(artistName, trackName, buttonElement);
                 return;
             }
             
@@ -962,8 +854,7 @@
             };
             
             audio.onerror = () => {
-                buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
-                showNote(`❌ Ошибка загрузки превью для "${trackName}"`);
+                playAlternativePreview(artistName, trackName, buttonElement);
             };
         }
 
@@ -1007,19 +898,15 @@
             "моргенштерн": ["hip-hop", "rap", "pop"],
             "imagine dragons": ["alternative rock", "indie rock", "pop rock"],
             "rammstein": ["industrial metal", "hard rock", "metal"],
-            "metallica": ["thrash metal", "heavy metal", "rock"],
             "billie eilish": ["pop", "alternative pop", "electropop"],
-            "the weeknd": ["r&b", "pop", "synthwave"],
-            "coldplay": ["alternative rock", "pop rock", "britpop"]
+            "the weeknd": ["r&b", "pop", "synthwave"]
         };
 
-        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
         let lastSearchedArtist = "";
         let currencyInterval = null;
         let gameQ = [], gameIdx = 0, gameScore = 0, gameActive = false;
         let recognition = null;
 
-        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
         function escapeHtml(s) { 
             if (!s) return ''; 
             return s.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); 
@@ -1042,18 +929,11 @@
                 `🎤 ${artist} — один из самых ярких исполнителей года!`,
                 `🔥 Треки ${artist} набирают миллионы прослушиваний`,
                 `⭐ Подпишись на ${artist}, чтобы не пропустить новые релизы!`,
-                `🎵 ${artist} — открытие года по версии слушателей`,
-                `📀 ${artist} ворвался в чарты в этом месяце`,
-                `🎸 У ${artist} уникальный стиль, который покоряет сердца`,
-                `💿 Дискография ${artist} пополняется новыми хитами`,
-                `🎧 ${artist} — в топе рекомендаций этой недели`,
-                `🌟 ${artist} набирает популярность с каждым днём`,
-                `🎶 ${artist} — это музыка, которая остаётся в сердце`
+                `🎵 ${artist} — открытие года по версии слушателей`
             ];
             return dynamicFacts[Math.floor(Math.random() * dynamicFacts.length)];
         }
 
-        // ========== КУРС ВАЛЮТ ==========
         async function getExchangeRates() {
             try {
                 const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
@@ -1077,18 +957,14 @@
                     <div class="currency-row">
                         <span class="currency-icon">🇺🇸</span>
                         <span class="currency-value">${rates.usd.toFixed(2)} ₽</span>
-                        <div class="bar-container">
-                            <div class="bar-fill usd-fill" style="width: ${Math.min(50 + (rates.usd - 90), 100)}%;"></div>
-                        </div>
+                        <div class="bar-container"><div class="bar-fill usd-fill" style="width: ${Math.min(50 + (rates.usd - 90), 100)}%;"></div></div>
                     </div>
                 </div>
                 <div class="currency-item">
                     <div class="currency-row">
                         <span class="currency-icon">🇪🇺</span>
                         <span class="currency-value">${rates.eur.toFixed(2)} ₽</span>
-                        <div class="bar-container">
-                            <div class="bar-fill eur-fill" style="width: ${Math.min(50 + (rates.eur - 90), 100)}%;"></div>
-                        </div>
+                        <div class="bar-container"><div class="bar-fill eur-fill" style="width: ${Math.min(50 + (rates.eur - 90), 100)}%;"></div></div>
                     </div>
                 </div>
                 <div class="currency-stats">
@@ -1104,11 +980,9 @@
             currencyInterval = setInterval(updateCurrencyChart, 30000);
         }
 
-        // ========== ПОХОЖИЕ ИСПОЛНИТЕЛИ ==========
         function getSimilarByGenre(currentArtist, count = 4) {
             const currentLower = currentArtist.toLowerCase();
             const currentGenres = artistsGenres[currentLower] || [];
-            
             if (currentGenres.length === 0) {
                 const defaultArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
                 const filtered = defaultArtists.filter(a => a.toLowerCase() !== currentLower);
@@ -1119,19 +993,15 @@
                 }
                 return shuffled.slice(0, count);
             }
-            
             const similar = [];
             for (const [artist, genres] of Object.entries(artistsGenres)) {
                 if (artist.toLowerCase() === currentLower) continue;
-                const hasCommonGenre = genres.some(g => currentGenres.includes(g));
-                if (hasCommonGenre) similar.push(artist);
+                if (genres.some(g => currentGenres.includes(g))) similar.push(artist);
             }
-            
             for (let i = similar.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [similar[i], similar[j]] = [similar[j], similar[i]];
             }
-            
             while (similar.length < count) {
                 const popularArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
                 const addArtist = popularArtists.find(p => p.toLowerCase() !== currentLower && !similar.includes(p));
@@ -1160,7 +1030,6 @@
             }
         }
 
-        // ========== КАРТА ==========
         function openYandexMap(lat, lng, name) {
             const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map`;
             tg.openLink(url);
@@ -1210,7 +1079,6 @@
         window.openYandexMap = openYandexMap;
         window.openMyLocationOnMap = openMyLocationOnMap;
 
-        // ========== НАВИГАЦИЯ ==========
         const menu = document.getElementById('menuContainer');
         const pages = {
             music: document.getElementById('musicPage'), 
@@ -1265,7 +1133,6 @@
             if (btn) btn.onclick = showMenu;
         });
 
-        // ========== МУЗЫКА ==========
         function loadPopular() { 
             const grid = document.getElementById('popularGrid');
             if (grid) grid.innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
@@ -1339,7 +1206,6 @@
             const artistImageUrl = await getArtistImage(q);
             const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             
-            // Создаём HTML для плеера с треками
             let tracksPreviewHtml = '';
             if (artistTracks.length > 0) {
                 tracksPreviewHtml = `
@@ -1393,7 +1259,6 @@
                 </div>
             `;
             
-            // Инициализация кнопок плеера
             if (artistTracks.length > 0) {
                 artistTracks.forEach((t, idx) => {
                     const btn = resDiv.querySelector(`.preview-btn-${idx}`);
@@ -1421,7 +1286,6 @@
         const searchInput = document.getElementById('searchInput');
         if (searchInput) searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
-        // ========== ИГРА ==========
         function genQ() { 
             const t = tracks[Math.floor(Math.random() * tracks.length)]; 
             const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); 
@@ -1486,7 +1350,6 @@
         const startGameBtn = document.getElementById('startGameBtn');
         if (startGameBtn) startGameBtn.onclick = startGame;
 
-        // ========== AI ОБЛОЖКИ ==========
         async function genCover(p) {
             const div = document.getElementById('aiResult');
             div.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🎨 Создаём обложку...</div>';
@@ -1519,7 +1382,6 @@
             if (p) genCover(p); 
         };
 
-        // ========== АССИСТЕНТ ==========
         async function askBot(q) {
             const low = q.toLowerCase();
             if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
@@ -1568,7 +1430,6 @@
         const chatInput = document.getElementById('chatInput');
         if (chatInput) chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
 
-        // ========== РАНДОМАЙЗЕР ==========
         function parseArtists(t) { 
             if (!t.trim()) return []; 
             const lines = t.split(/\r?\n/); 
@@ -1629,7 +1490,6 @@
         const artistList = document.getElementById('artistListInput');
         if (artistList) artistList.addEventListener('input', updateTotal);
 
-        // ========== НАСТРОЕНИЕ ==========
         const moodTracks = { 
             happy: ["Останься - Асия"], 
             sad: ["Группа крови - Кино"], 
@@ -1657,7 +1517,6 @@
             }; 
         });
 
-        // ========== НАСТРОЙКИ ==========
         function loadAppearance() {
             const bg = localStorage.getItem('music_bot_bg');
             if (bg && bg !== 'default') { 
@@ -1667,8 +1526,6 @@
                     document.body.style.backgroundSize = 'cover'; 
                 } 
             }
-            const theme = localStorage.getItem('music_bot_theme');
-            if (theme === 'dark') document.body.classList.add('dark-theme');
         }
         
         window.setGrad = (g) => { 
@@ -1743,7 +1600,6 @@
             };
         }
 
-        // ========== ГОЛОСОВОЙ ПОИСК ==========
         const vBtn = document.getElementById('voiceSearchBtn');
         if (vBtn && 'webkitSpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1760,7 +1616,6 @@
             vBtn.onclick = () => recognition.start();
         } else if (vBtn) vBtn.style.opacity = '0.5';
 
-        // ========== ЗАПУСК ==========
         loadAppearance();
         loadPopular();
         updateTotal();
@@ -1772,8 +1627,7 @@
             preloadPopularArtistsImages();
         }, 2000);
         
-        console.log('🎵 Music Hub с красивым интерфейсом и Deezer плеером загружен!');
-        console.log('📱 Версия 3.0 | Добавлено прослушивание 30-секундных превью треков');
+        console.log('🎵 Music Hub с Deezer плеером и fallback на Яндекс.Музыку загружен!');
     </script>
 </body>
 </html>
