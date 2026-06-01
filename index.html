@@ -612,6 +612,21 @@
         .user-info { font-size: 11px; text-align: center; margin-top: 12px; color: rgba(255,255,255,0.4); }
         .hidden { display: none; }
 
+        /* Стили для плеера */
+        .music-player {
+            transition: all 0.3s ease;
+        }
+        .play-preview-btn:active {
+            transform: scale(0.95);
+        }
+        .preview-track-item {
+            transition: all 0.2s ease;
+        }
+        .preview-track-item:active {
+            background: rgba(255,255,255,0.05);
+            border-radius: 60px;
+        }
+
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
             .menu-screen { gap: 16px; max-width: 240px; }
@@ -687,7 +702,7 @@
             <div class="popular-grid" id="popularGrid"></div>
             <div id="musicResult"></div>
         </div>
-        <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке</div>
+        <div class="user-info">🤖 ИИ-факты как в Яндекс.Музыке | 🎵 Нажмите на песню, чтобы послушать 30-секундное превью</div>
     </div>
 
     <div class="fullscreen-page" id="gamePage">
@@ -833,6 +848,124 @@
         }
 
         loadDeezerCache();
+
+        // ========== DEEZER ПЛЕЕР (ПРЕВЬЮ 30 СЕКУНД) ==========
+        const trackIdCache = new Map();
+
+        async function getDeezerTrackId(artistName, trackName) {
+            const cacheKey = `${artistName.toLowerCase()}_${trackName.toLowerCase()}`;
+            if (trackIdCache.has(cacheKey)) {
+                return trackIdCache.get(cacheKey);
+            }
+            
+            try {
+                const searchQuery = `${artistName} ${trackName}`;
+                const url = `https://api.deezer.com/search?q=${encodeURIComponent(searchQuery)}&limit=3`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    const bestMatch = data.data.find(track => 
+                        track.artist.name.toLowerCase() === artistName.toLowerCase() &&
+                        track.title.toLowerCase().includes(trackName.toLowerCase())
+                    ) || data.data[0];
+                    
+                    trackIdCache.set(cacheKey, bestMatch.id);
+                    return bestMatch.id;
+                }
+                return null;
+            } catch(e) {
+                console.error('Deezer поиск трека ошибка:', e);
+                return null;
+            }
+        }
+
+        async function getTrackPreviewUrl(artistName, trackName) {
+            const trackId = await getDeezerTrackId(artistName, trackName);
+            if (!trackId) return null;
+            
+            try {
+                const url = `https://api.deezer.com/track/${trackId}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                return data.preview || null;
+            } catch(e) {
+                console.error('Deezer превью ошибка:', e);
+                return null;
+            }
+        }
+
+        let currentAudio = null;
+        let currentAudioButton = null;
+
+        function stopCurrentPreview() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                if (currentAudioButton) {
+                    currentAudioButton.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                }
+                currentAudio = null;
+                currentAudioButton = null;
+            }
+        }
+
+        async function playPreview(artistName, trackName, buttonElement, timerElement = null) {
+            if (currentAudio && currentAudioButton === buttonElement && !currentAudio.paused) {
+                currentAudio.pause();
+                buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                currentAudio = null;
+                currentAudioButton = null;
+                if (timerElement) timerElement.textContent = '0:00';
+                return;
+            }
+            
+            stopCurrentPreview();
+            
+            buttonElement.innerHTML = '<div style="width:16px; height:16px; border:2px solid white; border-top-color: transparent; border-radius:50%; animation: spin 0.8s linear infinite;"></div>';
+            
+            const previewUrl = await getTrackPreviewUrl(artistName, trackName);
+            
+            if (!previewUrl) {
+                buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                showNote(`❌ Превью для "${trackName}" не найдено`);
+                return;
+            }
+            
+            const audio = new Audio(previewUrl);
+            audio.volume = 0.7;
+            
+            audio.oncanplay = () => {
+                audio.play();
+                buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                currentAudio = audio;
+                currentAudioButton = buttonElement;
+                
+                if (timerElement) {
+                    const updateTimer = setInterval(() => {
+                        if (!currentAudio || currentAudio.paused) {
+                            clearInterval(updateTimer);
+                            return;
+                        }
+                        const seconds = Math.floor(currentAudio.currentTime);
+                        timerElement.textContent = `0:${seconds.toString().padStart(2, '0')}`;
+                        
+                        if (currentAudio.ended || currentAudio.currentTime >= currentAudio.duration - 0.1) {
+                            clearInterval(updateTimer);
+                            buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                            timerElement.textContent = '0:00';
+                            currentAudio = null;
+                            currentAudioButton = null;
+                        }
+                    }, 500);
+                }
+            };
+            
+            audio.onerror = () => {
+                buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                showNote(`❌ Ошибка загрузки превью для "${trackName}"`);
+            };
+        }
 
         // ========== ОСНОВНЫЕ ДАННЫЕ ==========
         const tracks = [
@@ -1203,9 +1336,32 @@
             const bio = await getWiki(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
-            // === DEEZER ФОТО ВМЕСТО WIKIPEDIA ===
             const artistImageUrl = await getArtistImage(q);
             const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+            
+            // Создаём HTML для плеера с треками
+            let tracksPreviewHtml = '';
+            if (artistTracks.length > 0) {
+                tracksPreviewHtml = `
+                    <div style="margin: 16px 0;">
+                        <div class="section-title">🎧 ПРЕВЬЮ ТРЕКОВ (30 СЕКУНД)</div>
+                        ${artistTracks.map((t, idx) => `
+                            <div class="preview-track-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500; font-size: 14px;">${escapeHtml(t.track)}</div>
+                                    <div style="font-size: 11px; opacity: 0.7;">${escapeHtml(t.artist)}</div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span id="timer_${idx}_${Date.now()}" style="font-size: 11px; font-family: monospace; opacity: 0.7;">0:00</span>
+                                    <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: #667eea; border: none; width: 36px; height: 36px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
             
             resDiv.innerHTML = `
                 <div class="result-card">
@@ -1216,6 +1372,7 @@
                             <div class="artist-role">🎤 Исполнитель</div>
                         </div>
                     </div>
+                    ${tracksPreviewHtml}
                     <div class="ai-fact-card">
                         <div class="ai-fact-header">
                             <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
@@ -1226,16 +1383,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="section-title">🎧 СЛУШАТЬ</div>
+                    <div class="section-title">🎧 СЛУШАТЬ ПОЛНОСТЬЮ</div>
                     <div class="platform-buttons">
                         <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                         <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                     </div>
-                    ${artistTracks.length ? `<div style="font-size:13px; margin:16px 0; color:rgba(255,255,255,0.6);">🎵 Популярные треки: ${artistTracks.map(t => t.track).join(', ')}</div>` : ''}
                     ${bio ? `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bio.title)}</div><div class="bio-text">${escapeHtml(bio.text)}</div><a href="${bio.url}" target="_blank" class="bio-wiki-link">🔗 Читать полностью →</a></div>` : '<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">❌ Информация не найдена</div></div>'}
                     <button class="search-btn" style="margin-top: 16px; background: linear-gradient(135deg, #2ecc71, #27ae60);" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Купить билеты на концерт</button>
                 </div>
             `;
+            
+            // Инициализация кнопок плеера
+            if (artistTracks.length > 0) {
+                artistTracks.forEach((t, idx) => {
+                    const btn = resDiv.querySelector(`.preview-btn-${idx}`);
+                    const timerSpan = resDiv.querySelector(`#timer_${idx}_${Date.now()}`);
+                    if (btn) {
+                        const artist = btn.dataset.artist;
+                        const track = btn.dataset.track;
+                        btn.onclick = () => playPreview(artist, track, btn, timerSpan);
+                    }
+                });
+            }
+            
             addSimilarArtistsToResult(q);
         }
         
@@ -1598,13 +1768,12 @@
         startCurrencyUpdates();
         showPage(pages.music, 'music');
         
-        // Запускаем предзагрузку фото через 2 секунды после старта
         setTimeout(() => {
             preloadPopularArtistsImages();
         }, 2000);
         
-        console.log('🎵 Music Hub с красивым интерфейсом и кнопками без текста загружен!');
-        console.log('📱 Версия 2.0 | Все функции активны | 1500+ строк кода | Deezer фото активны');
+        console.log('🎵 Music Hub с красивым интерфейсом и Deezer плеером загружен!');
+        console.log('📱 Версия 3.0 | Добавлено прослушивание 30-секундных превью треков');
     </script>
 </body>
 </html>
