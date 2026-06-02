@@ -41,9 +41,9 @@
             to { opacity: 1; transform: scale(1); }
         }
         @keyframes pulseGlow {
-            0% { box-shadow: 0 0 0 0 rgba(102,126,234,0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(102,126,234,0); }
-            100% { box-shadow: 0 0 0 0 rgba(102,126,234,0); }
+            0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255,204,0,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,204,0,0); }
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp {
@@ -288,13 +288,17 @@
         }
         .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
 
+        /* Стили карточки исполнителя с инверсией */
         .artist-profile {
             display: flex;
             align-items: center;
             gap: 16px;
             margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 12px;
+            margin: -12px -12px 20px -12px;
+            border-radius: 24px;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
         .artist-avatar {
             width: 70px;
@@ -304,6 +308,7 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
         }
         .artist-info { flex: 1; }
         .artist-name-large {
@@ -311,8 +316,43 @@
             font-weight: 700;
             color: white;
             margin-bottom: 4px;
+            transition: all 0.3s ease;
         }
-        .artist-role { font-size: 12px; color: rgba(255,255,255,0.5); }
+        .artist-role {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+        }
+        .invert-icon {
+            margin-left: 8px;
+            font-size: 14px;
+            opacity: 0.6;
+            transition: all 0.2s;
+        }
+        .artist-profile:hover .invert-icon {
+            opacity: 1;
+        }
+
+        /* ИНВЕРСИЯ КАРТОЧКИ ИСПОЛНИТЕЛЯ */
+        .artist-profile.inverted {
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .artist-profile.inverted .artist-name-large {
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255,204,0,0.3);
+        }
+        .artist-profile.inverted .artist-role {
+            color: #ffcc00cc;
+        }
+        .artist-profile.inverted .artist-avatar {
+            filter: brightness(1.1) contrast(1.2);
+            border-color: #ffcc00;
+            box-shadow: 0 0 15px rgba(255,204,0,0.3);
+        }
+        .artist-profile.inverted .invert-icon {
+            animation: pulseGlow 1s infinite;
+        }
 
         .result-card {
             background: rgba(255,255,255,0.08);
@@ -534,6 +574,14 @@
             background: rgba(255,255,255,0.05);
             border-radius: 60px;
         }
+        
+        .album-card {
+            transition: all 0.2s ease;
+        }
+        .album-card:active {
+            transform: scale(0.96);
+            background: rgba(255,255,255,0.1) !important;
+        }
 
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
@@ -606,7 +654,7 @@
             <div class="popular-grid" id="popularGrid"></div>
             <div id="musicResult"></div>
         </div>
-        <div class="user-info">🎵 Нажмите на кнопку Play рядом с треком — если превью нет, откроется Яндекс.Музыка</div>
+        <div class="user-info">🎵 Нажмите на карточку исполнителя для инверсии цветов | Нажмите на альбом для списка треков</div>
     </div>
 
     <div class="fullscreen-page" id="gamePage">
@@ -858,6 +906,40 @@
             };
         }
 
+        // ========== ИНВЕРСИЯ КАРТОЧКИ ИСПОЛНИТЕЛЯ ==========
+
+        function toggleArtistInversion() {
+            const artistProfile = document.querySelector('.artist-profile');
+            if (!artistProfile) return;
+            
+            artistProfile.classList.toggle('inverted');
+            
+            const currentArtist = document.querySelector('.artist-name-large')?.innerText?.replace('🔄', '').trim();
+            if (currentArtist) {
+                const invertedState = artistProfile.classList.contains('inverted');
+                localStorage.setItem(`inverted_${currentArtist}`, invertedState);
+            }
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+            
+            showNote(artistProfile.classList.contains('inverted') ? 
+                '🎨 Инверсия включена • Имя стало золотым' : '🎨 Инверсия выключена');
+        }
+
+        function loadInvertedState(artistName) {
+            const artistProfile = document.querySelector('.artist-profile');
+            if (!artistProfile) return;
+            
+            const savedState = localStorage.getItem(`inverted_${artistName}`);
+            if (savedState === 'true') {
+                artistProfile.classList.add('inverted');
+            } else {
+                artistProfile.classList.remove('inverted');
+            }
+        }
+
         // ========== ОСНОВНЫЕ ДАННЫЕ ==========
         const tracks = [
             { track: "Останься", artist: "Асия" },
@@ -888,7 +970,146 @@
             { track: "Звезда по имени Солнце", artist: "Кино" },
             { track: "El Problema", artist: "Моргенштерн" }
         ];
-         
+        
+        // ========== АЛЬБОМЫ НА ОСНОВЕ ТРЕКОВ ==========
+
+        function getAlbumsFromTracks(artistName) {
+            const artistTracks = tracks.filter(t => t.artist.toLowerCase() === artistName.toLowerCase());
+            if (artistTracks.length === 0) return [];
+            
+            const albums = [];
+            
+            if (artistName.toLowerCase() === "асия") {
+                albums.push({
+                    title: "Останься",
+                    year: 2022,
+                    cover: "🎵",
+                    tracks: tracks.filter(t => t.artist === "Асия" && ["Останься", "Твой поцелуй", "Помнишь", "Детство", "Притворяюсь", "Обочины", "Шекспир", "О любви", "Звонок"].includes(t.track))
+                });
+                albums.push({
+                    title: "Красное платье",
+                    year: 2023,
+                    cover: "❤️",
+                    tracks: tracks.filter(t => t.artist === "Асия" && ["Красное платье", "911", "Крестики", "Алоэ", "Сильно так", "Амур", "Я не злюсь, милый", "Молчу", "Шоу Трумана", "Мили", "Говори"].includes(t.track))
+                });
+            }
+            else if (artistName.toLowerCase() === "imagine dragons") {
+                albums.push({
+                    title: "Evolve / Night Visions",
+                    year: 2017,
+                    cover: "🌙",
+                    tracks: tracks.filter(t => t.artist === "Imagine Dragons" && ["Believer", "Radioactive"].includes(t.track))
+                });
+            }
+            else if (artistName.toLowerCase() === "кино") {
+                albums.push({
+                    title: "Группа крови",
+                    year: 1988,
+                    cover: "🩸",
+                    tracks: tracks.filter(t => t.artist === "Кино" && t.track === "Группа крови")
+                });
+                albums.push({
+                    title: "Звезда по имени Солнце",
+                    year: 1989,
+                    cover: "⭐",
+                    tracks: tracks.filter(t => t.artist === "Кино" && t.track === "Звезда по имени Солнце")
+                });
+            }
+            else if (artistName.toLowerCase() === "моргенштерн") {
+                albums.push({
+                    title: "Millennium",
+                    year: 2021,
+                    cover: "💎",
+                    tracks: tracks.filter(t => t.artist === "Моргенштерн" && ["Cadillac", "El Problema"].includes(t.track))
+                });
+            }
+            else if (artistName.toLowerCase() === "земфира") {
+                albums.push({
+                    title: "Земфира",
+                    year: 1999,
+                    cover: "🎸",
+                    tracks: tracks.filter(t => t.artist === "Земфира" && t.track === "Искала")
+                });
+            }
+            else {
+                albums.push({
+                    title: "Популярное",
+                    year: new Date().getFullYear(),
+                    cover: "🔥",
+                    tracks: artistTracks
+                });
+            }
+            
+            return albums.filter(album => album.tracks.length > 0);
+        }
+
+        function renderAlbumsFromTracks(artistName) {
+            const albums = getAlbumsFromTracks(artistName);
+            if (albums.length === 0) return '';
+            
+            return `
+                <div class="albums-section" style="margin: 16px 0;">
+                    <div class="section-title">📀 АЛЬБОМЫ</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                        ${albums.map(album => `
+                            <div class="album-card" onclick="showAlbumTracks('${escapeHtml(artistName)}', '${escapeHtml(album.title)}')" style="background: rgba(255,255,255,0.05); border-radius: 16px; padding: 12px; width: calc(33% - 8px); text-align: center; cursor: pointer; transition: all 0.2s;">
+                                <div style="font-size: 40px; margin-bottom: 8px;">${album.cover}</div>
+                                <div style="font-size: 13px; font-weight: 600;">${escapeHtml(album.title)}</div>
+                                <div style="font-size: 10px; opacity: 0.6;">${album.year} • ${album.tracks.length} треков</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        window.showAlbumTracks = function(artistName, albumTitle) {
+            const albums = getAlbumsFromTracks(artistName);
+            const album = albums.find(a => a.title === albumTitle);
+            if (!album) return;
+            
+            let tracksList = '<div style="max-height: 400px; overflow-y: auto;">';
+            album.tracks.forEach((track, idx) => {
+                tracksList += `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div style="flex: 1;">
+                            <div style="font-size: 14px; font-weight: 500;">${idx + 1}. ${escapeHtml(track.track)}</div>
+                            <div style="font-size: 11px; opacity: 0.7;">${escapeHtml(track.artist)}</div>
+                        </div>
+                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: #667eea; border: none; width: 36px; height: 36px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        </button>
+                    </div>
+                `;
+            });
+            tracksList += '</div>';
+            
+            tg.showPopup({
+                title: `📀 ${album.title}`,
+                message: tracksList,
+                buttons: [{ type: "close", text: "Закрыть" }]
+            });
+        };
+
+        window.playTrackFromAlbum = function(artist, track) {
+            tg.closePopup();
+            
+            const trackButtons = document.querySelectorAll('.preview-track-item');
+            for (let btn of trackButtons) {
+                const trackNameElement = btn.querySelector('div > div:first-child');
+                if (trackNameElement && trackNameElement.innerText === track) {
+                    const playButton = btn.querySelector('button');
+                    if (playButton) {
+                        playButton.click();
+                        showNote(`🎵 Загружаем "${track}"...`);
+                        return;
+                    }
+                }
+            }
+            
+            tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(`${artist} ${track}`)}`);
+            showNote(`🎵 Открываем "${track}" в Яндекс.Музыке`);
+        };
         
         const facts = {
             "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства", "В 2022 стала артисткой Effective Records"],
@@ -904,7 +1125,9 @@
             { name: "Gipsy", lat: 55.740117, lng: 37.609712, address: "Москва, Болотная наб., 3, стр. 4", metro: "Кропоткинская" },
             { name: "16 тонн", lat: 55.764279, lng: 37.564399, address: "Москва, ул. Пресненский Вал, 6, стр. 1", metro: "Улица 1905 года" },
             { name: "МТС Live Холл", lat: 55.749461, lng: 37.696446, address: "Москва, ш. Энтузиастов, 5, стр. 2", metro: "Площадь Ильича / Римская" },
+            { name: "Крокус Сити Холл", lat: 55.825345, lng: 37.388251, address: "Москва, ул. Международная, 20", metro: "Мякинино" },
             { name: "VK Stadium", lat: 55.796169, lng: 37.560462, address: "Москва, Ленинградский пр-т, 80, корп. 17", metro: "Сокол" },
+            { name: "Stadium Live", lat: 55.798456, lng: 37.700234, address: "Москва, ул. Стромынка, 20", metro: "Сокольники" }
         ];
 
         const artistsGenres = {
@@ -1227,7 +1450,7 @@
                 tracksPreviewHtml = `
                     <div style="margin: 16px 0;">
                         <div class="section-title">🎧 ПРЕВЬЮ ТРЕКОВ (30 СЕКУНД)</div>
-                        ${artistTracks.map((t, idx) => `
+                        ${artistTracks.slice(0, 10).map((t, idx) => `
                             <div class="preview-track-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                 <div style="flex: 1;">
                                     <div style="font-weight: 500; font-size: 14px;">${escapeHtml(t.track)}</div>
@@ -1247,13 +1470,17 @@
             
             resDiv.innerHTML = `
                 <div class="result-card">
-                    <div class="artist-profile">
+                    <div class="artist-profile" onclick="toggleArtistInversion()">
                         <img class="artist-avatar" src="${finalAvatarUrl}" alt="${escapeHtml(q)}">
                         <div class="artist-info">
-                            <div class="artist-name-large">${escapeHtml(q)}</div>
-                            <div class="artist-role">🎤 Исполнитель</div>
+                            <div class="artist-name-large">
+                                ${escapeHtml(q)}
+                                <span class="invert-icon">🔄</span>
+                            </div>
+                            <div class="artist-role">🎤 Исполнитель • Нажмите для инверсии</div>
                         </div>
                     </div>
+                    ${renderAlbumsFromTracks(q)}
                     ${tracksPreviewHtml}
                     <div class="ai-fact-card">
                         <div class="ai-fact-header">
@@ -1276,7 +1503,7 @@
             `;
             
             if (artistTracks.length > 0) {
-                artistTracks.forEach((t, idx) => {
+                artistTracks.slice(0, 10).forEach((t, idx) => {
                     const btn = resDiv.querySelector(`.preview-btn-${idx}`);
                     const timerSpan = resDiv.querySelector(`#timer_${idx}_${Date.now()}`);
                     if (btn) {
@@ -1286,6 +1513,8 @@
                     }
                 });
             }
+            
+            loadInvertedState(q);
             
             addSimilarArtistsToResult(q);
         }
@@ -1643,7 +1872,7 @@
             preloadPopularArtistsImages();
         }, 2000);
         
-        console.log('🎵 Music Hub с Deezer плеером и fallback на Яндекс.Музыку загружен!');
+        console.log('🎵 Music Hub с инверсией карточки исполнителя, альбомами Асии (20+ треков) и Deezer плеером загружен!');
     </script>
 </body>
 </html>
