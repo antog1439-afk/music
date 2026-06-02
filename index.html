@@ -32,7 +32,6 @@
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, rgba(102,126,234,0.5), rgba(118,75,162,0.5)); border-radius: 10px; }
 
-        /* Анимации */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
@@ -48,29 +47,7 @@
         }
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
-        }
-        @keyframes wave {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; }
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-3px); }
-        }
-        @keyframes subtleRotate {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            75% { transform: rotate(-15deg); }
-        }
-        @keyframes loadingPulse {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.1); }
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp {
@@ -127,18 +104,7 @@
             position: relative;
             overflow: hidden;
         }
-        .menu-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-            transition: left 0.5s;
-        }
-        .menu-btn:hover::before { left: 100%; }
-        .menu-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.1); }
+        .menu-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
         .menu-icon {
             width: 56px;
             height: 56px;
@@ -153,13 +119,7 @@
             stroke: rgba(255,255,255,0.8);
             stroke-width: 1.5;
             fill: none;
-            transition: all 0.3s;
         }
-        .menu-btn:hover .menu-icon svg {
-            stroke: #b983ff;
-            transform: scale(1.05);
-        }
-        .menu-title, .menu-desc { display: none; }
 
         .currency-chart {
             position: fixed;
@@ -183,53 +143,19 @@
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
         .currency-update-time { font-size: 8px; color: rgba(79,172,254,0.7); }
         .currency-item { margin-bottom: 8px; }
-        .currency-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .currency-row { display: flex; align-items: center; gap: 8px; }
         .currency-icon { font-size: 16px; min-width: 32px; }
-        .currency-value {
-            font-size: 13px;
-            font-weight: 600;
-            color: white;
-            min-width: 60px;
-        }
-        .bar-container {
-            flex: 1;
-            height: 6px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .currency-value { font-size: 13px; font-weight: 600; color: white; min-width: 60px; }
+        .bar-container { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .usd-fill { background: linear-gradient(90deg, #3498db, #5dade2); }
         .eur-fill { background: linear-gradient(90deg, #2ecc71, #58d68d); }
-        .currency-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-            font-size: 8px;
-            color: rgba(255,255,255,0.25);
-        }
+        .currency-stats { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 8px; color: rgba(255,255,255,0.25); }
 
-        .page-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding-top: 8px;
-        }
+        .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 8px; }
         .back-btn {
             background: rgba(255,255,255,0.06);
             backdrop-filter: blur(12px);
@@ -243,7 +169,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s;
         }
         .back-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
         .page-title {
@@ -265,9 +190,7 @@
             padding: 24px;
             margin-bottom: 16px;
             border: 1px solid rgba(255,255,255,0.06);
-            transition: all 0.3s;
         }
-        .glass-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); }
 
         .search-box { display: flex; gap: 10px; margin-bottom: 24px; }
         .search-input {
@@ -279,38 +202,18 @@
             background: rgba(255,255,255,0.9);
             font-weight: 500;
             color: #1a1a2e;
-            transition: all 0.3s;
         }
-        .search-input:focus { outline: none; background: white; transform: scale(1.01); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
-        .search-input::placeholder { color: rgba(26,26,46,0.4); }
+        .search-input:focus { outline: none; background: white; }
         .search-btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
-            background-size: 200% 200%;
-            animation: gradientShift 3s ease infinite;
             border: none;
             padding: 0 28px;
             border-radius: 60px;
             color: white;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            position: relative;
-            overflow: hidden;
         }
-        .search-btn::after {
-            content: "🔍";
-            position: absolute;
-            right: -30px;
-            top: 50%;
-            transform: translateY(-50%);
-            transition: right 0.3s ease;
-            font-size: 14px;
-        }
-        .search-btn:hover::after {
-            right: 20px;
-        }
-        .search-btn:active { transform: scale(0.96); opacity: 0.9; }
+        .search-btn:active { transform: scale(0.96); }
         .voice-btn {
             background: rgba(155,89,182,0.5);
             border: 1px solid rgba(255,255,255,0.1);
@@ -321,10 +224,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
         }
-        .voice-btn:hover { background: rgba(155,89,182,0.9); transform: scale(1.02); }
-        .voice-btn:active { transform: scale(0.95); }
         .voice-btn.listening { background: #e74c3c; animation: glowPulse 1.5s infinite; }
 
         .section-title {
@@ -347,17 +247,9 @@
             font-weight: 500;
             color: rgba(255,255,255,0.8);
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             border: 1px solid rgba(255,255,255,0.05);
-            backdrop-filter: blur(4px);
         }
-        .popular-tag span:first-child {
-            font-size: 18px;
-            transition: transform 0.2s ease;
-        }
-        .popular-tag:hover span:first-child {
-            transform: scale(1.15) rotate(5deg);
-        }
+        .popular-tag span:first-child { font-size: 18px; }
         .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.12); }
 
         .artist-profile {
@@ -379,56 +271,20 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             box-shadow: 0 8px 25px rgba(0,0,0,0.25);
             border: 2px solid rgba(255,255,255,0.15);
-            transition: all 0.3s ease;
         }
         .artist-info { flex: 1; }
-        .artist-name-large {
-            font-size: 24px;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 4px;
-            transition: all 0.3s ease;
-            letter-spacing: -0.3px;
-        }
-        .artist-role {
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
-            transition: all 0.3s ease;
-        }
-        .invert-icon {
-            margin-left: 8px;
-            font-size: 14px;
-            opacity: 0.5;
-            transition: all 0.2s ease;
-            display: inline-block;
-            cursor: pointer;
-        }
-        .invert-icon:hover {
-            transform: rotate(180deg);
-            opacity: 1 !important;
-        }
-        .artist-profile:hover .invert-icon {
-            opacity: 0.8;
-        }
+        .artist-name-large { font-size: 24px; font-weight: 600; color: white; margin-bottom: 4px; }
+        .artist-role { font-size: 12px; color: rgba(255,255,255,0.5); }
+        .invert-icon { margin-left: 8px; font-size: 14px; opacity: 0.5; display: inline-block; }
 
         .artist-profile.inverted {
             background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
-        .artist-profile.inverted .artist-name-large {
-            color: #f5b042;
-            text-shadow: 0 0 15px rgba(245,176,66,0.2);
-        }
-        .artist-profile.inverted .artist-role {
-            color: #f5b042cc;
-        }
+        .artist-profile.inverted .artist-name-large { color: #f5b042; }
+        .artist-profile.inverted .artist-role { color: #f5b042cc; }
         .artist-profile.inverted .artist-avatar {
-            filter: brightness(1.08) contrast(1.1);
+            filter: brightness(1.08);
             border-color: #f5b042;
-            box-shadow: 0 0 20px rgba(245,176,66,0.25);
-        }
-        .artist-profile.inverted .invert-icon {
-            animation: subtleRotate 3s ease infinite;
         }
 
         .result-card {
@@ -438,7 +294,6 @@
             margin-top: 20px;
             animation: fadeInScale 0.5s ease;
             border: 1px solid rgba(255,255,255,0.06);
-            backdrop-filter: blur(10px);
         }
 
         .ai-fact-card {
@@ -449,13 +304,10 @@
             margin: 20px 0;
         }
         .ai-fact-header { display: flex; gap: 14px; }
-        .ai-fact-icon svg { width: 28px; height: 28px; stroke: #b983ff; stroke-width: 1.5; fill: none; opacity: 0.8; }
+        .ai-fact-icon svg { width: 28px; height: 28px; stroke: #b983ff; stroke-width: 1.5; fill: none; }
         .ai-fact-label { font-size: 10px; color: #b983ff; font-weight: 500; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1.5px; }
         .ai-fact-text { font-size: 14px; line-height: 1.45; color: rgba(255,255,255,0.85); }
         .ai-fact-refresh {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
             background: rgba(155,89,182,0.2);
             border: 1px solid rgba(155,89,182,0.3);
             padding: 6px 14px;
@@ -464,20 +316,10 @@
             font-size: 11px;
             margin-top: 10px;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
-        .ai-fact-refresh:hover {
-            transform: rotate(180deg);
-            background: rgba(155,89,182,0.4);
-        }
-        .ai-fact-refresh:active { transform: rotate(360deg); }
 
         .platform-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
         .platform-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             padding: 12px;
             border-radius: 60px;
             text-align: center;
@@ -485,19 +327,10 @@
             cursor: pointer;
             border: none;
             font-size: 14px;
-            transition: all 0.2s ease;
-            background-size: 200% 200%;
-            animation: gradientShift 3s ease infinite;
-        }
-        .platform-btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.05);
         }
         .platform-btn:active { transform: scale(0.97); }
         .yandex-btn { background: #ffcc00; color: #1a1a2e; }
-        .yandex-btn::before { content: "🎵"; font-size: 16px; }
         .youtube-btn { background: #ff0000; color: white; }
-        .youtube-btn::before { content: "▶️"; font-size: 16px; }
 
         .bio-section {
             background: rgba(0,0,0,0.2);
@@ -507,88 +340,9 @@
             max-height: 220px;
             overflow-y: auto;
         }
-        .bio-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #9b59b6; letter-spacing: 0.5px; }
+        .bio-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #9b59b6; }
         .bio-text { font-size: 13px; line-height: 1.45; color: rgba(255,255,255,0.75); }
-        .bio-wiki-link { color: #b983ff; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; opacity: 0.7; transition: opacity 0.2s; }
-
-        .track-name { font-size: 22px; font-weight: 600; margin: 20px 0; color: white; text-align: center; letter-spacing: -0.3px; }
-        .game-options { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
-        .game-option {
-            background: rgba(255,255,255,0.06);
-            padding: 14px;
-            border-radius: 60px;
-            text-align: center;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(255,255,255,0.05);
-            background-size: 200% 200%;
-            animation: gradientShift 3s ease infinite;
-        }
-        .game-option:active { transform: scale(0.97); background: rgba(255,255,255,0.12); }
-
-        .ai-cover-img {
-            width: 100%;
-            max-width: 200px;
-            border-radius: 24px;
-            margin: 12px auto;
-            display: block;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-        }
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            margin: 20px auto;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            border-top-color: #9b59b6;
-            animation: spin 1s linear infinite, loadingPulse 1.5s ease infinite;
-        }
-
-        .chat-container {
-            background: rgba(0,0,0,0.2);
-            border-radius: 24px;
-            padding: 16px;
-            height: 360px;
-            overflow-y: auto;
-            margin-bottom: 14px;
-        }
-        .message { margin-bottom: 12px; display: flex; gap: 10px; }
-        .message-user { justify-content: flex-end; }
-        .message-ai { justify-content: flex-start; }
-        .message-bubble {
-            max-width: 75%;
-            padding: 10px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            line-height: 1.4;
-        }
-        .message-user .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-bottom-right-radius: 5px; }
-        .message-ai .message-bubble { background: rgba(255,255,255,0.08); color: white; border-bottom-left-radius: 5px; }
-
-        .random-artist-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 14px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .random-artist-name { font-size: 15px; font-weight: 500; color: white; }
-        .random-artist-link {
-            background: #ffcc00;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 40px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 12px;
-            color: #1a1a2e;
-            transition: all 0.2s;
-        }
-        .random-artist-link:active { transform: scale(0.95); }
+        .bio-wiki-link { color: #b983ff; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
 
         .settings-fab {
             position: fixed;
@@ -605,10 +359,8 @@
             cursor: pointer;
             z-index: 100;
             border: 1px solid rgba(255,255,255,0.08);
-            transition: all 0.2s;
         }
-        .settings-fab:active { transform: scale(0.92); background: rgba(0,0,0,0.7); }
-        .settings-fab svg { width: 26px; height: 26px; stroke: white; stroke-width: 1.5; fill: none; opacity: 0.8; }
+        .settings-fab:active { transform: scale(0.92); }
 
         .settings-modal {
             position: fixed;
@@ -633,7 +385,7 @@
             max-width: 320px;
             border: 1px solid rgba(255,255,255,0.08);
         }
-        .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; text-align: center; color: white; letter-spacing: -0.3px; }
+        .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; text-align: center; color: white; }
         .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
         .settings-label { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8); }
         .gradient-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
@@ -643,9 +395,7 @@
             border-radius: 48px;
             cursor: pointer;
             border: 2px solid rgba(255,255,255,0.2);
-            transition: all 0.2s;
         }
-        .gradient-circle:active { transform: scale(0.95); border-color: rgba(255,255,255,0.5); }
         .close-modal, .appearance-btn {
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.1);
@@ -654,10 +404,7 @@
             color: white;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 13px;
         }
-        .close-modal:active, .appearance-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
         .appearance-btn { padding: 8px 16px; font-size: 13px; }
 
         .notification-toast {
@@ -678,65 +425,49 @@
             border: 1px solid rgba(255,255,255,0.08);
         }
 
-        .user-info { font-size: 11px; text-align: center; margin-top: 16px; color: rgba(255,255,255,0.3); letter-spacing: 0.3px; }
+        .user-info { font-size: 11px; text-align: center; margin-top: 16px; color: rgba(255,255,255,0.3); }
         .hidden { display: none; }
 
         .preview-track-item {
-            transition: all 0.2s ease;
-            border-radius: 60px;
-            padding: 8px 12px;
-            margin: 0 -12px;
-        }
-        .preview-track-item:active {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255,255,255,0.03);
+            border-radius: 24px;
+            padding: 14px 16px;
+            text-align: center;
+            transition: all 0.2s;
         }
         .preview-track-item button {
-            transition: all 0.2s ease;
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
         }
-        .preview-track-item button:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 12px rgba(102,126,234,0.5);
-        }
-        .preview-track-item button:active {
-            transform: scale(0.95);
-        }
-        
+
         .album-card {
-            transition: all 0.25s ease;
+            background: rgba(255,255,255,0.04);
             border-radius: 20px;
+            padding: 12px;
+            width: calc(33% - 8px);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .album-card:hover {
-            transform: translateY(-4px);
-            background: rgba(255,255,255,0.08) !important;
-        }
-        .album-card:hover div:first-child {
-            transform: scale(1.1);
-            display: inline-block;
-        }
-        .album-card div:first-child {
-            transition: transform 0.2s ease;
-            display: inline-block;
-        }
-        .album-card:active {
-            transform: scale(0.97);
-        }
+        .album-card div:first-child { font-size: 44px; margin-bottom: 8px; }
 
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
             .menu-screen { gap: 16px; max-width: 240px; }
             .menu-btn { padding: 18px 8px; }
-            .menu-icon { width: 48px; height: 48px; }
             .menu-icon svg { width: 28px; height: 28px; }
             .page-title { font-size: 24px; }
             .artist-avatar { width: 56px; height: 56px; }
             .artist-name-large { font-size: 20px; }
-            .glass-card { padding: 20px; }
-            .result-card { padding: 20px; }
-            .currency-chart { bottom: 10px; left: 10px; right: 10px; padding: 8px 12px; }
-            .currency-icon { font-size: 14px; min-width: 28px; }
-            .currency-value { font-size: 12px; min-width: 52px; }
-            .bar-container { height: 5px; }
+            .album-card { width: calc(50% - 6px); }
         }
     </style>
 </head>
@@ -748,70 +479,48 @@
                 <span class="currency-update-time" id="updateTime">загрузка...</span>
             </div>
             <div id="currencyContent">
-                <div style="text-align:center; padding:10px; font-size:11px; opacity:0.6;">Загрузка курсов...</div>
+                <div style="text-align:center; padding:10px; font-size:11px; opacity:0.6;">Загрузка...</div>
             </div>
         </div>
 
         <div class="menu-screen">
-            <div class="menu-btn" id="goToMusicBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
-            </div>
-            <div class="menu-btn" id="goToGameBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
-            </div>
-            <div class="menu-btn" id="goToAIBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div>
-            </div>
-            <div class="menu-btn" id="goToAssistantBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
-            </div>
-            <div class="menu-btn" id="goToRandomizerBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
-            </div>
-            <div class="menu-btn" id="goToMoodBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div>
-            </div>
-            <div class="menu-btn" id="goToMapBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-            </div>
-            <div class="menu-btn" id="goToTicketsBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div>
-            </div>
+            <div class="menu-btn" id="goToMusicBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div></div>
+            <div class="menu-btn" id="goToGameBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div></div>
+            <div class="menu-btn" id="goToAIBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div></div>
+            <div class="menu-btn" id="goToAssistantBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div></div>
+            <div class="menu-btn" id="goToRandomizerBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div></div>
+            <div class="menu-btn" id="goToMoodBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div></div>
+            <div class="menu-btn" id="goToMapBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div></div>
+            <div class="menu-btn" id="goToTicketsBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div></div>
         </div>
     </div>
 
-    <!-- ОСНОВНАЯ СТРАНИЦА МУЗЫКИ С УЛУЧШЕННЫМИ ЗНАЧКАМИ -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
             <div class="page-title">МУЗЫКА</div>
         </div>
-        
         <div class="glass-card">
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Rammstein...">
                 <button id="voiceSearchBtn" class="voice-btn"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
                 <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
-            
             <div class="section-title">ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ</div>
             <div class="popular-grid" id="popularGrid"></div>
-            
             <div id="musicResult"></div>
         </div>
-        
-        <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля | Нажмите 🔄 для инверсии</div>
+        <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля</div>
     </div>
 
-    <!-- ОСТАЛЬНЫЕ СТРАНИЦЫ -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">ИГРА</div></div>
-        <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:500; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.4);">Нажмите «Начать игру»</div></div></div>
+        <div class="glass-card"><button id="startGameBtn" class="search-btn" style="width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.4);">Нажмите «Начать игру»</div></div></div>
     </div>
 
     <div class="fullscreen-page" id="aiPage">
         <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI ОБЛОЖКИ</div></div>
-        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:30px; color:rgba(255,255,255,0.4);">✨ Введите описание обложки</div></div></div>
+        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:30px; color:rgba(255,255,255,0.4);">✨ Введите описание</div></div></div>
     </div>
 
     <div class="fullscreen-page" id="assistantPage">
@@ -821,29 +530,29 @@
 
     <div class="fullscreen-page" id="randomizerPage">
         <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">РАНДОМАЙЗЕР</div></div>
-        <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white; opacity:0.7;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
+        <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white; opacity:0.7;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
 
     <div class="fullscreen-page" id="mapPage">
         <div class="page-header"><button class="back-btn" id="backFromMap"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">КОНЦЕРТНЫЕ ПЛОЩАДКИ</div></div>
-        <div class="glass-card"><button id="geoLocationBtn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 500; width: 100%; cursor: pointer;">📍 Моё местоположение</button></div>
+        <div class="glass-card"><button id="geoLocationBtn" class="search-btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); width:100%;">📍 Моё местоположение</button></div>
         <div class="glass-card"><div class="section-title">🎤 КОНЦЕРТНЫЕ ЗАЛЫ</div><div id="venuesList"></div></div>
     </div>
 
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">НАСТРОЕНИЕ</div></div>
-        <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px; font-weight:500;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; color:white; font-weight:500;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; color:white; font-weight:500;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; color:white; font-weight:500;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; color:white; font-weight:500;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; color:white; font-weight:500;">📚 Фокус</button></div><div id="moodResult"></div></div>
+        <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
     </div>
 
     <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
-    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Своё фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
+    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // ========== DEEZER ФОТО ИСПОЛНИТЕЛЕЙ ==========
+        // ========== DEEZER ФОТО ==========
         const deezerImageCache = new Map();
 
         function loadDeezerCache() {
@@ -875,8 +584,7 @@
                 const searchData = await searchResponse.json();
                 
                 if (searchData.data && searchData.data.length > 0) {
-                    const exactMatch = searchData.data.find(artist => artist.name.toLowerCase() === artistName.toLowerCase());
-                    const bestMatch = exactMatch || searchData.data[0];
+                    const bestMatch = searchData.data[0];
                     const artistUrl = `https://api.deezer.com/artist/${bestMatch.id}`;
                     const artistResponse = await fetch(artistUrl);
                     const artistData = await artistResponse.json();
@@ -898,24 +606,12 @@
         }
 
         async function getArtistImage(artistName) {
-            let imageUrl = await getArtistImageFromDeezer(artistName);
-            if (!imageUrl && typeof getArtistImageFromWiki === 'function') {
-                imageUrl = await getArtistImageFromWiki(artistName);
-            }
-            return imageUrl;
-        }
-
-        async function preloadPopularArtistsImages() {
-            const popularList = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein"];
-            for (const artist of popularList) {
-                await getArtistImageFromDeezer(artist);
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
+            return await getArtistImageFromDeezer(artistName);
         }
 
         loadDeezerCache();
 
-        // ========== DEEZER ПЛЕЕР С FALLBACK ==========
+        // ========== DEEZER ПЛЕЕР ==========
         const trackIdCache = new Map();
 
         async function getDeezerTrackId(artistName, trackName) {
@@ -923,27 +619,15 @@
             if (trackIdCache.has(cacheKey)) return trackIdCache.get(cacheKey);
             
             try {
-                const searchQueries = [
-                    `${artistName} ${trackName}`,
-                    trackName,
-                    `${artistName} - ${trackName}`
-                ];
+                const url = `https://api.deezer.com/search?q=${encodeURIComponent(artistName + ' ' + trackName)}&limit=3`;
+                const response = await fetch(url);
+                const data = await response.json();
                 
-                for (const query of searchQueries) {
-                    const url = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=5`;
-                    const response = await fetch(url);
-                    const data = await response.json();
-                    
-                    if (data.data && data.data.length > 0) {
-                        const bestMatch = data.data.find(track => 
-                            track.artist.name.toLowerCase() === artistName.toLowerCase() ||
-                            track.title.toLowerCase().includes(trackName.toLowerCase())
-                        ) || data.data[0];
-                        
-                        if (bestMatch.preview) {
-                            trackIdCache.set(cacheKey, bestMatch.id);
-                            return bestMatch.id;
-                        }
+                if (data.data && data.data.length > 0) {
+                    const bestMatch = data.data[0];
+                    if (bestMatch.preview) {
+                        trackIdCache.set(cacheKey, bestMatch.id);
+                        return bestMatch.id;
                     }
                 }
                 return null;
@@ -968,8 +652,6 @@
         function playAlternativePreview(artistName, trackName, buttonElement) {
             const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(`${artistName} ${trackName}`)}`;
             buttonElement.innerHTML = '▶️';
-            buttonElement.style.fontSize = '18px';
-            buttonElement.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
             tg.openLink(yandexUrl);
             showNote(`Открываем "${trackName}" в Яндекс.Музыке`);
         }
@@ -983,7 +665,6 @@
                 currentAudio.currentTime = 0;
                 if (currentAudioButton) {
                     currentAudioButton.innerHTML = '▶️';
-                    currentAudioButton.style.fontSize = '18px';
                 }
                 currentAudio = null;
                 currentAudioButton = null;
@@ -994,7 +675,6 @@
             if (currentAudio && currentAudioButton === buttonElement && !currentAudio.paused) {
                 currentAudio.pause();
                 buttonElement.innerHTML = '▶️';
-                buttonElement.style.fontSize = '18px';
                 currentAudio = null;
                 currentAudioButton = null;
                 if (timerElement) timerElement.textContent = '0:00';
@@ -1004,7 +684,6 @@
             stopCurrentPreview();
             
             buttonElement.innerHTML = '⏳';
-            buttonElement.style.fontSize = '18px';
             
             const previewUrl = await getTrackPreviewUrl(artistName, trackName);
             
@@ -1019,8 +698,6 @@
             audio.oncanplay = () => {
                 audio.play();
                 buttonElement.innerHTML = '⏸️';
-                buttonElement.style.fontSize = '18px';
-                buttonElement.style.background = '#e74c3c';
                 currentAudio = audio;
                 currentAudioButton = buttonElement;
                 
@@ -1033,11 +710,9 @@
                         const seconds = Math.floor(currentAudio.currentTime);
                         timerElement.textContent = `0:${seconds.toString().padStart(2, '0')}`;
                         
-                        if (currentAudio.ended || currentAudio.currentTime >= currentAudio.duration - 0.1) {
+                        if (currentAudio.ended) {
                             clearInterval(updateTimer);
                             buttonElement.innerHTML = '▶️';
-                            buttonElement.style.fontSize = '18px';
-                            buttonElement.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
                             timerElement.textContent = '0:00';
                             currentAudio = null;
                             currentAudioButton = null;
@@ -1051,41 +726,27 @@
             };
         }
 
-        // ========== ИНВЕРСИЯ КАРТОЧКИ ИСПОЛНИТЕЛЯ ==========
-
+        // ========== ИНВЕРСИЯ ==========
         function toggleArtistInversion() {
             const artistProfile = document.querySelector('.artist-profile');
             if (!artistProfile) return;
-            
             artistProfile.classList.toggle('inverted');
-            
             const currentArtist = document.querySelector('.artist-name-large')?.innerText?.replace('🔄', '').trim();
             if (currentArtist) {
-                const invertedState = artistProfile.classList.contains('inverted');
-                localStorage.setItem(`inverted_${currentArtist}`, invertedState);
+                localStorage.setItem(`inverted_${currentArtist}`, artistProfile.classList.contains('inverted'));
             }
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
-            
-            showNote(artistProfile.classList.contains('inverted') ? 
-                '✨ Инверсия включена' : '✨ Инверсия выключена');
+            showNote(artistProfile.classList.contains('inverted') ? '✨ Инверсия включена' : '✨ Инверсия выключена');
         }
 
         function loadInvertedState(artistName) {
             const artistProfile = document.querySelector('.artist-profile');
             if (!artistProfile) return;
-            
             const savedState = localStorage.getItem(`inverted_${artistName}`);
-            if (savedState === 'true') {
-                artistProfile.classList.add('inverted');
-            } else {
-                artistProfile.classList.remove('inverted');
-            }
+            if (savedState === 'true') artistProfile.classList.add('inverted');
+            else artistProfile.classList.remove('inverted');
         }
 
-        // ========== ОСНОВНЫЕ ДАННЫЕ ==========
+        // ========== ДАННЫЕ ==========
         const tracks = [
             { track: "Останься", artist: "Асия" },
             { track: "Твой поцелуй", artist: "Асия" },
@@ -1116,74 +777,41 @@
             { track: "El Problema", artist: "Моргенштерн" }
         ];
         
-        // ========== АЛЬБОМЫ НА ОСНОВЕ ТРЕКОВ ==========
-                if (artistName.toLowerCase() === "асия") {
-            albums.push({
-                title: "Асия",
-                year: 2021,
-                cover: "💿",
-                tracks: tracks.filter(t => t.artist === "Асия" && [
-                    "Рокстар", "Бабочки", "Спасибо", "Капли", "Дикий", "Розы", "Останься"
-                ].includes(t.track))
-            });
-            albums.push({
-                title: "ударение на А",
-                year: 2023,
-                cover: "⚡",
-                tracks: tracks.filter(t => t.artist === "Асия" && [
-                    "Я не злюсь, милый", "Мили", "Говори", "Молчу", "Как ты", 
-                    "Второй том", "Шоу Трумана", "Крестики", "Алоэ", "911",
-                    "Красное платье", "Притворяюсь", "Обочины", "Шекспир", 
-                    "О любви", "Звонок", "Детство", "Помнишь", "Твой поцелуй"
-                ].includes(t.track))
-            });
-        }
-       
-            else if (artistName.toLowerCase() === "imagine dragons") {
+        // ========== АЛЬБОМЫ ==========
+        function getAlbumsFromTracks(artistName) {
+            const artistTracks = tracks.filter(t => t.artist.toLowerCase() === artistName.toLowerCase());
+            if (artistTracks.length === 0) return [];
+            const albums = [];
+            
+            if (artistName.toLowerCase() === "асия") {
                 albums.push({
-                    title: "Evolve / Night Visions",
-                    year: 2017,
-                    cover: "🌙",
-                    tracks: tracks.filter(t => t.artist === "Imagine Dragons" && ["Believer", "Radioactive"].includes(t.track))
+                    title: "Асия",
+                    year: 2021,
+                    cover: "💿",
+                    tracks: tracks.filter(t => t.artist === "Асия" && ["Останься", "Рокстар", "Бабочки", "Спасибо", "Капли", "Дикий", "Розы"].includes(t.track))
                 });
+                albums.push({
+                    title: "ударение на А",
+                    year: 2022,
+                    cover: "⚡",
+                    tracks: tracks.filter(t => t.artist === "Асия" && !["Рокстар", "Бабочки", "Спасибо", "Капли", "Дикий", "Розы"].includes(t.track))
+                });
+            }
+            else if (artistName.toLowerCase() === "imagine dragons") {
+                albums.push({ title: "Evolve / Night Visions", year: 2017, cover: "🌙", tracks: artistTracks });
             }
             else if (artistName.toLowerCase() === "кино") {
-                albums.push({
-                    title: "Группа крови",
-                    year: 1988,
-                    cover: "🩸",
-                    tracks: tracks.filter(t => t.artist === "Кино" && t.track === "Группа крови")
-                });
-                albums.push({
-                    title: "Звезда по имени Солнце",
-                    year: 1989,
-                    cover: "⭐",
-                    tracks: tracks.filter(t => t.artist === "Кино" && t.track === "Звезда по имени Солнце")
-                });
+                albums.push({ title: "Группа крови", year: 1988, cover: "🩸", tracks: artistTracks.filter(t => t.track === "Группа крови") });
+                albums.push({ title: "Звезда по имени Солнце", year: 1989, cover: "⭐", tracks: artistTracks.filter(t => t.track === "Звезда по имени Солнце") });
             }
             else if (artistName.toLowerCase() === "моргенштерн") {
-                albums.push({
-                    title: "Millennium",
-                    year: 2021,
-                    cover: "💎",
-                    tracks: tracks.filter(t => t.artist === "Моргенштерн" && ["Cadillac", "El Problema"].includes(t.track))
-                });
+                albums.push({ title: "Millennium", year: 2021, cover: "💎", tracks: artistTracks });
             }
             else if (artistName.toLowerCase() === "земфира") {
-                albums.push({
-                    title: "Земфира",
-                    year: 1999,
-                    cover: "🎸",
-                    tracks: tracks.filter(t => t.artist === "Земфира" && t.track === "Искала")
-                });
+                albums.push({ title: "Земфира", year: 1999, cover: "🎸", tracks: artistTracks });
             }
             else {
-                albums.push({
-                    title: "Популярное",
-                    year: new Date().getFullYear(),
-                    cover: "🔥",
-                    tracks: artistTracks
-                });
+                albums.push({ title: "Популярное", year: new Date().getFullYear(), cover: "🔥", tracks: artistTracks });
             }
             
             return albums.filter(album => album.tracks.length > 0);
@@ -1193,24 +821,13 @@
             const albums = getAlbumsFromTracks(artistName);
             if (albums.length === 0) return '';
             
-            const albumIcons = {
-                "Останься": "🎵",
-                "Красное платье": "👗",
-                "Evolve / Night Visions": "🌙",
-                "Группа крови": "🩸",
-                "Звезда по имени Солнце": "⭐",
-                "Millennium": "💎",
-                "Земфира": "🎸",
-                "Популярное": "🔥"
-            };
-            
             return `
                 <div class="albums-section" style="margin: 20px 0 16px;">
                     <div class="section-title">📀 АЛЬБОМЫ</div>
                     <div style="display: flex; flex-wrap: wrap; gap: 12px;">
                         ${albums.map(album => `
-                            <div class="album-card" onclick="showAlbumTracks('${escapeHtml(artistName)}', '${escapeHtml(album.title)}')" style="background: rgba(255,255,255,0.04); border-radius: 20px; padding: 12px; width: calc(33% - 8px); text-align: center; cursor: pointer; transition: all 0.2s;">
-                                <div style="font-size: 44px; margin-bottom: 8px; transition: transform 0.2s;">${albumIcons[album.title] || album.cover || "📀"}</div>
+                            <div class="album-card" onclick="showAlbumTracks('${escapeHtml(artistName)}', '${escapeHtml(album.title)}')">
+                                <div style="font-size: 44px; margin-bottom: 8px;">${album.cover}</div>
                                 <div style="font-size: 13px; font-weight: 500;">${escapeHtml(album.title)}</div>
                                 <div style="font-size: 10px; opacity: 0.5; margin-top: 4px;">${album.year} • ${album.tracks.length} треков</div>
                             </div>
@@ -1233,68 +850,43 @@
                             <div style="font-size: 14px; font-weight: 500;">${idx + 1}. ${escapeHtml(track.track)}</div>
                             <div style="font-size: 11px; opacity: 0.6;">${escapeHtml(track.artist)}</div>
                         </div>
-                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;">
-                            ▶️
-                        </button>
+                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; font-size: 18px; cursor: pointer;">▶️</button>
                     </div>
                 `;
             });
             tracksList += '</div>';
             
-            tg.showPopup({
-                title: `📀 ${album.title}`,
-                message: tracksList,
-                buttons: [{ type: "close", text: "Закрыть" }]
-            });
+            tg.showPopup({ title: `📀 ${album.title}`, message: tracksList, buttons: [{ type: "close", text: "Закрыть" }] });
         };
 
         window.playTrackFromAlbum = function(artist, track) {
             tg.closePopup();
-            
             const trackButtons = document.querySelectorAll('.preview-track-item');
             for (let btn of trackButtons) {
                 const trackNameElement = btn.querySelector('div > div:first-child');
                 if (trackNameElement && trackNameElement.innerText === track) {
                     const playButton = btn.querySelector('button');
-                    if (playButton) {
-                        playButton.click();
-                        showNote(`🎵 Загружаем "${track}"...`);
-                        return;
-                    }
+                    if (playButton) { playButton.click(); return; }
                 }
             }
-            
             tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(`${artist} ${track}`)}`);
-            showNote(`🎵 Открываем "${track}" в Яндекс.Музыке`);
         };
         
         const facts = {
-            "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997 в Белово", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства", "В 2022 стала артисткой Effective Records"],
-            "кино": ["Группа основана в 1981 в Ленинграде", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения 90-х", "«Чёрный альбом» вышел после смерти Цоя", "Введены в Зал славы российской музыки"],
-            "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA", "Группа из Лас-Вегаса", "«Radioactive» — самый долгоиграющий сингл Billboard", "Вокалист борется с анкилозирующим спондилитом"],
-            "моргенштерн": ["Родился в Уфе 17 февраля 1998", "Самый молодой миллионер в шоу-бизнесе", "«Cadillac» — 100 млн просмотров", "Премия MTV Europe Music Awards 2021", "Состояние оценивается в 10+ млн долларов"],
-            "земфира": ["Родилась в Уфе 26 августа 1976", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий", "5 премий «Муз-ТВ»", "Пишет стихи с 7 лет"]
+            "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства"],
+            "кино": ["Группа основана в 1981", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения"],
+            "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA", "Группа из Лас-Вегаса"],
+            "моргенштерн": ["Родился в Уфе", "Самый молодой миллионер", "«Cadillac» — 100 млн просмотров"],
+            "земфира": ["Родилась в Уфе", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий"]
         };
         
         const venues = [
-            { name: "Gipsy", lat: 55.740117, lng: 37.609712, address: "Москва, Болотная наб., 3, стр. 4", metro: "Кропоткинская" },
-            { name: "16 тонн", lat: 55.764279, lng: 37.564399, address: "Москва, ул. Пресненский Вал, 6, стр. 1", metro: "Улица 1905 года" },
-            { name: "МТС Live Холл", lat: 55.749461, lng: 37.696446, address: "Москва, ш. Энтузиастов, 5, стр. 2", metro: "Площадь Ильича / Римская" },
+            { name: "Gipsy", lat: 55.740117, lng: 37.609712, address: "Москва, Болотная наб., 3", metro: "Кропоткинская" },
+            { name: "16 тонн", lat: 55.764279, lng: 37.564399, address: "Москва, ул. Пресненский Вал, 6", metro: "Улица 1905 года" },
+            { name: "МТС Live Холл", lat: 55.749461, lng: 37.696446, address: "Москва, ш. Энтузиастов, 5", metro: "Площадь Ильича" },
             { name: "Крокус Сити Холл", lat: 55.825345, lng: 37.388251, address: "Москва, ул. Международная, 20", metro: "Мякинино" },
-            { name: "VK Stadium", lat: 55.796169, lng: 37.560462, address: "Москва, Ленинградский пр-т, 80, корп. 17", metro: "Сокол" },
-            { name: "Stadium Live", lat: 55.798456, lng: 37.700234, address: "Москва, ул. Стромынка, 20", metro: "Сокольники" }
+            { name: "VK Stadium", lat: 55.796169, lng: 37.560462, address: "Москва, Ленинградский пр-т, 80", metro: "Сокол" }
         ];
-
-        const artistsGenres = {
-            "асия": ["pop", "russian pop", "indie pop"],
-            "кино": ["rock", "post-punk", "russian rock"],
-            "земфира": ["rock", "alternative", "russian rock"],
-            "моргенштерн": ["hip-hop", "rap", "pop"],
-            "imagine dragons": ["alternative rock", "indie rock", "pop rock"],
-            "rammstein": ["industrial metal", "hard rock", "metal"],
-            "billie eilish": ["pop", "alternative pop", "electropop"],
-            "the weeknd": ["r&b", "pop", "synthwave"]
-        };
 
         let lastSearchedArtist = "";
         let currencyInterval = null;
@@ -1319,13 +911,7 @@
             for (const [k, f] of Object.entries(facts)) {
                 if (key.includes(k)) return f[Math.floor(Math.random() * f.length)];
             }
-            const dynamicFacts = [
-                `🎤 ${artist} — один из самых ярких исполнителей года`,
-                `🔥 Треки ${artist} набирают миллионы прослушиваний`,
-                `⭐ Подпишись на ${artist}, чтобы не пропустить новые релизы`,
-                `🎵 ${artist} — открытие года по версии слушателей`
-            ];
-            return dynamicFacts[Math.floor(Math.random() * dynamicFacts.length)];
+            return `🎤 ${artist} — один из самых ярких исполнителей года!`;
         }
 
         async function getExchangeRates() {
@@ -1341,30 +927,14 @@
             if (!container) return;
             const rates = await getExchangeRates();
             if (!rates) {
-                container.innerHTML = '<div style="text-align:center; padding:15px;">Ошибка загрузки</div>';
+                container.innerHTML = '<div style="text-align:center; padding:15px;">Ошибка</div>';
                 return;
             }
             const timeElement = document.getElementById('updateTime');
-            if (timeElement) timeElement.textContent = `${new Date().toLocaleTimeString('ru-RU')}`;
+            if (timeElement) timeElement.textContent = new Date().toLocaleTimeString('ru-RU');
             container.innerHTML = `
-                <div class="currency-item">
-                    <div class="currency-row">
-                        <span class="currency-icon">🇺🇸 USD</span>
-                        <span class="currency-value">${rates.usd.toFixed(2)} ₽</span>
-                        <div class="bar-container"><div class="bar-fill usd-fill" style="width: ${Math.min(50 + (rates.usd - 90), 100)}%;"></div></div>
-                    </div>
-                </div>
-                <div class="currency-item">
-                    <div class="currency-row">
-                        <span class="currency-icon">🇪🇺 EUR</span>
-                        <span class="currency-value">${rates.eur.toFixed(2)} ₽</span>
-                        <div class="bar-container"><div class="bar-fill eur-fill" style="width: ${Math.min(50 + (rates.eur - 90), 100)}%;"></div></div>
-                    </div>
-                </div>
-                <div class="currency-stats">
-                    <span>Данные биржи</span>
-                    <span>Актуально</span>
-                </div>
+                <div class="currency-item"><div class="currency-row"><span class="currency-icon">🇺🇸 USD</span><span class="currency-value">${rates.usd.toFixed(2)} ₽</span><div class="bar-container"><div class="bar-fill usd-fill" style="width: ${Math.min(50 + (rates.usd - 90), 100)}%;"></div></div></div></div>
+                <div class="currency-item"><div class="currency-row"><span class="currency-icon">🇪🇺 EUR</span><span class="currency-value">${rates.eur.toFixed(2)} ₽</span><div class="bar-container"><div class="bar-fill eur-fill" style="width: ${Math.min(50 + (rates.eur - 90), 100)}%;"></div></div></div></div>
             `;
         }
 
@@ -1374,111 +944,33 @@
             currencyInterval = setInterval(updateCurrencyChart, 30000);
         }
 
-        function getSimilarByGenre(currentArtist, count = 4) {
-            const currentLower = currentArtist.toLowerCase();
-            const currentGenres = artistsGenres[currentLower] || [];
-            if (currentGenres.length === 0) {
-                const defaultArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
-                const filtered = defaultArtists.filter(a => a.toLowerCase() !== currentLower);
-                const shuffled = [...filtered];
-                for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-                }
-                return shuffled.slice(0, count);
-            }
-            const similar = [];
-            for (const [artist, genres] of Object.entries(artistsGenres)) {
-                if (artist.toLowerCase() === currentLower) continue;
-                if (genres.some(g => currentGenres.includes(g))) similar.push(artist);
-            }
-            for (let i = similar.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [similar[i], similar[j]] = [similar[j], similar[i]];
-            }
-            while (similar.length < count) {
-                const popularArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
-                const addArtist = popularArtists.find(p => p.toLowerCase() !== currentLower && !similar.includes(p));
-                if (addArtist) similar.push(addArtist);
-                else break;
-            }
-            return similar.slice(0, count);
-        }
-
-        function addSimilarArtistsToResult(artistName) {
-            const resultCard = document.querySelector('#musicResult .result-card');
-            if (!resultCard) return;
-            const oldSection = resultCard.querySelector('.similar-artists-section');
-            if (oldSection) oldSection.remove();
-            const similarArtists = getSimilarByGenre(artistName, 4);
-            if (similarArtists.length > 0) {
-                const similarHtml = `
-                    <div class="similar-artists-section" style="margin-top: 16px;">
-                        <div class="section-title">ПОХОЖИЕ ИСПОЛНИТЕЛИ</div>
-                        <div class="popular-grid" style="margin-bottom: 16px;">
-                            ${similarArtists.map(artist => `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')"><span>🎤</span> ${artist}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-                resultCard.insertAdjacentHTML('beforeend', similarHtml);
-            }
-        }
-
         function openYandexMap(lat, lng, name) {
-            const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map`;
-            tg.openLink(url);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            showNote(`🗺️ Открываем ${name} на Яндекс.Картах`);
+            tg.openLink(`https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map`);
+            showNote(`🗺️ Открываем ${name}`);
         }
         
         function openMyLocationOnMap() {
-            if (!navigator.geolocation) {
-                showNote('Геолокация не поддерживается');
-                return;
-            }
-            showNote('📍 Определяем ваше местоположение...');
+            if (!navigator.geolocation) { showNote('Геолокация не поддерживается'); return; }
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=15&l=map`;
-                    tg.openLink(url);
-                    showNote('🗺️ Яндекс.Карты с вашим местоположением открыты');
-                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-                },
-                (error) => {
-                    let errorMsg = 'Не удалось определить местоположение';
-                    if (error.code === 1) errorMsg = 'Разрешите доступ к геолокации';
-                    showNote(errorMsg);
-                },
-                { enableHighAccuracy: true, timeout: 10000 }
+                (position) => tg.openLink(`https://yandex.ru/maps/?pt=${position.coords.longitude},${position.coords.latitude}&z=15&l=map`),
+                () => showNote('Не удалось определить местоположение')
             );
         }
         
         function updateVenuesList() {
             const listContainer = document.getElementById('venuesList');
             if (!listContainer) return;
-            listContainer.innerHTML = venues.map(venue => `
-                <div class="venue-card" onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')" style="background: rgba(255,255,255,0.04); border-radius: 20px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;">
-                    <div>
-                        <div class="venue-name" style="font-weight: 500;">🎤 ${escapeHtml(venue.name)}</div>
-                        <div class="venue-address" style="font-size: 11px; opacity: 0.6;">📍 ${escapeHtml(venue.address)}</div>
-                        <div class="venue-address" style="font-size: 11px; opacity: 0.6;">🚇 Метро: ${escapeHtml(venue.metro)}</div>
-                    </div>
-                </div>
-            `).join('');
+            listContainer.innerHTML = venues.map(venue => `<div onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')" style="background: rgba(255,255,255,0.04); border-radius: 20px; padding: 12px; margin-bottom: 8px; cursor: pointer;"><div style="font-weight: 500;">🎤 ${escapeHtml(venue.name)}</div><div style="font-size: 11px; opacity: 0.6;">📍 ${escapeHtml(venue.address)}</div><div style="font-size: 11px; opacity: 0.6;">🚇 ${escapeHtml(venue.metro)}</div></div>`).join('');
         }
-        
-        window.openYandexMap = openYandexMap;
-        window.openMyLocationOnMap = openMyLocationOnMap;
 
+        // ========== НАВИГАЦИЯ ==========
         const menu = document.getElementById('menuContainer');
         const pages = {
-            music: document.getElementById('musicPage'), 
+            music: document.getElementById('musicPage'),
             game: document.getElementById('gamePage'),
-            ai: document.getElementById('aiPage'), 
+            ai: document.getElementById('aiPage'),
             assistant: document.getElementById('assistantPage'),
-            randomizer: document.getElementById('randomizerPage'), 
+            randomizer: document.getElementById('randomizerPage'),
             mood: document.getElementById('moodPage'),
             map: document.getElementById('mapPage')
         };
@@ -1503,50 +995,24 @@
         document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); };
         document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
         document.getElementById('goToMapBtn').onclick = () => { showPage(pages.map, 'map'); updateVenuesList(); };
-        
         document.getElementById('goToTicketsBtn').onclick = () => {
-            if (lastSearchedArtist) {
-                tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(lastSearchedArtist)}`);
-                showNote(`🎫 Открываем концерты: ${lastSearchedArtist}`);
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            } else {
-                tg.showPopup({
-                    title: "Билеты на концерты",
-                    message: "Сначала найдите артиста в разделе «Музыка»",
-                    buttons: [{ type: "ok", text: "OK" }]
-                });
-            }
+            if (lastSearchedArtist) tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(lastSearchedArtist)}`);
+            else tg.showPopup({ title: "Билеты", message: "Сначала найдите артиста", buttons: [{ type: "ok" }] });
         };
         
-        const geoBtn = document.getElementById('geoLocationBtn');
-        if (geoBtn) geoBtn.onclick = openMyLocationOnMap;
-        
+        document.getElementById('geoLocationBtn').onclick = openMyLocationOnMap;
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
             if (btn) btn.onclick = showMenu;
         });
 
+        // ========== МУЗЫКАЛЬНЫЕ ФУНКЦИИ ==========
         function loadPopular() { 
             const grid = document.getElementById('popularGrid');
             if (!grid) return;
-            
-            const popularWithIcons = [
-                { name: "Асия", icon: "🎤", color: "#ff6b9d" },
-                { name: "Imagine Dragons", icon: "🐉", color: "#4facfe" },
-                { name: "Кино", icon: "🎸", color: "#2ecc71" },
-                { name: "Моргенштерн", icon: "💎", color: "#f39c12" },
-                { name: "Земфира", icon: "🎹", color: "#e74c3c" },
-                { name: "Rammstein", icon: "🔥", color: "#ff4757" },
-                { name: "Billie Eilish", icon: "🌊", color: "#2ed573" },
-                { name: "The Weeknd", icon: "⭐", color: "#a29bfe" }
-            ];
-            
-            grid.innerHTML = popularWithIcons.map(a => `
-                <span class="popular-tag" onclick="searchArtist('${a.name.replace(/'/g, "\\'")}')">
-                    <span style="display: inline-block; animation: float 3s ease infinite;">${a.icon}</span>
-                    ${a.name}
-                </span>
-            `).join(''); 
+            const popularArtists = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein", "Billie Eilish", "The Weeknd"];
+            const icons = { "Асия": "🎤", "Imagine Dragons": "🐉", "Кино": "🎸", "Моргенштерн": "💎", "Земфира": "🎹", "Rammstein": "🔥", "Billie Eilish": "🌊", "The Weeknd": "⭐" };
+            grid.innerHTML = popularArtists.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')"><span>${icons[a] || "🎵"}</span> ${a}</span>`).join(''); 
         }
         
         window.searchArtist = function(a) { 
@@ -1557,13 +1023,7 @@
         
         async function getWiki(artist) {
             try {
-                const match = { 
-                    "асия":"Асия (певица)", 
-                    "кино":"Кино (группа)", 
-                    "imagine dragons":"Imagine Dragons", 
-                    "моргенштерн":"Моргенштерн", 
-                    "земфира":"Земфира" 
-                };
+                const match = { "асия":"Асия (певица)", "кино":"Кино (группа)", "imagine dragons":"Imagine Dragons", "моргенштерн":"Моргенштерн", "земфира":"Земфира" };
                 let title = match[artist.toLowerCase()];
                 if (!title) {
                     const s = await fetch(`https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artist)}&format=json&origin=*`);
@@ -1575,27 +1035,8 @@
                 const d = await c.json();
                 const text = d.query.pages[Object.keys(d.query.pages)[0]]?.extract || "";
                 if (!text) return null;
-                return { 
-                    title, 
-                    text: text.slice(0, 800) + (text.length > 800 ? '...' : ''), 
-                    url: `https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}` 
-                };
+                return { title, text: text.slice(0, 800), url: `https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}` };
             } catch { return null; }
-        }
-        
-        async function getArtistImageFromWiki(artistName) {
-            try {
-                const directUrl = `https://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(artistName)}&pithumbsize=300&format=json&origin=*`;
-                const directRes = await fetch(directUrl);
-                const directData = await directRes.json();
-                const directPages = directData.query?.pages || {};
-                for (const pageId in directPages) {
-                    if (directPages[pageId].thumbnail?.source) {
-                        return directPages[pageId].thumbnail.source;
-                    }
-                }
-                return null;
-            } catch(e) { return null; }
         }
         
         async function search() {
@@ -1603,56 +1044,46 @@
             if (!q) return;
             
             lastSearchedArtist = q;
-            
             const resDiv = document.getElementById('musicResult');
-            resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center; opacity:0.6;">Поиск...</div>';
+            resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">Поиск...</div>';
             
-            const links = { 
-                yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, 
-                youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` 
-            };
+            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
             const bio = await getWiki(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             const artistImageUrl = await getArtistImage(q);
             const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
-             let tracksPreviewHtml = '';
-        
-        let tracksPreviewHtml = '';
-        if (artistTracks.length > 0) {
-        tracksPreviewHtml = `
-            <div style="margin: 20px 0 16px;">
-                <div class="section-title" style="text-align: center; font-size: 12px; letter-spacing: 2px;">🎧 ПРЕВЬЮ ТРЕКОВ</div>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    ${artistTracks.slice(0, 10).map((t, idx) => `
-                        <div class="preview-track-item" style="background: rgba(255,255,255,0.03); border-radius: 24px; padding: 14px 16px; text-align: center; transition: all 0.2s;">
-                            <div style="margin-bottom: 10px;">
-                                <div style="font-weight: 600; font-size: 16px; color: white; letter-spacing: -0.2px;">${escapeHtml(t.track)}</div>
-                                <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div>
-                            </div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
-                                <span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; font-weight: 500; opacity: 0.7;">0:00</span>
-                                <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 44px; height: 44px; border-radius: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-                                    ▶️
-                                </button>
-                            </div>
+            
+            // Блок превью треков (центрированный)
+            let tracksPreviewHtml = '';
+            if (artistTracks.length > 0) {
+                tracksPreviewHtml = `
+                    <div style="margin: 20px 0 16px;">
+                        <div class="section-title" style="text-align: center;">🎧 ПРЕВЬЮ ТРЕКОВ</div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            ${artistTracks.slice(0, 10).map((t, idx) => `
+                                <div class="preview-track-item">
+                                    <div style="margin-bottom: 10px;">
+                                        <div style="font-weight: 600; font-size: 16px; color: white;">${escapeHtml(t.track)}</div>
+                                        <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                                        <span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; opacity: 0.7;">0:00</span>
+                                        <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">▶️</button>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }
-           
+                    </div>
+                `;
+            }
             
             resDiv.innerHTML = `
                 <div class="result-card">
                     <div class="artist-profile" onclick="toggleArtistInversion()">
                         <img class="artist-avatar" src="${finalAvatarUrl}" alt="${escapeHtml(q)}">
                         <div class="artist-info">
-                            <div class="artist-name-large">
-                                ${escapeHtml(q)}
-                                <span class="invert-icon">🔄</span>
-                            </div>
+                            <div class="artist-name-large">${escapeHtml(q)}<span class="invert-icon">🔄</span></div>
                             <div class="artist-role">Нажмите для смены стиля</div>
                         </div>
                     </div>
@@ -1670,14 +1101,15 @@
                     </div>
                     <div class="section-title">СЛУШАТЬ ПОЛНОСТЬЮ</div>
                     <div class="platform-buttons">
-                        <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">Яндекс.Музыка</button>
-                        <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">YouTube Music</button>
+                        <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                        <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                     </div>
                     ${bio ? `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bio.title)}</div><div class="bio-text">${escapeHtml(bio.text)}</div><a href="${bio.url}" target="_blank" class="bio-wiki-link">Читать полностью →</a></div>` : '<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">Информация не найдена</div></div>'}
                     <button class="search-btn" style="margin-top: 16px; background: linear-gradient(135deg, #2ecc71, #27ae60);" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
                 </div>
             `;
             
+            // Инициализация кнопок
             if (artistTracks.length > 0) {
                 artistTracks.slice(0, 10).forEach((t, idx) => {
                     const btn = resDiv.querySelector(`.preview-btn-${idx}`);
@@ -1691,15 +1123,12 @@
             }
             
             loadInvertedState(q);
-            
-            addSimilarArtistsToResult(q);
         }
         
         window.refreshFact = function(artistName) {
             const newFact = getFact(artistName);
             const factTextDiv = document.getElementById('aiFactText');
             if (factTextDiv) factTextDiv.innerHTML = escapeHtml(newFact);
-            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         };
         
         const doSearchBtn = document.getElementById('doSearchBtn');
@@ -1707,23 +1136,18 @@
         const searchInput = document.getElementById('searchInput');
         if (searchInput) searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
+        // ========== ИГРА ==========
         function genQ() { 
             const t = tracks[Math.floor(Math.random() * tracks.length)]; 
             const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); 
             let opts = [t.artist, ...others]; 
-            for (let i = opts.length - 1; i > 0; i--) { 
-                const j = Math.floor(Math.random() * (i + 1)); 
-                [opts[i], opts[j]] = [opts[j], opts[i]]; 
-            } 
+            for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; } 
             return { track: t.track, correct: t.artist, options: opts }; 
         }
         
         function startGame() { 
-            gameQ = []; 
-            for (let i = 0; i < 6; i++) gameQ.push(genQ()); 
+            gameQ = []; for (let i = 0; i < 6; i++) gameQ.push(genQ()); 
             gameIdx = 0; gameScore = 0; gameActive = true; 
-            const startBtn = document.getElementById('startGameBtn');
-            if (startBtn) startBtn.textContent = 'Игра активна';
             showGame(); 
         }
         
@@ -1732,77 +1156,37 @@
             const q = gameQ[gameIdx]; 
             const content = document.getElementById('gameContent');
             if (!content) return;
-            content.innerHTML = `
-                <div style="text-align:center;">
-                    <div style="font-size:12px; opacity:0.6;">Вопрос ${gameIdx+1}/${gameQ.length}</div>
-                    <div class="track-name">"${escapeHtml(q.track)}"</div>
-                    <div style="margin-bottom:16px;">Кто исполнитель?</div>
-                    <div class="game-options">
-                        ${q.options.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(opt)}</div>`).join('')}
-                    </div>
-                    <div style="margin-top:16px; opacity:0.7;">🎯 Счёт: ${gameScore}/${gameQ.length}</div>
-                </div>
-            `; 
+            content.innerHTML = `<div style="text-align:center;"><div style="opacity:0.6;">Вопрос ${gameIdx+1}/${gameQ.length}</div><div class="track-name">"${escapeHtml(q.track)}"</div><div>Кто исполнитель?</div><div class="game-options">${q.options.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(opt)}</div>`).join('')}</div><div style="margin-top:16px;">🎯 Счёт: ${gameScore}/${gameQ.length}</div></div>`; 
         }
         
-        window.checkAnswer = function(sel, cor) { 
-            if (!gameActive) return; 
-            if (sel === cor) gameScore++; 
-            gameIdx++; 
-            showGame(); 
-        };
+        window.checkAnswer = function(sel, cor) { if (!gameActive) return; if (sel === cor) gameScore++; gameIdx++; showGame(); };
         
         function endGame() { 
             gameActive = false; 
             const content = document.getElementById('gameContent');
-            if (content) {
-                content.innerHTML = `
-                    <div style="text-align:center; padding:30px;">
-                        <div style="font-size:64px;">🎉</div>
-                        <div style="font-size:28px; font-weight:600; margin:16px;">${gameScore}/${gameQ.length}</div>
-                        <button onclick="startGame()" class="search-btn">🔄 Сыграть снова</button>
-                    </div>
-                `;
-            }
-            const startBtn = document.getElementById('startGameBtn');
-            if (startBtn) startBtn.textContent = '▶ Начать игру';
+            if (content) content.innerHTML = `<div style="text-align:center; padding:30px;"><div style="font-size:64px;">🎉</div><div style="font-size:28px; font-weight:600; margin:16px;">${gameScore}/${gameQ.length}</div><button onclick="startGame()" class="search-btn">🔄 Сыграть снова</button></div>`;
         }
         
         const startGameBtn = document.getElementById('startGameBtn');
         if (startGameBtn) startGameBtn.onclick = startGame;
 
+        // ========== AI ОБЛОЖКИ ==========
         async function genCover(p) {
             const div = document.getElementById('aiResult');
-            div.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center; opacity:0.6;">Создаём обложку...</div>';
+            div.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">Создаём...</div>';
             const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=512&height=512&nologo=true`;
             const img = new Image();
-            img.onload = () => { 
-                div.innerHTML = `
-                    <div>
-                        <img src="${url}" class="ai-cover-img">
-                        <div style="text-align:center; margin:12px; opacity:0.8;">${escapeHtml(p)}</div>
-                        <button onclick="downloadImg('${url}')" class="search-btn" style="margin-top:12px; background:linear-gradient(135deg,#9b59b6,#8e44ad); width:auto; padding:12px 24px;">💾 Скачать</button>
-                    </div>
-                `; 
-            };
-            img.onerror = () => div.innerHTML = '<div style="text-align:center; padding:40px; opacity:0.6;">Ошибка генерации</div>';
+            img.onload = () => { div.innerHTML = `<div><img src="${url}" class="ai-cover-img"><div style="text-align:center; margin:12px;">${escapeHtml(p)}</div><button onclick="downloadImg('${url}')" class="search-btn" style="margin-top:12px;">💾 Скачать</button></div>`; };
+            img.onerror = () => div.innerHTML = '<div style="text-align:center; padding:40px;">Ошибка</div>';
             img.src = url;
         }
         
-        window.downloadImg = (url) => { 
-            const a = document.createElement('a'); 
-            a.href = url; 
-            a.download = `cover_${Date.now()}.jpg`; 
-            a.click(); 
-            showNote('Скачивание начато'); 
-        };
+        window.downloadImg = (url) => { const a = document.createElement('a'); a.href = url; a.download = `cover_${Date.now()}.jpg`; a.click(); showNote('Скачивание начато'); };
         
         const generateBtn = document.getElementById('generateAIBtn');
-        if (generateBtn) generateBtn.onclick = () => { 
-            const p = document.getElementById('aiPrompt').value.trim(); 
-            if (p) genCover(p); 
-        };
+        if (generateBtn) generateBtn.onclick = () => { const p = document.getElementById('aiPrompt').value.trim(); if (p) genCover(p); };
 
+        // ========== АССИСТЕНТ ==========
         async function askBot(q) {
             const low = q.toLowerCase();
             if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
@@ -1810,12 +1194,9 @@
                 if (bio) return `📖 **${bio.title}**\n\n${bio.text}\n\n🔗 [Читать полностью](${bio.url})`;
                 return `❌ Не нашёл "${q}"`;
             }
-            if (low.includes("грустн")) return `😢 **Грустные песни:**\n"Останься" - Асия\n"Группа крови" - Кино\n"Искала" - Земфира`;
-            if (low.includes("весел")) return `😊 **Весёлые песни:**\n"Believer" - Imagine Dragons\n"Твой поцелуй" - Асия\n"Cadillac" - Моргенштерн`;
-            if (low.includes("случайный")) { 
-                const t = tracks[Math.floor(Math.random() * tracks.length)]; 
-                return `🎲 **Случайный трек:**\n"${t.track}" - ${t.artist}`; 
-            }
+            if (low.includes("грустн")) return `😢 **Грустные песни:**\n"Останься" - Асия\n"Группа крови" - Кино`;
+            if (low.includes("весел")) return `😊 **Весёлые песни:**\n"Believer" - Imagine Dragons\n"Твой поцелуй" - Асия`;
+            if (low.includes("случайный")) { const t = tracks[Math.floor(Math.random() * tracks.length)]; return `🎲 **Случайный трек:**\n"${t.track}" - ${t.artist}`; }
             return `🎶 Напиши имя исполнителя или "грустная песня"`;
         }
         
@@ -1826,23 +1207,18 @@
             let html = text;
             if (!isUser) html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>').replace(/\n/g, '<br>');
             d.innerHTML = isUser ? `<div class="message-bubble">${escapeHtml(text)}</div>` : `<div class="message-icon">🤖</div><div class="message-bubble">${html}</div>`;
-            cont.appendChild(d); 
-            cont.scrollTop = cont.scrollHeight;
+            cont.appendChild(d); cont.scrollTop = cont.scrollHeight;
         }
         
-        let typing = null;
         async function sendMsg() {
             const inp = document.getElementById('chatInput');
             const msg = inp.value.trim();
             if (!msg) return;
-            addMsg(msg, true); 
-            inp.value = '';
-            typing = document.createElement('div'); 
-            typing.className = 'message message-ai'; 
-            typing.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">Думаю...</div>`;
+            addMsg(msg, true); inp.value = '';
+            const typing = document.createElement('div'); typing.className = 'message message-ai'; typing.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">Думаю...</div>`;
             document.getElementById('chatContainer').appendChild(typing);
             const resp = await askBot(msg);
-            if (typing) typing.remove();
+            typing.remove();
             addMsg(resp);
         }
         
@@ -1851,15 +1227,12 @@
         const chatInput = document.getElementById('chatInput');
         if (chatInput) chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
 
+        // ========== РАНДОМАЙЗЕР ==========
         function parseArtists(t) { 
             if (!t.trim()) return []; 
             const lines = t.split(/\r?\n/); 
             let a = []; 
-            for (let l of lines) { 
-                l = l.trim(); 
-                if (!l) continue; 
-                a.push(...l.split(',').map(p => p.trim())); 
-            } 
+            for (let l of lines) { l = l.trim(); if (!l) continue; a.push(...l.split(',').map(p => p.trim())); } 
             return [...new Map(a.map(v => [v.toLowerCase(), v])).values()]; 
         }
         
@@ -1870,40 +1243,23 @@
         
         function doRandom() {
             const artists = parseArtists(document.getElementById('artistListInput').value);
-            if (!artists.length) { 
-                document.getElementById('randomizerResult').innerHTML = '<div style="padding:20px; text-align:center; opacity:0.6;">Введите исполнителей</div>'; 
-                return; 
-            }
+            if (!artists.length) { document.getElementById('randomizerResult').innerHTML = '<div style="padding:20px; text-align:center;">Введите исполнителей</div>'; return; }
             let cnt = parseInt(document.getElementById('randomCountInput').value) || 1;
             cnt = Math.min(cnt, artists.length);
-            const shuffled = [...artists]; 
-            for (let i = shuffled.length - 1; i > 0; i--) { 
-                const j = Math.floor(Math.random() * (i + 1)); 
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; 
-            }
+            const shuffled = [...artists]; for (let i = shuffled.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; }
             const selected = shuffled.slice(0, cnt);
             let html = '<div class="section-title">ВЫБРАНО</div>';
-            selected.forEach((a, i) => { 
-                html += `
-                    <div class="random-artist-card">
-                        <span class="random-artist-name">${i+1}. ${escapeHtml(a)}</span>
-                        <button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(a)}')" class="random-artist-link">Слушать</button>
-                    </div>
-                `; 
-            });
+            selected.forEach((a, i) => { html += `<div class="random-artist-card"><span class="random-artist-name">${i+1}. ${escapeHtml(a)}</span><button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(a)}')" class="random-artist-link">Слушать</button></div>`; });
             document.getElementById('randomizerResult').innerHTML = html;
         }
         
         function loadQuick() { 
-            const q = ["Асия", "Imagine Dragons", "Кино", "Земфира"]; 
-            document.getElementById('quickArtistsGrid').innerHTML = q.map(a => `<span class="popular-tag" onclick="addArtist('${a}')"><span>+</span> ${a}</span>`).join(''); 
+            document.getElementById('quickArtistsGrid').innerHTML = ["Асия", "Imagine Dragons", "Кино", "Земфира"].map(a => `<span class="popular-tag" onclick="addArtist('${a}')"><span>+</span> ${a}</span>`).join(''); 
         }
         
         window.addArtist = function(a) { 
             const inp = document.getElementById('artistListInput');
-            inp.value = inp.value + (inp.value ? "\n" : "") + a; 
-            updateTotal(); 
-            showNote(`Добавлен: ${a}`);
+            inp.value = inp.value + (inp.value ? "\n" : "") + a; updateTotal(); showNote(`Добавлен: ${a}`);
         };
         
         const randomizeBtn = document.getElementById('doRandomizeBtn');
@@ -1911,132 +1267,59 @@
         const artistList = document.getElementById('artistListInput');
         if (artistList) artistList.addEventListener('input', updateTotal);
 
-        const moodTracks = { 
-            happy: ["Останься - Асия"], 
-            sad: ["Группа крови - Кино"], 
-            energetic: ["Believer - Imagine Dragons"], 
-            relax: ["Твой поцелуй - Асия"], 
-            romantic: ["Твой поцелуй - Асия"], 
-            focus: ["Lo-Fi Hip Hop Instrumental"] 
-        };
-        
-        document.querySelectorAll('.mood-btn').forEach(btn => { 
-            btn.onclick = () => { 
-                const mood = btn.dataset.mood; 
-                const track = moodTracks[mood][0]; 
-                const yandex = `https://music.yandex.ru/search?text=${encodeURIComponent(track)}`; 
-                const youtube = `https://music.youtube.com/search?q=${encodeURIComponent(track)}`; 
-                document.getElementById('moodResult').innerHTML = `
-                    <div class="result-card">
-                        <div style="font-size:20px; font-weight:600; margin-bottom:12px;">🎵 ${escapeHtml(track)}</div>
-                        <div class="platform-buttons">
-                            <button onclick="tg.openLink('${yandex}')" class="platform-btn yandex-btn">Яндекс.Музыка</button>
-                            <button onclick="tg.openLink('${youtube}')" class="platform-btn youtube-btn">YouTube Music</button>
-                        </div>
-                    </div>
-                `;
-            }; 
-        });
+        // ========== НАСТРОЕНИЕ ==========
+        const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Lo-Fi Hip Hop"] };
+        document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const track = moodTracks[btn.dataset.mood][0]; tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(track)}`); }; });
 
+        // ========== НАСТРОЙКИ ==========
         function loadAppearance() {
             const bg = localStorage.getItem('music_bot_bg');
             if (bg && bg !== 'default') { 
                 if (bg.startsWith('linear')) document.body.style.background = bg; 
-                else { 
-                    document.body.style.backgroundImage = `url(${bg})`; 
-                    document.body.style.backgroundSize = 'cover'; 
-                } 
+                else { document.body.style.backgroundImage = `url(${bg})`; document.body.style.backgroundSize = 'cover'; } 
             }
         }
         
-        window.setGrad = (g) => { 
-            document.body.style.background = g; 
-            document.body.style.backgroundImage = ''; 
-            localStorage.setItem('music_bot_bg', g); 
-        };
-        
-        window.toggleTheme = () => { 
-            document.body.classList.toggle('dark-theme'); 
-            localStorage.setItem('music_bot_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light'); 
-        };
-        
-        window.resetBg = () => { 
-            document.body.style.background = ''; 
-            document.body.style.backgroundImage = ''; 
-            localStorage.setItem('music_bot_bg', 'default'); 
-        };
+        window.setGrad = (g) => { document.body.style.background = g; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', g); };
+        window.toggleTheme = () => { document.body.classList.toggle('dark-theme'); localStorage.setItem('music_bot_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light'); };
+        window.resetBg = () => { document.body.style.background = ''; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', 'default'); };
         
         const fab = document.getElementById('settingsFab');
         const modal = document.getElementById('settingsModal');
         const closeModalBtn = document.getElementById('closeSettingsBtn');
-        
         if (fab) fab.onclick = () => modal.classList.remove('hidden');
         if (closeModalBtn) closeModalBtn.onclick = () => modal.classList.add('hidden');
         if (modal) modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
         
         document.querySelectorAll('.gradient-circle').forEach(c => c.onclick = () => setGrad(c.style.background));
-        
-        const resetBgBtn = document.getElementById('resetBgBtn');
-        if (resetBgBtn) resetBgBtn.onclick = resetBg;
+        document.getElementById('resetBgBtn').onclick = resetBg;
         
         const uploadBgBtn = document.getElementById('uploadBgBtn');
         const bgImageInput = document.getElementById('bgImageInput');
         if (uploadBgBtn && bgImageInput) {
             uploadBgBtn.onclick = () => bgImageInput.click();
-            bgImageInput.onchange = (e) => { 
-                if (e.target.files[0]) { 
-                    const r = new FileReader(); 
-                    r.onload = (ev) => { 
-                        document.body.style.backgroundImage = `url(${ev.target.result})`; 
-                        document.body.style.backgroundSize = 'cover'; 
-                        localStorage.setItem('music_bot_bg', ev.target.result); 
-                    }; 
-                    r.readAsDataURL(e.target.files[0]); 
-                } 
-            };
+            bgImageInput.onchange = (e) => { if (e.target.files[0]) { const r = new FileReader(); r.onload = (ev) => { document.body.style.backgroundImage = `url(${ev.target.result})`; document.body.style.backgroundSize = 'cover'; localStorage.setItem('music_bot_bg', ev.target.result); }; r.readAsDataURL(e.target.files[0]); } };
         }
         
-        const toggleThemeBtn = document.getElementById('toggleThemeBtn');
-        if (toggleThemeBtn) toggleThemeBtn.onclick = toggleTheme;
-        
-        const colorPickerBtn = document.getElementById('colorPickerBtn');
-        if (colorPickerBtn) {
-            colorPickerBtn.onclick = () => { 
-                const inp = document.createElement('input'); 
-                inp.type = 'color'; 
-                inp.onchange = (e) => { 
-                    document.body.style.background = e.target.value; 
-                    document.body.style.backgroundImage = ''; 
-                    localStorage.setItem('music_bot_bg', e.target.value); 
-                }; 
-                inp.click(); 
-            };
-        }
+        document.getElementById('toggleThemeBtn').onclick = toggleTheme;
+        document.getElementById('colorPickerBtn').onclick = () => { const inp = document.createElement('input'); inp.type = 'color'; inp.onchange = (e) => { document.body.style.background = e.target.value; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', e.target.value); }; inp.click(); };
         
         const buttonColorPicker = document.getElementById('buttonColorPicker');
-        if (buttonColorPicker) {
-            buttonColorPicker.onchange = (e) => { 
-                document.documentElement.style.setProperty('--button-color', e.target.value); 
-                localStorage.setItem('music_bot_btn_color', e.target.value); 
-            };
-        }
+        if (buttonColorPicker) buttonColorPicker.onchange = (e) => { document.documentElement.style.setProperty('--button-color', e.target.value); localStorage.setItem('music_bot_btn_color', e.target.value); };
 
+        // ========== ГОЛОСОВОЙ ПОИСК ==========
         const vBtn = document.getElementById('voiceSearchBtn');
         if (vBtn && 'webkitSpeechRecognition' in window) {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SR(); 
-            recognition.lang = 'ru-RU';
+            recognition = new SR(); recognition.lang = 'ru-RU';
             recognition.onstart = () => vBtn.classList.add('listening');
-            recognition.onresult = (e) => { 
-                const searchInputField = document.getElementById('searchInput');
-                if (searchInputField) searchInputField.value = e.results[0][0].transcript; 
-                search(); 
-            };
+            recognition.onresult = (e) => { document.getElementById('searchInput').value = e.results[0][0].transcript; search(); };
             recognition.onerror = () => showNote('Не распознано');
             recognition.onend = () => vBtn.classList.remove('listening');
             vBtn.onclick = () => recognition.start();
         } else if (vBtn) vBtn.style.opacity = '0.5';
 
+        // ========== ЗАПУСК ==========
         loadAppearance();
         loadPopular();
         updateTotal();
@@ -2044,11 +1327,7 @@
         startCurrencyUpdates();
         showPage(pages.music, 'music');
         
-        setTimeout(() => {
-            preloadPopularArtistsImages();
-        }, 2000);
-        
-        console.log('Music Hub с улучшенными анимированными значками загружен!');
+        console.log('Music Hub загружен!');
     </script>
 </body>
 </html>
