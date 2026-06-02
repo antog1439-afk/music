@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Music Hub | Элегантный музыкальный центр</title>
+    <title>Music Hub | Музыкальный центр</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <style>
@@ -22,14 +22,12 @@
             transition: all 0.3s ease;
         }
 
-        /* Элегантные градиенты для разных режимов */
         body.music-mode { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
         body.game-mode { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f2027 100%); }
         body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
         body.assistant-mode { background: linear-gradient(135deg, #0b8793 0%, #360033 50%, #1a0033 100%); }
         body.map-mode { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
 
-        /* Утончённый скроллбар */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, rgba(102,126,234,0.5), rgba(118,75,162,0.5)); border-radius: 10px; }
@@ -48,21 +46,38 @@
             70% { box-shadow: 0 0 0 12px rgba(102,126,234,0); }
             100% { box-shadow: 0 0 0 0 rgba(102,126,234,0); }
         }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes wave {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        @keyframes subtleRotate {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        @keyframes subtlePulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
 
-        /* Страницы */
         .fullscreen-page {
             position: fixed;
             top: 0;
@@ -78,7 +93,6 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* Элегантное меню */
         .menu-container {
             position: fixed;
             top: 0;
@@ -147,7 +161,6 @@
         }
         .menu-title, .menu-desc { display: none; }
 
-        /* Элегантный виджет курса валют */
         .currency-chart {
             position: fixed;
             bottom: 20px;
@@ -172,7 +185,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .currency-update-time { font-size: 8px; color: rgba(79,172,254,0.7); font-weight: 400; }
+        .currency-update-time { font-size: 8px; color: rgba(79,172,254,0.7); }
         .currency-item { margin-bottom: 8px; }
         .currency-row {
             display: flex;
@@ -185,8 +198,6 @@
             font-weight: 600;
             color: white;
             min-width: 60px;
-            font-feature-settings: 'tnum';
-            letter-spacing: -0.2px;
         }
         .bar-container {
             flex: 1;
@@ -210,10 +221,8 @@
             border-top: 1px solid rgba(255,255,255,0.04);
             font-size: 8px;
             color: rgba(255,255,255,0.25);
-            letter-spacing: 0.3px;
         }
 
-        /* Элегантная шапка */
         .page-header {
             display: flex;
             align-items: center;
@@ -243,14 +252,12 @@
             color: white;
             letter-spacing: -0.5px;
             flex: 1;
-            text-shadow: 0 2px 20px rgba(0,0,0,0.2);
             background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        /* Элегантные карточки */
         .glass-card {
             background: rgba(255,255,255,0.04);
             backdrop-filter: blur(20px);
@@ -262,7 +269,6 @@
         }
         .glass-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); }
 
-        /* Утончённая поисковая строка */
         .search-box { display: flex; gap: 10px; margin-bottom: 24px; }
         .search-input {
             flex: 1;
@@ -274,12 +280,13 @@
             font-weight: 500;
             color: #1a1a2e;
             transition: all 0.3s;
-            letter-spacing: -0.2px;
         }
         .search-input:focus { outline: none; background: white; transform: scale(1.01); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
-        .search-input::placeholder { color: rgba(26,26,46,0.4); font-weight: 400; }
+        .search-input::placeholder { color: rgba(26,26,46,0.4); }
         .search-btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
             border: none;
             padding: 0 28px;
             border-radius: 60px;
@@ -288,7 +295,20 @@
             cursor: pointer;
             transition: all 0.2s;
             font-size: 14px;
-            letter-spacing: 0.3px;
+            position: relative;
+            overflow: hidden;
+        }
+        .search-btn::after {
+            content: "🔍";
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: right 0.3s ease;
+            font-size: 14px;
+        }
+        .search-btn:hover::after {
+            right: 20px;
         }
         .search-btn:active { transform: scale(0.96); opacity: 0.9; }
         .voice-btn {
@@ -303,10 +323,10 @@
             justify-content: center;
             transition: all 0.2s;
         }
-        .voice-btn:active { transform: scale(0.95); background: rgba(155,89,182,0.7); }
+        .voice-btn:hover { background: rgba(155,89,182,0.9); transform: scale(1.02); }
+        .voice-btn:active { transform: scale(0.95); }
         .voice-btn.listening { background: #e74c3c; animation: glowPulse 1.5s infinite; }
 
-        /* Элегантные секции */
         .section-title {
             font-size: 11px;
             font-weight: 500;
@@ -314,10 +334,12 @@
             color: rgba(255,255,255,0.5);
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-feature-settings: 'case';
         }
         .popular-grid { display: flex; flex-wrap: wrap; gap: 8px; }
         .popular-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             background: rgba(255,255,255,0.06);
             padding: 8px 18px;
             border-radius: 40px;
@@ -325,13 +347,19 @@
             font-weight: 500;
             color: rgba(255,255,255,0.8);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             border: 1px solid rgba(255,255,255,0.05);
             backdrop-filter: blur(4px);
         }
-        .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.15); }
+        .popular-tag span:first-child {
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+        .popular-tag:hover span:first-child {
+            transform: scale(1.15) rotate(5deg);
+        }
+        .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.12); }
 
-        /* Элегантный профиль исполнителя */
         .artist-profile {
             display: flex;
             align-items: center;
@@ -366,20 +394,23 @@
             font-size: 12px;
             color: rgba(255,255,255,0.5);
             transition: all 0.3s ease;
-            font-weight: 400;
         }
         .invert-icon {
             margin-left: 8px;
             font-size: 14px;
             opacity: 0.5;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             display: inline-block;
+            cursor: pointer;
+        }
+        .invert-icon:hover {
+            transform: rotate(180deg);
+            opacity: 1 !important;
         }
         .artist-profile:hover .invert-icon {
             opacity: 0.8;
         }
 
-        /* Инверсия карточки исполнителя */
         .artist-profile.inverted {
             background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
@@ -397,10 +428,9 @@
             box-shadow: 0 0 20px rgba(245,176,66,0.25);
         }
         .artist-profile.inverted .invert-icon {
-            animation: subtlePulse 2s infinite;
+            animation: subtleRotate 3s ease infinite;
         }
 
-        /* Элегантная карточка результата */
         .result-card {
             background: rgba(255,255,255,0.04);
             border-radius: 28px;
@@ -411,7 +441,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Элегантная карточка с AI фактом */
         .ai-fact-card {
             background: linear-gradient(135deg, rgba(155,89,182,0.12), rgba(142,68,173,0.08));
             border-left: 2px solid #b983ff;
@@ -422,8 +451,11 @@
         .ai-fact-header { display: flex; gap: 14px; }
         .ai-fact-icon svg { width: 28px; height: 28px; stroke: #b983ff; stroke-width: 1.5; fill: none; opacity: 0.8; }
         .ai-fact-label { font-size: 10px; color: #b983ff; font-weight: 500; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1.5px; }
-        .ai-fact-text { font-size: 14px; line-height: 1.45; color: rgba(255,255,255,0.85); font-weight: 400; }
+        .ai-fact-text { font-size: 14px; line-height: 1.45; color: rgba(255,255,255,0.85); }
         .ai-fact-refresh {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: rgba(155,89,182,0.2);
             border: 1px solid rgba(155,89,182,0.3);
             padding: 6px 14px;
@@ -432,13 +464,20 @@
             font-size: 11px;
             margin-top: 10px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
-        .ai-fact-refresh:active { transform: scale(0.96); background: rgba(155,89,182,0.35); }
+        .ai-fact-refresh:hover {
+            transform: rotate(180deg);
+            background: rgba(155,89,182,0.4);
+        }
+        .ai-fact-refresh:active { transform: rotate(360deg); }
 
-        /* Элегантные кнопки платформ */
         .platform-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
         .platform-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             padding: 12px;
             border-radius: 60px;
             text-align: center;
@@ -446,14 +485,20 @@
             cursor: pointer;
             border: none;
             font-size: 14px;
-            transition: all 0.2s;
-            letter-spacing: 0.2px;
+            transition: all 0.2s ease;
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
         }
-        .platform-btn:active { transform: scale(0.97); opacity: 0.9; }
+        .platform-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+        .platform-btn:active { transform: scale(0.97); }
         .yandex-btn { background: #ffcc00; color: #1a1a2e; }
+        .yandex-btn::before { content: "🎵"; font-size: 16px; }
         .youtube-btn { background: #ff0000; color: white; }
+        .youtube-btn::before { content: "▶️"; font-size: 16px; }
 
-        /* Элегантная секция биографии */
         .bio-section {
             background: rgba(0,0,0,0.2);
             border-radius: 20px;
@@ -466,7 +511,6 @@
         .bio-text { font-size: 13px; line-height: 1.45; color: rgba(255,255,255,0.75); }
         .bio-wiki-link { color: #b983ff; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; opacity: 0.7; transition: opacity 0.2s; }
 
-        /* Стили для игры */
         .track-name { font-size: 22px; font-weight: 600; margin: 20px 0; color: white; text-align: center; letter-spacing: -0.3px; }
         .game-options { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
         .game-option {
@@ -478,10 +522,11 @@
             cursor: pointer;
             transition: all 0.2s;
             border: 1px solid rgba(255,255,255,0.05);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
         }
         .game-option:active { transform: scale(0.97); background: rgba(255,255,255,0.12); }
 
-        /* AI обложки */
         .ai-cover-img {
             width: 100%;
             max-width: 200px;
@@ -497,10 +542,9 @@
             border: 2px solid rgba(255,255,255,0.1);
             border-radius: 50%;
             border-top-color: #9b59b6;
-            animation: spin 1s ease infinite;
+            animation: spin 1s linear infinite, loadingPulse 1.5s ease infinite;
         }
 
-        /* Чат ассистента */
         .chat-container {
             background: rgba(0,0,0,0.2);
             border-radius: 24px;
@@ -522,7 +566,6 @@
         .message-user .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-bottom-right-radius: 5px; }
         .message-ai .message-bubble { background: rgba(255,255,255,0.08); color: white; border-bottom-left-radius: 5px; }
 
-        /* Рандомайзер */
         .random-artist-card {
             background: rgba(255,255,255,0.05);
             border-radius: 20px;
@@ -547,7 +590,6 @@
         }
         .random-artist-link:active { transform: scale(0.95); }
 
-        /* Настройки */
         .settings-fab {
             position: fixed;
             bottom: 22px;
@@ -618,7 +660,6 @@
         .close-modal:active, .appearance-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
         .appearance-btn { padding: 8px 16px; font-size: 13px; }
 
-        /* Уведомления */
         .notification-toast {
             position: fixed;
             bottom: 90px;
@@ -640,7 +681,6 @@
         .user-info { font-size: 11px; text-align: center; margin-top: 16px; color: rgba(255,255,255,0.3); letter-spacing: 0.3px; }
         .hidden { display: none; }
 
-        /* Элементы альбомов */
         .preview-track-item {
             transition: all 0.2s ease;
             border-radius: 60px;
@@ -650,17 +690,38 @@
         .preview-track-item:active {
             background: rgba(255,255,255,0.04);
         }
+        .preview-track-item button {
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        }
+        .preview-track-item button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 12px rgba(102,126,234,0.5);
+        }
+        .preview-track-item button:active {
+            transform: scale(0.95);
+        }
         
         .album-card {
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             border-radius: 20px;
+        }
+        .album-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.08) !important;
+        }
+        .album-card:hover div:first-child {
+            transform: scale(1.1);
+            display: inline-block;
+        }
+        .album-card div:first-child {
+            transition: transform 0.2s ease;
+            display: inline-block;
         }
         .album-card:active {
             transform: scale(0.97);
-            background: rgba(255,255,255,0.08) !important;
         }
 
-        /* Адаптивность */
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
             .menu-screen { gap: 16px; max-width: 240px; }
@@ -719,7 +780,7 @@
         </div>
     </div>
 
-    <!-- ОСНОВНАЯ СТРАНИЦА МУЗЫКИ С ЭЛЕГАНТНЫМ ИНТЕРФЕЙСОМ -->
+    <!-- ОСНОВНАЯ СТРАНИЦА МУЗЫКИ С УЛУЧШЕННЫМИ ЗНАЧКАМИ -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -727,25 +788,22 @@
         </div>
         
         <div class="glass-card">
-            <!-- Элегантная поисковая строка -->
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Rammstein...">
                 <button id="voiceSearchBtn" class="voice-btn"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
                 <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
             
-            <!-- Популярные исполнители -->
             <div class="section-title">ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ</div>
             <div class="popular-grid" id="popularGrid"></div>
             
-            <!-- Результаты поиска -->
             <div id="musicResult"></div>
         </div>
         
-        <div class="user-info">🎧 Нажмите на карточку исполнителя для смены стиля | Альбомы показывают треки</div>
+        <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля | Нажмите 🔄 для инверсии</div>
     </div>
 
-    <!-- ОСТАЛЬНЫЕ СТРАНИЦЫ (без изменений) -->
+    <!-- ОСТАЛЬНЫЕ СТРАНИЦЫ -->
     <div class="fullscreen-page" id="gamePage">
         <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">ИГРА</div></div>
         <div class="glass-card"><button id="startGameBtn" style="background:linear-gradient(135deg,#9b59b6,#8e44ad); border:none; padding:14px; border-radius:60px; color:white; font-weight:500; width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.4);">Нажмите «Начать игру»</div></div></div>
@@ -909,7 +967,9 @@
 
         function playAlternativePreview(artistName, trackName, buttonElement) {
             const yandexUrl = `https://music.yandex.ru/search?text=${encodeURIComponent(`${artistName} ${trackName}`)}`;
-            buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+            buttonElement.innerHTML = '▶️';
+            buttonElement.style.fontSize = '18px';
+            buttonElement.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
             tg.openLink(yandexUrl);
             showNote(`Открываем "${trackName}" в Яндекс.Музыке`);
         }
@@ -922,7 +982,8 @@
                 currentAudio.pause();
                 currentAudio.currentTime = 0;
                 if (currentAudioButton) {
-                    currentAudioButton.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                    currentAudioButton.innerHTML = '▶️';
+                    currentAudioButton.style.fontSize = '18px';
                 }
                 currentAudio = null;
                 currentAudioButton = null;
@@ -932,7 +993,8 @@
         async function playPreview(artistName, trackName, buttonElement, timerElement = null) {
             if (currentAudio && currentAudioButton === buttonElement && !currentAudio.paused) {
                 currentAudio.pause();
-                buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                buttonElement.innerHTML = '▶️';
+                buttonElement.style.fontSize = '18px';
                 currentAudio = null;
                 currentAudioButton = null;
                 if (timerElement) timerElement.textContent = '0:00';
@@ -941,7 +1003,8 @@
             
             stopCurrentPreview();
             
-            buttonElement.innerHTML = '<div style="width:16px; height:16px; border:2px solid white; border-top-color: transparent; border-radius:50%; animation: spin 0.8s linear infinite;"></div>';
+            buttonElement.innerHTML = '⏳';
+            buttonElement.style.fontSize = '18px';
             
             const previewUrl = await getTrackPreviewUrl(artistName, trackName);
             
@@ -955,7 +1018,9 @@
             
             audio.oncanplay = () => {
                 audio.play();
-                buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                buttonElement.innerHTML = '⏸️';
+                buttonElement.style.fontSize = '18px';
+                buttonElement.style.background = '#e74c3c';
                 currentAudio = audio;
                 currentAudioButton = buttonElement;
                 
@@ -970,7 +1035,9 @@
                         
                         if (currentAudio.ended || currentAudio.currentTime >= currentAudio.duration - 0.1) {
                             clearInterval(updateTimer);
-                            buttonElement.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                            buttonElement.innerHTML = '▶️';
+                            buttonElement.style.fontSize = '18px';
+                            buttonElement.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
                             timerElement.textContent = '0:00';
                             currentAudio = null;
                             currentAudioButton = null;
@@ -1003,7 +1070,7 @@
             }
             
             showNote(artistProfile.classList.contains('inverted') ? 
-                'Инверсия включена' : 'Инверсия выключена');
+                '✨ Инверсия включена' : '✨ Инверсия выключена');
         }
 
         function loadInvertedState(artistName) {
@@ -1067,7 +1134,7 @@
                 albums.push({
                     title: "Красное платье",
                     year: 2023,
-                    cover: "❤️",
+                    cover: "👗",
                     tracks: tracks.filter(t => t.artist === "Асия" && ["Красное платье", "911", "Крестики", "Алоэ", "Сильно так", "Амур", "Я не злюсь, милый", "Молчу", "Шоу Трумана", "Мили", "Говори"].includes(t.track))
                 });
             }
@@ -1125,13 +1192,24 @@
             const albums = getAlbumsFromTracks(artistName);
             if (albums.length === 0) return '';
             
+            const albumIcons = {
+                "Останься": "🎵",
+                "Красное платье": "👗",
+                "Evolve / Night Visions": "🌙",
+                "Группа крови": "🩸",
+                "Звезда по имени Солнце": "⭐",
+                "Millennium": "💎",
+                "Земфира": "🎸",
+                "Популярное": "🔥"
+            };
+            
             return `
                 <div class="albums-section" style="margin: 20px 0 16px;">
-                    <div class="section-title">АЛЬБОМЫ</div>
+                    <div class="section-title">📀 АЛЬБОМЫ</div>
                     <div style="display: flex; flex-wrap: wrap; gap: 12px;">
                         ${albums.map(album => `
-                            <div class="album-card" onclick="showAlbumTracks('${escapeHtml(artistName)}', '${escapeHtml(album.title)}')" style="background: rgba(255,255,255,0.04); border-radius: 20px; padding: 12px; width: calc(33% - 8px); text-align: center; cursor: pointer; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.04);">
-                                <div style="font-size: 40px; margin-bottom: 8px;">${album.cover}</div>
+                            <div class="album-card" onclick="showAlbumTracks('${escapeHtml(artistName)}', '${escapeHtml(album.title)}')" style="background: rgba(255,255,255,0.04); border-radius: 20px; padding: 12px; width: calc(33% - 8px); text-align: center; cursor: pointer; transition: all 0.2s;">
+                                <div style="font-size: 44px; margin-bottom: 8px; transition: transform 0.2s;">${albumIcons[album.title] || album.cover || "📀"}</div>
                                 <div style="font-size: 13px; font-weight: 500;">${escapeHtml(album.title)}</div>
                                 <div style="font-size: 10px; opacity: 0.5; margin-top: 4px;">${album.year} • ${album.tracks.length} треков</div>
                             </div>
@@ -1154,8 +1232,8 @@
                             <div style="font-size: 14px; font-weight: 500;">${idx + 1}. ${escapeHtml(track.track)}</div>
                             <div style="font-size: 11px; opacity: 0.6;">${escapeHtml(track.artist)}</div>
                         </div>
-                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: #667eea; border: none; width: 36px; height: 36px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;">
+                            ▶️
                         </button>
                     </div>
                 `;
@@ -1179,14 +1257,14 @@
                     const playButton = btn.querySelector('button');
                     if (playButton) {
                         playButton.click();
-                        showNote(`Загружаем "${track}"...`);
+                        showNote(`🎵 Загружаем "${track}"...`);
                         return;
                     }
                 }
             }
             
             tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(`${artist} ${track}`)}`);
-            showNote(`Открываем "${track}" в Яндекс.Музыке`);
+            showNote(`🎵 Открываем "${track}" в Яндекс.Музыке`);
         };
         
         const facts = {
@@ -1196,8 +1274,6 @@
             "моргенштерн": ["Родился в Уфе 17 февраля 1998", "Самый молодой миллионер в шоу-бизнесе", "«Cadillac» — 100 млн просмотров", "Премия MTV Europe Music Awards 2021", "Состояние оценивается в 10+ млн долларов"],
             "земфира": ["Родилась в Уфе 26 августа 1976", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий", "5 премий «Муз-ТВ»", "Пишет стихи с 7 лет"]
         };
-        
-        const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein", "Billie Eilish", "The Weeknd"];
         
         const venues = [
             { name: "Gipsy", lat: 55.740117, lng: 37.609712, address: "Москва, Болотная наб., 3, стр. 4", metro: "Кропоткинская" },
@@ -1339,7 +1415,7 @@
                     <div class="similar-artists-section" style="margin-top: 16px;">
                         <div class="section-title">ПОХОЖИЕ ИСПОЛНИТЕЛИ</div>
                         <div class="popular-grid" style="margin-bottom: 16px;">
-                            ${similarArtists.map(artist => `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')">🎤 ${artist}</span>`).join('')}
+                            ${similarArtists.map(artist => `<span class="popular-tag" onclick="searchArtist('${artist.replace(/'/g, "\\'")}')"><span>🎤</span> ${artist}</span>`).join('')}
                         </div>
                     </div>
                 `;
@@ -1351,7 +1427,7 @@
             const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map`;
             tg.openLink(url);
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-            showNote(`Открываем ${name} на Яндекс.Картах`);
+            showNote(`🗺️ Открываем ${name} на Яндекс.Картах`);
         }
         
         function openMyLocationOnMap() {
@@ -1359,14 +1435,14 @@
                 showNote('Геолокация не поддерживается');
                 return;
             }
-            showNote('Определяем ваше местоположение...');
+            showNote('📍 Определяем ваше местоположение...');
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     const url = `https://yandex.ru/maps/?pt=${lng},${lat}&z=15&l=map`;
                     tg.openLink(url);
-                    showNote('Яндекс.Карты с вашим местоположением открыты');
+                    showNote('🗺️ Яндекс.Карты с вашим местоположением открыты');
                     if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
                 },
                 (error) => {
@@ -1430,7 +1506,7 @@
         document.getElementById('goToTicketsBtn').onclick = () => {
             if (lastSearchedArtist) {
                 tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(lastSearchedArtist)}`);
-                showNote(`Открываем концерты: ${lastSearchedArtist}`);
+                showNote(`🎫 Открываем концерты: ${lastSearchedArtist}`);
                 if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             } else {
                 tg.showPopup({
@@ -1451,7 +1527,25 @@
 
         function loadPopular() { 
             const grid = document.getElementById('popularGrid');
-            if (grid) grid.innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')">🎤 ${a}</span>`).join(''); 
+            if (!grid) return;
+            
+            const popularWithIcons = [
+                { name: "Асия", icon: "🎤", color: "#ff6b9d" },
+                { name: "Imagine Dragons", icon: "🐉", color: "#4facfe" },
+                { name: "Кино", icon: "🎸", color: "#2ecc71" },
+                { name: "Моргенштерн", icon: "💎", color: "#f39c12" },
+                { name: "Земфира", icon: "🎹", color: "#e74c3c" },
+                { name: "Rammstein", icon: "🔥", color: "#ff4757" },
+                { name: "Billie Eilish", icon: "🌊", color: "#2ed573" },
+                { name: "The Weeknd", icon: "⭐", color: "#a29bfe" }
+            ];
+            
+            grid.innerHTML = popularWithIcons.map(a => `
+                <span class="popular-tag" onclick="searchArtist('${a.name.replace(/'/g, "\\'")}')">
+                    <span style="display: inline-block; animation: float 3s ease infinite;">${a.icon}</span>
+                    ${a.name}
+                </span>
+            `).join(''); 
         }
         
         window.searchArtist = function(a) { 
@@ -1526,7 +1620,7 @@
             if (artistTracks.length > 0) {
                 tracksPreviewHtml = `
                     <div style="margin: 20px 0 16px;">
-                        <div class="section-title">ПРЕВЬЮ ТРЕКОВ</div>
+                        <div class="section-title">🎧 ПРЕВЬЮ ТРЕКОВ</div>
                         ${artistTracks.slice(0, 10).map((t, idx) => `
                             <div class="preview-track-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                 <div style="flex: 1;">
@@ -1535,8 +1629,8 @@
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <span id="timer_${idx}_${Date.now()}" style="font-size: 11px; font-family: monospace; opacity: 0.6;">0:00</span>
-                                    <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: #667eea; border: none; width: 36px; height: 36px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;">
+                                        ▶️
                                     </button>
                                 </div>
                             </div>
@@ -1565,14 +1659,14 @@
                             <div>
                                 <div class="ai-fact-label">ИИ ФАКТ</div>
                                 <div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div>
-                                <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">Новый факт</button>
+                                <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">🔄 Новый факт</button>
                             </div>
                         </div>
                     </div>
                     <div class="section-title">СЛУШАТЬ ПОЛНОСТЬЮ</div>
                     <div class="platform-buttons">
-                        <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                        <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                        <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">Яндекс.Музыка</button>
+                        <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">YouTube Music</button>
                     </div>
                     ${bio ? `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bio.title)}</div><div class="bio-text">${escapeHtml(bio.text)}</div><a href="${bio.url}" target="_blank" class="bio-wiki-link">Читать полностью →</a></div>` : '<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">Информация не найдена</div></div>'}
                     <button class="search-btn" style="margin-top: 16px; background: linear-gradient(135deg, #2ecc71, #27ae60);" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
@@ -1797,7 +1891,7 @@
         
         function loadQuick() { 
             const q = ["Асия", "Imagine Dragons", "Кино", "Земфира"]; 
-            document.getElementById('quickArtistsGrid').innerHTML = q.map(a => `<span class="popular-tag" onclick="addArtist('${a}')">+ ${a}</span>`).join(''); 
+            document.getElementById('quickArtistsGrid').innerHTML = q.map(a => `<span class="popular-tag" onclick="addArtist('${a}')"><span>+</span> ${a}</span>`).join(''); 
         }
         
         window.addArtist = function(a) { 
@@ -1831,8 +1925,8 @@
                     <div class="result-card">
                         <div style="font-size:20px; font-weight:600; margin-bottom:12px;">🎵 ${escapeHtml(track)}</div>
                         <div class="platform-buttons">
-                            <button onclick="tg.openLink('${yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                            <button onclick="tg.openLink('${youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                            <button onclick="tg.openLink('${yandex}')" class="platform-btn yandex-btn">Яндекс.Музыка</button>
+                            <button onclick="tg.openLink('${youtube}')" class="platform-btn youtube-btn">YouTube Music</button>
                         </div>
                     </div>
                 `;
@@ -1949,7 +2043,7 @@
             preloadPopularArtistsImages();
         }, 2000);
         
-        console.log('Music Hub с элегантным интерфейсом загружен');
+        console.log('Music Hub с улучшенными анимированными значками загружен!');
     </script>
 </body>
 </html>
