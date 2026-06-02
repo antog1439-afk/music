@@ -1117,27 +1117,28 @@
         ];
         
         // ========== АЛЬБОМЫ НА ОСНОВЕ ТРЕКОВ ==========
-
-        function getAlbumsFromTracks(artistName) {
-            const artistTracks = tracks.filter(t => t.artist.toLowerCase() === artistName.toLowerCase());
-            if (artistTracks.length === 0) return [];
-            
-            const albums = [];
-            
-            if (artistName.toLowerCase() === "асия") {
-                albums.push({
-                    title: "Останься",
-                    year: 2022,
-                    cover: "🎵",
-                    tracks: tracks.filter(t => t.artist === "Асия" && ["Останься", "Твой поцелуй", "Помнишь", "Детство", "Притворяюсь", "Обочины", "Шекспир", "О любви", "Звонок"].includes(t.track))
-                });
-                albums.push({
-                    title: "Красное платье",
-                    year: 2023,
-                    cover: "👗",
-                    tracks: tracks.filter(t => t.artist === "Асия" && ["Красное платье", "911", "Крестики", "Алоэ", "Сильно так", "Амур", "Я не злюсь, милый", "Молчу", "Шоу Трумана", "Мили", "Говори"].includes(t.track))
-                });
-            }
+                if (artistName.toLowerCase() === "асия") {
+            albums.push({
+                title: "Асия",
+                year: 2021,
+                cover: "💿",
+                tracks: tracks.filter(t => t.artist === "Асия" && [
+                    "Рокстар", "Бабочки", "Спасибо", "Капли", "Дикий", "Розы", "Останься"
+                ].includes(t.track))
+            });
+            albums.push({
+                title: "ударение на А",
+                year: 2023,
+                cover: "⚡",
+                tracks: tracks.filter(t => t.artist === "Асия" && [
+                    "Я не злюсь, милый", "Мили", "Говори", "Молчу", "Как ты", 
+                    "Второй том", "Шоу Трумана", "Крестики", "Алоэ", "911",
+                    "Красное платье", "Притворяюсь", "Обочины", "Шекспир", 
+                    "О любви", "Звонок", "Детство", "Помнишь", "Твой поцелуй"
+                ].includes(t.track))
+            });
+        }
+       
             else if (artistName.toLowerCase() === "imagine dragons") {
                 albums.push({
                     title: "Evolve / Night Visions",
