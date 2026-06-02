@@ -1615,29 +1615,33 @@
             const aiFact = getFact(q);
             const artistImageUrl = await getArtistImage(q);
             const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
-            
-            let tracksPreviewHtml = '';
-            if (artistTracks.length > 0) {
-                tracksPreviewHtml = `
-                    <div style="margin: 20px 0 16px;">
-                        <div class="section-title">🎧 ПРЕВЬЮ ТРЕКОВ</div>
-                        ${artistTracks.slice(0, 10).map((t, idx) => `
-                            <div class="preview-track-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <div style="flex: 1;">
-                                    <div style="font-weight: 500; font-size: 14px;">${escapeHtml(t.track)}</div>
-                                    <div style="font-size: 11px; opacity: 0.5;">${escapeHtml(t.artist)}</div>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span id="timer_${idx}_${Date.now()}" style="font-size: 11px; font-family: monospace; opacity: 0.6;">0:00</span>
-                                    <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;">
-                                        ▶️
-                                    </button>
-                                </div>
+             let tracksPreviewHtml = '';
+        
+        let tracksPreviewHtml = '';
+        if (artistTracks.length > 0) {
+        tracksPreviewHtml = `
+            <div style="margin: 20px 0 16px;">
+                <div class="section-title" style="text-align: center; font-size: 12px; letter-spacing: 2px;">🎧 ПРЕВЬЮ ТРЕКОВ</div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    ${artistTracks.slice(0, 10).map((t, idx) => `
+                        <div class="preview-track-item" style="background: rgba(255,255,255,0.03); border-radius: 24px; padding: 14px 16px; text-align: center; transition: all 0.2s;">
+                            <div style="margin-bottom: 10px;">
+                                <div style="font-weight: 600; font-size: 16px; color: white; letter-spacing: -0.2px;">${escapeHtml(t.track)}</div>
+                                <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div>
                             </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                                <span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; font-weight: 500; opacity: 0.7;">0:00</span>
+                                <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 44px; height: 44px; border-radius: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                                    ▶️
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+           
             
             resDiv.innerHTML = `
                 <div class="result-card">
