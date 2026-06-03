@@ -1270,43 +1270,122 @@
         // ========== НАСТРОЕНИЕ ==========
         const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Lo-Fi Hip Hop"] };
         document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const track = moodTracks[btn.dataset.mood][0]; tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(track)}`); }; });
+        
+        // ========== НАСТРОЙКИ ФОНА (РАБОТАЕТ НА ТЕЛЕФОНЕ И КОМПЬЮТЕРЕ) ==========
 
-        // ========== НАСТРОЙКИ ==========
         function loadAppearance() {
             const bg = localStorage.getItem('music_bot_bg');
             if (bg && bg !== 'default') { 
-                if (bg.startsWith('linear')) document.body.style.background = bg; 
-                else { document.body.style.backgroundImage = `url(${bg})`; document.body.style.backgroundSize = 'cover'; } 
+                if (bg.startsWith('linear')) {
+                    document.body.style.background = bg;
+                    document.body.style.backgroundImage = '';
+                } else if (bg.startsWith('#')) {
+                    document.body.style.background = bg;
+                    document.body.style.backgroundImage = '';
+                } else {
+                    document.body.style.backgroundImage = `url(${bg})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.background = '';
+                }
             }
         }
-        
-        window.setGrad = (g) => { document.body.style.background = g; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', g); };
-        window.toggleTheme = () => { document.body.classList.toggle('dark-theme'); localStorage.setItem('music_bot_theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light'); };
-        window.resetBg = () => { document.body.style.background = ''; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', 'default'); };
-        
+
+        // Выбор цвета
+        const colorPickerBtn = document.getElementById('colorPickerBtn');
+        if (colorPickerBtn) {
+            colorPickerBtn.onclick = () => {
+                const input = document.createElement('input');
+                input.type = 'color';
+                input.value = '#1a1a3e';
+                input.style.position = 'fixed';
+                input.style.top = '0';
+                input.style.left = '0';
+                input.style.opacity = '0';
+                input.style.width = '0';
+                input.style.height = '0';
+                document.body.appendChild(input);
+                input.click();
+                input.onchange = (e) => {
+                    const color = e.target.value;
+                    document.body.style.background = color;
+                    document.body.style.backgroundImage = '';
+                    localStorage.setItem('music_bot_bg', color);
+                    showNote('🎨 Цвет фона изменён');
+                    input.remove();
+                };
+                input.oncancel = () => input.remove();
+                setTimeout(() => {
+                    if (document.body.contains(input)) input.remove();
+                }, 10000);
+            };
+        }
+
+        // Загрузка фото
+        const uploadBgBtn = document.getElementById('uploadBgBtn');
+        if (uploadBgBtn) {
+            uploadBgBtn.onclick = () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.style.position = 'fixed';
+                input.style.top = '0';
+                input.style.left = '0';
+                input.style.opacity = '0';
+                input.style.width = '0';
+                input.style.height = '0';
+                document.body.appendChild(input);
+                input.click();
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            document.body.style.backgroundImage = `url(${ev.target.result})`;
+                            document.body.style.backgroundSize = 'cover';
+                            document.body.style.backgroundPosition = 'center';
+                            document.body.style.background = '';
+                            localStorage.setItem('music_bot_bg', ev.target.result);
+                            showNote('📸 Фоновое изображение установлено');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                    input.remove();
+                };
+            };
+        }
+
+        // Сброс фона
+        const resetBgBtn = document.getElementById('resetBgBtn');
+        if (resetBgBtn) {
+            resetBgBtn.onclick = () => {
+                document.body.style.background = '';
+                document.body.style.backgroundImage = '';
+                localStorage.setItem('music_bot_bg', 'default');
+                showNote('🔄 Фон сброшен');
+            };
+        }
+
+        // Градиенты
+        document.querySelectorAll('.gradient-circle').forEach(c => {
+            c.onclick = () => {
+                document.body.style.background = c.style.background;
+                document.body.style.backgroundImage = '';
+                localStorage.setItem('music_bot_bg', c.style.background);
+                showNote('✨ Градиент установлен');
+            };
+        });
+
+        loadAppearance();
+
         const fab = document.getElementById('settingsFab');
         const modal = document.getElementById('settingsModal');
         const closeModalBtn = document.getElementById('closeSettingsBtn');
+        
         if (fab) fab.onclick = () => modal.classList.remove('hidden');
         if (closeModalBtn) closeModalBtn.onclick = () => modal.classList.add('hidden');
         if (modal) modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
-        
-        document.querySelectorAll('.gradient-circle').forEach(c => c.onclick = () => setGrad(c.style.background));
-        document.getElementById('resetBgBtn').onclick = resetBg;
-        
-        const uploadBgBtn = document.getElementById('uploadBgBtn');
-        const bgImageInput = document.getElementById('bgImageInput');
-        if (uploadBgBtn && bgImageInput) {
-            uploadBgBtn.onclick = () => bgImageInput.click();
-            bgImageInput.onchange = (e) => { if (e.target.files[0]) { const r = new FileReader(); r.onload = (ev) => { document.body.style.backgroundImage = `url(${ev.target.result})`; document.body.style.backgroundSize = 'cover'; localStorage.setItem('music_bot_bg', ev.target.result); }; r.readAsDataURL(e.target.files[0]); } };
-        }
-        
-        document.getElementById('toggleThemeBtn').onclick = toggleTheme;
-        document.getElementById('colorPickerBtn').onclick = () => { const inp = document.createElement('input'); inp.type = 'color'; inp.onchange = (e) => { document.body.style.background = e.target.value; document.body.style.backgroundImage = ''; localStorage.setItem('music_bot_bg', e.target.value); }; inp.click(); };
-        
-        const buttonColorPicker = document.getElementById('buttonColorPicker');
-        if (buttonColorPicker) buttonColorPicker.onchange = (e) => { document.documentElement.style.setProperty('--button-color', e.target.value); localStorage.setItem('music_bot_btn_color', e.target.value); };
-
+      
         // ========== ГОЛОСОВОЙ ПОИСК ==========
         const vBtn = document.getElementById('voiceSearchBtn');
         if (vBtn && 'webkitSpeechRecognition' in window) {
