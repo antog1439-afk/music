@@ -1273,7 +1273,7 @@
         
         // ========== НАСТРОЙКИ ФОНА (РАБОТАЕТ НА ТЕЛЕФОНЕ И КОМПЬЮТЕРЕ) ==========
 
-        function loadAppearance() {
+         function loadAppearance() {
             const bg = localStorage.getItem('music_bot_bg');
             if (bg && bg !== 'default') { 
                 if (bg.startsWith('linear')) {
@@ -1291,37 +1291,62 @@
             }
         }
 
-        // Выбор цвета
+        // Выбор цвета с кнопкой ОК
         const colorPickerBtn = document.getElementById('colorPickerBtn');
         if (colorPickerBtn) {
             colorPickerBtn.onclick = () => {
-                const input = document.createElement('input');
-                input.type = 'color';
-                input.value = '#1a1a3e';
-                input.style.position = 'fixed';
-                input.style.top = '0';
-                input.style.left = '0';
-                input.style.opacity = '0';
-                input.style.width = '0';
-                input.style.height = '0';
-                document.body.appendChild(input);
-                input.click();
-                input.onchange = (e) => {
-                    const color = e.target.value;
+                const colorModal = document.createElement('div');
+                colorModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.85);
+                    backdrop-filter: blur(20px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                    animation: fadeInScale 0.3s ease;
+                `;
+                
+                colorModal.innerHTML = `
+                    <div style="background: rgba(30,30,45,0.95); backdrop-filter: blur(24px); border-radius: 32px; padding: 24px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                        <div style="font-size: 20px; font-weight: 600; margin-bottom: 20px; color: white;">🎨 Выберите цвет</div>
+                        <input type="color" id="tempColorPicker" value="#1a1a3e" style="width: 100%; height: 60px; border: none; border-radius: 16px; cursor: pointer; margin-bottom: 20px;">
+                        <div id="colorPreview" style="width: 100%; height: 50px; border-radius: 16px; margin-bottom: 20px; background: #1a1a3e; border: 1px solid rgba(255,255,255,0.2);"></div>
+                        <div style="display: flex; gap: 12px;">
+                            <button id="applyColorBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 12px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">✅ ОК</button>
+                            <button id="cancelColorBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">❌ Отмена</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(colorModal);
+                
+                const colorPicker = colorModal.querySelector('#tempColorPicker');
+                const preview = colorModal.querySelector('#colorPreview');
+                const applyBtn = colorModal.querySelector('#applyColorBtn');
+                const cancelBtn = colorModal.querySelector('#cancelColorBtn');
+                
+                colorPicker.oninput = (e) => { preview.style.background = e.target.value; };
+                
+                applyBtn.onclick = () => {
+                    const color = colorPicker.value;
                     document.body.style.background = color;
                     document.body.style.backgroundImage = '';
                     localStorage.setItem('music_bot_bg', color);
                     showNote('🎨 Цвет фона изменён');
-                    input.remove();
+                    colorModal.remove();
                 };
-                input.oncancel = () => input.remove();
-                setTimeout(() => {
-                    if (document.body.contains(input)) input.remove();
-                }, 10000);
+                
+                cancelBtn.onclick = () => colorModal.remove();
+                colorModal.onclick = (e) => { if (e.target === colorModal) colorModal.remove(); };
             };
         }
 
-        // Загрузка фото
+        // Загрузка фото с кнопкой ОК
         const uploadBgBtn = document.getElementById('uploadBgBtn');
         if (uploadBgBtn) {
             uploadBgBtn.onclick = () => {
@@ -1329,24 +1354,57 @@
                 input.type = 'file';
                 input.accept = 'image/*';
                 input.style.position = 'fixed';
-                input.style.top = '0';
-                input.style.left = '0';
-                input.style.opacity = '0';
-                input.style.width = '0';
-                input.style.height = '0';
+                input.style.top = '-100px';
+                input.style.left = '-100px';
                 document.body.appendChild(input);
                 input.click();
+                
                 input.onchange = (e) => {
                     const file = e.target.files[0];
                     if (file) {
                         const reader = new FileReader();
                         reader.onload = (ev) => {
-                            document.body.style.backgroundImage = `url(${ev.target.result})`;
-                            document.body.style.backgroundSize = 'cover';
-                            document.body.style.backgroundPosition = 'center';
-                            document.body.style.background = '';
-                            localStorage.setItem('music_bot_bg', ev.target.result);
-                            showNote('📸 Фоновое изображение установлено');
+                            const previewModal = document.createElement('div');
+                            previewModal.style.cssText = `
+                                position: fixed;
+                                top: 0;
+                                left: 0;
+                                right: 0;
+                                bottom: 0;
+                                background: rgba(0,0,0,0.85);
+                                backdrop-filter: blur(20px);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                z-index: 1000;
+                                animation: fadeInScale 0.3s ease;
+                            `;
+                            
+                            previewModal.innerHTML = `
+                                <div style="background: rgba(30,30,45,0.95); backdrop-filter: blur(24px); border-radius: 32px; padding: 24px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                                    <div style="font-size: 20px; font-weight: 600; margin-bottom: 16px; color: white;">📸 Предпросмотр</div>
+                                    <img src="${ev.target.result}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 20px; margin-bottom: 16px;">
+                                    <div style="display: flex; gap: 12px;">
+                                        <button id="applyPhotoBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 12px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">✅ ОК</button>
+                                        <button id="cancelPhotoBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">❌ Отмена</button>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            document.body.appendChild(previewModal);
+                            
+                            previewModal.querySelector('#applyPhotoBtn').onclick = () => {
+                                document.body.style.backgroundImage = `url(${ev.target.result})`;
+                                document.body.style.backgroundSize = 'cover';
+                                document.body.style.backgroundPosition = 'center';
+                                document.body.style.background = '';
+                                localStorage.setItem('music_bot_bg', ev.target.result);
+                                showNote('📸 Фоновое изображение установлено');
+                                previewModal.remove();
+                            };
+                            
+                            previewModal.querySelector('#cancelPhotoBtn').onclick = () => previewModal.remove();
+                            previewModal.onclick = (e) => { if (e.target === previewModal) previewModal.remove(); };
                         };
                         reader.readAsDataURL(file);
                     }
@@ -1355,24 +1413,95 @@
             };
         }
 
-        // Сброс фона
+        // Сброс фона с подтверждением
         const resetBgBtn = document.getElementById('resetBgBtn');
         if (resetBgBtn) {
             resetBgBtn.onclick = () => {
-                document.body.style.background = '';
-                document.body.style.backgroundImage = '';
-                localStorage.setItem('music_bot_bg', 'default');
-                showNote('🔄 Фон сброшен');
+                const confirmModal = document.createElement('div');
+                confirmModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.85);
+                    backdrop-filter: blur(20px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                    animation: fadeInScale 0.3s ease;
+                `;
+                
+                confirmModal.innerHTML = `
+                    <div style="background: rgba(30,30,45,0.95); backdrop-filter: blur(24px); border-radius: 32px; padding: 24px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                        <div style="font-size: 20px; font-weight: 600; margin-bottom: 16px; color: white;">🔄 Сбросить фон?</div>
+                        <div style="font-size: 14px; opacity: 0.7; margin-bottom: 20px;">Фон вернётся к стандартному градиенту</div>
+                        <div style="display: flex; gap: 12px;">
+                            <button id="confirmResetBtn" style="flex: 1; background: linear-gradient(135deg, #e74c3c, #c0392b); border: none; padding: 12px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">✅ Да, сбросить</button>
+                            <button id="cancelResetBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">❌ Отмена</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(confirmModal);
+                
+                confirmModal.querySelector('#confirmResetBtn').onclick = () => {
+                    document.body.style.background = '';
+                    document.body.style.backgroundImage = '';
+                    localStorage.setItem('music_bot_bg', 'default');
+                    showNote('🔄 Фон сброшен');
+                    confirmModal.remove();
+                };
+                
+                confirmModal.querySelector('#cancelResetBtn').onclick = () => confirmModal.remove();
+                confirmModal.onclick = (e) => { if (e.target === confirmModal) confirmModal.remove(); };
             };
         }
 
-        // Градиенты
+        // Градиенты с кнопкой ОК
         document.querySelectorAll('.gradient-circle').forEach(c => {
             c.onclick = () => {
-                document.body.style.background = c.style.background;
-                document.body.style.backgroundImage = '';
-                localStorage.setItem('music_bot_bg', c.style.background);
-                showNote('✨ Градиент установлен');
+                const gradient = c.style.background;
+                const gradModal = document.createElement('div');
+                gradModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.85);
+                    backdrop-filter: blur(20px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                    animation: fadeInScale 0.3s ease;
+                `;
+                
+                gradModal.innerHTML = `
+                    <div style="background: rgba(30,30,45,0.95); backdrop-filter: blur(24px); border-radius: 32px; padding: 24px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                        <div style="font-size: 20px; font-weight: 600; margin-bottom: 16px; color: white;">✨ Установить градиент?</div>
+                        <div style="width: 100%; height: 60px; border-radius: 16px; margin-bottom: 20px; background: ${gradient}; border: 1px solid rgba(255,255,255,0.2);"></div>
+                        <div style="display: flex; gap: 12px;">
+                            <button id="applyGradBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 12px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">✅ ОК</button>
+                            <button id="cancelGradBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">❌ Отмена</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(gradModal);
+                
+                gradModal.querySelector('#applyGradBtn').onclick = () => {
+                    document.body.style.background = gradient;
+                    document.body.style.backgroundImage = '';
+                    localStorage.setItem('music_bot_bg', gradient);
+                    showNote('✨ Градиент установлен');
+                    gradModal.remove();
+                };
+                
+                gradModal.querySelector('#cancelGradBtn').onclick = () => gradModal.remove();
+                gradModal.onclick = (e) => { if (e.target === gradModal) gradModal.remove(); };
             };
         });
 
