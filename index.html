@@ -17,11 +17,10 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
-            background-attachment: fixed;
             transition: all 0.3s ease;
         }
 
+        /* Базовые градиенты для режимов (будут перезаписываться пользовательским фоном) */
         body.music-mode { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
         body.game-mode { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f2027 100%); }
         body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
@@ -45,15 +44,11 @@
             70% { box-shadow: 0 0 0 12px rgba(102,126,234,0); }
             100% { box-shadow: 0 0 0 0 rgba(102,126,234,0); }
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-3px); }
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .fullscreen-page {
             position: fixed;
@@ -101,8 +96,6 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
         .menu-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
         .menu-icon {
@@ -153,7 +146,6 @@
         .bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .usd-fill { background: linear-gradient(90deg, #3498db, #5dade2); }
         .eur-fill { background: linear-gradient(90deg, #2ecc71, #58d68d); }
-        .currency-stats { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 8px; color: rgba(255,255,255,0.25); }
 
         .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 8px; }
         .back-btn {
@@ -318,7 +310,6 @@
             cursor: pointer;
         }
 
-        /* НОВЫЙ СТИЛЬ ДЛЯ ЦИТАТ */
         .quote-card {
             background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,215,0,0.03));
             border-left: 2px solid #ffd700;
@@ -494,6 +485,62 @@
         }
         .album-card div:first-child { font-size: 44px; margin-bottom: 8px; }
 
+        .game-options { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .game-option {
+            background: rgba(255,255,255,0.08);
+            padding: 12px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .game-option:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
+        .track-name { font-size: 20px; font-weight: 600; margin: 16px 0; color: white; }
+
+        .random-artist-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 60px;
+            margin-bottom: 8px;
+        }
+        .random-artist-name { font-weight: 500; color: white; }
+        .random-artist-link {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 6px 16px;
+            border-radius: 60px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .message { display: flex; gap: 12px; margin-bottom: 16px; align-items: flex-start; }
+        .message-ai { justify-content: flex-start; }
+        .message-user { justify-content: flex-end; }
+        .message-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(155,89,182,0.3);
+            border-radius: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .message-bubble {
+            background: rgba(255,255,255,0.08);
+            padding: 10px 16px;
+            border-radius: 20px;
+            max-width: 80%;
+            font-size: 14px;
+            color: white;
+        }
+        .message-user .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .chat-container { height: 400px; overflow-y: auto; margin-bottom: 16px; display: flex; flex-direction: column; }
+
+        .ai-cover-img { width: 100%; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
             .menu-screen { gap: 16px; max-width: 240px; }
@@ -543,10 +590,7 @@
             </div>
             <div class="section-title">ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ</div>
             <div class="popular-grid" id="popularGrid"></div>
-            
-            <!-- НОВЫЙ БЛОК: СЛУЧАЙНАЯ ЦИТАТА НА ГЛАВНОЙ -->
             <div id="randomQuoteOnMain" style="margin-top: 20px;"></div>
-            
             <div id="musicResult"></div>
         </div>
         <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля</div>
@@ -584,7 +628,7 @@
     </div>
 
     <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
-    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
+    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -647,10 +691,8 @@
             ]
         };
 
-        // Функция для получения случайной цитаты исполнителя
         function getRandomQuote(artistName) {
             const lowerArtist = artistName.toLowerCase();
-            // Ищем ближайшее совпадение в базе
             let matchedKey = null;
             for (const key in quotesDatabase) {
                 if (lowerArtist.includes(key) || key.includes(lowerArtist)) {
@@ -662,11 +704,9 @@
                 const quotes = quotesDatabase[matchedKey];
                 return quotes[Math.floor(Math.random() * quotes.length)];
             }
-            // Если нет цитат для этого исполнителя, возвращаем общую
             return `«${artistName} создаёт музыку, которая трогает сердца миллионов. Вдохновляйтесь и слушайте лучшее!»`;
         }
 
-        // Функция для отображения цитаты на странице
         function displayQuote(artistName, containerId = null) {
             const quote = getRandomQuote(artistName);
             const quoteHtml = `
@@ -688,7 +728,6 @@
                     if (existingQuote) {
                         existingQuote.outerHTML = quoteHtml;
                     } else {
-                        // Вставляем после AI-факта
                         const aiFactCard = musicResult.querySelector('.ai-fact-card');
                         if (aiFactCard && aiFactCard.nextSibling) {
                             aiFactCard.insertAdjacentHTML('afterend', quoteHtml);
@@ -700,7 +739,6 @@
             }
         }
 
-        // Глобальная функция для обновления цитаты
         window.refreshQuote = function(artistName) {
             const newQuote = getRandomQuote(artistName);
             const quoteCard = document.getElementById('currentQuoteCard');
@@ -713,7 +751,6 @@
             showNote('✨ Новая цитата загружена');
         };
 
-        // Показываем случайную цитату на главном экране
         function showRandomQuoteOnMain() {
             const artists = ["Асия", "Кино", "Imagine Dragons", "Земфира", "Моргенштерн"];
             const randomArtist = artists[Math.floor(Math.random() * artists.length)];
@@ -729,43 +766,54 @@
             if (container) container.innerHTML = quoteHtml;
         }
 
-        // Обновляем ассистента, чтобы он мог давать цитаты
-        async function askBotWithQuotes(q) {
-            const low = q.toLowerCase();
+        // ========== СИСТЕМА ФОНА (ИСПРАВЛЕНА) ==========
+        let currentMode = 'music';
+        
+        function applyBackground(backgroundValue, mode = null) {
+            // Сохраняем в localStorage
+            if (backgroundValue) {
+                localStorage.setItem('music_bot_bg', backgroundValue);
+            }
             
-            // Проверка на запрос цитаты
-            if (low.includes("цитат") || low.includes("скажи что-нибудь от") || low.includes("мудрая мысль")) {
-                // Пытаемся найти имя исполнителя в запросе
-                const artists = ["асия", "кино", "imagine dragons", "земфира", "моргенштерн", "billie eilish", "the weeknd", "rammstein"];
-                let foundArtist = null;
-                for (const artist of artists) {
-                    if (low.includes(artist)) {
-                        foundArtist = artist;
-                        break;
-                    }
-                }
-                if (foundArtist) {
-                    const quote = getRandomQuote(foundArtist);
-                    return `💬 **Цитата ${foundArtist}:**\n\n«${quote}»`;
+            // Определяем какой фон применять
+            let bgToApply = backgroundValue;
+            if (!bgToApply || bgToApply === 'default') {
+                // Если сброс или нет сохранённого, используем градиент режима
+                bgToApply = null;
+            }
+            
+            // Очищаем все inline стили фона
+            document.body.style.background = '';
+            document.body.style.backgroundImage = '';
+            document.body.style.backgroundColor = '';
+            
+            if (bgToApply && bgToApply !== 'default') {
+                // Пользовательский фон (цвет, градиент, картинка)
+                if (bgToApply.startsWith('linear-gradient') || bgToApply.startsWith('radial-gradient')) {
+                    document.body.style.background = bgToApply;
+                } else if (bgToApply.startsWith('#')) {
+                    document.body.style.background = bgToApply;
                 } else {
-                    // Случайная цитата из любого артиста
-                    const allArtists = Object.keys(quotesDatabase);
-                    const randomArtist = allArtists[Math.floor(Math.random() * allArtists.length)];
-                    const quote = getRandomQuote(randomArtist);
-                    return `💬 **Случайная музыкальная цитата:**\n\n«${quote}»\n\n— ${randomArtist}`;
+                    document.body.style.backgroundImage = `url(${bgToApply})`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    document.body.style.backgroundAttachment = 'fixed';
                 }
+            } else {
+                // Используем CSS классы для градиентов режимов
+                const modeToApply = mode || currentMode;
+                document.body.className = modeToApply + '-mode';
             }
-            
-            // Существующая логика
-            if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
-                const bio = await getWiki(q);
-                if (bio) return `📖 **${bio.title}**\n\n${bio.text}\n\n🔗 [Читать полностью](${bio.url})`;
-                return `❌ Не нашёл "${q}"`;
+        }
+        
+        function loadAppearance() {
+            const savedBg = localStorage.getItem('music_bot_bg');
+            if (savedBg && savedBg !== 'default') {
+                applyBackground(savedBg);
+            } else {
+                // Сброс к градиенту текущего режима
+                applyBackground('default');
             }
-            if (low.includes("грустн")) return `😢 **Грустные песни:**\n"Останься" - Асия\n"Группа крови" - Кино`;
-            if (low.includes("весел")) return `😊 **Весёлые песни:**\n"Believer" - Imagine Dragons\n"Твой поцелуй" - Асия`;
-            if (low.includes("случайный")) { const t = tracks[Math.floor(Math.random() * tracks.length)]; return `🎲 **Случайный трек:**\n"${t.track}" - ${t.artist}`; }
-            return `🎶 Напиши имя исполнителя, "грустная песня" или "цитата Асии"`;
         }
 
         // ========== DEEZER ФОТО ==========
@@ -1194,15 +1242,24 @@
         function showMenu() { 
             menu.classList.remove('hidden-menu'); 
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
-            document.body.className = '';
+            // Применяем сохранённый фон при возврате в меню
+            applyBackground(localStorage.getItem('music_bot_bg') || 'default');
         }
         
         function showPage(page, mode) { 
-            stopCurrentPreview(); // Останавливаем музыку при смене страницы
+            stopCurrentPreview();
+            currentMode = mode;
             menu.classList.add('hidden-menu'); 
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
             if (page) page.classList.add('active'); 
-            document.body.className = mode + '-mode';
+            
+            // Применяем сохранённый фон или градиент режима
+            const savedBg = localStorage.getItem('music_bot_bg');
+            if (savedBg && savedBg !== 'default') {
+                applyBackground(savedBg);
+            } else {
+                applyBackground('default', mode);
+            }
         }
         
         document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); showRandomQuoteOnMain(); };
@@ -1262,7 +1319,7 @@
             
             lastSearchedArtist = q;
             const resDiv = document.getElementById('musicResult');
-            resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">Поиск...</div>';
+            resDiv.innerHTML = '<div style="text-align:center; padding:30px;">🔍 Поиск...</div>';
             
             const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
             const bio = await getWiki(q);
@@ -1271,7 +1328,6 @@
             const artistImageUrl = await getArtistImage(q);
             const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             
-            // Блок превью треков
             let tracksPreviewHtml = '';
             if (artistTracks.length > 0) {
                 tracksPreviewHtml = `
@@ -1326,7 +1382,6 @@
                 </div>
             `;
             
-            // Инициализация кнопок
             if (artistTracks.length > 0) {
                 artistTracks.slice(0, 10).forEach((t, idx) => {
                     const btn = resDiv.querySelector(`.preview-btn-${idx}`);
@@ -1339,7 +1394,6 @@
                 });
             }
             
-            // ПОКАЗЫВАЕМ ЦИТАТУ ПОСЛЕ ЗАГРУЗКИ
             displayQuote(q);
             loadInvertedState(q);
         }
@@ -1392,11 +1446,11 @@
         // ========== AI ОБЛОЖКИ ==========
         async function genCover(p) {
             const div = document.getElementById('aiResult');
-            div.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">Создаём...</div>';
+            div.innerHTML = '<div style="text-align:center; padding:30px;">🎨 Генерация...</div>';
             const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=512&height=512&nologo=true`;
             const img = new Image();
             img.onload = () => { div.innerHTML = `<div><img src="${url}" class="ai-cover-img"><div style="text-align:center; margin:12px;">${escapeHtml(p)}</div><button onclick="downloadImg('${url}')" class="search-btn" style="margin-top:12px;">💾 Скачать</button></div>`; };
-            img.onerror = () => div.innerHTML = '<div style="text-align:center; padding:40px;">Ошибка</div>';
+            img.onerror = () => div.innerHTML = '<div style="text-align:center; padding:40px;">❌ Ошибка генерации</div>';
             img.src = url;
         }
         
@@ -1405,11 +1459,10 @@
         const generateBtn = document.getElementById('generateAIBtn');
         if (generateBtn) generateBtn.onclick = () => { const p = document.getElementById('aiPrompt').value.trim(); if (p) genCover(p); };
 
-        // ========== АССИСТЕНТ С ЦИТАТАМИ ==========
+        // ========== АССИСТЕНТ ==========
         async function askBot(q) {
             const low = q.toLowerCase();
             
-            // Проверка на запрос цитаты
             if (low.includes("цитат") || low.includes("скажи что-нибудь от") || low.includes("мудрая мысль")) {
                 const artists = ["асия", "кино", "imagine dragons", "земфира", "моргенштерн", "billie eilish", "the weeknd", "rammstein"];
                 let foundArtist = null;
@@ -1430,7 +1483,6 @@
                 }
             }
             
-            // Существующая логика
             if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
                 const bio = await getWiki(q);
                 if (bio) return `📖 **${bio.title}**\n\n${bio.text}\n\n🔗 [Читать полностью](${bio.url})`;
@@ -1512,26 +1564,9 @@
         // ========== НАСТРОЕНИЕ ==========
         const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Lo-Fi Hip Hop"] };
         document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const track = moodTracks[btn.dataset.mood][0]; tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(track)}`); }; });
-        
-        // ========== НАСТРОЙКИ ФОНА ==========
-        function loadAppearance() {
-            const bg = localStorage.getItem('music_bot_bg');
-            if (bg && bg !== 'default') { 
-                if (bg.startsWith('linear')) {
-                    document.body.style.background = bg;
-                    document.body.style.backgroundImage = '';
-                } else if (bg.startsWith('#')) {
-                    document.body.style.background = bg;
-                    document.body.style.backgroundImage = '';
-                } else {
-                    document.body.style.backgroundImage = `url(${bg})`;
-                    document.body.style.backgroundSize = 'cover';
-                    document.body.style.backgroundPosition = 'center';
-                    document.body.style.background = '';
-                }
-            }
-        }
 
+        // ========== НАСТРОЙКИ ФОНА (ИСПРАВЛЕНЫ) ==========
+        // Цвет
         const colorPickerBtn = document.getElementById('colorPickerBtn');
         if (colorPickerBtn) {
             colorPickerBtn.onclick = () => {
@@ -1574,11 +1609,10 @@
                 
                 applyBtn.onclick = () => {
                     const color = colorPicker.value;
-                    document.body.style.background = color;
-                    document.body.style.backgroundImage = '';
-                    localStorage.setItem('music_bot_bg', color);
-                    showNote('🎨 Цвет фона изменён');
+                    applyBackground(color);
+                    modal.classList.add('hidden');
                     colorModal.remove();
+                    showNote('🎨 Цвет фона изменён');
                 };
                 
                 cancelBtn.onclick = () => colorModal.remove();
@@ -1586,6 +1620,7 @@
             };
         }
 
+        // Фото
         const uploadBgBtn = document.getElementById('uploadBgBtn');
         if (uploadBgBtn) {
             uploadBgBtn.onclick = () => {
@@ -1633,13 +1668,10 @@
                             document.body.appendChild(previewModal);
                             
                             previewModal.querySelector('#applyPhotoBtn').onclick = () => {
-                                document.body.style.backgroundImage = `url(${ev.target.result})`;
-                                document.body.style.backgroundSize = 'cover';
-                                document.body.style.backgroundPosition = 'center';
-                                document.body.style.background = '';
-                                localStorage.setItem('music_bot_bg', ev.target.result);
-                                showNote('📸 Фоновое изображение установлено');
+                                applyBackground(ev.target.result);
+                                modal.classList.add('hidden');
                                 previewModal.remove();
+                                showNote('📸 Фоновое изображение установлено');
                             };
                             
                             previewModal.querySelector('#cancelPhotoBtn').onclick = () => previewModal.remove();
@@ -1652,6 +1684,7 @@
             };
         }
 
+        // Сброс
         const resetBgBtn = document.getElementById('resetBgBtn');
         if (resetBgBtn) {
             resetBgBtn.onclick = () => {
@@ -1685,11 +1718,11 @@
                 document.body.appendChild(confirmModal);
                 
                 confirmModal.querySelector('#confirmResetBtn').onclick = () => {
-                    document.body.style.background = '';
-                    document.body.style.backgroundImage = '';
                     localStorage.setItem('music_bot_bg', 'default');
-                    showNote('🔄 Фон сброшен');
+                    applyBackground('default', currentMode);
+                    modal.classList.add('hidden');
                     confirmModal.remove();
+                    showNote('🔄 Фон сброшен к стандартному');
                 };
                 
                 confirmModal.querySelector('#cancelResetBtn').onclick = () => confirmModal.remove();
@@ -1697,6 +1730,7 @@
             };
         }
 
+        // Градиенты
         document.querySelectorAll('.gradient-circle').forEach(c => {
             c.onclick = () => {
                 const gradient = c.style.background;
@@ -1730,19 +1764,16 @@
                 document.body.appendChild(gradModal);
                 
                 gradModal.querySelector('#applyGradBtn').onclick = () => {
-                    document.body.style.background = gradient;
-                    document.body.style.backgroundImage = '';
-                    localStorage.setItem('music_bot_bg', gradient);
-                    showNote('✨ Градиент установлен');
+                    applyBackground(gradient);
+                    modal.classList.add('hidden');
                     gradModal.remove();
+                    showNote('✨ Градиент установлен');
                 };
                 
                 gradModal.querySelector('#cancelGradBtn').onclick = () => gradModal.remove();
                 gradModal.onclick = (e) => { if (e.target === gradModal) gradModal.remove(); };
             };
         });
-
-        loadAppearance();
 
         const fab = document.getElementById('settingsFab');
         const modal = document.getElementById('settingsModal');
@@ -1754,7 +1785,7 @@
       
         // ========== ГОЛОСОВОЙ ПОИСК ==========
         const vBtn = document.getElementById('voiceSearchBtn');
-        if (vBtn && 'webkitSpeechRecognition' in window) {
+        if (vBtn && 'webkitSpeechRecognition' in window && location.protocol === 'https:') {
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SR(); recognition.lang = 'ru-RU';
             recognition.onstart = () => vBtn.classList.add('listening');
@@ -1762,7 +1793,10 @@
             recognition.onerror = () => showNote('Не распознано');
             recognition.onend = () => vBtn.classList.remove('listening');
             vBtn.onclick = () => recognition.start();
-        } else if (vBtn) vBtn.style.opacity = '0.5';
+        } else if (vBtn) {
+            vBtn.style.opacity = '0.5';
+            vBtn.style.pointerEvents = 'none';
+        }
 
         // ========== ЗАПУСК ==========
         loadAppearance();
@@ -1770,10 +1804,10 @@
         updateTotal();
         loadQuick();
         startCurrencyUpdates();
-        showRandomQuoteOnMain(); // Показываем случайную цитату на главной
+        showRandomQuoteOnMain();
         showPage(pages.music, 'music');
         
-        console.log('Music Hub с цитатами загружен!');
+        console.log('Music Hub с исправленным фоном и цитатами загружен!');
     </script>
 </body>
 </html>
