@@ -18,14 +18,155 @@
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
             min-height: 100vh;
             transition: all 0.3s ease;
+            color: white;
         }
 
-        /* Базовые градиенты для режимов (будут перезаписываться пользовательским фоном) */
+        /* Базовые градиенты для режимов */
         body.music-mode { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
         body.game-mode { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f2027 100%); }
         body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
         body.assistant-mode { background: linear-gradient(135deg, #0b8793 0%, #360033 50%, #1a0033 100%); }
         body.map-mode { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
+
+        /* ========== СВЕТЛЫЙ ТЕКСТ (для тёмного фона) ========== */
+        body.light-text {
+            color: white;
+        }
+        body.light-text .glass-card,
+        body.light-text .result-card,
+        body.light-text .menu-btn,
+        body.light-text .back-btn,
+        body.light-text .popular-tag,
+        body.light-text .album-card,
+        body.light-text .preview-track-item,
+        body.light-text .currency-chart,
+        body.light-text .settings-fab,
+        body.light-text .quote-card,
+        body.light-text .ai-fact-card,
+        body.light-text .bio-section,
+        body.light-text .random-artist-card,
+        body.light-text .game-option {
+            color: white;
+        }
+        body.light-text .search-input {
+            color: #1a1a2e;
+            background: rgba(255,255,255,0.9);
+        }
+        body.light-text .section-title {
+            color: rgba(255,255,255,0.5);
+        }
+        body.light-text .artist-name-large {
+            color: white;
+        }
+        body.light-text .artist-role {
+            color: rgba(255,255,255,0.5);
+        }
+        body.light-text .currency-value,
+        body.light-text .currency-title {
+            color: white;
+        }
+        body.light-text .currency-update-time {
+            color: rgba(79,172,254,0.7);
+        }
+        body.light-text .message-bubble {
+            color: white;
+            background: rgba(255,255,255,0.08);
+        }
+        body.light-text .message-user .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        body.light-text .back-btn svg path {
+            stroke: white;
+        }
+        body.light-text .track-name {
+            color: white;
+        }
+
+        /* ========== ТЁМНЫЙ ТЕКСТ (для светлого фона) ========== */
+        body.dark-text {
+            color: #1a1a2e;
+        }
+        body.dark-text .glass-card,
+        body.dark-text .result-card,
+        body.dark-text .menu-btn,
+        body.dark-text .back-btn,
+        body.dark-text .popular-tag,
+        body.dark-text .album-card,
+        body.dark-text .preview-track-item,
+        body.dark-text .currency-chart,
+        body.dark-text .settings-fab,
+        body.dark-text .quote-card,
+        body.dark-text .ai-fact-card,
+        body.dark-text .bio-section,
+        body.dark-text .random-artist-card,
+        body.dark-text .game-option {
+            color: #1a1a2e;
+        }
+        body.dark-text .section-title {
+            color: rgba(0,0,0,0.5);
+        }
+        body.dark-text .artist-name-large {
+            color: #1a1a2e;
+        }
+        body.dark-text .artist-role {
+            color: rgba(0,0,0,0.5);
+        }
+        body.dark-text .artist-profile.inverted .artist-name-large {
+            color: #f5b042;
+        }
+        body.dark-text .artist-profile.inverted .artist-role {
+            color: rgba(245,176,66,0.7);
+        }
+        body.dark-text .search-input {
+            color: #1a1a2e;
+            background: white;
+        }
+        body.dark-text .back-btn svg path {
+            stroke: #1a1a2e;
+        }
+        body.dark-text .page-title {
+            background: linear-gradient(135deg, #1a1a2e, rgba(26,26,46,0.7));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body.dark-text .message-bubble {
+            color: #1a1a2e;
+            background: rgba(0,0,0,0.08);
+        }
+        body.dark-text .message-user .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        body.dark-text .currency-value,
+        body.dark-text .currency-title {
+            color: #1a1a2e;
+        }
+        body.dark-text .currency-update-time {
+            color: rgba(26,26,46,0.6);
+        }
+        body.dark-text .currency-stats {
+            color: rgba(0,0,0,0.25);
+        }
+        body.dark-text .quote-text {
+            color: #1a1a2e;
+        }
+        body.dark-text .ai-fact-text {
+            color: #1a1a2e;
+        }
+        body.dark-text .bio-text {
+            color: #1a1a2e;
+        }
+        body.dark-text .bio-title {
+            color: #9b59b6;
+        }
+        body.dark-text .track-name {
+            color: #1a1a2e;
+        }
+        body.dark-text .preview-track-item button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
@@ -109,7 +250,7 @@
         .menu-icon svg {
             width: 32px;
             height: 32px;
-            stroke: rgba(255,255,255,0.8);
+            stroke: currentColor;
             stroke-width: 1.5;
             fill: none;
         }
@@ -130,22 +271,22 @@
         .currency-title {
             font-size: 9px;
             font-weight: 500;
-            color: rgba(255,255,255,0.4);
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
         }
-        .currency-update-time { font-size: 8px; color: rgba(79,172,254,0.7); }
+        .currency-update-time { font-size: 8px; }
         .currency-item { margin-bottom: 8px; }
         .currency-row { display: flex; align-items: center; gap: 8px; }
         .currency-icon { font-size: 16px; min-width: 32px; }
-        .currency-value { font-size: 13px; font-weight: 600; color: white; min-width: 60px; }
+        .currency-value { font-size: 13px; font-weight: 600; min-width: 60px; }
         .bar-container { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; }
         .bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .usd-fill { background: linear-gradient(90deg, #3498db, #5dade2); }
         .eur-fill { background: linear-gradient(90deg, #2ecc71, #58d68d); }
+        .currency-stats { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 8px; }
 
         .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 8px; }
         .back-btn {
@@ -154,7 +295,6 @@
             border: 1px solid rgba(255,255,255,0.08);
             padding: 10px 18px;
             border-radius: 40px;
-            color: white;
             font-weight: 500;
             font-size: 14px;
             cursor: pointer;
@@ -166,13 +306,12 @@
         .page-title {
             font-size: 28px;
             font-weight: 600;
-            color: white;
             letter-spacing: -0.5px;
             flex: 1;
             background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7));
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .glass-card {
@@ -191,9 +330,7 @@
             border-radius: 60px;
             border: none;
             font-size: 15px;
-            background: rgba(255,255,255,0.9);
             font-weight: 500;
-            color: #1a1a2e;
         }
         .search-input:focus { outline: none; background: white; }
         .search-btn {
@@ -223,7 +360,6 @@
             font-size: 11px;
             font-weight: 500;
             margin: 20px 0 12px;
-            color: rgba(255,255,255,0.5);
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -237,7 +373,6 @@
             border-radius: 40px;
             font-size: 13px;
             font-weight: 500;
-            color: rgba(255,255,255,0.8);
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.05);
         }
@@ -265,8 +400,8 @@
             border: 2px solid rgba(255,255,255,0.15);
         }
         .artist-info { flex: 1; }
-        .artist-name-large { font-size: 24px; font-weight: 600; color: white; margin-bottom: 4px; }
-        .artist-role { font-size: 12px; color: rgba(255,255,255,0.5); }
+        .artist-name-large { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+        .artist-role { font-size: 12px; }
         .invert-icon { margin-left: 8px; font-size: 14px; opacity: 0.5; display: inline-block; }
 
         .artist-profile.inverted {
@@ -298,7 +433,7 @@
         .ai-fact-header { display: flex; gap: 14px; }
         .ai-fact-icon svg { width: 28px; height: 28px; stroke: #b983ff; stroke-width: 1.5; fill: none; }
         .ai-fact-label { font-size: 10px; color: #b983ff; font-weight: 500; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1.5px; }
-        .ai-fact-text { font-size: 14px; line-height: 1.45; color: rgba(255,255,255,0.85); }
+        .ai-fact-text { font-size: 14px; line-height: 1.45; }
         .ai-fact-refresh {
             background: rgba(155,89,182,0.2);
             border: 1px solid rgba(155,89,182,0.3);
@@ -321,7 +456,6 @@
         .quote-text {
             font-size: 15px;
             line-height: 1.5;
-            color: rgba(255,255,255,0.9);
             font-style: italic;
             font-weight: 500;
         }
@@ -367,7 +501,7 @@
             overflow-y: auto;
         }
         .bio-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #9b59b6; }
-        .bio-text { font-size: 13px; line-height: 1.45; color: rgba(255,255,255,0.75); }
+        .bio-text { font-size: 13px; line-height: 1.45; }
         .bio-wiki-link { color: #b983ff; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
 
         .settings-fab {
@@ -451,7 +585,7 @@
             border: 1px solid rgba(255,255,255,0.08);
         }
 
-        .user-info { font-size: 11px; text-align: center; margin-top: 16px; color: rgba(255,255,255,0.3); }
+        .user-info { font-size: 11px; text-align: center; margin-top: 16px; opacity: 0.3; }
         .hidden { display: none; }
 
         .preview-track-item {
@@ -472,6 +606,7 @@
             justify-content: center;
             cursor: pointer;
             font-size: 20px;
+            color: white;
         }
 
         .album-card {
@@ -494,7 +629,7 @@
             transition: all 0.2s;
         }
         .game-option:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
-        .track-name { font-size: 20px; font-weight: 600; margin: 16px 0; color: white; }
+        .track-name { font-size: 20px; font-weight: 600; margin: 16px 0; }
 
         .random-artist-card {
             display: flex;
@@ -505,7 +640,7 @@
             border-radius: 60px;
             margin-bottom: 8px;
         }
-        .random-artist-name { font-weight: 500; color: white; }
+        .random-artist-name { font-weight: 500; }
         .random-artist-link {
             background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
@@ -534,7 +669,6 @@
             border-radius: 20px;
             max-width: 80%;
             font-size: 14px;
-            color: white;
         }
         .message-user .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); }
         .chat-container { height: 400px; overflow-y: auto; margin-bottom: 16px; display: flex; flex-direction: column; }
@@ -566,20 +700,20 @@
         </div>
 
         <div class="menu-screen">
-            <div class="menu-btn" id="goToMusicBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div></div>
-            <div class="menu-btn" id="goToGameBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div></div>
-            <div class="menu-btn" id="goToAIBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div></div>
-            <div class="menu-btn" id="goToAssistantBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div></div>
-            <div class="menu-btn" id="goToRandomizerBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div></div>
-            <div class="menu-btn" id="goToMoodBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div></div>
-            <div class="menu-btn" id="goToMapBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div></div>
-            <div class="menu-btn" id="goToTicketsBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div></div>
+            <div class="menu-btn" id="goToMusicBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div></div>
+            <div class="menu-btn" id="goToGameBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div></div>
+            <div class="menu-btn" id="goToAIBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div></div>
+            <div class="menu-btn" id="goToAssistantBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div></div>
+            <div class="menu-btn" id="goToRandomizerBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div></div>
+            <div class="menu-btn" id="goToMoodBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div></div>
+            <div class="menu-btn" id="goToMapBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div></div>
+            <div class="menu-btn" id="goToTicketsBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div></div>
         </div>
     </div>
 
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
-            <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
+            <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
             <div class="page-title">МУЗЫКА</div>
         </div>
         <div class="glass-card">
@@ -597,33 +731,33 @@
     </div>
 
     <div class="fullscreen-page" id="gamePage">
-        <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">ИГРА</div></div>
-        <div class="glass-card"><button id="startGameBtn" class="search-btn" style="width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.4);">Нажмите «Начать игру»</div></div></div>
+        <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">ИГРА</div></div>
+        <div class="glass-card"><button id="startGameBtn" class="search-btn" style="width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; opacity:0.4;">Нажмите «Начать игру»</div></div></div>
     </div>
 
     <div class="fullscreen-page" id="aiPage">
-        <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI ОБЛОЖКИ</div></div>
-        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:30px; color:rgba(255,255,255,0.4);">✨ Введите описание</div></div></div>
+        <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI ОБЛОЖКИ</div></div>
+        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:30px; opacity:0.4;">✨ Введите описание</div></div></div>
     </div>
 
     <div class="fullscreen-page" id="assistantPage">
-        <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">АССИСТЕНТ</div></div>
+        <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">АССИСТЕНТ</div></div>
         <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon">🤖</div><div class="message-bubble">Привет! Напиши имя исполнителя, "грустная песня" или "цитата Асии"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
 
     <div class="fullscreen-page" id="randomizerPage">
-        <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">РАНДОМАЙЗЕР</div></div>
-        <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white; opacity:0.7;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
+        <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">РАНДОМАЙЗЕР</div></div>
+        <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="opacity:0.7;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
 
     <div class="fullscreen-page" id="mapPage">
-        <div class="page-header"><button class="back-btn" id="backFromMap"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">КОНЦЕРТНЫЕ ПЛОЩАДКИ</div></div>
+        <div class="page-header"><button class="back-btn" id="backFromMap"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">КОНЦЕРТНЫЕ ПЛОЩАДКИ</div></div>
         <div class="glass-card"><button id="geoLocationBtn" class="search-btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); width:100%;">📍 Моё местоположение</button></div>
         <div class="glass-card"><div class="section-title">🎤 КОНЦЕРТНЫЕ ЗАЛЫ</div><div id="venuesList"></div></div>
     </div>
 
     <div class="fullscreen-page" id="moodPage">
-        <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">НАСТРОЕНИЕ</div></div>
+        <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">НАСТРОЕНИЕ</div></div>
         <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
     </div>
 
@@ -766,29 +900,92 @@
             if (container) container.innerHTML = quoteHtml;
         }
 
-        // ========== СИСТЕМА ФОНА (ИСПРАВЛЕНА) ==========
+        // ========== АВТОМАТИЧЕСКИЙ ЦВЕТ ТЕКСТА ==========
+        function getLuminance(color) {
+            if (color.includes('url')) return 0.3;
+            
+            let r, g, b;
+            
+            if (color.startsWith('rgb')) {
+                const match = color.match(/\d+/g);
+                if (match) {
+                    r = parseInt(match[0]);
+                    g = parseInt(match[1]);
+                    b = parseInt(match[2]);
+                }
+            } 
+            else if (color.startsWith('#')) {
+                const hex = color.slice(1);
+                if (hex.length === 3) {
+                    r = parseInt(hex[0] + hex[0], 16);
+                    g = parseInt(hex[1] + hex[1], 16);
+                    b = parseInt(hex[2] + hex[2], 16);
+                } else if (hex.length === 6) {
+                    r = parseInt(hex.slice(0, 2), 16);
+                    g = parseInt(hex.slice(2, 4), 16);
+                    b = parseInt(hex.slice(4, 6), 16);
+                }
+            }
+            else if (color.includes('linear-gradient')) {
+                const firstColorMatch = color.match(/#[0-9a-f]{6}|#[0-9a-f]{3}|rgb\([^)]+\)/i);
+                if (firstColorMatch) {
+                    return getLuminance(firstColorMatch[0]);
+                }
+                return 0.2;
+            }
+            
+            if (r === undefined) return 0.3;
+            
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance;
+        }
+
+        function setTextColorBasedOnBackground() {
+            const bodyStyle = window.getComputedStyle(document.body);
+            let bgColor = bodyStyle.backgroundColor;
+            const bgImage = bodyStyle.backgroundImage;
+            
+            if (bgImage !== 'none' && bgImage !== '') {
+                document.body.classList.add('light-text');
+                document.body.classList.remove('dark-text');
+                return;
+            }
+            
+            if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') {
+                document.body.classList.add('light-text');
+                document.body.classList.remove('dark-text');
+                return;
+            }
+            
+            const luminance = getLuminance(bgColor);
+            
+            if (luminance > 0.6) {
+                document.body.classList.add('dark-text');
+                document.body.classList.remove('light-text');
+            } else {
+                document.body.classList.add('light-text');
+                document.body.classList.remove('dark-text');
+            }
+        }
+
+        // ========== СИСТЕМА ФОНА ==========
         let currentMode = 'music';
         
         function applyBackground(backgroundValue, mode = null) {
-            // Сохраняем в localStorage
             if (backgroundValue) {
                 localStorage.setItem('music_bot_bg', backgroundValue);
             }
             
-            // Определяем какой фон применять
             let bgToApply = backgroundValue;
             if (!bgToApply || bgToApply === 'default') {
-                // Если сброс или нет сохранённого, используем градиент режима
                 bgToApply = null;
             }
             
-            // Очищаем все inline стили фона
             document.body.style.background = '';
             document.body.style.backgroundImage = '';
             document.body.style.backgroundColor = '';
             
             if (bgToApply && bgToApply !== 'default') {
-                // Пользовательский фон (цвет, градиент, картинка)
                 if (bgToApply.startsWith('linear-gradient') || bgToApply.startsWith('radial-gradient')) {
                     document.body.style.background = bgToApply;
                 } else if (bgToApply.startsWith('#')) {
@@ -800,10 +997,11 @@
                     document.body.style.backgroundAttachment = 'fixed';
                 }
             } else {
-                // Используем CSS классы для градиентов режимов
                 const modeToApply = mode || currentMode;
                 document.body.className = modeToApply + '-mode';
             }
+            
+            setTimeout(setTextColorBasedOnBackground, 50);
         }
         
         function loadAppearance() {
@@ -811,10 +1009,15 @@
             if (savedBg && savedBg !== 'default') {
                 applyBackground(savedBg);
             } else {
-                // Сброс к градиенту текущего режима
                 applyBackground('default');
             }
         }
+
+        // Следим за изменениями фона
+        const observer = new MutationObserver(() => {
+            setTextColorBasedOnBackground();
+        });
+        observer.observe(document.body, { attributes: true, attributeFilter: ['style', 'class'] });
 
         // ========== DEEZER ФОТО ==========
         const deezerImageCache = new Map();
@@ -1114,7 +1317,7 @@
                             <div style="font-size: 14px; font-weight: 500;">${idx + 1}. ${escapeHtml(track.track)}</div>
                             <div style="font-size: 11px; opacity: 0.6;">${escapeHtml(track.artist)}</div>
                         </div>
-                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; font-size: 18px; cursor: pointer;">▶️</button>
+                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; font-size: 18px; cursor: pointer; color: white;">▶️</button>
                     </div>
                 `;
             });
@@ -1242,7 +1445,6 @@
         function showMenu() { 
             menu.classList.remove('hidden-menu'); 
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
-            // Применяем сохранённый фон при возврате в меню
             applyBackground(localStorage.getItem('music_bot_bg') || 'default');
         }
         
@@ -1253,7 +1455,6 @@
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
             if (page) page.classList.add('active'); 
             
-            // Применяем сохранённый фон или градиент режима
             const savedBg = localStorage.getItem('music_bot_bg');
             if (savedBg && savedBg !== 'default') {
                 applyBackground(savedBg);
@@ -1337,12 +1538,12 @@
                             ${artistTracks.slice(0, 10).map((t, idx) => `
                                 <div class="preview-track-item">
                                     <div style="margin-bottom: 10px;">
-                                        <div style="font-weight: 600; font-size: 16px; color: white;">${escapeHtml(t.track)}</div>
+                                        <div style="font-weight: 600; font-size: 16px;">${escapeHtml(t.track)}</div>
                                         <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div>
                                     </div>
                                     <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
                                         <span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; opacity: 0.7;">0:00</span>
-                                        <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">▶️</button>
+                                        <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer; color: white;">▶️</button>
                                     </div>
                                 </div>
                             `).join('')}
@@ -1565,8 +1766,7 @@
         const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Lo-Fi Hip Hop"] };
         document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const track = moodTracks[btn.dataset.mood][0]; tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(track)}`); }; });
 
-        // ========== НАСТРОЙКИ ФОНА (ИСПРАВЛЕНЫ) ==========
-        // Цвет
+        // ========== НАСТРОЙКИ ФОНА ==========
         const colorPickerBtn = document.getElementById('colorPickerBtn');
         if (colorPickerBtn) {
             colorPickerBtn.onclick = () => {
@@ -1620,7 +1820,6 @@
             };
         }
 
-        // Фото
         const uploadBgBtn = document.getElementById('uploadBgBtn');
         if (uploadBgBtn) {
             uploadBgBtn.onclick = () => {
@@ -1684,7 +1883,6 @@
             };
         }
 
-        // Сброс
         const resetBgBtn = document.getElementById('resetBgBtn');
         if (resetBgBtn) {
             resetBgBtn.onclick = () => {
@@ -1730,7 +1928,6 @@
             };
         }
 
-        // Градиенты
         document.querySelectorAll('.gradient-circle').forEach(c => {
             c.onclick = () => {
                 const gradient = c.style.background;
@@ -1807,7 +2004,7 @@
         showRandomQuoteOnMain();
         showPage(pages.music, 'music');
         
-        console.log('Music Hub с исправленным фоном и цитатами загружен!');
+        console.log('Music Hub с адаптивным фоном и цитатами загружен!');
     </script>
 </body>
 </html>
