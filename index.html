@@ -318,6 +318,41 @@
             cursor: pointer;
         }
 
+        /* НОВЫЙ СТИЛЬ ДЛЯ ЦИТАТ */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,215,0,0.03));
+            border-left: 2px solid #ffd700;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .quote-icon { font-size: 24px; margin-bottom: 8px; opacity: 0.7; }
+        .quote-text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: rgba(255,255,255,0.9);
+            font-style: italic;
+            font-weight: 500;
+        }
+        .quote-author {
+            font-size: 11px;
+            color: #ffd700;
+            margin-top: 10px;
+            text-align: right;
+            letter-spacing: 0.5px;
+        }
+        .quote-refresh {
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.3);
+            padding: 4px 12px;
+            border-radius: 40px;
+            color: #ffd700;
+            font-size: 10px;
+            margin-top: 8px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
         .platform-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
         .platform-btn {
             padding: 12px;
@@ -508,6 +543,10 @@
             </div>
             <div class="section-title">ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ</div>
             <div class="popular-grid" id="popularGrid"></div>
+            
+            <!-- НОВЫЙ БЛОК: СЛУЧАЙНАЯ ЦИТАТА НА ГЛАВНОЙ -->
+            <div id="randomQuoteOnMain" style="margin-top: 20px;"></div>
+            
             <div id="musicResult"></div>
         </div>
         <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля</div>
@@ -525,7 +564,7 @@
 
     <div class="fullscreen-page" id="assistantPage">
         <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">АССИСТЕНТ</div></div>
-        <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon">🤖</div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
+        <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon">🤖</div><div class="message-bubble">Привет! Напиши имя исполнителя, "грустная песня" или "цитата Асии"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
 
     <div class="fullscreen-page" id="randomizerPage">
@@ -551,6 +590,183 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
+
+        // ========== БАЗА ЦИТАТ ИСПОЛНИТЕЛЕЙ ==========
+        const quotesDatabase = {
+            "асия": [
+                "«Музыка — это способ говорить, когда слова заканчиваются»",
+                "«Каждая песня — это маленькая жизнь, прожитая за три минуты»",
+                "«Я пишу о том, что чувствую. Искренность — главное в творчестве»",
+                "«Сцена — это место, где я могу быть собой без масок»",
+                "«Вдохновение приходит, когда ты его не ждёшь, поэтому нужно всегда быть готовым»"
+            ],
+            "кино": [
+                "«Мы ждём перемен — это наше главное желание»",
+                "«Звезда по имени Солнце — она освещает путь каждому»",
+                "«Музыка должна быть честной. Если ты врёшь в песне — люди это чувствуют»",
+                "«Я хочу быть услышанным, но не навязывать своё мнение»",
+                "«Группа крови — это не просто слова, это судьба целого поколения»"
+            ],
+            "imagine dragons": [
+                "«It's okay to be not okay — быть не в порядке — это нормально»",
+                "«Believer — о том, как боль делает нас сильнее»",
+                "«Музыка лечит. Она спасла мне жизнь» (Дэн Рейнольдс)",
+                "«Мы не пытаемся быть модными. Мы пытаемся быть искренними»",
+                "«Наша музыка для тех, кто чувствует себя одиноким в толпе»"
+            ],
+            "земфира": [
+                "«Я пою о том, что вижу. И мне не стыдно»",
+                "«Искала тебя — искала себя одновременно»",
+                "«Свобода — это когда тебе не нужно никому ничего доказывать»",
+                "«Музыка — моя терапия, моя жизнь и моё спасение»",
+                "«Петь на больших стадионах страшно, но без этого кайфа не понять»"
+            ],
+            "моргенштерн": [
+                "«Делай что хочешь — это единственное правило»",
+                "«Я никогда не думал, что стану известным. Просто делал то, что мне нравится»",
+                "«Деньги — это инструмент, а не цель»",
+                "«Хейтеры — моя лучшая мотивация»",
+                "«Cadillac — это не про машину, это про мечту»"
+            ],
+            "billie eilish": [
+                "«Ты не обязана быть той, кем тебя хотят видеть другие»",
+                "«Уязвимость — это сила, а не слабость»",
+                "«Я хочу, чтобы моя музыка помогала людям чувствовать себя менее одинокими»",
+                "«Ты можешь всё. Даже если сейчас тебе кажется, что это не так»"
+            ],
+            "the weeknd": [
+                "«Blinding Lights — это песня о том, как мы все ищем связь с другими»",
+                "«Мрачная музыка может быть танцевальной. Это и есть жизнь»",
+                "«Успех — это когда ты можешь делать то, что любишь, и никого не слушать»"
+            ],
+            "rammstein": [
+                "«Наша музыка — это театр абсурда и силы»",
+                "«Мы поём по-немецки, но нас понимают во всём мире. Музыка не знает языков»",
+                "«Провокация — это способ заставить людей думать»",
+                "«Живые выступления — это наш дом. Там мы настоящие»"
+            ]
+        };
+
+        // Функция для получения случайной цитаты исполнителя
+        function getRandomQuote(artistName) {
+            const lowerArtist = artistName.toLowerCase();
+            // Ищем ближайшее совпадение в базе
+            let matchedKey = null;
+            for (const key in quotesDatabase) {
+                if (lowerArtist.includes(key) || key.includes(lowerArtist)) {
+                    matchedKey = key;
+                    break;
+                }
+            }
+            if (matchedKey && quotesDatabase[matchedKey].length > 0) {
+                const quotes = quotesDatabase[matchedKey];
+                return quotes[Math.floor(Math.random() * quotes.length)];
+            }
+            // Если нет цитат для этого исполнителя, возвращаем общую
+            return `«${artistName} создаёт музыку, которая трогает сердца миллионов. Вдохновляйтесь и слушайте лучшее!»`;
+        }
+
+        // Функция для отображения цитаты на странице
+        function displayQuote(artistName, containerId = null) {
+            const quote = getRandomQuote(artistName);
+            const quoteHtml = `
+                <div class="quote-card" id="currentQuoteCard">
+                    <div class="quote-icon">💬</div>
+                    <div class="quote-text">${escapeHtml(quote)}</div>
+                    <div class="quote-author">— ${escapeHtml(artistName)}</div>
+                    <span class="quote-refresh" onclick="refreshQuote('${escapeHtml(artistName)}')">🔄 Другая цитата</span>
+                </div>
+            `;
+            
+            if (containerId) {
+                const container = document.getElementById(containerId);
+                if (container) container.innerHTML = quoteHtml;
+            } else {
+                const musicResult = document.getElementById('musicResult');
+                if (musicResult) {
+                    const existingQuote = document.getElementById('currentQuoteCard');
+                    if (existingQuote) {
+                        existingQuote.outerHTML = quoteHtml;
+                    } else {
+                        // Вставляем после AI-факта
+                        const aiFactCard = musicResult.querySelector('.ai-fact-card');
+                        if (aiFactCard && aiFactCard.nextSibling) {
+                            aiFactCard.insertAdjacentHTML('afterend', quoteHtml);
+                        } else {
+                            musicResult.insertAdjacentHTML('beforeend', quoteHtml);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Глобальная функция для обновления цитаты
+        window.refreshQuote = function(artistName) {
+            const newQuote = getRandomQuote(artistName);
+            const quoteCard = document.getElementById('currentQuoteCard');
+            if (quoteCard) {
+                const quoteText = quoteCard.querySelector('.quote-text');
+                const quoteAuthor = quoteCard.querySelector('.quote-author');
+                if (quoteText) quoteText.innerHTML = escapeHtml(newQuote);
+                if (quoteAuthor) quoteAuthor.innerHTML = `— ${escapeHtml(artistName)}`;
+            }
+            showNote('✨ Новая цитата загружена');
+        };
+
+        // Показываем случайную цитату на главном экране
+        function showRandomQuoteOnMain() {
+            const artists = ["Асия", "Кино", "Imagine Dragons", "Земфира", "Моргенштерн"];
+            const randomArtist = artists[Math.floor(Math.random() * artists.length)];
+            const quote = getRandomQuote(randomArtist);
+            const quoteHtml = `
+                <div class="quote-card" style="margin-top: 16px;">
+                    <div class="quote-icon">💭</div>
+                    <div class="quote-text" style="font-size: 13px;">${escapeHtml(quote)}</div>
+                    <div class="quote-author">— ${escapeHtml(randomArtist)}</div>
+                </div>
+            `;
+            const container = document.getElementById('randomQuoteOnMain');
+            if (container) container.innerHTML = quoteHtml;
+        }
+
+        // Обновляем ассистента, чтобы он мог давать цитаты
+        async function askBotWithQuotes(q) {
+            const low = q.toLowerCase();
+            
+            // Проверка на запрос цитаты
+            if (low.includes("цитат") || low.includes("скажи что-нибудь от") || low.includes("мудрая мысль")) {
+                // Пытаемся найти имя исполнителя в запросе
+                const artists = ["асия", "кино", "imagine dragons", "земфира", "моргенштерн", "billie eilish", "the weeknd", "rammstein"];
+                let foundArtist = null;
+                for (const artist of artists) {
+                    if (low.includes(artist)) {
+                        foundArtist = artist;
+                        break;
+                    }
+                }
+                if (foundArtist) {
+                    const quote = getRandomQuote(foundArtist);
+                    return `💬 **Цитата ${foundArtist}:**\n\n«${quote}»`;
+                } else {
+                    // Случайная цитата из любого артиста
+                    const allArtists = Object.keys(quotesDatabase);
+                    const randomArtist = allArtists[Math.floor(Math.random() * allArtists.length)];
+                    const quote = getRandomQuote(randomArtist);
+                    return `💬 **Случайная музыкальная цитата:**\n\n«${quote}»\n\n— ${randomArtist}`;
+                }
+            }
+            
+            // Существующая логика
+            if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
+                const bio = await getWiki(q);
+                if (bio) return `📖 **${bio.title}**\n\n${bio.text}\n\n🔗 [Читать полностью](${bio.url})`;
+                return `❌ Не нашёл "${q}"`;
+            }
+            if (low.includes("грустн")) return `😢 **Грустные песни:**\n"Останься" - Асия\n"Группа крови" - Кино`;
+            if (low.includes("весел")) return `😊 **Весёлые песни:**\n"Believer" - Imagine Dragons\n"Твой поцелуй" - Асия`;
+            if (low.includes("случайный")) { const t = tracks[Math.floor(Math.random() * tracks.length)]; return `🎲 **Случайный трек:**\n"${t.track}" - ${t.artist}`; }
+            return `🎶 Напиши имя исполнителя, "грустная песня" или "цитата Асии"`;
+        }
 
         // ========== DEEZER ФОТО ==========
         const deezerImageCache = new Map();
@@ -982,13 +1198,14 @@
         }
         
         function showPage(page, mode) { 
+            stopCurrentPreview(); // Останавливаем музыку при смене страницы
             menu.classList.add('hidden-menu'); 
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
             if (page) page.classList.add('active'); 
             document.body.className = mode + '-mode';
         }
         
-        document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); };
+        document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); showRandomQuoteOnMain(); };
         document.getElementById('goToGameBtn').onclick = () => showPage(pages.game, 'game');
         document.getElementById('goToAIBtn').onclick = () => showPage(pages.ai, 'ai');
         document.getElementById('goToAssistantBtn').onclick = () => showPage(pages.assistant, 'assistant');
@@ -1054,7 +1271,7 @@
             const artistImageUrl = await getArtistImage(q);
             const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             
-            // Блок превью треков (центрированный)
+            // Блок превью треков
             let tracksPreviewHtml = '';
             if (artistTracks.length > 0) {
                 tracksPreviewHtml = `
@@ -1122,6 +1339,8 @@
                 });
             }
             
+            // ПОКАЗЫВАЕМ ЦИТАТУ ПОСЛЕ ЗАГРУЗКИ
+            displayQuote(q);
             loadInvertedState(q);
         }
         
@@ -1186,9 +1405,32 @@
         const generateBtn = document.getElementById('generateAIBtn');
         if (generateBtn) generateBtn.onclick = () => { const p = document.getElementById('aiPrompt').value.trim(); if (p) genCover(p); };
 
-        // ========== АССИСТЕНТ ==========
+        // ========== АССИСТЕНТ С ЦИТАТАМИ ==========
         async function askBot(q) {
             const low = q.toLowerCase();
+            
+            // Проверка на запрос цитаты
+            if (low.includes("цитат") || low.includes("скажи что-нибудь от") || low.includes("мудрая мысль")) {
+                const artists = ["асия", "кино", "imagine dragons", "земфира", "моргенштерн", "billie eilish", "the weeknd", "rammstein"];
+                let foundArtist = null;
+                for (const artist of artists) {
+                    if (low.includes(artist)) {
+                        foundArtist = artist;
+                        break;
+                    }
+                }
+                if (foundArtist) {
+                    const quote = getRandomQuote(foundArtist);
+                    return `💬 **Цитата ${foundArtist}:**\n\n«${quote}»`;
+                } else {
+                    const allArtists = Object.keys(quotesDatabase);
+                    const randomArtist = allArtists[Math.floor(Math.random() * allArtists.length)];
+                    const quote = getRandomQuote(randomArtist);
+                    return `💬 **Случайная музыкальная цитата:**\n\n«${quote}»\n\n— ${randomArtist}`;
+                }
+            }
+            
+            // Существующая логика
             if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
                 const bio = await getWiki(q);
                 if (bio) return `📖 **${bio.title}**\n\n${bio.text}\n\n🔗 [Читать полностью](${bio.url})`;
@@ -1197,7 +1439,7 @@
             if (low.includes("грустн")) return `😢 **Грустные песни:**\n"Останься" - Асия\n"Группа крови" - Кино`;
             if (low.includes("весел")) return `😊 **Весёлые песни:**\n"Believer" - Imagine Dragons\n"Твой поцелуй" - Асия`;
             if (low.includes("случайный")) { const t = tracks[Math.floor(Math.random() * tracks.length)]; return `🎲 **Случайный трек:**\n"${t.track}" - ${t.artist}`; }
-            return `🎶 Напиши имя исполнителя или "грустная песня"`;
+            return `🎶 Напиши имя исполнителя, "грустная песня" или "цитата Асии"`;
         }
         
         function addMsg(text, isUser = false) {
@@ -1271,9 +1513,8 @@
         const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Lo-Fi Hip Hop"] };
         document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const track = moodTracks[btn.dataset.mood][0]; tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(track)}`); }; });
         
-        // ========== НАСТРОЙКИ ФОНА (РАБОТАЕТ НА ТЕЛЕФОНЕ И КОМПЬЮТЕРЕ) ==========
-
-         function loadAppearance() {
+        // ========== НАСТРОЙКИ ФОНА ==========
+        function loadAppearance() {
             const bg = localStorage.getItem('music_bot_bg');
             if (bg && bg !== 'default') { 
                 if (bg.startsWith('linear')) {
@@ -1291,7 +1532,6 @@
             }
         }
 
-        // Выбор цвета с кнопкой ОК
         const colorPickerBtn = document.getElementById('colorPickerBtn');
         if (colorPickerBtn) {
             colorPickerBtn.onclick = () => {
@@ -1346,7 +1586,6 @@
             };
         }
 
-        // Загрузка фото с кнопкой ОК
         const uploadBgBtn = document.getElementById('uploadBgBtn');
         if (uploadBgBtn) {
             uploadBgBtn.onclick = () => {
@@ -1413,7 +1652,6 @@
             };
         }
 
-        // Сброс фона с подтверждением
         const resetBgBtn = document.getElementById('resetBgBtn');
         if (resetBgBtn) {
             resetBgBtn.onclick = () => {
@@ -1459,7 +1697,6 @@
             };
         }
 
-        // Градиенты с кнопкой ОК
         document.querySelectorAll('.gradient-circle').forEach(c => {
             c.onclick = () => {
                 const gradient = c.style.background;
@@ -1533,9 +1770,10 @@
         updateTotal();
         loadQuick();
         startCurrencyUpdates();
+        showRandomQuoteOnMain(); // Показываем случайную цитату на главной
         showPage(pages.music, 'music');
         
-        console.log('Music Hub загружен!');
+        console.log('Music Hub с цитатами загружен!');
     </script>
 </body>
 </html>
