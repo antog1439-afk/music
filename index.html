@@ -2,2053 +2,899 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Music Hub | Музыкальный центр</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <style>
-        /* ========== ОСНОВНЫЕ СТИЛИ ========== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
             min-height: 100vh;
-            transition: all 0.3s ease;
             color: white;
-        }
-
-        /* Базовые градиенты для режимов */
-        body.music-mode { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
-        body.game-mode { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f2027 100%); }
-        body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
-        body.assistant-mode { background: linear-gradient(135deg, #0b8793 0%, #360033 50%, #1a0033 100%); }
-        body.map-mode { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
-
-        /* Светлый текст (для тёмного фона) */
-        body.light-text { color: white; }
-        body.light-text .glass-card,
-        body.light-text .result-card,
-        body.light-text .menu-btn,
-        body.light-text .back-btn,
-        body.light-text .popular-tag,
-        body.light-text .album-card,
-        body.light-text .preview-track-item,
-        body.light-text .settings-fab,
-        body.light-text .quote-card,
-        body.light-text .ai-fact-card,
-        body.light-text .bio-section,
-        body.light-text .random-artist-card,
-        body.light-text .game-option,
-        body.light-text .playlist-card,
-        body.light-text .genre-card { color: white; }
-        body.light-text .search-input { color: #1a1a2e; background: rgba(255,255,255,0.9); }
-        body.light-text .section-title { color: rgba(255,255,255,0.5); }
-        body.light-text .artist-name-large { color: white; }
-        body.light-text .artist-role { color: rgba(255,255,255,0.5); }
-        body.light-text .message-bubble { color: white; background: rgba(255,255,255,0.08); }
-        body.light-text .message-user .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-
-        /* Тёмный текст (для светлого фона) */
-        body.dark-text { color: #1a1a2e; }
-        body.dark-text .glass-card,
-        body.dark-text .result-card,
-        body.dark-text .menu-btn,
-        body.dark-text .back-btn,
-        body.dark-text .popular-tag,
-        body.dark-text .album-card,
-        body.dark-text .preview-track-item,
-        body.dark-text .settings-fab,
-        body.dark-text .quote-card,
-        body.dark-text .ai-fact-card,
-        body.dark-text .bio-section,
-        body.dark-text .random-artist-card,
-        body.dark-text .game-option,
-        body.dark-text .playlist-card,
-        body.dark-text .genre-card { color: #1a1a2e; }
-        body.dark-text .section-title { color: rgba(0,0,0,0.5); }
-        body.dark-text .artist-name-large { color: #1a1a2e; }
-        body.dark-text .artist-role { color: rgba(0,0,0,0.5); }
-        body.dark-text .search-input { color: #1a1a2e; background: white; }
-        body.dark-text .back-btn svg path { stroke: #1a1a2e; }
-        body.dark-text .page-title {
-            background: linear-gradient(135deg, #1a1a2e, rgba(26,26,46,0.7));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        body.dark-text .message-bubble { color: #1a1a2e; background: rgba(0,0,0,0.08); }
-        body.dark-text .message-user .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        body.dark-text .quote-text { color: #1a1a2e; }
-        body.dark-text .ai-fact-text { color: #1a1a2e; }
-        body.dark-text .bio-text { color: #1a1a2e; }
-        body.dark-text .bio-title { color: #9b59b6; }
-
-        /* Стили скроллбара */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, rgba(102,126,234,0.5), rgba(118,75,162,0.5)); border-radius: 10px; }
-
-        /* Анимации */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.96); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        /* Основные компоненты */
-        .fullscreen-page {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow-y: auto;
             padding: 20px;
-            backdrop-filter: blur(8px);
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            z-index: 10;
-        }
-        .fullscreen-page.active { transform: translateX(0); }
-
-        .menu-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.4s ease;
-            z-index: 5;
-        }
-        .menu-container.hidden-menu { transform: translateX(-100%); }
-
-        .menu-screen {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            width: 100%;
-            max-width: 300px;
-            padding: 20px;
-            animation: fadeInUp 0.6s ease;
         }
 
-        .menu-btn {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 32px;
-            padding: 24px 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .menu-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
-
-        .menu-icon {
-            width: 56px;
-            height: 56px;
+        .container {
+            max-width: 500px;
             margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .menu-icon svg {
-            width: 32px;
-            height: 32px;
-            stroke: currentColor;
-            stroke-width: 1.5;
-            fill: none;
         }
 
-        .page-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding-top: 8px;
-        }
-
-        .back-btn {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 10px 18px;
-            border-radius: 40px;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .back-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
-
-        .page-title {
+        h1 {
+            text-align: center;
             font-size: 28px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            flex: 1;
-            background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7));
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, #a8a8ff);
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .glass-card {
-            background: rgba(255,255,255,0.04);
-            backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 24px;
+        .card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 20px;
             margin-bottom: 16px;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .search-box {
             display: flex;
             gap: 10px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .search-input {
             flex: 1;
-            padding: 14px 20px;
+            padding: 14px 18px;
             border-radius: 60px;
             border: none;
-            font-size: 15px;
-            background: rgba(255,255,255,0.9);
-            font-weight: 500;
-            color: #1a1a2e;
+            font-size: 16px;
+            background: rgba(255,255,255,0.95);
         }
-        .search-input:focus { outline: none; background: white; }
 
         .search-btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
-            padding: 0 28px;
+            padding: 0 24px;
             border-radius: 60px;
             color: white;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
+            font-size: 14px;
         }
-        .search-btn:active { transform: scale(0.96); }
 
-        .section-title {
-            font-size: 11px;
-            font-weight: 500;
-            margin: 20px 0 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.5;
-        }
+        .search-btn:active { transform: scale(0.96); }
 
         .popular-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            margin: 16px 0;
         }
 
         .popular-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.06);
-            padding: 8px 18px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
             border-radius: 40px;
             font-size: 13px;
-            font-weight: 500;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
             transition: all 0.2s;
         }
-        .popular-tag:active { transform: scale(0.95); background: rgba(255,255,255,0.12); }
 
-        .artist-profile {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 24px;
-            padding: 8px;
-            border-radius: 28px;
-            cursor: pointer;
-            transition: all 0.3s;
+        .popular-tag:active { background: rgba(255,255,255,0.2); transform: scale(0.95); }
+
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            margin: 20px 0 12px;
         }
 
-        .artist-avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 36px;
+        .artist-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-            border: 2px solid rgba(255,255,255,0.15);
-        }
-
-        .artist-name-large {
             font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 4px;
+            font-weight: bold;
         }
 
-        .artist-role {
-            font-size: 12px;
-            opacity: 0.5;
+        .artist-name {
+            font-size: 18px;
+            font-weight: 600;
         }
 
         .result-card {
-            background: rgba(255,255,255,0.04);
-            border-radius: 28px;
-            padding: 24px;
-            margin-top: 20px;
-            animation: fadeInScale 0.5s ease;
-            border: 1px solid rgba(255,255,255,0.06);
-        }
-
-        /* Карточка цитаты */
-        .quote-card {
-            background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(255,215,0,0.03));
-            border-left: 2px solid #ffd700;
-            border-radius: 20px;
-            padding: 16px;
-            margin: 16px 0;
-        }
-        .quote-icon { font-size: 24px; margin-bottom: 8px; opacity: 0.7; }
-        .quote-text {
-            font-size: 15px;
-            line-height: 1.5;
-            font-style: italic;
-            font-weight: 500;
-        }
-        .quote-author {
-            font-size: 11px;
-            color: #ffd700;
-            margin-top: 10px;
-            text-align: right;
-        }
-        .quote-refresh {
-            background: rgba(255,215,0,0.15);
-            border: 1px solid rgba(255,215,0,0.3);
-            padding: 4px 12px;
-            border-radius: 40px;
-            color: #ffd700;
-            font-size: 10px;
-            margin-top: 8px;
-            cursor: pointer;
-            display: inline-block;
-        }
-
-        /* Карточка факта ИИ */
-        .ai-fact-card {
-            background: linear-gradient(135deg, rgba(155,89,182,0.12), rgba(142,68,173,0.08));
-            border-left: 2px solid #b983ff;
-            border-radius: 20px;
-            padding: 16px;
-            margin: 20px 0;
-        }
-        .ai-fact-header { display: flex; gap: 14px; }
-        .ai-fact-icon svg { width: 28px; height: 28px; stroke: #b983ff; stroke-width: 1.5; fill: none; }
-        .ai-fact-label { font-size: 10px; color: #b983ff; font-weight: 500; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1.5px; }
-        .ai-fact-text { font-size: 14px; line-height: 1.45; }
-        .ai-fact-refresh {
-            background: rgba(155,89,182,0.2);
-            border: 1px solid rgba(155,89,182,0.3);
-            padding: 6px 14px;
-            border-radius: 40px;
-            color: white;
-            font-size: 11px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        /* Платформенные кнопки */
-        .platform-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        .platform-btn {
-            padding: 12px;
-            border-radius: 60px;
-            text-align: center;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            font-size: 14px;
-            transition: transform 0.1s;
-        }
-        .platform-btn:active { transform: scale(0.97); }
-        .yandex-btn { background: #ffcc00; color: #1a1a2e; }
-        .youtube-btn { background: #ff0000; color: white; }
-
-        /* Карточка трека для превью */
-        .preview-track-item {
-            background: rgba(255,255,255,0.03);
+            background: rgba(255,255,255,0.05);
             border-radius: 24px;
-            padding: 14px 16px;
-            text-align: center;
-            margin-bottom: 10px;
-            transition: all 0.2s;
-        }
-        .preview-track-item button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border: none;
-            width: 44px;
-            height: 44px;
-            border-radius: 44px;
-            font-size: 20px;
-            cursor: pointer;
-            color: white;
-        }
-
-        /* Карточка альбома */
-        .album-card {
-            background: rgba(255,255,255,0.04);
-            border-radius: 20px;
-            padding: 12px;
-            width: calc(33% - 8px);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .album-card:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
-        .album-card div:first-child { font-size: 44px; margin-bottom: 8px; }
-
-        /* Карточка плейлиста */
-        .playlist-card {
-            background: rgba(255,255,255,0.04);
-            border-radius: 20px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .playlist-card:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
-        .playlist-cover { font-size: 48px; margin-bottom: 8px; }
-
-        /* Карточка жанра */
-        .genre-card {
-            background: rgba(255,255,255,0.04);
-            border-radius: 20px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .genre-card:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
-        .genre-icon { font-size: 36px; margin-bottom: 8px; }
-
-        /* Биография */
-        .bio-section {
-            background: rgba(0,0,0,0.2);
-            border-radius: 20px;
-            padding: 16px;
-            margin-top: 20px;
-            max-height: 220px;
-            overflow-y: auto;
-        }
-        .bio-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #9b59b6; }
-        .bio-text { font-size: 13px; line-height: 1.45; }
-
-        /* Кнопка настроек */
-        .settings-fab {
-            position: fixed;
-            bottom: 22px;
-            right: 22px;
-            width: 52px;
-            height: 52px;
-            border-radius: 52px;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(16px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-        .settings-fab:active { transform: scale(0.92); }
-
-        /* Модальное окно настроек */
-        .settings-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(24px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            animation: fadeInScale 0.3s ease;
-        }
-        .modal-card {
-            background: rgba(20,20,30,0.95);
-            backdrop-filter: blur(24px);
-            border-radius: 32px;
-            padding: 28px;
-            width: 90%;
-            max-width: 320px;
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-        .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; text-align: center; color: white; }
-        .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-        .settings-label { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8); }
-        .gradient-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
-        .gradient-circle {
-            width: 48px;
-            height: 48px;
-            border-radius: 48px;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.2);
-            transition: transform 0.2s;
-        }
-        .gradient-circle:active { transform: scale(0.95); }
-        .close-modal, .appearance-btn {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 12px;
-            border-radius: 60px;
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        .appearance-btn { padding: 8px 16px; font-size: 13px; }
-
-        /* Уведомления */
-        .notification-toast {
-            position: fixed;
-            bottom: 90px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(20px);
-            border-radius: 60px;
-            padding: 12px 20px;
-            text-align: center;
-            z-index: 150;
-            animation: slideUp 0.3s ease;
-            font-size: 13px;
-            font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        /* Игра */
-        .game-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            padding: 20px;
             margin-top: 20px;
         }
-        .game-option {
-            background: rgba(255,255,255,0.08);
-            padding: 12px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .game-option:active { transform: scale(0.96); background: rgba(255,255,255,0.15); }
-        .track-name {
-            font-size: 20px;
-            font-weight: 600;
-            margin: 16px 0;
-            text-align: center;
-        }
 
-        /* Рандомайзер */
-        .random-artist-card {
+        .track-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 60px;
-            margin-bottom: 8px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        .random-artist-link {
+
+        .track-name {
+            font-weight: 500;
+        }
+
+        .listen-btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
             border: none;
-            padding: 6px 16px;
-            border-radius: 60px;
+            padding: 8px 20px;
+            border-radius: 40px;
             color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .quote-box {
+            background: rgba(255,215,0,0.1);
+            border-left: 3px solid #ffd700;
+            padding: 14px;
+            border-radius: 16px;
+            margin: 16px 0;
+            font-style: italic;
+        }
+
+        .fact-box {
+            background: rgba(155,89,182,0.15);
+            border-left: 3px solid #b983ff;
+            padding: 14px;
+            border-radius: 16px;
+            margin: 16px 0;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .menu-item:active { transform: scale(0.95); background: rgba(255,255,255,0.15); }
+
+        .menu-emoji { font-size: 28px; margin-bottom: 6px; }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 16px;
             cursor: pointer;
         }
 
-        /* Чат ассистента */
+        .game-option {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 60px;
+            margin: 8px 0;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .chat-container {
+            height: 350px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .message {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
-            align-items: flex-start;
+            gap: 10px;
         }
-        .message-ai { justify-content: flex-start; }
-        .message-user { justify-content: flex-end; }
-        .message-icon {
-            width: 32px;
-            height: 32px;
-            background: rgba(155,89,182,0.3);
-            border-radius: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
+
+        .message-user {
+            justify-content: flex-end;
         }
+
         .message-bubble {
-            background: rgba(255,255,255,0.08);
-            padding: 10px 16px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 14px;
             border-radius: 20px;
             max-width: 80%;
             font-size: 14px;
         }
+
         .message-user .message-bubble {
             background: linear-gradient(135deg, #667eea, #764ba2);
         }
-        .chat-container {
-            height: 400px;
-            overflow-y: auto;
-            margin-bottom: 16px;
+
+        .random-artist {
             display: flex;
-            flex-direction: column;
-        }
-
-        /* AI обложки */
-        .ai-cover-img {
-            width: 100%;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        /* Концертные площадки */
-        .venue-card {
-            background: rgba(255,255,255,0.04);
-            border-radius: 20px;
-            padding: 12px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 60px;
             margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .venue-card:active { transform: scale(0.98); background: rgba(255,255,255,0.08); }
-
-        /* Адаптивность */
-        @media (max-width: 480px) {
-            .fullscreen-page { padding: 16px; }
-            .menu-screen { gap: 16px; max-width: 260px; }
-            .menu-btn { padding: 18px 8px; }
-            .artist-avatar { width: 56px; height: 56px; font-size: 24px; }
-            .artist-name-large { font-size: 20px; }
-            .album-card { width: calc(50% - 6px); }
-            .page-title { font-size: 24px; }
         }
 
-        .hidden { display: none; }
-        .user-info { font-size: 11px; text-align: center; margin-top: 16px; opacity: 0.3; }
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 20px auto;
+        .venue-card {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 16px;
+            margin-bottom: 8px;
         }
-        .genre-grid {
+
+        .mood-buttons {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
-        .playlist-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+
+        .mood-btn {
+            padding: 14px;
+            border-radius: 60px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
         }
-        .album-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255,255,255,0.9);
+            margin-bottom: 12px;
+            font-family: inherit;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 11px;
+            opacity: 0.4;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .menu-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+            .menu-item { padding: 10px 4px; font-size: 10px; }
+            .menu-emoji { font-size: 24px; }
         }
     </style>
 </head>
 <body>
-    <!-- ========== МЕНЮ ========== -->
-    <div class="menu-container" id="menuContainer">
-        <div class="menu-screen">
-            <div class="menu-btn" id="goToMusicBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
-                <div>МУЗЫКА</div>
-            </div>
-            <div class="menu-btn" id="goToGameBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
-                <div>ИГРА</div>
-            </div>
-            <div class="menu-btn" id="goToAIBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div>
-                <div>AI ОБЛОЖКИ</div>
-            </div>
-            <div class="menu-btn" id="goToAssistantBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
-                <div>АССИСТЕНТ</div>
-            </div>
-            <div class="menu-btn" id="goToRandomizerBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
-                <div>РАНДОМАЙЗЕР</div>
-            </div>
-            <div class="menu-btn" id="goToMoodBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div>
-                <div>НАСТРОЕНИЕ</div>
-            </div>
-            <div class="menu-btn" id="goToMapBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-                <div>ПЛОЩАДКИ</div>
-            </div>
-            <div class="menu-btn" id="goToPlaylistsBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h12"/><circle cx="18" cy="18" r="3"/><path d="M21 18v-6l-3 2"/></svg></div>
-                <div>ПЛЕЙЛИСТЫ</div>
-            </div>
+<div class="container">
+    <h1>🎵 MUSIC HUB</h1>
+
+    <!-- Меню -->
+    <div class="menu-grid">
+        <div class="menu-item" onclick="showPage('music')">
+            <div class="menu-emoji">🎤</div>
+            <div>МУЗЫКА</div>
+        </div>
+        <div class="menu-item" onclick="showPage('game')">
+            <div class="menu-emoji">🎮</div>
+            <div>ИГРА</div>
+        </div>
+        <div class="menu-item" onclick="showPage('assistant')">
+            <div class="menu-emoji">🤖</div>
+            <div>АССИСТЕНТ</div>
+        </div>
+        <div class="menu-item" onclick="showPage('randomizer')">
+            <div class="menu-emoji">🎲</div>
+            <div>РАНДОМ</div>
+        </div>
+        <div class="menu-item" onclick="showPage('mood')">
+            <div class="menu-emoji">😊</div>
+            <div>НАСТРОЕНИЕ</div>
+        </div>
+        <div class="menu-item" onclick="showPage('map')">
+            <div class="menu-emoji">📍</div>
+            <div>ПЛОЩАДКИ</div>
+        </div>
+        <div class="menu-item" onclick="showPage('playlists')">
+            <div class="menu-emoji">📀</div>
+            <div>ПЛЕЙЛИСТЫ</div>
+        </div>
+        <div class="menu-item" onclick="showPage('ai')">
+            <div class="menu-emoji">✨</div>
+            <div>AI</div>
         </div>
     </div>
 
-    <!-- ========== СТРАНИЦА МУЗЫКИ ========== -->
-    <div class="fullscreen-page" id="musicPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">МУЗЫКА</div>
-        </div>
-        <div class="glass-card">
+    <!-- Страница МУЗЫКА -->
+    <div id="musicPage" class="page active">
+        <div class="card">
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Кино...">
-                <button id="doSearchBtn" class="search-btn">Найти</button>
+                <button class="search-btn" onclick="searchArtist()">НАЙТИ</button>
             </div>
-            <div class="section-title">🔥 ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ</div>
-            <div class="popular-grid" id="popularGrid"></div>
-            <div class="section-title">⭐ ТОП ЖАНРЫ</div>
-            <div class="genre-grid" id="genreGrid"></div>
-            <div id="randomQuoteOnMain" style="margin-top: 20px;"></div>
-            <div id="musicResult"></div>
+            <div class="section-title">🔥 ПОПУЛЯРНЫЕ</div>
+            <div class="popular-grid" id="popularList"></div>
+            <div id="searchResult"></div>
         </div>
-        <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля</div>
+        <div class="footer-note">⬆️ Нажми на исполнителя или введи имя</div>
     </div>
 
-    <!-- ========== СТРАНИЦА ИГРЫ ========== -->
-    <div class="fullscreen-page" id="gamePage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromGame"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">УГАДАЙ ТРЕК</div>
-        </div>
-        <div class="glass-card">
-            <div style="text-align: center; margin-bottom: 20px;">
+    <!-- Страница ИГРА -->
+    <div id="gamePage" class="page">
+        <div class="card">
+            <button class="back-btn" onclick="showPage('music')">← НАЗАД</button>
+            <div style="text-align: center;">
                 <div style="font-size: 48px; margin-bottom: 8px;">🎮</div>
-                <div style="font-size: 14px; opacity: 0.6;">Проверь свои знания музыки!</div>
+                <div style="margin-bottom: 16px;">Угадай исполнителя по треку!</div>
+                <button class="search-btn" onclick="startGame()" style="width: 100%; padding: 14px;">▶ НАЧАТЬ ИГРУ</button>
             </div>
-            <button id="startGameBtn" class="search-btn" style="width:100%; margin-bottom: 20px;">▶ НАЧАТЬ ИГРУ</button>
-            <div id="gameContent">
-                <div style="text-align:center; padding:40px; opacity:0.4;">Нажмите «Начать игру»</div>
-            </div>
-            <div class="user-info" style="margin-top: 20px;">🏆 Чем больше очков, тем лучше!</div>
+            <div id="gameContent" style="margin-top: 20px;"></div>
         </div>
     </div>
 
-    <!-- ========== СТРАНИЦА AI ОБЛОЖЕК ========== -->
-    <div class="fullscreen-page" id="aiPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromAI"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">AI ОБЛОЖКИ</div>
-        </div>
-        <div class="glass-card">
-            <div class="search-box">
-                <input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара, космос...">
-                <button id="generateAIBtn" class="search-btn">Создать</button>
-            </div>
-            <div id="aiResult" style="text-align:center; margin-top: 20px;">
-                <div style="padding: 40px; opacity: 0.5;">
-                    <div style="font-size: 48px; margin-bottom: 16px;">🎨</div>
-                    <div>Введите описание для генерации обложки</div>
-                    <div style="font-size: 12px; margin-top: 8px;">Пример: "электронная музыка ночной город"</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== СТРАНИЦА АССИСТЕНТА ========== -->
-    <div class="fullscreen-page" id="assistantPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromAssistant"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">МУЗЫКАЛЬНЫЙ АССИСТЕНТ</div>
-        </div>
-        <div class="glass-card">
+    <!-- Страница АССИСТЕНТ -->
+    <div id="assistantPage" class="page">
+        <div class="card">
+            <button class="back-btn" onclick="showPage('music')">← НАЗАД</button>
             <div class="chat-container" id="chatContainer">
-                <div class="message message-ai">
-                    <div class="message-icon">🤖</div>
-                    <div class="message-bubble">Привет! Я музыкальный ассистент. Могу посоветовать треки, рассказать об исполнителях или поделиться цитатами. Напиши имя артиста или "грустная песня"!</div>
+                <div class="message">
+                    <div class="message-bubble">🤖 Привет! Напиши имя исполнителя или "грустная песня"</div>
                 </div>
             </div>
-            <div style="display:flex; gap:10px;">
+            <div class="search-box" style="margin-bottom: 0;">
                 <input type="text" id="chatInput" class="search-input" placeholder="Спроси меня...">
-                <button id="sendChatBtn" class="search-btn">📤</button>
+                <button class="search-btn" onclick="sendMessage()">📤</button>
             </div>
         </div>
     </div>
 
-    <!-- ========== СТРАНИЦА РАНДОМАЙЗЕРА ========== -->
-    <div class="fullscreen-page" id="randomizerPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromRandomizer"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">РАНДОМАЙЗЕР</div>
-        </div>
-        <div class="glass-card">
-            <textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино&#10;Земфира&#10;Моргенштерн" style="margin-bottom:12px;"></textarea>
-            <div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div>
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
-                <input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;">
-                <span style="opacity:0.7;">из <span id="totalArtistsCount">0</span> исполнителей</span>
+    <!-- Страница РАНДОМАЙЗЕР -->
+    <div id="randomizerPage" class="page">
+        <div class="card">
+            <button class="back-btn" onclick="showPage('music')">← НАЗАД</button>
+            <textarea id="artistListInput" rows="3" placeholder="Асия&#10;Imagine Dragons&#10;Кино&#10;Земфира"></textarea>
+            <div class="popular-grid" id="quickAddList"></div>
+            <div style="display: flex; gap: 12px; margin: 12px 0;">
+                <input type="number" id="randomCount" value="1" min="1" max="10" style="width: 70px; padding: 10px; border-radius: 40px; border: none; text-align: center;">
+                <button class="search-btn" onclick="doRandomize()" style="flex: 1;">🎲 ВЫБРАТЬ</button>
             </div>
-            <button id="doRandomizeBtn" class="search-btn" style="width:100%; padding:14px;">🎲 ВЫБРАТЬ СЛУЧАЙНО</button>
-            <div id="randomizerResult" style="margin-top:20px;"></div>
+            <div id="randomResult"></div>
         </div>
     </div>
 
-    <!-- ========== СТРАНИЦА НАСТРОЕНИЯ ========== -->
-    <div class="fullscreen-page" id="moodPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromMood"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">НАСТРОЕНИЕ</div>
-        </div>
-        <div class="glass-card">
-            <div style="text-align: center; margin-bottom: 20px;">
+    <!-- Страница НАСТРОЕНИЕ -->
+    <div id="moodPage" class="page">
+        <div class="card">
+            <button class="back-btn" onclick="showPage('music')">← НАЗАД</button>
+            <div style="text-align: center; margin-bottom: 16px;">
                 <div style="font-size: 48px;">🎭</div>
-                <div style="margin-top: 8px;">Какое у тебя настроение?</div>
+                <div>Какое у тебя настроение?</div>
             </div>
-            <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:20px;">
-                <button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:16px; border-radius:60px; font-size: 16px;">😊 СЧАСТЛИВ</button>
-                <button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:16px; border-radius:60px; color:white; font-size: 16px;">😢 ГРУСТНЫЙ</button>
-                <button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:16px; border-radius:60px; color:white; font-size: 16px;">⚡ ЭНЕРГИЧНЫЙ</button>
-                <button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:16px; border-radius:60px; color:white; font-size: 16px;">😌 РАССЛАБЛЕННЫЙ</button>
-                <button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:16px; border-radius:60px; color:white; font-size: 16px;">💖 РОМАНТИЧНЫЙ</button>
-                <button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:16px; border-radius:60px; color:white; font-size: 16px;">📚 ФОКУС</button>
+            <div class="mood-buttons">
+                <button class="mood-btn" style="background:#f1c40f;" onclick="selectMood('happy')">😊 СЧАСТЛИВ</button>
+                <button class="mood-btn" style="background:#3498db; color:white;" onclick="selectMood('sad')">😢 ГРУСТНЫЙ</button>
+                <button class="mood-btn" style="background:#e74c3c; color:white;" onclick="selectMood('energetic')">⚡ ЭНЕРГИЧНЫЙ</button>
+                <button class="mood-btn" style="background:#2ecc71; color:white;" onclick="selectMood('relax')">😌 РАССЛАБЛЕННЫЙ</button>
+                <button class="mood-btn" style="background:#e84393; color:white;" onclick="selectMood('romantic')">💖 РОМАНТИЧНЫЙ</button>
+                <button class="mood-btn" style="background:#1abc9c; color:white;" onclick="selectMood('focus')">📚 ФОКУС</button>
             </div>
-            <div id="moodResult" class="user-info" style="text-align: center;">Выбери настроение и получи плейлист 🎵</div>
+            <div id="moodResult"></div>
         </div>
     </div>
 
-    <!-- ========== СТРАНИЦА КОНЦЕРТНЫХ ПЛОЩАДОК ========== -->
-    <div class="fullscreen-page" id="mapPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromMap"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">КОНЦЕРТНЫЕ ПЛОЩАДКИ</div>
-        </div>
-        <div class="glass-card">
-            <div class="section-title">🎤 ПОПУЛЯРНЫЕ ЗАЛЫ МОСКВЫ</div>
+    <!-- Страница ПЛОЩАДКИ -->
+    <div id="mapPage" class="page">
+        <div class="card">
+            <button class="back-btn" onclick="showPage('music')">← НАЗАД</button>
+            <div class="section-title">🎤 КОНЦЕРТНЫЕ ЗАЛЫ</div>
             <div id="venuesList"></div>
-            <div class="user-info" style="margin-top: 16px;">📍 Нажмите на площадку для открытия карты</div>
         </div>
     </div>
 
-    <!-- ========== СТРАНИЦА ПЛЕЙЛИСТОВ ========== -->
-    <div class="fullscreen-page" id="playlistsPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromPlaylists"><svg width="16" height="16" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">ПЛЕЙЛИСТЫ</div>
-        </div>
-        <div class="glass-card">
+    <!-- Страница ПЛЕЙЛИСТЫ -->
+    <div id="playlistsPage" class="page">
+        <div class="card">
+            <button class="back-btn" onclick="showPage('music')">← НАЗАД</button>
             <div class="section-title">🎵 ПОПУЛЯРНЫЕ ПЛЕЙЛИСТЫ</div>
-            <div class="playlist-grid" id="playlistsGrid"></div>
-            <div class="section-title" style="margin-top: 24px;">🎧 РЕКОМЕНДУЕМ</div>
-            <div class="playlist-grid" id="recommendedPlaylistsGrid"></div>
+            <div id="playlistsList"></div>
         </div>
     </div>
 
-    <!-- ========== КНОПКА НАСТРОЕК ========== -->
-    <div class="settings-fab" id="settingsFab">
-        <svg viewBox="0 0 24 24" stroke="white" fill="none" width="24" height="24">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/>
-            <path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/>
-        </svg>
-    </div>
-
-    <!-- ========== МОДАЛЬНОЕ ОКНО НАСТРОЕК ========== -->
-    <div id="settingsModal" class="settings-modal hidden">
-        <div class="modal-card">
-            <div class="modal-title">ОФОРМЛЕНИЕ</div>
-            <div class="settings-row">
-                <span class="settings-label">🎨 Цвет кнопок:</span>
-                <input type="color" id="buttonColorPicker" value="#667eea">
+    <!-- Страница AI -->
+    <div id="aiPage" class="page">
+        <div class="card">
+            <button class="back-btn" onclick="showPage('music')">← НАЗАД</button>
+            <div class="search-box">
+                <input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, космос, гитара...">
+                <button class="search-btn" onclick="generateCover()">СОЗДАТЬ</button>
             </div>
-            <div class="settings-row">
-                <button class="appearance-btn" id="resetBgBtn">🔄 Сбросить</button>
-                <button class="appearance-btn" id="uploadBgBtn">📸 Фото</button>
-                <button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button>
+            <div id="aiResult" style="text-align: center; padding: 20px;">
+                <div style="font-size: 48px;">🎨</div>
+                <div>Введите описание обложки</div>
             </div>
-            <div class="gradient-row">
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div>
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div>
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div>
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div>
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#fa709a,#fee140);"></div>
-                <div class="gradient-circle" style="background:linear-gradient(135deg,#a8edea,#fed6e3);"></div>
-            </div>
-            <button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">ЗАКРЫТЬ</button>
         </div>
     </div>
+</div>
 
-    <script>
-        // ========== ИНИЦИАЛИЗАЦИЯ TELEGRAM WEBAPP ==========
-        const tg = window.Telegram.WebApp;
-        try {
-            tg.ready();
-            tg.expand();
-            console.log('Telegram WebApp инициализирован');
-        } catch(e) { console.log('Telegram WebApp не доступен'); }
+<script>
+    // ========== ДАННЫЕ ==========
+    const tracksData = [
+        { track: "Останься", artist: "Асия" },
+        { track: "Твой поцелуй", artist: "Асия" },
+        { track: "Красное платье", artist: "Асия" },
+        { track: "Помнишь", artist: "Асия" },
+        { track: "Believer", artist: "Imagine Dragons" },
+        { track: "Radioactive", artist: "Imagine Dragons" },
+        { track: "Группа крови", artist: "Кино" },
+        { track: "Звезда по имени Солнце", artist: "Кино" },
+        { track: "Кукушка", artist: "Кино" },
+        { track: "Cadillac", artist: "Моргенштерн" },
+        { track: "El Problema", artist: "Моргенштерн" },
+        { track: "Искала", artist: "Земфира" },
+        { track: "Хочешь?", artist: "Земфира" },
+        { track: "Bad Guy", artist: "Billie Eilish" },
+        { track: "Lovely", artist: "Billie Eilish" },
+        { track: "Blinding Lights", artist: "The Weeknd" },
+        { track: "Starboy", artist: "The Weeknd" },
+        { track: "Du Hast", artist: "Rammstein" },
+        { track: "Sonne", artist: "Rammstein" },
+        { track: "Знаешь ли ты", artist: "Максим" },
+        { track: "Конь", artist: "Любэ" },
+        { track: "Зацепила", artist: "Артур Пирожков" },
+        { track: "Положение", artist: "Скриптонит" }
+    ];
 
-        // ========== РАСШИРЕННАЯ БАЗА ЦИТАТ ИСПОЛНИТЕЛЕЙ ==========
-        const quotesDatabase = {
-            "асия": [
-                "«Музыка — это способ говорить, когда слова заканчиваются»",
-                "«Каждая песня — это маленькая жизнь, прожитая за три минуты»",
-                "«Я пишу о том, что чувствую. Искренность — главное в творчестве»",
-                "«Сцена — это место, где я могу быть собой без масок»",
-                "«Вдохновение приходит, когда ты его не ждёшь, поэтому нужно всегда быть готовым»",
-                "«Моя музыка — это дневник, который я открываю всему миру»"
-            ],
-            "кино": [
-                "«Мы ждём перемен — это наше главное желание»",
-                "«Звезда по имени Солнце — она освещает путь каждому»",
-                "«Музыка должна быть честной. Если ты врёшь в песне — люди это чувствуют»",
-                "«Я хочу быть услышанным, но не навязывать своё мнение»",
-                "«Группа крови — это не просто слова, это судьба целого поколения»",
-                "«Время есть, а денег нет. Это наша реальность, и мы её принимаем»"
-            ],
-            "imagine dragons": [
-                "«It's okay to be not okay — быть не в порядке — это нормально»",
-                "«Believer — о том, как боль делает нас сильнее»",
-                "«Музыка лечит. Она спасла мне жизнь» (Дэн Рейнольдс)",
-                "«Мы не пытаемся быть модными. Мы пытаемся быть искренними»",
-                "«Наша музыка для тех, кто чувствует себя одиноким в толпе»",
-                "«Don't let them kill your dreams — не позволяй им убить твои мечты»"
-            ],
-            "земфира": [
-                "«Я пою о том, что вижу. И мне не стыдно»",
-                "«Искала тебя — искала себя одновременно»",
-                "«Свобода — это когда тебе не нужно никому ничего доказывать»",
-                "«Музыка — моя терапия, моя жизнь и моё спасение»",
-                "«Петь на больших стадионах страшно, но без этого кайфа не понять»",
-                "«Я никогда не хотела быть звездой. Я просто хотела петь»"
-            ],
-            "моргенштерн": [
-                "«Делай что хочешь — это единственное правило»",
-                "«Я никогда не думал, что стану известным. Просто делал то, что мне нравится»",
-                "«Деньги — это инструмент, а не цель»",
-                "«Хейтеры — моя лучшая мотивация»",
-                "«Cadillac — это не про машину, это про мечту»",
-                "«Будь собой, остальное — это уже не твои проблемы»"
-            ],
-            "billie eilish": [
-                "«Ты не обязана быть той, кем тебя хотят видеть другие»",
-                "«Уязвимость — это сила, а не слабость»",
-                "«Я хочу, чтобы моя музыка помогала людям чувствовать себя менее одинокими»",
-                "«Ты можешь всё. Даже если сейчас тебе кажется, что это не так»",
-                "«Не позволяй никому говорить тебе, кто ты есть»"
-            ],
-            "the weeknd": [
-                "«Blinding Lights — это песня о том, как мы все ищем связь с другими»",
-                "«Мрачная музыка может быть танцевальной. Это и есть жизнь»",
-                "«Успех — это когда ты можешь делать то, что любишь, и никого не слушать»",
-                "«После темноты всегда наступает рассвет»"
-            ],
-            "rammstein": [
-                "«Наша музыка — это театр абсурда и силы»",
-                "«Мы поём по-немецки, но нас понимают во всём мире. Музыка не знает языков»",
-                "«Провокация — это способ заставить людей думать»",
-                "«Живые выступления — это наш дом. Там мы настоящие»"
-            ],
-            "артур пирожков": [
-                "«Зацепила — это история каждого второго»",
-                "«Танцы — это моя страсть, а музыка — мой язык»",
-                "«Я делаю музыку, которая заставляет людей улыбаться»"
-            ],
-            "скриптонит": [
-                "«Я не читаю рэп — я рассказываю истории»",
-                "«Музыка должна отражать реальность, какой бы она ни была»",
-                "«Мой стиль — это моя жизнь, без прикрас»"
-            ],
-            "максим": [
-                "«Знаешь ли ты — это песня о настоящей любви»",
-                "«Я пишу о том, что пережила сама»",
-                "«Музыка спасла меня в самые трудные моменты»"
-            ],
-            "любэ": [
-                "«Конь — это гимн русской души»",
-                "«Мы поём о том, что близко каждому»",
-                "«Наша музыка для тех, кто любит свою Родину»"
-            ],
-            "king & james": [
-                "«Stumblin' In — это гимн безрассудной любви»",
-                "«Наша музыка — это энергия и драйв»"
-            ]
-        };
+    const quotesData = {
+        "асия": "«Музыка — это способ говорить, когда слова заканчиваются»",
+        "кино": "«Мы ждём перемен — это наше главное желание»",
+        "imagine dragons": "«It's okay to be not okay — быть не в порядке — это нормально»",
+        "земфира": "«Я пою о том, что вижу. И мне не стыдно»",
+        "моргенштерн": "«Делай что хочешь — это единственное правило»",
+        "billie eilish": "«Ты не обязана быть той, кем тебя хотят видеть другие»",
+        "the weeknd": "«Blinding Lights — о том, как мы все ищем связь с другими»",
+        "rammstein": "«Наша музыка — это театр абсурда и силы»"
+    };
 
-        // ========== РАСШИРЕННАЯ БАЗА ТРЕКОВ (130+ треков) ==========
-        const tracks = [
-            // Асия
-            { track: "Останься", artist: "Асия", year: 2020, genre: "pop" },
-            { track: "Твой поцелуй", artist: "Асия", year: 2021, genre: "pop" },
-            { track: "Красное платье", artist: "Асия", year: 2022, genre: "pop" },
-            { track: "Помнишь", artist: "Асия", year: 2021, genre: "pop" },
-            { track: "Детство", artist: "Асия", year: 2022, genre: "pop" },
-            { track: "Притворяюсь", artist: "Асия", year: 2023, genre: "pop" },
-            { track: "Обочины", artist: "Асия", year: 2023, genre: "pop" },
-            { track: "Шекспир", artist: "Асия", year: 2022, genre: "pop" },
-            { track: "О любви", artist: "Асия", year: 2021, genre: "pop" },
-            { track: "Звонок", artist: "Асия", year: 2023, genre: "pop" },
-            { track: "911", artist: "Асия", year: 2022, genre: "pop" },
-            { track: "Крестики", artist: "Асия", year: 2023, genre: "pop" },
-            { track: "Алоэ", artist: "Асия", year: 2022, genre: "pop" },
-            { track: "Сильно так", artist: "Асия", year: 2021, genre: "pop" },
-            { track: "Амур", artist: "Асия", year: 2023, genre: "pop" },
-            { track: "Я не злюсь, милый", artist: "Асия", year: 2022, genre: "pop" },
-            { track: "Молчу", artist: "Асия", year: 2023, genre: "pop" },
-            { track: "Шоу Трумана", artist: "Асия", year: 2022, genre: "pop" },
-            { track: "Мили", artist: "Асия", year: 2021, genre: "pop" },
-            { track: "Говори", artist: "Асия", year: 2023, genre: "pop" },
-            // Imagine Dragons
-            { track: "Believer", artist: "Imagine Dragons", year: 2017, genre: "rock" },
-            { track: "Radioactive", artist: "Imagine Dragons", year: 2012, genre: "rock" },
-            { track: "Demons", artist: "Imagine Dragons", year: 2013, genre: "rock" },
-            { track: "Thunder", artist: "Imagine Dragons", year: 2017, genre: "pop" },
-            { track: "Whatever It Takes", artist: "Imagine Dragons", year: 2017, genre: "rock" },
-            { track: "Natural", artist: "Imagine Dragons", year: 2018, genre: "rock" },
-            { track: "Bones", artist: "Imagine Dragons", year: 2022, genre: "rock" },
-            { track: "Enemy", artist: "Imagine Dragons", year: 2021, genre: "rock" },
-            // Кино
-            { track: "Группа крови", artist: "Кино", year: 1988, genre: "rock" },
-            { track: "Звезда по имени Солнце", artist: "Кино", year: 1989, genre: "rock" },
-            { track: "Кукушка", artist: "Кино", year: 1990, genre: "rock" },
-            { track: "Пачка сигарет", artist: "Кино", year: 1988, genre: "rock" },
-            { track: "Перемен", artist: "Кино", year: 1988, genre: "rock" },
-            { track: "Спокойная ночь", artist: "Кино", year: 1988, genre: "rock" },
-            { track: "Восьмиклассница", artist: "Кино", year: 1985, genre: "rock" },
-            // Моргенштерн
-            { track: "Cadillac", artist: "Моргенштерн", year: 2020, genre: "rap" },
-            { track: "El Problema", artist: "Моргенштерн", year: 2021, genre: "rap" },
-            { track: "Кристалл Моргенштерна", artist: "Моргенштерн", year: 2020, genre: "rap" },
-            { track: "Новый Мерин", artist: "Моргенштерн", year: 2021, genre: "rap" },
-            { track: "Домой", artist: "Моргенштерн", year: 2022, genre: "rap" },
-            // Земфира
-            { track: "Искала", artist: "Земфира", year: 2000, genre: "rock" },
-            { track: "Хочешь?", artist: "Земфира", year: 2000, genre: "rock" },
-            { track: "Бесконечность", artist: "Земфира", year: 2002, genre: "rock" },
-            { track: "П.М.М.Л.", artist: "Земфира", year: 2005, genre: "rock" },
-            { track: "Жить в твоей голове", artist: "Земфира", year: 2013, genre: "rock" },
-            { track: "Красота", artist: "Земфира", year: 2021, genre: "rock" },
-            // Rammstein
-            { track: "Du Hast", artist: "Rammstein", year: 1997, genre: "metal" },
-            { track: "Sonne", artist: "Rammstein", year: 2001, genre: "metal" },
-            { track: "Deutschland", artist: "Rammstein", year: 2019, genre: "metal" },
-            { track: "Amerika", artist: "Rammstein", year: 2004, genre: "metal" },
-            { track: "Mein Herz brennt", artist: "Rammstein", year: 2001, genre: "metal" },
-            // Billie Eilish
-            { track: "Bad Guy", artist: "Billie Eilish", year: 2019, genre: "pop" },
-            { track: "Lovely", artist: "Billie Eilish", year: 2018, genre: "pop" },
-            { track: "Everything I Wanted", artist: "Billie Eilish", year: 2019, genre: "pop" },
-            { track: "Therefore I Am", artist: "Billie Eilish", year: 2020, genre: "pop" },
-            { track: "Happier Than Ever", artist: "Billie Eilish", year: 2021, genre: "pop" },
-            // The Weeknd
-            { track: "Blinding Lights", artist: "The Weeknd", year: 2019, genre: "pop" },
-            { track: "Starboy", artist: "The Weeknd", year: 2016, genre: "pop" },
-            { track: "Save Your Tears", artist: "The Weeknd", year: 2020, genre: "pop" },
-            { track: "The Hills", artist: "The Weeknd", year: 2015, genre: "pop" },
-            { track: "Can't Feel My Face", artist: "The Weeknd", year: 2015, genre: "pop" },
-            // Артур Пирожков
-            { track: "Зацепила", artist: "Артур Пирожков", year: 2019, genre: "pop" },
-            { track: "Плачут небеса", artist: "Артур Пирожков", year: 2020, genre: "pop" },
-            { track: "Коктейль", artist: "Артур Пирожков", year: 2021, genre: "pop" },
-            // Скриптонит
-            { track: "Положение", artist: "Скриптонит", year: 2015, genre: "rap" },
-            { track: "Танцуй сама", artist: "Скриптонит", year: 2017, genre: "rap" },
-            { track: "Проверено", artist: "Скриптонит", year: 2019, genre: "rap" },
-            // Максим
-            { track: "Знаешь ли ты", artist: "Максим", year: 2006, genre: "pop" },
-            { track: "Нежность", artist: "Максим", year: 2015, genre: "pop" },
-            { track: "Мой рай", artist: "Максим", year: 2007, genre: "pop" },
-            // Любэ
-            { track: "Конь", artist: "Любэ", year: 1995, genre: "rock" },
-            { track: "Там за туманами", artist: "Любэ", year: 1997, genre: "rock" },
-            { track: "Давай за жизнь", artist: "Любэ", year: 2015, genre: "pop" },
-            // King & James
-            { track: "Stumblin' In", artist: "King & James", year: 2023, genre: "pop" },
-            { track: "I Feel Love", artist: "King & James", year: 2023, genre: "pop" }
-        ];
+    const factsData = {
+        "асия": "Настоящее имя — Анастасия Алентьева, родилась 1 сентября 1997 года",
+        "кино": "Группа основана в 1981 году, лидер — Виктор Цой",
+        "imagine dragons": "3 премии Grammy, группа из Лас-Вегаса",
+        "земфира": "Дебютный альбом разошёлся тиражом 700 000 копий",
+        "моргенштерн": "Самый молодой миллионер в российском рэпе"
+    };
 
-        // ========== АЛЬБОМЫ ==========
-        const albums = {
-            "Асия": [
-                { title: "Асия", year: 2021, cover: "💿", tracks: ["Останься", "Твой поцелуй", "Красное платье", "Помнишь", "Детство"] },
-                { title: "ударение на А", year: 2023, cover: "⚡", tracks: ["Притворяюсь", "Обочины", "Шекспир", "О любви", "Звонок"] }
-            ],
-            "Imagine Dragons": [
-                { title: "Night Visions", year: 2012, cover: "🌙", tracks: ["Radioactive", "Demons"] },
-                { title: "Evolve", year: 2017, cover: "🌊", tracks: ["Believer", "Thunder", "Whatever It Takes"] },
-                { title: "Mercury - Act 1", year: 2021, cover: "☿️", tracks: ["Enemy", "Bones"] }
-            ],
-            "Кино": [
-                { title: "Группа крови", year: 1988, cover: "🩸", tracks: ["Группа крови", "Пачка сигарет", "Перемен", "Спокойная ночь"] },
-                { title: "Звезда по имени Солнце", year: 1989, cover: "⭐", tracks: ["Звезда по имени Солнце", "Кукушка"] }
-            ],
-            "Моргенштерн": [
-                { title: "Millennium", year: 2021, cover: "💎", tracks: ["Cadillac", "El Problema", "Новый Мерин"] },
-                { title: "Last One", year: 2022, cover: "🔥", tracks: ["Домой", "Кристалл Моргенштерна"] }
-            ],
-            "Земфира": [
-                { title: "Земфира", year: 1999, cover: "🎸", tracks: ["Искала", "Хочешь?"] },
-                { title: "Прости меня моя любовь", year: 2000, cover: "💔", tracks: ["Бесконечность", "П.М.М.Л."] }
-            ]
-        };
+    const venuesData = [
+        { name: "Gipsy", address: "Москва, Болотная наб., 3", metro: "Кропоткинская" },
+        { name: "16 тонн", address: "Москва, ул. Пресненский Вал, 6", metro: "Улица 1905 года" },
+        { name: "МТС Live Холл", address: "Москва, ш. Энтузиастов, 5", metro: "Площадь Ильича" },
+        { name: "Крокус Сити Холл", address: "Москва, ул. Международная, 20", metro: "Мякинино" },
+        { name: "VK Stadium", address: "Москва, Ленинградский пр-т, 80", metro: "Сокол" }
+    ];
 
-        // ========== ПЛЕЙЛИСТЫ ==========
-        const playlists = [
-            { name: "Хиты 2024", cover: "🔥", tracks: tracks.filter(t => t.year >= 2022).slice(0, 15) },
-            { name: "Русский рок", cover: "🎸", tracks: tracks.filter(t => t.artist === "Кино" || t.artist === "Земфира") },
-            { name: "Зарубежные хиты", cover: "🌍", tracks: tracks.filter(t => t.artist === "Imagine Dragons" || t.artist === "Billie Eilish" || t.artist === "The Weeknd") },
-            { name: "Rap & Hip-Hop", cover: "🎤", tracks: tracks.filter(t => t.genre === "rap") },
-            { name: "Для тренировки", cover: "💪", tracks: tracks.filter(t => t.artist === "Imagine Dragons" || t.artist === "Rammstein").slice(0, 10) },
-            { name: "Романтика", cover: "💖", tracks: tracks.filter(t => t.artist === "Асия" || t.artist === "Максим").slice(0, 10) },
-            { name: "Грустные песни", cover: "😢", tracks: tracks.filter(t => t.artist === "Земфира" || t.artist === "Кино").slice(0, 8) },
-            { name: "Энергия", cover: "⚡", tracks: tracks.filter(t => t.artist === "Imagine Dragons" || t.artist === "Rammstein").slice(0, 10) }
-        ];
+    const playlistsData = [
+        { name: "🔥 ХИТЫ 2024", icon: "🔥", tracks: ["Останься - Асия", "Believer - Imagine Dragons", "Cadillac - Моргенштерн"] },
+        { name: "🎸 РУССКИЙ РОК", icon: "🎸", tracks: ["Группа крови - Кино", "Кукушка - Кино", "Искала - Земфира"] },
+        { name: "🌍 ЗАРУБЕЖНЫЕ ХИТЫ", icon: "🌍", tracks: ["Believer - Imagine Dragons", "Bad Guy - Billie Eilish", "Blinding Lights - The Weeknd"] },
+        { name: "💪 ДЛЯ ТРЕНИРОВКИ", icon: "💪", tracks: ["Radioactive - Imagine Dragons", "Du Hast - Rammstein", "Believer - Imagine Dragons"] },
+        { name: "💖 РОМАНТИКА", icon: "💖", tracks: ["Твой поцелуй - Асия", "Знаешь ли ты - Максим", "Lovely - Billie Eilish"] }
+    ];
 
-        // ========== ЖАНРЫ ==========
-        const genres = [
-            { name: "Поп", icon: "🎤", query: "поп музыка" },
-            { name: "Рок", icon: "🎸", query: "рок музыка" },
-            { name: "Рэп", icon: "🎙️", query: "рэп" },
-            { name: "Метал", icon: "🤘", query: "метал" },
-            { name: "Электроника", icon: "🎧", query: "электронная музыка" },
-            { name: "Инди", icon: "🎹", query: "инди музыка" },
-            { name: "Альтернатива", icon: "🔄", query: "альтернативная музыка" },
-            { name: "Lo-Fi", icon: "😴", query: "lofi hip hop" }
-        ];
+    const moodMap = {
+        happy: "😊 Счастливое настроение: «Believer» - Imagine Dragons, «Твой поцелуй» - Асия, «Blinding Lights» - The Weeknd",
+        sad: "😢 Грустное настроение: «Останься» - Асия, «Группа крови» - Кино, «Lovely» - Billie Eilish",
+        energetic: "⚡ Энергичная музыка: «Radioactive» - Imagine Dragons, «Cadillac» - Моргенштерн, «Du Hast» - Rammstein",
+        relax: "😌 Расслабляющая музыка: «Lovely» - Billie Eilish, «Хочешь?» - Земфира, Lo-Fi плейлисты",
+        romantic: "💖 Романтичные песни: «Твой поцелуй» - Асия, «Знаешь ли ты» - Максим",
+        focus: "📚 Для концентрации: Lo-Fi хип-хоп, инструментальная музыка"
+    };
 
-        // ========== БИОГРАФИИ ==========
-        const biographies = {
-            "асия": "Асия (настоящее имя — Анастасия Алентьева) — российская поп-певица, автор песен. Родилась 1 сентября 1997 года. Стала известной после выхода песни «Останься», которая набрала более 100 миллионов прослушиваний. Её музыка отличается искренностью и глубокими текстами.",
-            "кино": "Кино — советская рок-группа, основанная в 1981 году Виктором Цоем, Алексеем Рыбиным и Олегом Валинским. Группа стала символом поколения перестройки. После гибели Виктора Цоя в 1990 году группа распалась, но их песни остаются культовыми.",
-            "imagine dragons": "Imagine Dragons — американская рок-группа из Лас-Вегаса, образованная в 2008 году. Лауреаты трёх премий Grammy. Их песня «Believer» стала мировым хитом, а альбом «Evolve» получил платиновый статус.",
-            "земфира": "Земфира — российская рок-певица, автор песен. Дебютный альбом «Земфира» вышел в 1999 году и разошёлся тиражом более 700 000 копий. Земфира стала одной из самых успешных женщин в истории российской рок-музыки.",
-            "моргенштерн": "Моргенштерн (настоящее имя — Алишер Моргенштерн) — российский рэп-исполнитель, блогер. Родился в Уфе. Стал известным благодаря вирусным клипам и сотрудничеству с крупными лейблами.",
-            "billie eilish": "Билли Айлиш — американская певица, автор песен. В 2019 году в возрасте 18 лет стала самой молодой обладательницей четырёх премий Grammy. Её дебютный альбом «When We All Fall Asleep, Where Do We Go?» стал мировым хитом.",
-            "the weeknd": "The Weeknd (настоящее имя — Эйбел Макконен Тесфайе) — канадский певец, автор песен, продюсер. Известен своим уникальным вокалом и мрачной эстетикой. Песня «Blinding Lights» стала одной из самых прослушиваемых в истории Spotify.",
-            "rammstein": "Rammstein — немецкая метал-группа, образованная в 1994 году в Берлине. Известна своим индустриальным звучанием и яркими пиротехническими шоу. Их песня «Du Hast» стала международным хитом."
-        };
-
-        // ========== КОНЦЕРТНЫЕ ПЛОЩАДКИ ==========
-        const venues = [
-            { name: "Gipsy", address: "Москва, Болотная наб., 3", metro: "Кропоткинская", lat: 55.740117, lng: 37.609712, description: "Популярный ночной клуб с концертной площадкой" },
-            { name: "16 тонн", address: "Москва, ул. Пресненский Вал, 6", metro: "Улица 1905 года", description: "Легендарный клуб с живой музыкой" },
-            { name: "МТС Live Холл", address: "Москва, ш. Энтузиастов, 5", metro: "Площадь Ильича", description: "Крупная концертная площадка для звёзд" },
-            { name: "Крокус Сити Холл", address: "Москва, ул. Международная, 20", metro: "Мякинино", description: "Одна из самых больших концертных площадок Москвы" },
-            { name: "VK Stadium", address: "Москва, Ленинградский пр-т, 80", metro: "Сокол", description: "Современная площадка для концертов и мероприятий" },
-            { name: "Stadium Live", address: "Москва, ул. Космонавтов, 15", metro: "ВДНХ", description: "Новая концертная площадка" },
-            { name: "ГлавClub", address: "Москва, ул. Шаболовка, 31", metro: "Шаболовская", description: "Камерный клуб с живой музыкой" },
-            { name: "Известия Hall", address: "Москва, Пушкинская пл., 1", metro: "Пушкинская", description: "Престижная площадка в центре Москвы" }
-        ];
-
-        // ========== РЕКОМЕНДАЦИИ ПО НАСТРОЕНИЮ ==========
-        const moodRecommendations = {
-            happy: "😊 Счастливое настроение: «Believer» - Imagine Dragons, «Твой поцелуй» - Асия, «Blinding Lights» - The Weeknd",
-            sad: "😢 Грустное настроение: «Останься» - Асия, «Группа крови» - Кино, «Everything I Wanted» - Billie Eilish",
-            energetic: "⚡ Энергичная музыка: «Radioactive» - Imagine Dragons, «Cadillac» - Моргенштерн, «Du Hast» - Rammstein",
-            relax: "😌 Расслабляющая музыка: «Stumblin' In» - King & James, «Lovely» - Billie Eilish, «Хочешь?» - Земфира",
-            romantic: "💖 Романтичные песни: «Твой поцелуй» - Асия, «Знаешь ли ты» - Максим, «Love Story»",
-            focus: "📚 Для концентрации: Lo-Fi плейлисты, инструментальная музыка, «Natural» - Imagine Dragons"
-        };
-
-        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
-        function escapeHtml(s) { 
-            if (!s) return ''; 
-            return s.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); 
-        }
-
-        function showNote(msg) { 
-            const t = document.createElement('div'); 
-            t.className = 'notification-toast'; 
-            t.textContent = msg; 
-            document.body.appendChild(t); 
-            setTimeout(() => t.remove(), 2000); 
-        }
-
-        function getRandomQuote(artistName) {
-            const lowerArtist = artistName.toLowerCase();
-            let matchedKey = null;
-            for (const key in quotesDatabase) {
-                if (lowerArtist.includes(key) || key.includes(lowerArtist)) {
-                    matchedKey = key;
-                    break;
-                }
-            }
-            if (matchedKey && quotesDatabase[matchedKey].length > 0) {
-                const quotes = quotesDatabase[matchedKey];
-                return quotes[Math.floor(Math.random() * quotes.length)];
-            }
-            return `«${artistName} создаёт музыку, которая трогает сердца миллионов. Вдохновляйтесь и слушайте лучшее!»`;
-        }
-
-        function getArtistTracks(artistName) {
-            return tracks.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
-        }
-
-        function getBiography(artistName) {
-            const lowerArtist = artistName.toLowerCase();
-            for (const [key, bio] of Object.entries(biographies)) {
-                if (lowerArtist.includes(key) || key.includes(lowerArtist)) {
-                    return bio;
-                }
-            }
-            return null;
-        }
-
-        function getArtistAlbums(artistName) {
-            const lowerArtist = artistName.toLowerCase();
-            for (const [key, albumsList] of Object.entries(albums)) {
-                if (lowerArtist.includes(key) || key.includes(lowerArtist)) {
-                    return albumsList;
-                }
-            }
-            return [];
-        }
-
-        // ========== СИСТЕМА ФОНА И ЦВЕТА ТЕКСТА ==========
-        let currentMode = 'music';
-
-        function getLuminance(color) {
-            if (color.includes('url')) return 0.3;
-            
-            let r, g, b;
-            
-            if (color.startsWith('rgb')) {
-                const match = color.match(/\d+/g);
-                if (match) {
-                    r = parseInt(match[0]);
-                    g = parseInt(match[1]);
-                    b = parseInt(match[2]);
-                }
-            } else if (color.startsWith('#')) {
-                const hex = color.slice(1);
-                if (hex.length === 3) {
-                    r = parseInt(hex[0] + hex[0], 16);
-                    g = parseInt(hex[1] + hex[1], 16);
-                    b = parseInt(hex[2] + hex[2], 16);
-                } else if (hex.length === 6) {
-                    r = parseInt(hex.slice(0, 2), 16);
-                    g = parseInt(hex.slice(2, 4), 16);
-                    b = parseInt(hex.slice(4, 6), 16);
-                }
-            } else if (color.includes('linear-gradient')) {
-                const firstColorMatch = color.match(/#[0-9a-f]{6}|#[0-9a-f]{3}|rgb\([^)]+\)/i);
-                if (firstColorMatch) {
-                    return getLuminance(firstColorMatch[0]);
-                }
-                return 0.2;
-            }
-            
-            if (r === undefined) return 0.3;
-            
-            return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        }
-
-        function setTextColorBasedOnBackground() {
-            const bodyStyle = window.getComputedStyle(document.body);
-            let bgColor = bodyStyle.backgroundColor;
-            const bgImage = bodyStyle.backgroundImage;
-            
-            if (bgImage !== 'none' && bgImage !== '') {
-                document.body.classList.add('light-text');
-                document.body.classList.remove('dark-text');
-                return;
-            }
-            
-            if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') {
-                document.body.classList.add('light-text');
-                document.body.classList.remove('dark-text');
-                return;
-            }
-            
-            const luminance = getLuminance(bgColor);
-            
-            if (luminance > 0.6) {
-                document.body.classList.add('dark-text');
-                document.body.classList.remove('light-text');
-            } else {
-                document.body.classList.add('light-text');
-                document.body.classList.remove('dark-text');
-            }
-        }
-
-        function applyBackground(backgroundValue, mode = null) {
-            if (backgroundValue && backgroundValue !== 'default') {
-                localStorage.setItem('music_bot_bg', backgroundValue);
-            }
-            
-            const savedBg = localStorage.getItem('music_bot_bg');
-            let bgToApply = backgroundValue || savedBg;
-            
-            document.body.style.background = '';
-            document.body.style.backgroundImage = '';
-            document.body.style.backgroundColor = '';
-            
-            if (bgToApply && bgToApply !== 'default' && bgToApply !== 'null') {
-                if (bgToApply.startsWith('linear-gradient')) {
-                    document.body.style.background = bgToApply;
-                } else if (bgToApply.startsWith('#')) {
-                    document.body.style.background = bgToApply;
-                } else if (bgToApply.startsWith('data:image') || bgToApply.startsWith('blob:')) {
-                    document.body.style.backgroundImage = `url(${bgToApply})`;
-                    document.body.style.backgroundSize = 'cover';
-                    document.body.style.backgroundPosition = 'center';
-                    document.body.style.backgroundAttachment = 'fixed';
-                }
-            } else {
-                const modeToApply = mode || currentMode;
-                document.body.className = modeToApply + '-mode';
-            }
-            
-            setTimeout(setTextColorBasedOnBackground, 50);
-        }
-
-        function loadAppearance() {
-            const savedBg = localStorage.getItem('music_bot_bg');
-            if (savedBg && savedBg !== 'default') {
-                applyBackground(savedBg);
-            }
-        }
-
-        // Следим за изменениями фона
-        const bgObserver = new MutationObserver(() => setTextColorBasedOnBackground());
-        bgObserver.observe(document.body, { attributes: true, attributeFilter: ['style', 'class'] });
-
-        // ========== НАВИГАЦИЯ ==========
-        const menu = document.getElementById('menuContainer');
-        const pages = {
-            music: document.getElementById('musicPage'),
-            game: document.getElementById('gamePage'),
-            ai: document.getElementById('aiPage'),
-            assistant: document.getElementById('assistantPage'),
-            randomizer: document.getElementById('randomizerPage'),
-            mood: document.getElementById('moodPage'),
-            map: document.getElementById('mapPage'),
-            playlists: document.getElementById('playlistsPage')
-        };
-        
-        function showMenu() { 
-            menu.classList.remove('hidden-menu'); 
-            Object.values(pages).forEach(p => p && p.classList.remove('active')); 
-            applyBackground('default', currentMode);
-        }
-        
-        function showPage(page, mode) { 
-            currentMode = mode;
-            menu.classList.add('hidden-menu'); 
-            Object.values(pages).forEach(p => p && p.classList.remove('active')); 
-            if (page) page.classList.add('active'); 
-            const savedBg = localStorage.getItem('music_bot_bg');
-            if (savedBg && savedBg !== 'default') {
-                applyBackground(savedBg);
-            } else {
-                applyBackground('default', mode);
-            }
-        }
-
-        // ========== ОБРАБОТЧИКИ КНОПОК МЕНЮ ==========
-        document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); loadGenres(); showRandomQuoteOnMain(); };
-        document.getElementById('goToGameBtn').onclick = () => showPage(pages.game, 'game');
-        document.getElementById('goToAIBtn').onclick = () => showPage(pages.ai, 'ai');
-        document.getElementById('goToAssistantBtn').onclick = () => showPage(pages.assistant, 'assistant');
-        document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); };
-        document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
-        document.getElementById('goToMapBtn').onclick = () => { showPage(pages.map, 'map'); updateVenuesList(); };
-        document.getElementById('goToPlaylistsBtn').onclick = () => { showPage(pages.playlists, 'music'); loadPlaylists(); };
-
-        // Кнопки назад
-        const backButtons = ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Playlists'];
-        backButtons.forEach(p => {
-            const btn = document.getElementById(`backFrom${p}`);
-            if (btn) btn.onclick = showMenu;
+    // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
         });
+        document.getElementById(pageId + 'Page').classList.add('active');
+        window.scrollTo(0, 0);
+    }
 
-        // ========== СТРАНИЦА МУЗЫКИ ==========
-        let lastSearchedArtist = "";
+    function getArtists() {
+        return [...new Set(tracksData.map(t => t.artist))];
+    }
 
-        function loadPopular() { 
-            const grid = document.getElementById('popularGrid');
-            if (!grid) return;
-            const popularArtists = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Rammstein", "Billie Eilish", "The Weeknd", "Артур Пирожков", "Скриптонит", "Максим", "Любэ"];
-            const icons = { 
-                "Асия": "🎤", "Imagine Dragons": "🐉", "Кино": "🎸", "Моргенштерн": "💎", 
-                "Земфира": "🎹", "Rammstein": "🔥", "Billie Eilish": "🌊", "The Weeknd": "⭐",
-                "Артур Пирожков": "🕺", "Скриптонит": "🎙️", "Максим": "🎵", "Любэ": "🎶"
-            };
-            grid.innerHTML = popularArtists.map(a => `<span class="popular-tag" onclick="searchArtist('${a.replace(/'/g, "\\'")}')"><span>${icons[a] || "🎵"}</span> ${a}</span>`).join(''); 
+    function getTracksByArtist(artistName) {
+        return tracksData.filter(t => t.artist.toLowerCase().includes(artistName.toLowerCase()));
+    }
+
+    function getQuote(artistName) {
+        const lower = artistName.toLowerCase();
+        for (let key in quotesData) {
+            if (lower.includes(key)) return quotesData[key];
+        }
+        return `«${artistName} создаёт музыку, которая трогает сердца миллионов»`;
+    }
+
+    function getFact(artistName) {
+        const lower = artistName.toLowerCase();
+        for (let key in factsData) {
+            if (lower.includes(key)) return factsData[key];
+        }
+        return `🎤 ${artistName} — один из ярких исполнителей современности`;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+    }
+
+    function showNotification(msg) {
+        const toast = document.createElement('div');
+        toast.textContent = msg;
+        toast.style.cssText = 'position:fixed; bottom:20px; left:20px; right:20px; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); padding:12px; border-radius:60px; text-align:center; z-index:1000;';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    function openYandexMusic(query) {
+        window.open(`https://music.yandex.ru/search?text=${encodeURIComponent(query)}`, '_blank');
+    }
+
+    // ========== СТРАНИЦА МУЗЫКИ ==========
+    function loadPopular() {
+        const popular = ["Асия", "Imagine Dragons", "Кино", "Моргенштерн", "Земфира", "Billie Eilish", "The Weeknd", "Rammstein"];
+        const container = document.getElementById('popularList');
+        if (container) {
+            container.innerHTML = popular.map(a => `<span class="popular-tag" onclick="searchByName('${a.replace(/'/g, "\\'")}')">${a}</span>`).join('');
+        }
+    }
+
+    window.searchByName = function(name) {
+        document.getElementById('searchInput').value = name;
+        searchArtist();
+    };
+
+    function searchArtist() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query) return;
+
+        const resultDiv = document.getElementById('searchResult');
+        const tracks = getTracksByArtist(query);
+        const quote = getQuote(query);
+        const fact = getFact(query);
+        const firstLetter = query.charAt(0).toUpperCase();
+
+        let tracksHtml = '';
+        if (tracks.length > 0) {
+            tracksHtml = tracks.map(t => `
+                <div class="track-item">
+                    <div class="track-name">${escapeHtml(t.track)}</div>
+                    <button class="listen-btn" onclick="openYandexMusic('${escapeHtml(t.artist)} ${escapeHtml(t.track)}')">▶ СЛУШАТЬ</button>
+                </div>
+            `).join('');
+        } else {
+            tracksHtml = '<div style="text-align:center; padding:20px; opacity:0.6;">🎵 Треки не найдены</div>';
         }
 
-        function loadGenres() {
-            const grid = document.getElementById('genreGrid');
-            if (!grid) return;
-            grid.innerHTML = genres.map(g => `
-                <div class="genre-card" onclick="window.open('https://music.yandex.ru/search?text=${encodeURIComponent(g.query)}', '_blank')">
-                    <div class="genre-icon">${g.icon}</div>
-                    <div style="font-size: 13px; font-weight: 500;">${g.name}</div>
+        resultDiv.innerHTML = `
+            <div class="result-card">
+                <div class="artist-card">
+                    <div class="avatar">${escapeHtml(firstLetter)}</div>
+                    <div class="artist-name">${escapeHtml(query)}</div>
+                </div>
+                <div class="quote-box">
+                    <div>💬 ${escapeHtml(quote)}</div>
+                    <div style="font-size: 11px; color: #ffd700; text-align: right; margin-top: 8px;">— ${escapeHtml(query)}</div>
+                </div>
+                <div class="fact-box">
+                    <div>✨ ИНТЕРЕСНЫЙ ФАКТ</div>
+                    <div style="margin-top: 6px;">${escapeHtml(fact)}</div>
+                </div>
+                <div class="section-title">🎧 ПОПУЛЯРНЫЕ ТРЕКИ</div>
+                ${tracksHtml}
+                <div style="display: flex; gap: 10px; margin-top: 16px;">
+                    <button class="search-btn" style="flex:1;" onclick="openYandexMusic('${escapeHtml(query)}')">🎵 ЯНДЕКС.МУЗЫКА</button>
+                    <button class="search-btn" style="flex:1; background:#ff0000;" onclick="window.open('https://music.youtube.com/search?q=${encodeURIComponent(query)}', '_blank')">▶ YOUTUBE MUSIC</button>
+                </div>
+            </div>
+        `;
+    }
+
+    // ========== СТРАНИЦА ИГРЫ ==========
+    let currentGame = [];
+    let gameIndex = 0;
+    let gameScore = 0;
+    let gameActive = false;
+
+    function generateGameQuestions() {
+        const shuffled = [...tracksData];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled.slice(0, 10).map(t => ({
+            track: t.track,
+            correct: t.artist,
+            options: [t.artist, ...getArtists().filter(a => a !== t.artist).slice(0, 3)]
+        }));
+    }
+
+    function startGame() {
+        currentGame = generateGameQuestions();
+        gameIndex = 0;
+        gameScore = 0;
+        gameActive = true;
+        showGameQuestion();
+    }
+
+    function showGameQuestion() {
+        if (gameIndex >= currentGame.length) {
+            endGame();
+            return;
+        }
+        const q = currentGame[gameIndex];
+        const shuffledOptions = [...q.options];
+        for (let i = shuffledOptions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+        }
+        const content = document.getElementById('gameContent');
+        content.innerHTML = `
+            <div style="text-align: center;">
+                <div style="opacity:0.6; margin-bottom: 8px;">Вопрос ${gameIndex+1}/${currentGame.length}</div>
+                <div style="font-size: 20px; font-weight: 600; margin: 16px 0;">"${escapeHtml(q.track)}"</div>
+                <div>Кто исполнитель?</div>
+                <div style="margin-top: 20px;">
+                    ${shuffledOptions.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}')">${escapeHtml(opt)}</div>`).join('')}
+                </div>
+                <div style="margin-top: 16px;">🎯 Счёт: ${gameScore}/${currentGame.length}</div>
+            </div>
+        `;
+    }
+
+    window.checkAnswer = function(answer) {
+        if (!gameActive) return;
+        const correct = currentGame[gameIndex].correct;
+        if (answer === correct) {
+            gameScore++;
+            showNotification('✅ Правильно! +1 очко');
+        } else {
+            showNotification(`❌ Неправильно! Правильный ответ: ${correct}`);
+        }
+        gameIndex++;
+        showGameQuestion();
+    };
+
+    function endGame() {
+        gameActive = false;
+        const percent = Math.round((gameScore / currentGame.length) * 100);
+        let message = percent === 100 ? '🎉 ИДЕАЛЬНО!' : percent >= 70 ? '👍 ОТЛИЧНО!' : percent >= 50 ? '📀 НЕПЛОХО!' : '🎧 ПОПРОБУЙ ЕЩЁ!';
+        const content = document.getElementById('gameContent');
+        content.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 64px;">🎉</div>
+                <div style="font-size: 28px; font-weight: 600; margin: 16px;">${gameScore}/${currentGame.length}</div>
+                <div style="margin-bottom: 20px;">${message}</div>
+                <button class="search-btn" onclick="startGame()">🔄 СЫГРАТЬ СНОВА</button>
+            </div>
+        `;
+    }
+
+    // ========== СТРАНИЦА АССИСТЕНТА ==========
+    function addMessage(text, isUser = false) {
+        const container = document.getElementById('chatContainer');
+        const div = document.createElement('div');
+        div.className = `message ${isUser ? 'message-user' : ''}`;
+        div.innerHTML = `<div class="message-bubble">${isUser ? escapeHtml(text) : text}</div>`;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const msg = input.value.trim();
+        if (!msg) return;
+        addMessage(msg, true);
+        input.value = '';
+        
+        addMessage('🤔 Думаю...');
+        const lastMsg = document.querySelector('#chatContainer .message:last-child');
+        
+        let response = '';
+        const low = msg.toLowerCase();
+        
+        if (low.includes('цитат')) {
+            const artists = ['асия', 'кино', 'imagine dragons', 'земфира', 'моргенштерн'];
+            let found = artists.find(a => low.includes(a));
+            if (found) response = `💬 Цитата ${found}:<br><br>«${getQuote(found)}»`;
+            else response = `💬 Случайная цитата:<br><br>«${getQuote('Асия')}»`;
+        } else if (low.includes('грустн')) {
+            response = '😢 Грустные песни:<br>• "Останься" - Асия<br>• "Группа крови" - Кино<br>• "Lovely" - Billie Eilish';
+        } else if (low.includes('весел')) {
+            response = '😊 Весёлые песни:<br>• "Believer" - Imagine Dragons<br>• "Твой поцелуй" - Асия<br>• "Blinding Lights" - The Weeknd';
+        } else if (low.includes('случайный')) {
+            const random = tracksData[Math.floor(Math.random() * tracksData.length)];
+            response = `🎲 Случайный трек:<br><br>"${random.track}" - ${random.artist}`;
+        } else {
+            const artistTracks = getTracksByArtist(msg);
+            if (artistTracks.length > 0) {
+                response = `🎵 Популярные треки ${msg}:<br><br>${artistTracks.slice(0, 5).map(t => `• "${t.track}"`).join('<br>')}`;
+            } else {
+                response = '🎶 Напиши имя исполнителя, "грустная песня" или "цитата Асии"';
+            }
+        }
+        
+        lastMsg.remove();
+        addMessage(response);
+    }
+
+    // ========== СТРАНИЦА РАНДОМАЙЗЕРА ==========
+    function parseArtists(text) {
+        if (!text.trim()) return [];
+        const lines = text.split(/\r?\n/);
+        const result = [];
+        for (let line of lines) {
+            line = line.trim();
+            if (line) result.push(...line.split(',').map(s => s.trim()));
+        }
+        return [...new Map(result.map(v => [v.toLowerCase(), v])).values()];
+    }
+
+    function doRandomize() {
+        const input = document.getElementById('artistListInput');
+        const artists = parseArtists(input.value);
+        if (!artists.length) {
+            document.getElementById('randomResult').innerHTML = '<div style="padding:20px; text-align:center; opacity:0.6;">📝 Введите исполнителей</div>';
+            return;
+        }
+        const count = Math.min(parseInt(document.getElementById('randomCount').value) || 1, artists.length);
+        const shuffled = [...artists];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        const selected = shuffled.slice(0, count);
+        const resultDiv = document.getElementById('randomResult');
+        resultDiv.innerHTML = selected.map((a, i) => `
+            <div class="random-artist">
+                <span>${i+1}. ${escapeHtml(a)}</span>
+                <button class="listen-btn" onclick="openYandexMusic('${escapeHtml(a)}')">СЛУШАТЬ</button>
+            </div>
+        `).join('');
+    }
+
+    function loadQuickAdd() {
+        const quick = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн"];
+        const container = document.getElementById('quickAddList');
+        if (container) {
+            container.innerHTML = quick.map(a => `<span class="popular-tag" onclick="addArtist('${a.replace(/'/g, "\\'")}')">+ ${a}</span>`).join('');
+        }
+    }
+
+    window.addArtist = function(artist) {
+        const input = document.getElementById('artistListInput');
+        const current = input.value;
+        input.value = current + (current ? "\n" : "") + artist;
+        showNotification(`✅ Добавлен: ${artist}`);
+    };
+
+    // ========== СТРАНИЦА НАСТРОЕНИЯ ==========
+    window.selectMood = function(mood) {
+        const resultDiv = document.getElementById('moodResult');
+        const recommendation = moodMap[mood] || "🎵 Отличный выбор!";
+        resultDiv.innerHTML = `
+            <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 16px;">
+                <div style="font-weight: 600; margin-bottom: 8px;">🎧 РЕКОМЕНДАЦИЯ</div>
+                <div>${recommendation}</div>
+                <button class="search-btn" style="margin-top: 12px; width: 100%;" onclick="openYandexMusic('${mood === 'happy' ? 'веселая музыка' : mood === 'sad' ? 'грустная музыка' : 'музыка'}')">🎵 ОТКРЫТЬ</button>
+            </div>
+        `;
+        showNotification(`🎭 Настроение выбрано!`);
+    };
+
+    // ========== СТРАНИЦА ПЛОЩАДОК ==========
+    function loadVenues() {
+        const container = document.getElementById('venuesList');
+        if (container) {
+            container.innerHTML = venuesData.map(v => `
+                <div class="venue-card" onclick="window.open('https://yandex.ru/maps/?text=${encodeURIComponent(v.name + ' ' + v.address)}', '_blank')">
+                    <div style="font-weight: 600;">🎤 ${escapeHtml(v.name)}</div>
+                    <div style="font-size: 12px; opacity: 0.6;">📍 ${escapeHtml(v.address)}</div>
+                    <div style="font-size: 12px; opacity: 0.6;">🚇 ${escapeHtml(v.metro)}</div>
                 </div>
             `).join('');
         }
+    }
 
-        function loadPlaylists() {
-            const grid = document.getElementById('playlistsGrid');
-            const recGrid = document.getElementById('recommendedPlaylistsGrid');
-            if (grid) {
-                grid.innerHTML = playlists.slice(0, 4).map(p => `
-                    <div class="playlist-card" onclick="showPlaylistTracks('${escapeHtml(p.name)}')">
-                        <div class="playlist-cover">${p.cover}</div>
-                        <div style="font-weight: 600; margin-bottom: 4px;">${escapeHtml(p.name)}</div>
-                        <div style="font-size: 10px; opacity: 0.6;">${p.tracks.length} треков</div>
+    // ========== СТРАНИЦА ПЛЕЙЛИСТОВ ==========
+    function loadPlaylists() {
+        const container = document.getElementById('playlistsList');
+        if (container) {
+            container.innerHTML = playlistsData.map(p => `
+                <div class="artist-card" style="cursor: pointer;" onclick="showPlaylist('${escapeHtml(p.name)}')">
+                    <div class="avatar" style="font-size: 28px;">${p.icon}</div>
+                    <div style="flex:1;">
+                        <div style="font-weight: 600;">${escapeHtml(p.name)}</div>
+                        <div style="font-size: 11px; opacity: 0.6;">${p.tracks.length} треков</div>
                     </div>
-                `).join('');
-            }
-            if (recGrid) {
-                recGrid.innerHTML = playlists.slice(4, 8).map(p => `
-                    <div class="playlist-card" onclick="showPlaylistTracks('${escapeHtml(p.name)}')">
-                        <div class="playlist-cover">${p.cover}</div>
-                        <div style="font-weight: 600; margin-bottom: 4px;">${escapeHtml(p.name)}</div>
-                        <div style="font-size: 10px; opacity: 0.6;">${p.tracks.length} треков</div>
-                    </div>
-                `).join('');
-            }
-        }
-
-        window.showPlaylistTracks = function(playlistName) {
-            const playlist = playlists.find(p => p.name === playlistName);
-            if (!playlist) return;
-            
-            let tracksHtml = '<div style="max-height: 400px; overflow-y: auto;">';
-            playlist.tracks.forEach((track, idx) => {
-                tracksHtml += `
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
-                        <div>
-                            <div style="font-weight: 600;">${idx + 1}. ${escapeHtml(track.track)}</div>
-                            <div style="font-size: 12px; opacity: 0.6;">${escapeHtml(track.artist)} • ${track.year}</div>
-                        </div>
-                        <button onclick="window.open('https://music.yandex.ru/search?text=${encodeURIComponent(track.artist + ' ' + track.track)}', '_blank')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; font-size: 16px; cursor: pointer; color: white;">▶️</button>
-                    </div>
-                `;
-            });
-            tracksHtml += '</div>';
-            
-            tg.showPopup({ title: `🎵 ${playlistName}`, message: tracksHtml, buttons: [{ type: "close", text: "Закрыть" }] });
-        };
-
-        window.searchArtist = function(a) { 
-            const input = document.getElementById('searchInput');
-            if (input) input.value = a; 
-            search(); 
-        };
-
-        function showRandomQuoteOnMain() {
-            const artists = ["Асия", "Кино", "Imagine Dragons", "Земфира", "Моргенштерн"];
-            const randomArtist = artists[Math.floor(Math.random() * artists.length)];
-            const quote = getRandomQuote(randomArtist);
-            const quoteHtml = `
-                <div class="quote-card" style="margin-top: 16px;">
-                    <div class="quote-icon">💭</div>
-                    <div class="quote-text" style="font-size: 13px;">${escapeHtml(quote)}</div>
-                    <div class="quote-author">— ${escapeHtml(randomArtist)}</div>
+                    <div>▶</div>
                 </div>
-            `;
-            const container = document.getElementById('randomQuoteOnMain');
-            if (container) container.innerHTML = quoteHtml;
+            `).join('');
         }
+    }
 
-        function displayQuote(artistName) {
-            const quote = getRandomQuote(artistName);
-            const quoteHtml = `
-                <div class="quote-card" id="currentQuoteCard">
-                    <div class="quote-icon">💬</div>
-                    <div class="quote-text">${escapeHtml(quote)}</div>
-                    <div class="quote-author">— ${escapeHtml(artistName)}</div>
-                    <span class="quote-refresh" onclick="refreshQuote('${escapeHtml(artistName)}')">🔄 ДРУГАЯ ЦИТАТА</span>
-                </div>
-            `;
-            const musicResult = document.getElementById('musicResult');
-            if (musicResult) {
-                const existingQuote = document.getElementById('currentQuoteCard');
-                if (existingQuote) {
-                    existingQuote.outerHTML = quoteHtml;
-                } else {
-                    musicResult.insertAdjacentHTML('beforeend', quoteHtml);
-                }
-            }
+    window.showPlaylist = function(playlistName) {
+        const playlist = playlistsData.find(p => p.name === playlistName);
+        if (!playlist) return;
+        let msg = `📀 ${playlist.name}\n\n`;
+        playlist.tracks.forEach((t, i) => { msg += `${i+1}. ${t}\n`; });
+        alert(msg);
+    };
+
+    // ========== СТРАНИЦА AI ОБЛОЖЕК ==========
+    window.generateCover = function() {
+        const prompt = document.getElementById('aiPrompt').value.trim();
+        const resultDiv = document.getElementById('aiResult');
+        if (!prompt) {
+            resultDiv.innerHTML = '<div style="font-size:48px;">🎨</div><div>Введите описание обложки</div>';
+            return;
         }
-
-        window.refreshQuote = function(artistName) {
-            const newQuote = getRandomQuote(artistName);
-            const quoteCard = document.getElementById('currentQuoteCard');
-            if (quoteCard) {
-                const quoteText = quoteCard.querySelector('.quote-text');
-                if (quoteText) quoteText.innerHTML = escapeHtml(newQuote);
-            }
-            showNote('✨ Новая цитата загружена');
-        };
-
-        function getRandomFact(artistName) {
-            const factsLocal = {
-                "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства"],
-                "кино": ["Группа основана в 1981", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения"],
-                "imagine dragons": ["3 премии Grammy", "«Believer» в рекламе FIFA", "Группа из Лас-Вегаса"],
-                "моргенштерн": ["Родился в Уфе", "Самый молодой миллионер", "«Cadillac» — 100 млн просмотров"],
-                "земфира": ["Родилась в Уфе", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий"],
-                "billie eilish": ["Самая молодая обладательница 4 Grammy", "Пишет песни вместе с братом", "Страдает синдромом Туретта"],
-                "the weeknd": ["Настоящее имя — Эйбел Тесфайе", "Был бездомным в начале карьеры", "Эфиопского происхождения"],
-                "rammstein": ["Названы в честь авиабазы", "Используют настоящий огонь на концертах", "Поют только на немецком"]
-            };
-            const lowerArtist = artistName.toLowerCase();
-            for (const [key, factsList] of Object.entries(factsLocal)) {
-                if (lowerArtist.includes(key) || key.includes(lowerArtist)) {
-                    return factsList[Math.floor(Math.random() * factsList.length)];
-                }
-            }
-            return `🎤 ${artistName} — один из самых ярких исполнителей года!`;
-        }
-
-        function renderAlbums(artistName) {
-            const artistAlbums = getArtistAlbums(artistName);
-            if (artistAlbums.length === 0) return '';
-            
-            return `
-                <div style="margin: 20px 0 16px;">
-                    <div class="section-title">📀 АЛЬБОМЫ</div>
-                    <div class="album-grid">
-                        ${artistAlbums.map(album => `
-                            <div class="album-card" onclick="showAlbumTracks('${escapeHtml(artistName)}', '${escapeHtml(album.title)}')">
-                                <div>${album.cover}</div>
-                                <div style="font-size: 13px; font-weight: 500;">${escapeHtml(album.title)}</div>
-                                <div style="font-size: 10px; opacity: 0.5; margin-top: 4px;">${album.year} • ${album.tracks.length} треков</div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        window.showAlbumTracks = function(artistName, albumTitle) {
-            const artistAlbums = getArtistAlbums(artistName);
-            const album = artistAlbums.find(a => a.title === albumTitle);
-            if (!album) return;
-            
-            let tracksHtml = '<div style="max-height: 400px; overflow-y: auto;">';
-            album.tracks.forEach((trackName, idx) => {
-                tracksHtml += `
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
-                        <div>
-                            <div style="font-weight: 600;">${idx + 1}. ${escapeHtml(trackName)}</div>
-                            <div style="font-size: 12px; opacity: 0.6;">${escapeHtml(artistName)}</div>
-                        </div>
-                        <button onclick="window.open('https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' ' + trackName)}', '_blank')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; font-size: 16px; cursor: pointer; color: white;">▶️</button>
-                    </div>
-                `;
-            });
-            tracksHtml += '</div>';
-            
-            tg.showPopup({ title: `📀 ${album.title}`, message: tracksHtml, buttons: [{ type: "close", text: "Закрыть" }] });
-        };
-
-        async function search() {
-            const q = document.getElementById('searchInput').value.trim();
-            if (!q) return;
-            
-            lastSearchedArtist = q;
-            const resDiv = document.getElementById('musicResult');
-            resDiv.innerHTML = '<div class="loading-spinner"></div><div style="text-align:center;">🔍 Поиск...</div>';
-            
-            const artistTracks = getArtistTracks(q);
-            const randomFact = getRandomFact(q);
-            const firstLetter = q.charAt(0).toUpperCase();
-            const bio = getBiography(q);
-            const albumsHtml = renderAlbums(q);
-            
-            let tracksPreviewHtml = '';
-            if (artistTracks.length > 0) {
-                tracksPreviewHtml = `
-                    <div style="margin: 20px 0 16px;">
-                        <div class="section-title" style="text-align: center;">🎧 ПОПУЛЯРНЫЕ ТРЕКИ</div>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            ${artistTracks.slice(0, 10).map((t, idx) => `
-                                <div class="preview-track-item">
-                                    <div style="margin-bottom: 10px;">
-                                        <div style="font-weight: 600; font-size: 16px;">${escapeHtml(t.track)}</div>
-                                        <div style="font-size: 12px; opacity: 0.5;">${escapeHtml(t.artist)} • ${t.year}</div>
-                                    </div>
-                                    <button onclick="window.open('https://music.yandex.ru/search?text=${encodeURIComponent(t.artist + ' ' + t.track)}', '_blank')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer; color: white;">▶️</button>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            } else {
-                tracksPreviewHtml = '<div style="padding: 20px; text-align: center; opacity: 0.6;">🎵 Треки не найдены</div>';
-            }
-            
-            resDiv.innerHTML = `
-                <div class="result-card">
-                    <div class="artist-profile">
-                        <div class="artist-avatar">${escapeHtml(firstLetter)}</div>
-                        <div class="artist-info">
-                            <div class="artist-name-large">${escapeHtml(q)}</div>
-                            <div class="artist-role">Популярный исполнитель</div>
-                        </div>
-                    </div>
-                    ${albumsHtml}
-                    ${tracksPreviewHtml}
-                    <div class="ai-fact-card">
-                        <div class="ai-fact-header">
-                            <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
-                            <div>
-                                <div class="ai-fact-label">ИНТЕРЕСНЫЙ ФАКТ</div>
-                                <div class="ai-fact-text" id="aiFactText">${escapeHtml(randomFact)}</div>
-                                <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">🔄 ДРУГОЙ ФАКТ</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="section-title">СЛУШАТЬ ПОЛНОСТЬЮ</div>
-                    <div class="platform-buttons">
-                        <button onclick="window.open('https://music.yandex.ru/search?text=${encodeURIComponent(q)}', '_blank')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                        <button onclick="window.open('https://music.youtube.com/search?q=${encodeURIComponent(q)}', '_blank')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
-                    </div>
-                    ${bio ? `<div class="bio-section"><div class="bio-title">📖 БИОГРАФИЯ</div><div class="bio-text">${escapeHtml(bio)}</div></div>` : ''}
-                    <button class="search-btn" style="margin-top: 16px; background: linear-gradient(135deg, #2ecc71, #27ae60);" onclick="window.open('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}', '_blank')">🎫 БИЛЕТЫ НА КОНЦЕРТ</button>
-                </div>
-            `;
-            
-            displayQuote(q);
-        }
-
-        window.refreshFact = function(artistName) {
-            const newFact = getRandomFact(artistName);
-            const factTextDiv = document.getElementById('aiFactText');
-            if (factTextDiv) factTextDiv.innerHTML = escapeHtml(newFact);
-            showNote('✨ Новый факт загружен');
-        };
-
-        document.getElementById('doSearchBtn').onclick = search;
-        document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
-
-        // ========== СТРАНИЦА ИГРЫ ==========
-        let gameQ = [], gameIdx = 0, gameScore = 0, gameActive = false;
-        
-        function genQ() { 
-            const t = tracks[Math.floor(Math.random() * tracks.length)]; 
-            const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); 
-            let opts = [t.artist, ...others]; 
-            for (let i = opts.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [opts[i], opts[j]] = [opts[j], opts[i]]; } 
-            return { track: t.track, correct: t.artist, options: opts }; 
-        }
-        
-        function startGame() { 
-            gameQ = []; 
-            for (let i = 0; i < 10; i++) gameQ.push(genQ()); 
-            gameIdx = 0; 
-            gameScore = 0; 
-            gameActive = true; 
-            showGame(); 
-        }
-        
-        function showGame() { 
-            if (gameIdx >= gameQ.length) { endGame(); return; } 
-            const q = gameQ[gameIdx]; 
-            const content = document.getElementById('gameContent');
-            if (!content) return;
-            content.innerHTML = `
-                <div style="text-align:center;">
-                    <div style="opacity:0.6; margin-bottom: 8px;">Вопрос ${gameIdx+1}/${gameQ.length}</div>
-                    <div class="track-name">"${escapeHtml(q.track)}"</div>
-                    <div style="margin-bottom: 16px;">Кто исполнитель?</div>
-                    <div class="game-options">
-                        ${q.options.map(opt => `<div class="game-option" onclick="checkAnswer('${escapeHtml(opt)}', '${escapeHtml(q.correct)}')">${escapeHtml(opt)}</div>`).join('')}
-                    </div>
-                    <div style="margin-top: 20px;">🎯 Счёт: ${gameScore}/${gameQ.length}</div>
-                </div>
-            `; 
-        }
-        
-        window.checkAnswer = function(sel, cor) { 
-            if (!gameActive) return; 
-            if (sel === cor) {
-                gameScore++;
-                showNote('✅ Правильно! +1 очко');
-            } else {
-                showNote(`❌ Неправильно! Правильный ответ: ${cor}`);
-            }
-            gameIdx++; 
-            showGame(); 
-        };
-        
-        function endGame() { 
-            gameActive = false; 
-            const percent = Math.round((gameScore / gameQ.length) * 100);
-            let message = '';
-            if (percent === 100) message = '🎉 ИДЕАЛЬНО! Ты настоящий меломан! 🎉';
-            else if (percent >= 70) message = '👍 ОТЛИЧНО! Ты хорошо знаешь музыку!';
-            else if (percent >= 50) message = '📀 НЕПЛОХО! Но можно и лучше!';
-            else message = '🎧 ПОПРОБУЙ ЕЩЁ! Слушай больше музыки!';
-            
-            const content = document.getElementById('gameContent');
-            if (content) content.innerHTML = `
-                <div style="text-align:center; padding:20px;">
-                    <div style="font-size:64px;">🎉</div>
-                    <div style="font-size:28px; font-weight:600; margin:16px;">${gameScore}/${gameQ.length}</div>
-                    <div style="font-size:14px; opacity:0.7; margin-bottom: 20px;">${message}</div>
-                    <button onclick="startGame()" class="search-btn">🔄 СЫГРАТЬ СНОВА</button>
-                </div>
-            `;
-        }
-        
-        document.getElementById('startGameBtn').onclick = startGame;
-
-        // ========== СТРАНИЦА AI ОБЛОЖЕК ==========
-        document.getElementById('generateAIBtn').onclick = () => {
-            const prompt = document.getElementById('aiPrompt').value.trim();
-            const resultDiv = document.getElementById('aiResult');
-            if (!prompt) {
-                resultDiv.innerHTML = '<div style="padding:40px; opacity:0.5;"><div style="font-size:48px;">🎨</div><div>Введите описание для генерации</div></div>';
-                return;
-            }
+        resultDiv.innerHTML = '<div style="padding: 20px;">🎨 Генерация...</div>';
+        setTimeout(() => {
             resultDiv.innerHTML = `
-                <div class="loading-spinner"></div>
-                <div style="text-align:center; margin-top: 16px;">Создаём обложку для "${escapeHtml(prompt)}"...</div>
+                <div style="font-size: 48px;">🖼️</div>
+                <div style="margin: 12px 0;">"${escapeHtml(prompt)}"</div>
+                <button class="search-btn" onclick="window.open('https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', music album cover')}', '_blank')">🌐 ОТКРЫТЬ ОБЛОЖКУ</button>
+                <div style="font-size: 11px; opacity: 0.5; margin-top: 12px;">(обложка откроется в новой вкладке)</div>
             `;
-            
-            setTimeout(() => {
-                const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + ', music album cover, professional, vibrant')}?width=512&height=512&nologo=true`;
-                resultDiv.innerHTML = `
-                    <div style="text-align:center;">
-                        <img src="${imageUrl}" class="ai-cover-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23667eea%22/%3E%3Ctext x=%2250%22 y=%2267%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22%3E🎵%3C/text%3E%3C/svg%3E'">
-                        <div style="margin: 16px 0 8px; font-weight: 500;">${escapeHtml(prompt)}</div>
-                        <button onclick="window.open('${imageUrl}', '_blank')" class="search-btn" style="margin-top: 8px;">💾 ОТКРЫТЬ</button>
-                    </div>
-                `;
-            }, 500);
-        };
+        }, 300);
+    };
 
-        // ========== СТРАНИЦА АССИСТЕНТА ==========
-        async function askBot(q) {
-            const low = q.toLowerCase();
-            
-            if (low.includes("цитат") || low.includes("скажи что-нибудь от") || low.includes("мудрая мысль")) {
-                const artistsList = ["асия", "кино", "imagine dragons", "земфира", "моргенштерн", "billie eilish", "the weeknd", "rammstein"];
-                let foundArtist = null;
-                for (const artist of artistsList) {
-                    if (low.includes(artist)) {
-                        foundArtist = artist;
-                        break;
-                    }
-                }
-                if (foundArtist) {
-                    const quote = getRandomQuote(foundArtist);
-                    return `💬 <b>Цитата ${foundArtist}:</b><br><br>«${quote}»`;
-                } else {
-                    const allArtists = Object.keys(quotesDatabase);
-                    const randomArtist = allArtists[Math.floor(Math.random() * allArtists.length)];
-                    const quote = getRandomQuote(randomArtist);
-                    return `💬 <b>Случайная цитата:</b><br><br>«${quote}»<br><br>— ${randomArtist}`;
-                }
-            }
-            
-            if (low.includes("грустн") || low.includes("печаль")) {
-                return `😢 <b>Грустные песни для твоего настроения:</b><br>• "Останься" - Асия<br>• "Группа крови" - Кино<br>• "Everything I Wanted" - Billie Eilish<br>• "Искала" - Земфира`;
-            }
-            
-            if (low.includes("весел") || low.includes("радост")) {
-                return `😊 <b>Весёлые и энергичные песни:</b><br>• "Believer" - Imagine Dragons<br>• "Твой поцелуй" - Асия<br>• "Blinding Lights" - The Weeknd<br>• "Cadillac" - Моргенштерн`;
-            }
-            
-            if (low.includes("случайный") || low.includes("рандом")) {
-                const t = tracks[Math.floor(Math.random() * tracks.length)];
-                return `🎲 <b>Случайный трек дня:</b><br><br>"${t.track}" - ${t.artist} (${t.year})<br><br>🎧 Послушай на Яндекс.Музыке!`;
-            }
-            
-            if (low.includes("спокойн") || low.includes("релакс")) {
-                return `😌 <b>Расслабляющая музыка:</b><br>• "Stumblin' In" - King & James<br>• "Lovely" - Billie Eilish<br>• "Хочешь?" - Земфира<br>• Lo-Fi плейлисты`;
-            }
-            
-            const artistTracks = getArtistTracks(q);
-            if (artistTracks.length > 0) {
-                const topTracks = artistTracks.slice(0, 5).map(t => `• "${t.track}" (${t.year})`).join('<br>');
-                const bio = getBiography(q);
-                if (bio) {
-                    return `🎵 <b>${q}</b><br><br>📖 <b>Краткая биография:</b><br>${bio}<br><br>🎧 <b>Популярные треки:</b><br>${topTracks}`;
-                }
-                return `🎵 <b>Популярные треки ${q}:</b><br><br>${topTracks}`;
-            }
-            
-            return `🎶 <b>Я музыкальный ассистент!</b><br><br>Могу:<br>• Найти треки исполнителя<br>• Подобрать музыку по настроению<br>• Рассказать цитату артиста<br>• Дать случайный трек<br><br>Просто напиши имя исполнителя или "грустная песня"!`;
-        }
-        
-        function addMsg(text, isUser = false) {
-            const cont = document.getElementById('chatContainer');
-            const d = document.createElement('div');
-            d.className = `message ${isUser ? 'message-user' : 'message-ai'}`;
-            if (isUser) {
-                d.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div>`;
-            } else {
-                d.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
-            }
-            cont.appendChild(d);
-            cont.scrollTop = cont.scrollHeight;
-        }
-        
-        async function sendMsg() {
-            const inp = document.getElementById('chatInput');
-            const msg = inp.value.trim();
-            if (!msg) return;
-            addMsg(msg, true);
-            inp.value = '';
-            
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message message-ai';
-            typingDiv.innerHTML = `<div class="message-icon">🤖</div><div class="message-bubble">Думаю...</div>`;
-            document.getElementById('chatContainer').appendChild(typingDiv);
-            
-            const resp = await askBot(msg);
-            typingDiv.remove();
-            addMsg(resp, false);
-        }
-        
-        document.getElementById('sendChatBtn').onclick = sendMsg;
-        document.getElementById('chatInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
-
-        // ========== СТРАНИЦА РАНДОМАЙЗЕРА ==========
-        function parseArtists(t) { 
-            if (!t.trim()) return []; 
-            const lines = t.split(/\r?\n/); 
-            let a = []; 
-            for (let l of lines) { 
-                l = l.trim(); 
-                if (!l) continue; 
-                a.push(...l.split(',').map(p => p.trim())); 
-            } 
-            return [...new Map(a.map(v => [v.toLowerCase(), v])).values()]; 
-        }
-        
-        function updateTotal() { 
-            const input = document.getElementById('artistListInput');
-            if (input) document.getElementById('totalArtistsCount').textContent = parseArtists(input.value).length; 
-        }
-        
-        function doRandom() {
-            const artists = parseArtists(document.getElementById('artistListInput').value);
-            if (!artists.length) { 
-                document.getElementById('randomizerResult').innerHTML = '<div style="padding:20px; text-align:center; opacity:0.6;">📝 Введите исполнителей</div>'; 
-                return; 
-            }
-            let cnt = parseInt(document.getElementById('randomCountInput').value) || 1;
-            cnt = Math.min(cnt, artists.length);
-            const shuffled = [...artists];
-            for (let i = shuffled.length - 1; i > 0; i--) { 
-                const j = Math.floor(Math.random() * (i + 1)); 
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; 
-            }
-            const selected = shuffled.slice(0, cnt);
-            let html = '<div class="section-title">🎲 ВЫБРАНО</div>';
-            selected.forEach((a, i) => { 
-                html += `
-                    <div class="random-artist-card">
-                        <span class="random-artist-name">${i+1}. ${escapeHtml(a)}</span>
-                        <button onclick="window.open('https://music.yandex.ru/search?text=${encodeURIComponent(a)}', '_blank')" class="random-artist-link">Слушать</button>
-                    </div>
-                `;
-            });
-            document.getElementById('randomizerResult').innerHTML = html;
-        }
-        
-        function loadQuick() { 
-            const quickArtists = ["Асия", "Imagine Dragons", "Кино", "Земфира", "Моргенштерн", "Billie Eilish"];
-            document.getElementById('quickArtistsGrid').innerHTML = quickArtists.map(a => `
-                <span class="popular-tag" onclick="addArtist('${a}')">
-                    <span>+</span> ${a}
-                </span>
-            `).join(''); 
-        }
-        
-        window.addArtist = function(a) { 
-            const inp = document.getElementById('artistListInput');
-            const current = inp.value;
-            inp.value = current + (current ? "\n" : "") + a;
-            updateTotal();
-            showNote(`✅ Добавлен: ${a}`);
-        };
-        
-        document.getElementById('doRandomizeBtn').onclick = doRandom;
-        document.getElementById('artistListInput').addEventListener('input', updateTotal);
-
-        // ========== СТРАНИЦА НАСТРОЕНИЯ ==========
-        document.querySelectorAll('.mood-btn').forEach(btn => { 
-            btn.onclick = () => { 
-                const mood = btn.dataset.mood;
-                const recommendation = moodRecommendations[mood] || "🎵 Отличный выбор! Слушай любимую музыку!";
-                document.getElementById('moodResult').innerHTML = `
-                    <div style="background: rgba(255,255,255,0.05); border-radius: 20px; padding: 16px; margin-top: 16px;">
-                        <div style="font-weight: 600; margin-bottom: 8px;">🎧 РЕКОМЕНДАЦИЯ</div>
-                        <div style="font-size: 14px; line-height: 1.5;">${recommendation}</div>
-                        <button onclick="window.open('https://music.yandex.ru/search?text=${encodeURIComponent(mood === 'happy' ? 'веселая музыка' : mood === 'sad' ? 'грустная музыка' : mood === 'energetic' ? 'энергичная музыка' : 'музыка')}', '_blank')" class="search-btn" style="margin-top: 12px; width: 100%;">🎵 ОТКРЫТЬ В ЯНДЕКС.МУЗЫКЕ</button>
-                    </div>
-                `;
-                showNote(`🎭 Настроение: ${btn.textContent.trim()}`);
-            }; 
-        });
-
-        // ========== СТРАНИЦА КОНЦЕРТНЫХ ПЛОЩАДОК ==========
-        function updateVenuesList() {
-            const listContainer = document.getElementById('venuesList');
-            if (!listContainer) return;
-            listContainer.innerHTML = venues.map(venue => `
-                <div class="venue-card" onclick="window.open('https://yandex.ru/maps/?text=${encodeURIComponent(venue.name + ' ' + venue.address)}', '_blank')">
-                    <div style="font-weight: 600; margin-bottom: 4px;">🎤 ${escapeHtml(venue.name)}</div>
-                    <div style="font-size: 11px; opacity: 0.6;">📍 ${escapeHtml(venue.address)}</div>
-                    <div style="font-size: 11px; opacity: 0.6;">🚇 ${escapeHtml(venue.metro)}</div>
-                    <div style="font-size: 10px; opacity: 0.4; margin-top: 6px;">${escapeHtml(venue.description)}</div>
-                </div>
-            `).join('');
-        }
-
-        // ========== НАСТРОЙКИ ФОНА ==========
-        const colorPickerBtn = document.getElementById('colorPickerBtn');
-        if (colorPickerBtn) {
-            colorPickerBtn.onclick = () => {
-                const colorModal = document.createElement('div');
-                colorModal.className = 'settings-modal';
-                colorModal.innerHTML = `
-                    <div class="modal-card">
-                        <div class="modal-title">🎨 ВЫБЕРИТЕ ЦВЕТ</div>
-                        <input type="color" id="tempColorPicker" value="#1a1a3e" style="width:100%; height:60px; border:none; border-radius:16px; margin-bottom:20px; cursor:pointer;">
-                        <div id="colorPreview" style="width:100%; height:50px; border-radius:16px; margin-bottom:20px; background:#1a1a3e; border:1px solid rgba(255,255,255,0.2);"></div>
-                        <div style="display: flex; gap: 12px;">
-                            <button id="applyColorBtn" style="flex:1; background:linear-gradient(135deg,#2ecc71,#27ae60); border:none; padding:12px; border-radius:60px; color:white; cursor:pointer; font-weight:600;">✅ ПРИМЕНИТЬ</button>
-                            <button id="cancelColorBtn" style="flex:1; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:60px; color:white; cursor:pointer;">❌ ОТМЕНА</button>
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(colorModal);
-                
-                const picker = colorModal.querySelector('#tempColorPicker');
-                const preview = colorModal.querySelector('#colorPreview');
-                picker.oninput = (e) => { preview.style.background = e.target.value; };
-                
-                colorModal.querySelector('#applyColorBtn').onclick = () => {
-                    applyBackground(picker.value);
-                    colorModal.remove();
-                    showNote('🎨 Цвет фона изменён');
-                };
-                colorModal.querySelector('#cancelColorBtn').onclick = () => colorModal.remove();
-                colorModal.onclick = (e) => { if (e.target === colorModal) colorModal.remove(); };
-            };
-        }
-
-        const uploadBgBtn = document.getElementById('uploadBgBtn');
-        if (uploadBgBtn) {
-            uploadBgBtn.onclick = () => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.onchange = (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => {
-                            applyBackground(ev.target.result);
-                            showNote('📸 Фоновое изображение установлено');
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                };
-                input.click();
-            };
-        }
-
-        const resetBgBtn = document.getElementById('resetBgBtn');
-        if (resetBgBtn) {
-            resetBgBtn.onclick = () => {
-                localStorage.removeItem('music_bot_bg');
-                applyBackground('default', currentMode);
-                showNote('🔄 Фон сброшен к стандартному');
-            };
-        }
-
-        document.querySelectorAll('.gradient-circle').forEach(c => {
-            c.onclick = () => {
-                const gradient = c.style.background;
-                applyBackground(gradient);
-                showNote('✨ Градиент установлен');
-            };
-        });
-
-        const fab = document.getElementById('settingsFab');
-        const modal = document.getElementById('settingsModal');
-        const closeModalBtn = document.getElementById('closeSettingsBtn');
-        
-        if (fab) fab.onclick = () => modal.classList.remove('hidden');
-        if (closeModalBtn) closeModalBtn.onclick = () => modal.classList.add('hidden');
-        if (modal) modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
-
-        // ========== ЗАПУСК ПРИЛОЖЕНИЯ ==========
-        loadAppearance();
-        loadPopular();
-        loadGenres();
-        loadPlaylists();
-        updateTotal();
-        loadQuick();
-        updateVenuesList();
-        showRandomQuoteOnMain();
-        showPage(pages.music, 'music');
-        
-        console.log('🎵 Music Hub загружен! Общая длина кода: 1850+ строк');
-        console.log('📀 База содержит:', tracks.length, 'треков');
-        console.log('💬 Доступно цитат:', Object.values(quotesDatabase).flat().length);
-    </script>
+    // ========== ЗАПУСК ==========
+    loadPopular();
+    loadQuickAdd();
+    loadVenues();
+    loadPlaylists();
+    showPage('music');
+</script>
 </body>
 </html>
