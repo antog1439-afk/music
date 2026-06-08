@@ -67,7 +67,7 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* ========== ГЛАВНОЕ МЕНЮ ЦЕНТРИРОВАНО ========== */
+        /* ========== ГЛАВНОЕ МЕНЮ - ИСПРАВЛЕНО (ЦЕНТР) ========== */
         .menu-container {
             position: fixed;
             top: 0;
@@ -81,47 +81,48 @@
             z-index: 5;
         }
         .menu-container.hidden-menu { transform: translateX(-100%); }
+        
         .menu-screen {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 16px;
             width: 100%;
             max-width: 280px;
             padding: 20px;
             animation: fadeInUp 0.6s ease;
             margin: 0 auto;
-            position: relative;
-            top: auto;
-            left: auto;
-            transform: none;
         }
+        
         .menu-btn {
             background: rgba(0,0,0,0.04);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(0,0,0,0.06);
-            border-radius: 32px;
-            padding: 24px 12px;
+            border-radius: 28px;
+            padding: 16px 8px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s ease;
         }
-        .menu-btn:active { transform: scale(0.96); background: rgba(0,0,0,0.08); }
+        .menu-btn:active { transform: scale(0.95); background: rgba(0,0,0,0.08); }
         .menu-icon {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 6px auto;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .menu-icon svg {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             stroke: #1a1a1a;
             stroke-width: 1.5;
             fill: none;
+        }
+        .menu-text {
+            font-size: 11px;
+            color: #1a1a1a;
+            font-weight: 500;
         }
 
         .currency-chart {
@@ -579,9 +580,9 @@
 
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
-            .menu-screen { gap: 16px; max-width: 240px; }
-            .menu-btn { padding: 18px 8px; }
-            .menu-icon svg { width: 28px; height: 28px; }
+            .menu-screen { gap: 12px; max-width: 260px; }
+            .menu-btn { padding: 12px 6px; }
+            .menu-icon svg { width: 24px; height: 24px; }
             .page-title { font-size: 24px; }
             .artist-avatar { width: 56px; height: 56px; }
             .artist-name-large { font-size: 20px; }
@@ -589,6 +590,7 @@
             .artist-avatar-circle { width: 60px; height: 60px; font-size: 28px; }
             .artist-card { width: 70px; }
             .artist-name-scroll { font-size: 11px; max-width: 70px; }
+            .menu-text { font-size: 10px; }
         }
     </style>
 </head>
@@ -648,7 +650,7 @@
         </div>
     </div>
 
-    <!-- ========== ГЛАВНОЕ МЕНЮ ========== -->
+    <!-- ========== ГЛАВНОЕ МЕНЮ - ИСПРАВЛЕНО ========== -->
     <div class="menu-container" id="menuContainer">
         <div class="currency-chart" id="currencyChart">
             <div class="currency-title">
@@ -661,14 +663,38 @@
         </div>
 
         <div class="menu-screen">
-            <div class="menu-btn" id="goToMusicBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div></div>
-            <div class="menu-btn" id="goToGameBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div></div>
-            <div class="menu-btn" id="goToAIBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div></div>
-            <div class="menu-btn" id="goToAssistantBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div></div>
-            <div class="menu-btn" id="goToRandomizerBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div></div>
-            <div class="menu-btn" id="goToMoodBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div></div>
-            <div class="menu-btn" id="goToMapBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div></div>
-            <div class="menu-btn" id="goToTicketsBtn"><div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div></div>
+            <div class="menu-btn" id="goToMusicBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
+                <div class="menu-text">Музыка</div>
+            </div>
+            <div class="menu-btn" id="goToGameBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
+                <div class="menu-text">Игра</div>
+            </div>
+            <div class="menu-btn" id="goToAIBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div>
+                <div class="menu-text">AI</div>
+            </div>
+            <div class="menu-btn" id="goToAssistantBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
+                <div class="menu-text">Ассистент</div>
+            </div>
+            <div class="menu-btn" id="goToRandomizerBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
+                <div class="menu-text">Рандом</div>
+            </div>
+            <div class="menu-btn" id="goToMoodBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div>
+                <div class="menu-text">Настроение</div>
+            </div>
+            <div class="menu-btn" id="goToMapBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                <div class="menu-text">Карта</div>
+            </div>
+            <div class="menu-btn" id="goToTicketsBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div>
+                <div class="menu-text">Билеты</div>
+            </div>
         </div>
     </div>
 
