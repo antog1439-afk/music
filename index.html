@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Loginov Music | Музыкальный центр</title>
+    <title>LE MONDE MUSIC | Музыкальный центр</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Подключаем красивые шрифты для заставки -->
+    <!-- Подключаем красивые шрифты -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -20,20 +20,20 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
+            background: #ffffff;
             background-attachment: fixed;
             transition: background 0.3s ease;
         }
 
-        body.music-mode { background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%); }
+        body.music-mode { background: #ffffff; }
         body.game-mode { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f2027 100%); }
         body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
         body.assistant-mode { background: linear-gradient(135deg, #0b8793 0%, #360033 50%, #1a0033 100%); }
         body.map-mode { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
 
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, rgba(102,126,234,0.5), rgba(118,75,162,0.5)); border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #ffcc00; border-radius: 10px; }
 
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -44,9 +44,9 @@
             to { opacity: 1; transform: scale(1); }
         }
         @keyframes glowPulse {
-            0% { box-shadow: 0 0 0 0 rgba(102,126,234,0.3); }
-            70% { box-shadow: 0 0 0 12px rgba(102,126,234,0); }
-            100% { box-shadow: 0 0 0 0 rgba(102,126,234,0); }
+            0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.3); }
+            70% { box-shadow: 0 0 0 12px rgba(255,204,0,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,204,0,0); }
         }
         @keyframes slideUp {
             from { transform: translateY(100px); opacity: 0; }
@@ -91,9 +91,9 @@
             animation: fadeInUp 0.6s ease;
         }
         .menu-btn {
-            background: rgba(255,255,255,0.06);
+            background: rgba(0,0,0,0.04);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(0,0,0,0.06);
             border-radius: 32px;
             padding: 24px 12px;
             text-align: center;
@@ -102,19 +102,11 @@
             position: relative;
             overflow: hidden;
         }
-        .menu-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
-        .menu-icon {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .menu-btn:active { transform: scale(0.96); background: rgba(0,0,0,0.08); }
         .menu-icon svg {
             width: 32px;
             height: 32px;
-            stroke: rgba(255,255,255,0.8);
+            stroke: #1a1a1a;
             stroke-width: 1.5;
             fill: none;
         }
@@ -124,42 +116,42 @@
             bottom: 20px;
             left: 20px;
             right: 20px;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.05);
             backdrop-filter: blur(20px);
             border-radius: 24px;
             padding: 10px 16px;
             z-index: 6;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(0,0,0,0.06);
             animation: slideUp 0.5s ease;
         }
         .currency-title {
             font-size: 9px;
             font-weight: 500;
-            color: rgba(255,255,255,0.4);
+            color: rgba(0,0,0,0.5);
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
         }
-        .currency-update-time { font-size: 8px; color: rgba(79,172,254,0.7); }
+        .currency-update-time { font-size: 8px; color: #ffcc00; }
         .currency-item { margin-bottom: 8px; }
         .currency-row { display: flex; align-items: center; gap: 8px; }
         .currency-icon { font-size: 16px; min-width: 32px; }
-        .currency-value { font-size: 13px; font-weight: 600; color: white; min-width: 60px; }
-        .bar-container { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; }
+        .currency-value { font-size: 13px; font-weight: 600; color: #1a1a1a; min-width: 60px; }
+        .bar-container { flex: 1; height: 6px; background: rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }
         .bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .usd-fill { background: linear-gradient(90deg, #3498db, #5dade2); }
-        .eur-fill { background: linear-gradient(90deg, #2ecc71, #58d68d); }
+        .usd-fill { background: linear-gradient(90deg, #ffcc00, #ffd633); }
+        .eur-fill { background: linear-gradient(90deg, #ffcc00, #ffd633); }
 
         .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 8px; }
         .back-btn {
-            background: rgba(255,255,255,0.06);
+            background: rgba(0,0,0,0.05);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(0,0,0,0.06);
             padding: 10px 18px;
             border-radius: 40px;
-            color: white;
+            color: #1a1a1a;
             font-weight: 500;
             font-size: 14px;
             cursor: pointer;
@@ -167,26 +159,22 @@
             align-items: center;
             gap: 6px;
         }
-        .back-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
+        .back-btn:active { transform: scale(0.96); background: rgba(0,0,0,0.1); }
         .page-title {
             font-size: 28px;
             font-weight: 600;
-            color: white;
+            color: #1a1a1a;
             letter-spacing: -0.5px;
             flex: 1;
-            background: linear-gradient(135deg, #fff, rgba(255,255,255,0.7));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .glass-card {
-            background: rgba(255,255,255,0.04);
+            background: rgba(0,0,0,0.03);
             backdrop-filter: blur(20px);
             border-radius: 32px;
             padding: 24px;
             margin-bottom: 16px;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(0,0,0,0.06);
         }
 
         .search-box { display: flex; gap: 10px; margin-bottom: 24px; }
@@ -196,39 +184,39 @@
             border-radius: 60px;
             border: none;
             font-size: 15px;
-            background: rgba(255,255,255,0.9);
+            background: rgba(0,0,0,0.05);
             font-weight: 500;
-            color: #1a1a2e;
+            color: #1a1a1a;
         }
-        .search-input:focus { outline: none; background: white; }
+        .search-input:focus { outline: none; background: rgba(0,0,0,0.08); }
         .search-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #ffcc00;
             border: none;
             padding: 0 28px;
             border-radius: 60px;
-            color: white;
-            font-weight: 500;
+            color: #1a1a1a;
+            font-weight: 600;
             cursor: pointer;
         }
-        .search-btn:active { transform: scale(0.96); }
+        .search-btn:active { transform: scale(0.96); background: #e6b800; }
         .voice-btn {
-            background: rgba(155,89,182,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.06);
             width: 48px;
             border-radius: 60px;
-            color: white;
+            color: #1a1a1a;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .voice-btn.listening { background: #e74c3c; animation: glowPulse 1.5s infinite; }
+        .voice-btn.listening { background: #ffcc00; animation: glowPulse 1.5s infinite; }
 
         .section-title {
             font-size: 11px;
-            font-weight: 500;
+            font-weight: 600;
             margin: 20px 0 12px;
-            color: rgba(255,255,255,0.5);
+            color: rgba(0,0,0,0.5);
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -248,12 +236,12 @@
         }
 
         .artists-scroll-container::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.05);
             border-radius: 10px;
         }
 
         .artists-scroll-container::-webkit-scrollbar-thumb {
-            background: linear-gradient(90deg, #a855f7, #ec4899);
+            background: #ffcc00;
             border-radius: 10px;
         }
 
@@ -283,8 +271,8 @@
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-            border: 2px solid rgba(255,255,255,0.15);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border: 2px solid rgba(0,0,0,0.08);
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
@@ -292,21 +280,21 @@
             font-size: 32px;
             font-weight: 600;
             color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             background-size: cover;
             background-position: center;
         }
 
         .artist-card:hover .artist-avatar-circle {
             transform: scale(1.02);
-            border-color: rgba(168,85,247,0.6);
-            box-shadow: 0 8px 20px rgba(168,85,247,0.3);
+            border-color: #ffcc00;
+            box-shadow: 0 8px 20px rgba(255,204,0,0.3);
         }
 
         .artist-name-scroll {
             font-size: 12px;
             font-weight: 500;
-            color: rgba(255,255,255,0.85);
+            color: #1a1a1a;
             text-align: center;
             max-width: 80px;
             overflow: hidden;
@@ -330,51 +318,50 @@
             height: 72px;
             border-radius: 36px;
             object-fit: cover;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-            border: 2px solid rgba(255,255,255,0.15);
+            background: linear-gradient(135deg, #ffcc00, #ffd633);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 2px solid rgba(0,0,0,0.08);
         }
         .artist-info { flex: 1; }
-        .artist-name-large { font-size: 24px; font-weight: 600; color: white; margin-bottom: 4px; }
-        .artist-role { font-size: 12px; color: rgba(255,255,255,0.5); }
+        .artist-name-large { font-size: 24px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+        .artist-role { font-size: 12px; color: rgba(0,0,0,0.5); }
         .invert-icon { margin-left: 8px; font-size: 14px; opacity: 0.5; display: inline-block; }
 
         .artist-profile.inverted {
-            background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
+            background: linear-gradient(135deg, rgba(255,204,0,0.1), rgba(0,0,0,0.05));
         }
-        .artist-profile.inverted .artist-name-large { color: #f5b042; }
-        .artist-profile.inverted .artist-role { color: #f5b042cc; }
+        .artist-profile.inverted .artist-name-large { color: #ffcc00; }
+        .artist-profile.inverted .artist-role { color: #ffcc00cc; }
         .artist-profile.inverted .artist-avatar {
-            filter: brightness(1.08);
-            border-color: #f5b042;
+            filter: brightness(1.05);
+            border-color: #ffcc00;
         }
 
         .result-card {
-            background: rgba(255,255,255,0.04);
+            background: rgba(0,0,0,0.03);
             border-radius: 28px;
             padding: 24px;
             margin-top: 20px;
             animation: fadeInScale 0.5s ease;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(0,0,0,0.06);
         }
 
         .ai-fact-card {
-            background: linear-gradient(135deg, rgba(155,89,182,0.12), rgba(142,68,173,0.08));
-            border-left: 2px solid #b983ff;
+            background: linear-gradient(135deg, rgba(255,204,0,0.08), rgba(0,0,0,0.03));
+            border-left: 2px solid #ffcc00;
             border-radius: 20px;
             padding: 16px;
             margin: 20px 0;
         }
-        .ai-fact-header { display: flex; gap: 14px; }
-        .ai-fact-icon svg { width: 28px; height: 28px; stroke: #b983ff; stroke-width: 1.5; fill: none; }
-        .ai-fact-label { font-size: 10px; color: #b983ff; font-weight: 500; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1.5px; }
-        .ai-fact-text { font-size: 14px; line-height: 1.45; color: rgba(255,255,255,0.85); }
+        .ai-fact-icon svg { width: 28px; height: 28px; stroke: #ffcc00; stroke-width: 1.5; fill: none; }
+        .ai-fact-label { font-size: 10px; color: #ffcc00; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1.5px; }
+        .ai-fact-text { font-size: 14px; line-height: 1.45; color: #1a1a1a; }
         .ai-fact-refresh {
-            background: rgba(155,89,182,0.2);
-            border: 1px solid rgba(155,89,182,0.3);
+            background: rgba(255,204,0,0.15);
+            border: 1px solid rgba(255,204,0,0.3);
             padding: 6px 14px;
             border-radius: 40px;
-            color: white;
+            color: #1a1a1a;
             font-size: 11px;
             margin-top: 10px;
             cursor: pointer;
@@ -385,26 +372,26 @@
             padding: 12px;
             border-radius: 60px;
             text-align: center;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             border: none;
             font-size: 14px;
         }
         .platform-btn:active { transform: scale(0.97); }
-        .yandex-btn { background: #ffcc00; color: #1a1a2e; }
+        .yandex-btn { background: #ffcc00; color: #1a1a1a; }
         .youtube-btn { background: #ff0000; color: white; }
 
         .bio-section {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.03);
             border-radius: 20px;
             padding: 16px;
             margin-top: 20px;
             max-height: 220px;
             overflow-y: auto;
         }
-        .bio-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #9b59b6; }
-        .bio-text { font-size: 13px; line-height: 1.45; color: rgba(255,255,255,0.75); }
-        .bio-wiki-link { color: #b983ff; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
+        .bio-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #ffcc00; }
+        .bio-text { font-size: 13px; line-height: 1.45; color: rgba(0,0,0,0.7); }
+        .bio-wiki-link { color: #ffcc00; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
 
         .settings-fab {
             position: fixed;
@@ -413,15 +400,16 @@
             width: 52px;
             height: 52px;
             border-radius: 52px;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.05);
             backdrop-filter: blur(16px);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 100;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(0,0,0,0.06);
         }
+        .settings-fab svg { stroke: #1a1a1a; }
         .settings-fab:active { transform: scale(0.92); }
 
         .settings-modal {
@@ -430,7 +418,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(24px);
             display: flex;
             align-items: center;
@@ -439,31 +427,30 @@
             animation: fadeInScale 0.3s ease;
         }
         .modal-card {
-            background: rgba(20,20,30,0.95);
+            background: rgba(255,255,255,0.95);
             backdrop-filter: blur(24px);
             border-radius: 32px;
             padding: 28px;
             width: 90%;
             max-width: 320px;
-            border: 1px solid rgba(255,255,255,0.08);
+            border: 1px solid rgba(0,0,0,0.08);
         }
-        .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; text-align: center; color: white; }
-        .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-        .settings-label { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8); }
+        .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; text-align: center; color: #1a1a1a; }
+        .settings-label { font-size: 14px; font-weight: 500; color: #1a1a1a; }
         .gradient-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
         .gradient-circle {
             width: 48px;
             height: 48px;
             border-radius: 48px;
             cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 2px solid rgba(0,0,0,0.1);
         }
         .close-modal, .appearance-btn {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.08);
             padding: 12px;
             border-radius: 60px;
-            color: white;
+            color: #1a1a1a;
             font-weight: 500;
             cursor: pointer;
         }
@@ -484,21 +471,20 @@
             animation: slideUp 0.3s ease;
             font-size: 13px;
             font-weight: 500;
-            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        .user-info { font-size: 11px; text-align: center; margin-top: 16px; color: rgba(255,255,255,0.3); }
+        .user-info { font-size: 11px; text-align: center; margin-top: 16px; color: rgba(0,0,0,0.3); }
         .hidden { display: none; }
 
         .preview-track-item {
-            background: rgba(255,255,255,0.03);
+            background: rgba(0,0,0,0.03);
             border-radius: 24px;
             padding: 14px 16px;
             text-align: center;
             transition: all 0.2s;
         }
         .preview-track-item button {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #ffcc00;
             border: none;
             width: 44px;
             height: 44px;
@@ -508,10 +494,11 @@
             justify-content: center;
             cursor: pointer;
             font-size: 20px;
+            color: #1a1a1a;
         }
 
         .album-card {
-            background: rgba(255,255,255,0.04);
+            background: rgba(0,0,0,0.03);
             border-radius: 20px;
             padding: 12px;
             width: calc(33% - 8px);
@@ -531,25 +518,25 @@
         }
         .message { display: flex; gap: 10px; align-items: flex-start; }
         .message-user { justify-content: flex-end; }
-        .message-user .message-bubble { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 4px 20px; }
-        .message-ai .message-bubble { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.9); border-radius: 20px 20px 20px 4px; }
+        .message-user .message-bubble { background: #ffcc00; color: #1a1a1a; border-radius: 20px 20px 4px 20px; }
+        .message-ai .message-bubble { background: rgba(0,0,0,0.05); color: #1a1a1a; border-radius: 20px 20px 20px 4px; }
         .message-bubble { padding: 10px 14px; max-width: 80%; font-size: 14px; line-height: 1.4; }
-        .message-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border-radius: 32px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .message-icon { width: 32px; height: 32px; background: rgba(0,0,0,0.05); border-radius: 32px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
 
         .game-options { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .game-option {
-            background: rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.05);
             padding: 12px;
             border-radius: 60px;
             text-align: center;
             cursor: pointer;
             font-weight: 500;
         }
-        .game-option:active { transform: scale(0.97); background: rgba(255,255,255,0.15); }
-        .track-name { font-size: 22px; font-weight: 700; margin: 16px 0; color: white; }
+        .game-option:active { transform: scale(0.97); background: rgba(0,0,0,0.1); }
+        .track-name { font-size: 22px; font-weight: 700; margin: 16px 0; color: #1a1a1a; }
 
         .random-artist-card {
-            background: rgba(255,255,255,0.06);
+            background: rgba(0,0,0,0.03);
             border-radius: 20px;
             padding: 12px 16px;
             margin-bottom: 8px;
@@ -557,14 +544,15 @@
             justify-content: space-between;
             align-items: center;
         }
-        .random-artist-name { font-weight: 500; color: white; }
+        .random-artist-name { font-weight: 500; color: #1a1a1a; }
         .random-artist-link {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: #ffcc00;
             border: none;
             padding: 8px 16px;
             border-radius: 40px;
-            color: white;
+            color: #1a1a1a;
             font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
         }
 
@@ -574,7 +562,7 @@
             border-radius: 24px;
             margin: 0 auto;
             display: block;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         @media (max-width: 480px) {
@@ -601,7 +589,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
+        background: #ffffff;
         z-index: 10000;
         display: flex;
         align-items: center;
@@ -610,53 +598,44 @@
         opacity: 1;
     ">
         <div style="text-align: center;">
-            <div style="margin-bottom: 24px;">
-                <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="url(#gradLogo)" stroke-width="1.2">
-                    <path d="M9 18V5L21 3V16"/>
-                    <circle cx="6" cy="18" r="3"/>
-                    <circle cx="18" cy="16" r="3"/>
-                    <path d="M9 12L21 10"/>
-                    <defs>
-                        <linearGradient id="gradLogo" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#a855f7"/>
-                            <stop offset="100%" style="stop-color:#ec4899"/>
-                        </linearGradient>
-                    </defs>
+            <!-- Логотип LM -->
+            <div style="margin-bottom: 20px;">
+                <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <text x="50" y="68" text-anchor="middle" fill="#ffcc00" font-size="64" font-family="'Playfair Display', serif" font-weight="700" letter-spacing="3">LM</text>
                 </svg>
             </div>
             
+            <!-- Название LE MONDE MUSIC -->
             <div style="
                 font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
-                font-size: 42px;
+                font-size: 34px;
                 font-weight: 700;
-                background: linear-gradient(135deg, #ffffff 0%, #e0b0ff 40%, #f472b6 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
+                color: #1a1a1a;
                 letter-spacing: 2px;
-                margin-bottom: 12px;
-                text-shadow: 0 0 20px rgba(192,132,252,0.2);
+                margin-bottom: 10px;
             ">
-                LOGINOV MUSIC
+                LE MONDE MUSIC
             </div>
             
+            <!-- Декоративная линия -->
             <div style="
-                width: 70px;
+                width: 60px;
                 height: 2px;
-                background: linear-gradient(90deg, #a855f7, #ec4899, #a855f7);
-                margin: 0 auto 16px auto;
+                background: #ffcc00;
+                margin: 0 auto 14px auto;
                 border-radius: 2px;
             "></div>
             
+            <!-- Подзаголовок -->
             <div style="
                 font-family: 'Montserrat', 'Inter', sans-serif;
-                font-size: 11px;
-                color: rgba(255,255,255,0.55);
+                font-size: 9px;
+                color: #888888;
                 letter-spacing: 2px;
                 font-weight: 500;
                 text-transform: uppercase;
             ">
-                prod. by ANTON LOGINOV
+                PLATFORM OF YANDEX MUSIC
             </div>
         </div>
     </div>
@@ -686,13 +665,13 @@
 
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
-            <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
+            <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
             <div class="page-title">МУЗЫКА</div>
         </div>
         <div class="glass-card">
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Асия, Imagine Dragons, Rammstein...">
-                <button id="voiceSearchBtn" class="voice-btn"><svg width="18" height="18" viewBox="0 0 24 24" stroke="white" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
+                <button id="voiceSearchBtn" class="voice-btn"><svg width="18" height="18" viewBox="0 0 24 24" stroke="#1a1a1a" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
                 <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
             
@@ -707,38 +686,38 @@
     </div>
 
     <div class="fullscreen-page" id="gamePage">
-        <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">ИГРА</div></div>
-        <div class="glass-card"><button id="startGameBtn" class="search-btn" style="width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(255,255,255,0.4);">Нажмите «Начать игру»</div></div></div>
+        <div class="page-header"><button class="back-btn" id="backFromGame"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">ИГРА</div></div>
+        <div class="glass-card"><button id="startGameBtn" class="search-btn" style="width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(0,0,0,0.4);">Нажмите «Начать игру»</div></div></div>
     </div>
 
     <div class="fullscreen-page" id="aiPage">
-        <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI ОБЛОЖКИ</div></div>
-        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:30px; color:rgba(255,255,255,0.4);">✨ Введите описание</div></div></div>
+        <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI ОБЛОЖКИ</div></div>
+        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:30px; color:rgba(0,0,0,0.4);">✨ Введите описание</div></div></div>
     </div>
 
     <div class="fullscreen-page" id="assistantPage">
-        <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">АССИСТЕНТ</div></div>
+        <div class="page-header"><button class="back-btn" id="backFromAssistant"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">АССИСТЕНТ</div></div>
         <div class="glass-card"><div class="chat-container" id="chatContainer"><div class="message message-ai"><div class="message-icon">🤖</div><div class="message-bubble">Привет! Напиши имя исполнителя или "грустная песня"</div></div></div><div style="display:flex; gap:10px;"><input type="text" id="chatInput" class="search-input" placeholder="Спроси меня..."><button id="sendChatBtn" class="search-btn">📤</button></div></div>
     </div>
 
     <div class="fullscreen-page" id="randomizerPage">
-        <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">РАНДОМАЙЗЕР</div></div>
-        <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:white; opacity:0.7;">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
+        <div class="page-header"><button class="back-btn" id="backFromRandomizer"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">РАНДОМАЙЗЕР</div></div>
+        <div class="glass-card"><textarea id="artistListInput" class="search-input" rows="4" placeholder="Асия&#10;Imagine Dragons&#10;Кино, Земфира" style="margin-bottom:12px;"></textarea><div class="popular-grid" id="quickArtistsGrid" style="margin-bottom:16px;"></div><div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;"><input type="number" id="randomCountInput" value="1" min="1" max="20" style="width:70px; padding:10px; border-radius:40px; border:none; text-align:center;"><span style="color:rgba(0,0,0,0.7);">из <span id="totalArtistsCount">0</span> исполнителей</span></div><button id="doRandomizeBtn" class="search-btn" style="width:100%; padding:14px;">🎲 Выбрать</button><div id="randomizerResult" style="margin-top:16px;"></div></div>
     </div>
 
     <div class="fullscreen-page" id="mapPage">
-        <div class="page-header"><button class="back-btn" id="backFromMap"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">КОНЦЕРТНЫЕ ПЛОЩАДКИ</div></div>
-        <div class="glass-card"><button id="geoLocationBtn" class="search-btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60); width:100%;">📍 Моё местоположение</button></div>
+        <div class="page-header"><button class="back-btn" id="backFromMap"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">КОНЦЕРТНЫЕ ПЛОЩАДКИ</div></div>
+        <div class="glass-card"><button id="geoLocationBtn" class="search-btn" style="background: #ffcc00; width:100%;">📍 Моё местоположение</button></div>
         <div class="glass-card"><div class="section-title">🎤 КОНЦЕРТНЫЕ ЗАЛЫ</div><div id="venuesList"></div></div>
     </div>
 
     <div class="fullscreen-page" id="moodPage">
-        <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="16" height="16" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">НАСТРОЕНИЕ</div></div>
-        <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#f1c40f; border:none; padding:14px; border-radius:60px;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
+        <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">НАСТРОЕНИЕ</div></div>
+        <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#ffcc00; border:none; padding:14px; border-radius:60px;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
     </div>
 
-    <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="white" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
-    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#667eea"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#667eea,#764ba2);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
+    <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="#1a1a1a" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
+    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#ffcc00"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#ffcc00,#ffd633);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
     <script>
         // Скрытие заставки через 4 секунды
@@ -1043,12 +1022,12 @@
             let tracksList = '<div style="max-height: 400px; overflow-y: auto;">';
             album.tracks.forEach((track, idx) => {
                 tracksList += `
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.08);">
                         <div style="flex: 1;">
                             <div style="font-size: 14px; font-weight: 500;">${idx + 1}. ${escapeHtml(track.track)}</div>
                             <div style="font-size: 11px; opacity: 0.6;">${escapeHtml(track.artist)}</div>
                         </div>
-                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 36px; height: 36px; border-radius: 36px; font-size: 18px; cursor: pointer;">▶️</button>
+                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: #ffcc00; border: none; width: 36px; height: 36px; border-radius: 36px; font-size: 18px; cursor: pointer;">▶️</button>
                     </div>
                 `;
             });
@@ -1158,7 +1137,7 @@
         function updateVenuesList() {
             const listContainer = document.getElementById('venuesList');
             if (!listContainer) return;
-            listContainer.innerHTML = venues.map(venue => `<div onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')" style="background: rgba(255,255,255,0.04); border-radius: 20px; padding: 12px; margin-bottom: 8px; cursor: pointer;"><div style="font-weight: 500;">🎤 ${escapeHtml(venue.name)}</div><div style="font-size: 11px; opacity: 0.6;">📍 ${escapeHtml(venue.address)}</div><div style="font-size: 11px; opacity: 0.6;">🚇 ${escapeHtml(venue.metro)}</div></div>`).join('');
+            listContainer.innerHTML = venues.map(venue => `<div onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')" style="background: rgba(0,0,0,0.03); border-radius: 20px; padding: 12px; margin-bottom: 8px; cursor: pointer;"><div style="font-weight: 500;">🎤 ${escapeHtml(venue.name)}</div><div style="font-size: 11px; opacity: 0.6;">📍 ${escapeHtml(venue.address)}</div><div style="font-size: 11px; opacity: 0.6;">🚇 ${escapeHtml(venue.metro)}</div></div>`).join('');
         }
 
         // ========== НАВИГАЦИЯ ==========
@@ -1212,18 +1191,18 @@
             if (!grid) return;
             
             const popularArtists = [
-                { name: "Асия", color1: "#a855f7", color2: "#ec4899" },
-                { name: "Imagine Dragons", color1: "#3b82f6", color2: "#06b6d4" },
-                { name: "Кино", color1: "#ef4444", color2: "#dc2626" },
-                { name: "Моргенштерн", color1: "#f59e0b", color2: "#f97316" },
-                { name: "Земфира", color1: "#10b981", color2: "#34d399" },
-                { name: "Rammstein", color1: "#dc2626", color2: "#b91c1c" },
-                { name: "Billie Eilish", color1: "#06b6d4", color2: "#0891b2" },
-                { name: "The Weeknd", color1: "#8b5cf6", color2: "#a855f7" },
-                { name: "Ариана Гранде", color1: "#ec4899", color2: "#f472b6" },
-                { name: "Eminem", color1: "#f97316", color2: "#ea580c" },
-                { name: "Руки Вверх", color1: "#14b8a6", color2: "#0d9488" },
-                { name: "Сектор Газа", color1: "#6366f1", color2: "#4f46e5" }
+                { name: "Асия", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Imagine Dragons", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Кино", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Моргенштерн", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Земфира", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Rammstein", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Billie Eilish", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "The Weeknd", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Ариана Гранде", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Eminem", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Руки Вверх", color1: "#ffcc00", color2: "#ffd633" },
+                { name: "Сектор Газа", color1: "#ffcc00", color2: "#ffd633" }
             ];
             
             // Создаем карточки с градиентными аватарками (первая буква)
@@ -1299,7 +1278,7 @@
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             const artistImageUrl = await getArtistImage(q);
-            const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23667eea'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+            const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffcc00'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             
             // Блок превью треков
             let tracksPreviewHtml = '';
@@ -1311,12 +1290,12 @@
                             ${artistTracks.slice(0, 10).map((t, idx) => `
                                 <div class="preview-track-item">
                                     <div style="margin-bottom: 10px;">
-                                        <div style="font-weight: 600; font-size: 16px; color: white;">${escapeHtml(t.track)}</div>
+                                        <div style="font-weight: 600; font-size: 16px; color: #1a1a1a;">${escapeHtml(t.track)}</div>
                                         <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div>
                                     </div>
                                     <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
                                         <span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; opacity: 0.7;">0:00</span>
-                                        <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">▶️</button>
+                                        <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: #ffcc00; border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">▶️</button>
                                     </div>
                                 </div>
                             `).join('')}
@@ -1338,7 +1317,7 @@
                     ${tracksPreviewHtml}
                     <div class="ai-fact-card">
                         <div class="ai-fact-header">
-                            <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#b983ff" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
+                            <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#ffcc00" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
                             <div>
                                 <div class="ai-fact-label">ИИ ФАКТ</div>
                                 <div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div>
@@ -1352,7 +1331,7 @@
                         <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                     </div>
                     ${bio ? `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bio.title)}</div><div class="bio-text">${escapeHtml(bio.text)}</div><a href="${bio.url}" target="_blank" class="bio-wiki-link">Читать полностью →</a></div>` : '<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">Информация не найдена</div></div>'}
-                    <button class="search-btn" style="margin-top: 16px; background: linear-gradient(135deg, #2ecc71, #27ae60);" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
+                    <button class="search-btn" style="margin-top: 16px;" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
                 </div>
             `;
             
@@ -1540,7 +1519,7 @@
                 document.body.style.backgroundRepeat = 'no-repeat';
                 document.body.style.backgroundAttachment = 'fixed';
             } else if (bgType === 'default') {
-                document.body.style.background = 'linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%)';
+                document.body.style.background = '#ffffff';
                 document.body.style.backgroundAttachment = 'fixed';
             }
             
@@ -1774,11 +1753,11 @@
                 const currentType = localStorage.getItem('music_bot_bg_type');
                 
                 if (currentType === 'color' && currentBg === '#000000') {
-                    applyBackground('#1a1a3e', 'color');
-                    showNote('🌞 Светлая тема');
+                    applyBackground('#ffcc00', 'color');
+                    showNote('🌞 Жёлтая тема');
                 } else {
-                    applyBackground('#000000', 'color');
-                    showNote('🌙 Тёмная тема');
+                    applyBackground('#ffffff', 'color');
+                    showNote('🌙 Белая тема');
                 }
             };
         }
@@ -1811,8 +1790,8 @@
                 const style = document.createElement('style');
                 style.id = 'dynamic-button-style';
                 style.textContent = `
-                    .search-btn, .preview-track-item button, .random-artist-link, .platform-btn, .mood-btn {
-                        background: linear-gradient(135deg, ${color}, ${color}cc) !important;
+                    .search-btn, .preview-track-item button, .random-artist-link, .platform-btn.yandex-btn, .mood-btn[data-mood="happy"] {
+                        background: ${color} !important;
                     }
                 `;
                 const oldStyle = document.getElementById('dynamic-button-style');
@@ -1837,7 +1816,7 @@
         startCurrencyUpdates();
         showPage(pages.music, 'music');
         
-        console.log('Loginov Music загружен!');
+        console.log('LE MONDE MUSIC загружен!');
     </script>
 </body>
 </html>
