@@ -87,15 +87,15 @@
         .menu-screen {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: 20px;
             width: 100%;
-            max-width: 280px;
+            max-width: 300px;
             padding: 20px;
             animation: fadeInUp 0.6s ease;
             margin: 0 auto;
         }
         
-        /* ========== ФИКС ДЛЯ КНОПОК (РАБОТАЕТ ВЕЗДЕ) ========== */
+        /* ========== КНОПКИ МЕНЮ - ФИКС ДЛЯ PWA ========== */
         .menu-btn {
             background: rgba(0,0,0,0.04);
             backdrop-filter: blur(20px);
@@ -107,53 +107,77 @@
             flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
-            min-height: 90px !important;
-            padding: 12px 8px !important;
+            min-width: 70px !important;
+            min-height: 85px !important;
+            padding: 12px 6px !important;
             box-sizing: border-box !important;
         }
         .menu-btn:active { transform: scale(0.95); background: rgba(0,0,0,0.08); }
         
         .menu-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 6px auto !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 40px;
+            height: 40px;
+            margin: 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
             flex-shrink: 0 !important;
         }
         .menu-icon svg {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             stroke: #1a1a1a;
             stroke-width: 1.5;
             fill: none;
             display: block !important;
-            margin: 0 auto !important;
         }
         
         .menu-text {
-            font-size: 11px;
+            font-size: 10px;
             color: #1a1a1a;
             font-weight: 500;
             display: block !important;
             text-align: center !important;
             width: 100% !important;
-            margin-top: 2px !important;
+            margin-top: 6px !important;
+            line-height: 1.2 !important;
         }
 
-        /* Фикс для PWA на телефонах */
+        /* Фикс для PWA на телефонах (рабочий стол) */
         @media (display-mode: standalone) {
             .menu-btn {
-                min-height: 100px !important;
-                padding: 16px 8px !important;
+                min-width: 75px !important;
+                min-height: 95px !important;
+                padding: 14px 8px !important;
+            }
+            .menu-icon {
+                width: 48px;
+                height: 48px;
             }
             .menu-icon svg {
-                width: 32px !important;
-                height: 32px !important;
+                width: 28px;
+                height: 28px;
             }
             .menu-text {
-                font-size: 12px !important;
+                font-size: 11px;
+                margin-top: 8px;
+            }
+        }
+        
+        /* Дополнительный фикс для всех мобильных браузеров */
+        @media (max-width: 480px) {
+            .menu-btn {
+                min-width: 65px !important;
+                min-height: 80px !important;
+                padding: 10px 4px !important;
+            }
+            .menu-icon svg {
+                width: 22px;
+                height: 22px;
+            }
+            .menu-text {
+                font-size: 9px;
+                margin-top: 4px;
             }
         }
 
