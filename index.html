@@ -67,7 +67,7 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* ========== ГЛАВНОЕ МЕНЮ - ИСПРАВЛЕНО (ЦЕНТР) ========== */
+        /* ========== ГЛАВНОЕ МЕНЮ - ЦЕНТРИРОВАНО (ИСПРАВЛЕНО) ========== */
         .menu-container {
             position: fixed;
             top: 0;
@@ -75,10 +75,12 @@
             right: 0;
             bottom: 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: transform 0.4s ease;
             z-index: 5;
+            background: #ffffff;
         }
         .menu-container.hidden-menu { transform: translateX(-100%); }
         
@@ -102,6 +104,11 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90px;
         }
         .menu-btn:active { transform: scale(0.95); background: rgba(0,0,0,0.08); }
         .menu-icon {
@@ -111,6 +118,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         .menu-icon svg {
             width: 28px;
@@ -118,13 +126,17 @@
             stroke: #1a1a1a;
             stroke-width: 1.5;
             fill: none;
+            display: block;
         }
         .menu-text {
             font-size: 11px;
             color: #1a1a1a;
             font-weight: 500;
+            display: block;
+            text-align: center;
         }
 
+        /* КУРС ВАЛЮТ - ФИКСИРОВАН ВНИЗУ */
         .currency-chart {
             position: fixed;
             bottom: 20px;
@@ -581,7 +593,7 @@
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
             .menu-screen { gap: 12px; max-width: 260px; }
-            .menu-btn { padding: 12px 6px; }
+            .menu-btn { padding: 12px 6px; min-height: 80px; }
             .menu-icon svg { width: 24px; height: 24px; }
             .page-title { font-size: 24px; }
             .artist-avatar { width: 56px; height: 56px; }
@@ -650,7 +662,7 @@
         </div>
     </div>
 
-    <!-- ========== ГЛАВНОЕ МЕНЮ - ИСПРАВЛЕНО ========== -->
+    <!-- ========== ГЛАВНОЕ МЕНЮ ========== -->
     <div class="menu-container" id="menuContainer">
         <div class="currency-chart" id="currencyChart">
             <div class="currency-title">
