@@ -718,7 +718,7 @@
             
             <div id="musicResult"></div>
         </div>
-        <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля</div>
+        <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля | 📝 Кнопка текста песни</div>
     </div>
 
     <div class="fullscreen-page" id="gamePage">
@@ -1289,6 +1289,109 @@
             } catch { return null; }
         }
         
+        // ========== ПОЛУЧЕНИЕ ТЕКСТА ПЕСНИ ==========
+        async function getLyrics(artist, track) {
+            try {
+                const response = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(track)}`);
+                const data = await response.json();
+                if (data.lyrics && !data.lyrics.includes("lyrics not found")) {
+                    return { source: "lyrics.ovh", text: data.lyrics };
+                }
+            } catch(e) {}
+            
+            return { 
+                source: "search", 
+                text: null,
+                yandexUrl: `https://yandex.ru/search/?text=${encodeURIComponent(`${artist} ${track} текст песни`)}`,
+                googleUrl: `https://www.google.com/search?q=${encodeURIComponent(`${artist} ${track} текст песни`)}`
+            };
+        }
+        
+        // ========== ПОКАЗ ТЕКСТА ПЕСНИ ==========
+        async function showLyrics(artist, track) {
+            const loadingModal = document.createElement('div');
+            loadingModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.85);
+                backdrop-filter: blur(20px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10001;
+                animation: fadeInScale 0.2s ease;
+            `;
+            loadingModal.innerHTML = `
+                <div style="background: rgba(25,25,40,0.98); border-radius: 32px; padding: 28px; text-align: center;">
+                    <div style="width: 40px; height: 40px; border: 3px solid rgba(255,204,0,0.3); border-top-color: #ffcc00; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;"></div>
+                    <div style="color: white;">🔍 Ищем текст "${escapeHtml(track)}"...</div>
+                </div>
+            `;
+            document.body.appendChild(loadingModal);
+            
+            const result = await getLyrics(artist, track);
+            loadingModal.remove();
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.85);
+                backdrop-filter: blur(20px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10001;
+                animation: fadeInScale 0.2s ease;
+                padding: 20px;
+            `;
+            
+            if (result.source === "lyrics.ovh" && result.text) {
+                modal.innerHTML = `
+                    <div style="background: rgba(25,25,40,0.98); border-radius: 32px; padding: 24px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #ffcc00;">${escapeHtml(track)}</div>
+                        <div style="font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 20px;">${escapeHtml(artist)}</div>
+                        <div style="font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.9); white-space: pre-wrap; font-family: monospace;">${escapeHtml(result.text)}</div>
+                        <div style="display: flex; gap: 12px; margin-top: 24px;">
+                            <button id="copyLyricsBtn" style="flex: 1; background: #ffcc00; border: none; padding: 12px; border-radius: 60px; color: #1a1a1a; font-weight: 600; cursor: pointer;">📋 Копировать</button>
+                            <button id="closeLyricsBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 60px; color: white; cursor: pointer;">Закрыть</button>
+                        </div>
+                    </div>
+                `;
+                modal.querySelector('#copyLyricsBtn').onclick = () => {
+                    navigator.clipboard.writeText(result.text);
+                    showNote('📋 Текст скопирован');
+                };
+            } else {
+                modal.innerHTML = `
+                    <div style="background: rgba(25,25,40,0.98); border-radius: 32px; padding: 28px; width: 90%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                        <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: white;">Текст не найден в базе</div>
+                        <div style="font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 16px;">"${escapeHtml(track)}" - ${escapeHtml(artist)}</div>
+                        <div style="font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 24px;">Попробуйте найти текст через поиск:</div>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <button id="searchYandexBtn" style="background: #ffcc00; border: none; padding: 12px; border-radius: 60px; color: #1a1a1a; font-weight: 600; cursor: pointer;">🌐 Поиск в Яндексе</button>
+                            <button id="searchGoogleBtn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 60px; color: white; cursor: pointer;">🔎 Поиск в Google</button>
+                            <button id="closeLyricsBtn" style="background: rgba(255,255,255,0.05); border: none; padding: 10px; border-radius: 60px; color: rgba(255,255,255,0.5); cursor: pointer;">Закрыть</button>
+                        </div>
+                    </div>
+                `;
+                modal.querySelector('#searchYandexBtn').onclick = () => { tg.openLink(result.yandexUrl); modal.remove(); };
+                modal.querySelector('#searchGoogleBtn').onclick = () => { tg.openLink(result.googleUrl); modal.remove(); };
+            }
+            
+            document.body.appendChild(modal);
+            const closeBtn = modal.querySelector('#closeLyricsBtn');
+            if (closeBtn) closeBtn.onclick = () => modal.remove();
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        }
+        
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
             if (!q) return;
@@ -1316,9 +1419,10 @@
                                         <div style="font-weight: 600; font-size: 16px; color: #1a1a1a;">${escapeHtml(t.track)}</div>
                                         <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div>
                                     </div>
-                                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
                                         <span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; opacity: 0.7;">0:00</span>
                                         <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: #ffcc00; border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">▶️</button>
+                                        <button class="lyrics-btn" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">📝</button>
                                     </div>
                                 </div>
                             `).join('')}
@@ -1369,6 +1473,11 @@
                     }
                 });
             }
+            
+            // Инициализация кнопок текстов песен
+            document.querySelectorAll('.lyrics-btn').forEach(btn => {
+                btn.onclick = () => showLyrics(btn.dataset.artist, btn.dataset.track);
+            });
             
             loadInvertedState(q);
         }
