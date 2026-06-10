@@ -366,11 +366,12 @@
             border-radius: 20px;
             padding: 16px;
             margin-top: 20px;
-            max-height: 220px;
+            max-height: 250px;
             overflow-y: auto;
         }
         .bio-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #ffcc00; }
-        .bio-text { font-size: 13px; color: rgba(0,0,0,0.7); }
+        .bio-text { font-size: 13px; line-height: 1.5; color: rgba(0,0,0,0.75); }
+        .bio-wiki-link { color: #ffcc00; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
 
         .settings-fab {
             position: fixed;
@@ -543,35 +544,6 @@
             font-size: 13px;
         }
 
-        /* Стили для страницы поиска текста */
-        .lyrics-search-container {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .lyrics-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .lyrics-input-group label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #1a1a1a;
-        }
-        .lyrics-input-group input {
-            padding: 14px 16px;
-            border-radius: 60px;
-            border: 1px solid rgba(0,0,0,0.1);
-            font-size: 15px;
-            background: rgba(0,0,0,0.03);
-        }
-        .lyrics-input-group input:focus {
-            outline: none;
-            border-color: #ffcc00;
-            background: rgba(0,0,0,0.05);
-        }
-
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
             .menu-screen { max-width: 300px; gap: 10px; padding: 12px; }
@@ -584,6 +556,7 @@
             .artist-card { width: 65px; }
             .artist-name-scroll { font-size: 10px; max-width: 65px; }
             .album-card { width: calc(50% - 6px); }
+            .bio-section { max-height: 200px; }
         }
     </style>
 </head>
@@ -616,7 +589,7 @@
         </div>
     </div>
 
-    <!-- ========== ГЛАВНОЕ МЕНЮ - 3x3 (9 КНОПОК) ========== -->
+    <!-- ========== ГЛАВНОЕ МЕНЮ - 3x3 ========== -->
     <div class="menu-container" id="menuContainer">
         <div class="currency-chart" id="currencyChart">
             <div class="currency-title">
@@ -659,9 +632,8 @@
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
                 <div class="menu-text">Билеты</div>
             </div>
-            <!-- НОВАЯ КНОПКА "ТЕКСТ ПЕСНИ" -->
             <div class="menu-btn" id="goToLyricsBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
                 <div class="menu-text">Текст песни</div>
             </div>
         </div>
@@ -688,7 +660,6 @@
         <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля | 📝 Текст песни</div>
     </div>
 
-    <!-- НОВАЯ СТРАНИЦА ДЛЯ ПОИСКА ТЕКСТА ПЕСНИ -->
     <div class="fullscreen-page" id="lyricsPage">
         <div class="page-header">
             <button class="back-btn" id="backFromLyrics"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -737,7 +708,7 @@
     </div>
 
     <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="#1a1a1a" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
-    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><span class="settings-label">🎨 Цвет кнопок:</span><input type="color" id="buttonColorPicker" value="#ffcc00"></div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button><input type="file" id="bgImageInput" accept="image/*" style="display:none;"></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#ffcc00,#ffd633);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
+    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#ffcc00,#ffd633);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
 
     <script>
         // Скрытие заставки через 4 секунды
@@ -1106,6 +1077,115 @@
             return `🎤 ${artist} — один из самых ярких исполнителей года!`;
         }
 
+        // ========== ПОЛУЧЕНИЕ БИОГРАФИИ ИЗ WIKIPEDIA (УЛУЧШЕННАЯ ВЕРСИЯ) ==========
+        async function getWiki(artist) {
+            try {
+                // Специальные соответствия для русских исполнителей
+                const specialMatches = {
+                    "асия": "Асия (певица)",
+                    "кино": "Кино (группа)",
+                    "imagine dragons": "Imagine Dragons",
+                    "моргенштерн": "Моргенштерн",
+                    "земфира": "Земфира",
+                    "rammstein": "Rammstein",
+                    "billie eilish": "Billie Eilish",
+                    "the weeknd": "The Weeknd",
+                    "eminem": "Eminem",
+                    "ариана гранде": "Ariana Grande",
+                    "руки вверх": "Руки Вверх!",
+                    "сектор газа": "Сектор Газа"
+                };
+                
+                let searchQuery = specialMatches[artist.toLowerCase()] || artist;
+                
+                // Поиск страницы в Wikipedia
+                const searchUrl = `https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(searchQuery)}&format=json&origin=*&srlimit=1`;
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
+                
+                if (!searchData.query?.search?.length) {
+                    // Пробуем поискать на английской Wikipedia
+                    const enSearchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artist)}&format=json&origin=*&srlimit=1`;
+                    const enSearchResponse = await fetch(enSearchUrl);
+                    const enSearchData = await enSearchResponse.json();
+                    
+                    if (!enSearchData.query?.search?.length) return null;
+                    
+                    const enTitle = enSearchData.query.search[0].title;
+                    const enContentUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(enTitle)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`;
+                    const enContentResponse = await fetch(enContentUrl);
+                    const enContentData = await enContentResponse.json();
+                    const enText = enContentData.query.pages[Object.keys(enContentData.query.pages)[0]]?.extract || "";
+                    
+                    if (enText) {
+                        return { 
+                            title: enTitle, 
+                            text: enText.slice(0, 1000), 
+                            url: `https://en.wikipedia.org/wiki/${encodeURIComponent(enTitle)}`,
+                            lang: "en"
+                        };
+                    }
+                    return null;
+                }
+                
+                const title = searchData.query.search[0].title;
+                const contentUrl = `https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`;
+                const contentResponse = await fetch(contentUrl);
+                const contentData = await contentResponse.json();
+                let text = contentData.query.pages[Object.keys(contentData.query.pages)[0]]?.extract || "";
+                
+                if (!text) return null;
+                
+                // Очистка текста от лишних символов
+                text = text
+                    .replace(/\([^)]*\)/g, (match) => {
+                        if (match.match(/\d{4}/)) return match;
+                        return "";
+                    })
+                    .replace(/\s+/g, ' ')
+                    .trim();
+                
+                // Обрезаем до 1000 символов для читаемости
+                if (text.length > 1000) {
+                    text = text.slice(0, 1000) + "...";
+                }
+                
+                return { 
+                    title: title, 
+                    text: text, 
+                    url: `https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}`,
+                    lang: "ru"
+                };
+            } catch(e) {
+                console.error("Wikipedia error:", e);
+                return null;
+            }
+        }
+        
+        // ========== ПОЛУЧЕНИЕ КРАТКОЙ БИОГРАФИИ (ЕСЛИ ОСНОВНАЯ НЕ НАЙДЕНА) ==========
+        function getShortBio(artist) {
+            const bios = {
+                "асия": "Асия (Анастасия Алентьева) — российская певица и автор песен. Родилась 1 сентября 1997 года. Стала известной после выхода песни «Останься», которая набрала миллионы прослушиваний. Её музыка сочетает поп, R&B и инди-звучание.",
+                "кино": "«Кино» — советская рок-группа, основанная в 1981 году Виктором Цоем. Считается одной из самых влиятельных рок-групп в истории русской музыки. Легендарные альбомы: «Группа крови», «Звезда по имени Солнце».",
+                "imagine dragons": "Imagine Dragons — американская рок-группа из Лас-Вегаса, основанная в 2008 году. Обладатели трёх премий Grammy. Самые известные хиты: «Radioactive», «Demons», «Believer».",
+                "моргенштерн": "Моргенштерн (Алишер Тагирович Моргенштерн) — российский рэп-исполнитель, блогер и музыкант. Родился 17 февраля 1998 года. Один из самых популярных и обсуждаемых артистов современной русской музыки.",
+                "земфира": "Земфира (Земфира Талгатовна Рамазанова) — российская рок-певица, музыкант и автор песен. Родилась 26 августа 1976 года. Дебютный альбом «Земфира» вышел в 1999 году и мгновенно стал культовым.",
+                "rammstein": "Rammstein — немецкая метал-группа, образованная в 1994 году в Берлине. Известна своим уникальным стилем, театральными выступлениями и пиротехническими шоу. Хиты: «Du Hast», «Sonne», «Deutschland».",
+                "billie eilish": "Billie Eilish — американская певица и автор песен. Родилась 18 декабря 2001 года. Стала известной после выхода дебютного сингла «Ocean Eyes». Обладательница множества премий Grammy.",
+                "the weeknd": "The Weeknd (Эйбел Тесфайе) — канадский певец, автор песен и продюсер. Родился 16 февраля 1990 года. Известен своими хитами: «Blinding Lights», «Starboy», «Save Your Tears».",
+                "eminem": "Eminem (Маршалл Брюс Мэтерс III) — американский рэпер, продюсер и актёр. Родился 17 октября 1972 года. Один из самых продаваемых музыкальных артистов в истории, обладатель 15 премий Grammy.",
+                "ариана гранде": "Ariana Grande — американская певица и актриса. Родилась 26 июня 1993 года. Обладательница двух премий Grammy. Известна своим уникальным вокальным диапазоном и хитами: «Problem», «Thank U, Next», «7 Rings».",
+                "руки вверх": "«Руки Вверх!» — российская поп-группа, основанная в 1996 году. Стала культовой в конце 1990-х и начале 2000-х. Хиты: «Крошка моя», «18 мне уже», «Он тебя целует».",
+                "сектор газа": "«Сектор Газа» — советская и российская рок-группа, основанная в 1987 году Юрием Хоем (Юрием Клинских). Стиль группы сочетает панк-рок, русский шансон и фолк-рок."
+            };
+            
+            const key = artist.toLowerCase();
+            for (const [k, bio] of Object.entries(bios)) {
+                if (key.includes(k)) return bio;
+            }
+            return null;
+        }
+
         async function getExchangeRates() {
             try {
                 const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
@@ -1194,7 +1274,6 @@
             else tg.showPopup({ title: "Билеты", message: "Сначала найдите артиста", buttons: [{ type: "ok" }] });
         };
         
-        // НОВАЯ КНОПКА "ТЕКСТ ПЕСНИ"
         document.getElementById('goToLyricsBtn').onclick = () => showPage(pages.lyrics, 'lyrics');
         
         document.getElementById('geoLocationBtn').onclick = openMyLocationOnMap;
@@ -1259,25 +1338,7 @@
             search(); 
         };
         
-        async function getWiki(artist) {
-            try {
-                const match = { "асия":"Асия (певица)", "кино":"Кино (группа)", "imagine dragons":"Imagine Dragons", "моргенштерн":"Моргенштерн", "земфира":"Земфира" };
-                let title = match[artist.toLowerCase()];
-                if (!title) {
-                    const s = await fetch(`https://ru.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(artist)}&format=json&origin=*`);
-                    const d = await s.json();
-                    if (!d.query?.search?.length) return null;
-                    title = d.query.search[0].title;
-                }
-                const c = await fetch(`https://ru.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*`);
-                const d = await c.json();
-                const text = d.query.pages[Object.keys(d.query.pages)[0]]?.extract || "";
-                if (!text) return null;
-                return { title, text: text.slice(0, 800), url: `https://ru.wikipedia.org/wiki/${encodeURIComponent(title)}` };
-            } catch { return null; }
-        }
-        
-        // ФУНКЦИЯ ДЛЯ ПОИСКА ТЕКСТА ПЕСНИ (ОТДЕЛЬНАЯ СТРАНИЦА)
+        // ========== ФУНКЦИЯ ПОИСКА ТЕКСТА ПЕСНИ ==========
         async function searchLyrics() {
             const artist = document.getElementById('lyricsArtistInput').value.trim();
             const track = document.getElementById('lyricsTrackInput').value.trim();
@@ -1375,11 +1436,38 @@
             resDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 Поиск...</div>';
             
             const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
-            const bio = await getWiki(q);
+            const wikiBio = await getWiki(q);
+            const shortBio = getShortBio(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             const artistImageUrl = await getArtistImage(q);
             const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffcc00'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+            
+            // Используем wikiBio если есть, иначе shortBio
+            let bioHtml = '';
+            if (wikiBio && wikiBio.text && wikiBio.text.length > 50) {
+                bioHtml = `
+                    <div class="bio-section">
+                        <div class="bio-title">📖 ${escapeHtml(wikiBio.title)}</div>
+                        <div class="bio-text">${escapeHtml(wikiBio.text)}</div>
+                        <a href="${wikiBio.url}" target="_blank" class="bio-wiki-link">Читать полностью на Wikipedia →</a>
+                    </div>
+                `;
+            } else if (shortBio) {
+                bioHtml = `
+                    <div class="bio-section">
+                        <div class="bio-title">📖 Об исполнителе</div>
+                        <div class="bio-text">${escapeHtml(shortBio)}</div>
+                    </div>
+                `;
+            } else {
+                bioHtml = `
+                    <div class="bio-section">
+                        <div class="bio-title">📖 Биография</div>
+                        <div class="bio-text">Информация об исполнителе "${escapeHtml(q)}" временно недоступна. Попробуйте найти информацию в Яндекс.Музыке или Wikipedia.</div>
+                    </div>
+                `;
+            }
             
             let tracksPreviewHtml = '';
             if (artistTracks.length > 0) {
@@ -1431,7 +1519,7 @@
                         <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
                         <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
                     </div>
-                    ${bio ? `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(bio.title)}</div><div class="bio-text">${escapeHtml(bio.text)}</div><a href="${bio.url}" target="_blank" class="bio-wiki-link">Читать полностью →</a></div>` : '<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">Информация не найдена</div></div>'}
+                    ${bioHtml}
                     <button class="search-btn" style="margin-top: 16px;" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
                 </div>
             `;
@@ -1448,7 +1536,6 @@
                 });
             }
             
-            // Инициализация кнопок текстов песен
             document.querySelectorAll('.lyrics-btn').forEach(btn => {
                 btn.onclick = () => showLyrics(btn.dataset.artist, btn.dataset.track);
             });
