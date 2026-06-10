@@ -29,6 +29,7 @@
         body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
         body.assistant-mode { background: linear-gradient(135deg, #0b8793 0%, #360033 50%, #1a0033 100%); }
         body.map-mode { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
+        body.lyrics-mode { background: #ffffff; }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
@@ -67,7 +68,7 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* ========== ГЛАВНОЕ МЕНЮ - ИСПРАВЛЕНО (ЦЕНТР) ========== */
+        /* ========== ГЛАВНОЕ МЕНЮ - 3x3 (9 КНОПОК) ========== */
         .menu-container {
             position: fixed;
             top: 0;
@@ -84,11 +85,11 @@
         
         .menu-screen {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             width: 100%;
-            max-width: 280px;
-            padding: 20px;
+            max-width: 320px;
+            padding: 16px;
             animation: fadeInUp 0.6s ease;
             margin: 0 auto;
         }
@@ -97,30 +98,30 @@
             background: rgba(0,0,0,0.04);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(0,0,0,0.06);
-            border-radius: 28px;
-            padding: 16px 8px;
+            border-radius: 24px;
+            padding: 12px 6px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
         }
         .menu-btn:active { transform: scale(0.95); background: rgba(0,0,0,0.08); }
         .menu-icon {
-            width: 48px;
-            height: 48px;
+            width: 42px;
+            height: 42px;
             margin: 0 auto 6px auto;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .menu-icon svg {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             stroke: #1a1a1a;
             stroke-width: 1.5;
             fill: none;
         }
         .menu-text {
-            font-size: 11px;
+            font-size: 10px;
             color: #1a1a1a;
             font-weight: 500;
         }
@@ -243,25 +244,13 @@
             margin: 0 -4px;
             padding: 4px 0 12px 0;
         }
-
-        .artists-scroll-container::-webkit-scrollbar {
-            height: 3px;
-        }
-
-        .artists-scroll-container::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
-            border-radius: 10px;
-        }
-
-        .artists-scroll-container::-webkit-scrollbar-thumb {
-            background: #ffcc00;
-            border-radius: 10px;
-        }
-
+        .artists-scroll-container::-webkit-scrollbar { height: 3px; }
+        .artists-scroll-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+        .artists-scroll-container::-webkit-scrollbar-thumb { background: #ffcc00; border-radius: 10px; }
         .artists-scroll {
             display: flex;
             gap: 20px;
-            padding: 8px 4px 8px 4px;
+            padding: 8px 4px;
             min-width: min-content;
         }
 
@@ -271,45 +260,30 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
             flex-shrink: 0;
-            width: 80px;
-        }
-
-        .artist-card:active {
-            transform: scale(0.95);
-        }
-
-        .artist-avatar-circle {
             width: 70px;
-            height: 70px;
+        }
+        .artist-avatar-circle {
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border: 2px solid rgba(0,0,0,0.08);
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 600;
             color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             background-size: cover;
             background-position: center;
         }
-
-        .artist-card:hover .artist-avatar-circle {
-            transform: scale(1.02);
-            border-color: #ffcc00;
-            box-shadow: 0 8px 20px rgba(255,204,0,0.3);
-        }
-
         .artist-name-scroll {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 500;
             color: #1a1a1a;
             text-align: center;
-            max-width: 80px;
+            max-width: 70px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -321,9 +295,7 @@
             gap: 18px;
             margin-bottom: 24px;
             padding: 8px;
-            margin: -8px -8px 20px -8px;
             border-radius: 28px;
-            transition: all 0.3s ease;
             cursor: pointer;
         }
         .artist-avatar {
@@ -331,14 +303,12 @@
             height: 72px;
             border-radius: 36px;
             object-fit: cover;
-            background: linear-gradient(135deg, #ffcc00, #ffd633);
+            background: #ffcc00;
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 2px solid rgba(0,0,0,0.08);
         }
-        .artist-info { flex: 1; }
-        .artist-name-large { font-size: 24px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+        .artist-name-large { font-size: 24px; font-weight: 600; color: #1a1a1a; }
         .artist-role { font-size: 12px; color: rgba(0,0,0,0.5); }
-        .invert-icon { margin-left: 8px; font-size: 14px; opacity: 0.5; display: inline-block; }
+        .invert-icon { margin-left: 8px; font-size: 14px; opacity: 0.5; }
 
         .artist-profile.inverted {
             background: linear-gradient(135deg, rgba(255,204,0,0.1), rgba(0,0,0,0.05));
@@ -355,20 +325,18 @@
             border-radius: 28px;
             padding: 24px;
             margin-top: 20px;
-            animation: fadeInScale 0.5s ease;
             border: 1px solid rgba(0,0,0,0.06);
         }
 
         .ai-fact-card {
-            background: linear-gradient(135deg, rgba(255,204,0,0.08), rgba(0,0,0,0.03));
+            background: rgba(255,204,0,0.08);
             border-left: 2px solid #ffcc00;
             border-radius: 20px;
             padding: 16px;
             margin: 20px 0;
         }
-        .ai-fact-icon svg { width: 28px; height: 28px; stroke: #ffcc00; stroke-width: 1.5; fill: none; }
-        .ai-fact-label { font-size: 10px; color: #ffcc00; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1.5px; }
-        .ai-fact-text { font-size: 14px; line-height: 1.45; color: #1a1a1a; }
+        .ai-fact-label { font-size: 10px; color: #ffcc00; font-weight: 600; margin-bottom: 6px; }
+        .ai-fact-text { font-size: 14px; color: #1a1a1a; }
         .ai-fact-refresh {
             background: rgba(255,204,0,0.15);
             border: 1px solid rgba(255,204,0,0.3);
@@ -390,7 +358,6 @@
             border: none;
             font-size: 14px;
         }
-        .platform-btn:active { transform: scale(0.97); }
         .yandex-btn { background: #ffcc00; color: #1a1a1a; }
         .youtube-btn { background: #ff0000; color: white; }
 
@@ -403,8 +370,7 @@
             overflow-y: auto;
         }
         .bio-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #ffcc00; }
-        .bio-text { font-size: 13px; line-height: 1.45; color: rgba(0,0,0,0.7); }
-        .bio-wiki-link { color: #ffcc00; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
+        .bio-text { font-size: 13px; color: rgba(0,0,0,0.7); }
 
         .settings-fab {
             position: fixed;
@@ -437,20 +403,17 @@
             align-items: center;
             justify-content: center;
             z-index: 200;
-            animation: fadeInScale 0.3s ease;
         }
         .modal-card {
             background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(24px);
             border-radius: 32px;
             padding: 28px;
             width: 90%;
             max-width: 320px;
-            border: 1px solid rgba(0,0,0,0.08);
+            text-align: center;
         }
-        .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; text-align: center; color: #1a1a1a; }
-        .settings-label { font-size: 14px; font-weight: 500; color: #1a1a1a; }
-        .gradient-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+        .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; color: #1a1a1a; }
+        .gradient-row { display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
         .gradient-circle {
             width: 48px;
             height: 48px;
@@ -494,7 +457,7 @@
             border-radius: 24px;
             padding: 14px 16px;
             text-align: center;
-            transition: all 0.2s;
+            margin-bottom: 10px;
         }
         .preview-track-item button {
             background: #ffcc00;
@@ -502,24 +465,21 @@
             width: 44px;
             height: 44px;
             border-radius: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
             font-size: 20px;
-            color: #1a1a1a;
         }
 
         .album-card {
             background: rgba(0,0,0,0.03);
             border-radius: 20px;
             padding: 12px;
-            width: calc(33% - 8px);
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            display: inline-block;
+            width: calc(33% - 8px);
+            margin-right: 8px;
+            margin-bottom: 8px;
         }
-        .album-card div:first-child { font-size: 44px; margin-bottom: 8px; }
 
         .chat-container {
             max-height: 400px;
@@ -529,12 +489,12 @@
             flex-direction: column;
             gap: 12px;
         }
-        .message { display: flex; gap: 10px; align-items: flex-start; }
+        .message { display: flex; gap: 10px; margin-bottom: 10px; }
         .message-user { justify-content: flex-end; }
-        .message-user .message-bubble { background: #ffcc00; color: #1a1a1a; border-radius: 20px 20px 4px 20px; }
-        .message-ai .message-bubble { background: rgba(0,0,0,0.05); color: #1a1a1a; border-radius: 20px 20px 20px 4px; }
-        .message-bubble { padding: 10px 14px; max-width: 80%; font-size: 14px; line-height: 1.4; }
-        .message-icon { width: 32px; height: 32px; background: rgba(0,0,0,0.05); border-radius: 32px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .message-user .message-bubble { background: #ffcc00; border-radius: 20px 20px 4px 20px; }
+        .message-ai .message-bubble { background: rgba(0,0,0,0.05); border-radius: 20px 20px 20px 4px; }
+        .message-bubble { padding: 10px 14px; max-width: 80%; font-size: 14px; }
+        .message-icon { width: 32px; height: 32px; background: rgba(0,0,0,0.05); border-radius: 32px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; }
 
         .game-options { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .game-option {
@@ -545,7 +505,6 @@
             cursor: pointer;
             font-weight: 500;
         }
-        .game-option:active { transform: scale(0.97); background: rgba(0,0,0,0.1); }
         .track-name { font-size: 22px; font-weight: 700; margin: 16px 0; color: #1a1a1a; }
 
         .random-artist-card {
@@ -557,15 +516,11 @@
             justify-content: space-between;
             align-items: center;
         }
-        .random-artist-name { font-weight: 500; color: #1a1a1a; }
         .random-artist-link {
             background: #ffcc00;
             border: none;
             padding: 8px 16px;
             border-radius: 40px;
-            color: #1a1a1a;
-            font-size: 12px;
-            font-weight: 600;
             cursor: pointer;
         }
 
@@ -578,19 +533,57 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
+        .popular-tag {
+            display: inline-block;
+            background: rgba(0,0,0,0.05);
+            padding: 6px 14px;
+            border-radius: 40px;
+            margin: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* Стили для страницы поиска текста */
+        .lyrics-search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .lyrics-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .lyrics-input-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+        .lyrics-input-group input {
+            padding: 14px 16px;
+            border-radius: 60px;
+            border: 1px solid rgba(0,0,0,0.1);
+            font-size: 15px;
+            background: rgba(0,0,0,0.03);
+        }
+        .lyrics-input-group input:focus {
+            outline: none;
+            border-color: #ffcc00;
+            background: rgba(0,0,0,0.05);
+        }
+
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
-            .menu-screen { gap: 12px; max-width: 260px; }
-            .menu-btn { padding: 12px 6px; }
-            .menu-icon svg { width: 24px; height: 24px; }
+            .menu-screen { max-width: 300px; gap: 10px; padding: 12px; }
+            .menu-btn { padding: 10px 4px; }
+            .menu-icon svg { width: 22px; height: 22px; }
+            .menu-icon { width: 38px; height: 38px; }
             .page-title { font-size: 24px; }
-            .artist-avatar { width: 56px; height: 56px; }
-            .artist-name-large { font-size: 20px; }
+            .menu-text { font-size: 9px; }
+            .artist-avatar-circle { width: 55px; height: 55px; font-size: 24px; }
+            .artist-card { width: 65px; }
+            .artist-name-scroll { font-size: 10px; max-width: 65px; }
             .album-card { width: calc(50% - 6px); }
-            .artist-avatar-circle { width: 60px; height: 60px; font-size: 28px; }
-            .artist-card { width: 70px; }
-            .artist-name-scroll { font-size: 11px; max-width: 70px; }
-            .menu-text { font-size: 10px; }
         }
     </style>
 </head>
@@ -613,53 +606,24 @@
     ">
         <div style="text-align: center;">
             <div style="margin-bottom: 20px;">
-                <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
                     <text x="50" y="68" text-anchor="middle" fill="#ffcc00" font-size="64" font-family="'Playfair Display', serif" font-weight="700" letter-spacing="3">LM</text>
                 </svg>
             </div>
-            
-            <div style="
-                font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
-                font-size: 34px;
-                font-weight: 700;
-                color: #1a1a1a;
-                letter-spacing: 2px;
-                margin-bottom: 10px;
-            ">
-                LE MONDE MUSIC
-            </div>
-            
-            <div style="
-                width: 60px;
-                height: 2px;
-                background: #ffcc00;
-                margin: 0 auto 14px auto;
-                border-radius: 2px;
-            "></div>
-            
-            <div style="
-                font-family: 'Montserrat', 'Inter', sans-serif;
-                font-size: 9px;
-                color: #888888;
-                letter-spacing: 2px;
-                font-weight: 500;
-                text-transform: uppercase;
-            ">
-                PLATFORM OF YANDEX MUSIC
-            </div>
+            <div style="font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: #1a1a1a; letter-spacing: 2px; margin-bottom: 10px;">LE MONDE MUSIC</div>
+            <div style="width: 60px; height: 2px; background: #ffcc00; margin: 0 auto 14px auto;"></div>
+            <div style="font-family: 'Montserrat', sans-serif; font-size: 9px; color: #888; letter-spacing: 2px;">PLATFORM OF YANDEX MUSIC</div>
         </div>
     </div>
 
-    <!-- ========== ГЛАВНОЕ МЕНЮ - ИСПРАВЛЕНО ========== -->
+    <!-- ========== ГЛАВНОЕ МЕНЮ - 3x3 (9 КНОПОК) ========== -->
     <div class="menu-container" id="menuContainer">
         <div class="currency-chart" id="currencyChart">
             <div class="currency-title">
                 <span>💎 КУРС ВАЛЮТ</span>
                 <span class="currency-update-time" id="updateTime">загрузка...</span>
             </div>
-            <div id="currencyContent">
-                <div style="text-align:center; padding:10px; font-size:11px; opacity:0.6;">Загрузка...</div>
-            </div>
+            <div id="currencyContent"><div style="text-align:center; padding:10px;">Загрузка...</div></div>
         </div>
 
         <div class="menu-screen">
@@ -692,8 +656,13 @@
                 <div class="menu-text">Карта</div>
             </div>
             <div class="menu-btn" id="goToTicketsBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
                 <div class="menu-text">Билеты</div>
+            </div>
+            <!-- НОВАЯ КНОПКА "ТЕКСТ ПЕСНИ" -->
+            <div class="menu-btn" id="goToLyricsBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1" fill="currentColor" stroke="none"/></svg></div>
+                <div class="menu-text">Текст песни</div>
             </div>
         </div>
     </div>
@@ -710,15 +679,30 @@
                 <button id="voiceSearchBtn" class="voice-btn"><svg width="18" height="18" viewBox="0 0 24 24" stroke="#1a1a1a" fill="none"><path d="M12 3a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg></button>
                 <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
-            
             <div class="section-title">🔥 ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ</div>
             <div class="artists-scroll-container">
                 <div class="artists-scroll" id="popularGrid"></div>
             </div>
-            
             <div id="musicResult"></div>
         </div>
         <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля | 📝 Текст песни</div>
+    </div>
+
+    <!-- НОВАЯ СТРАНИЦА ДЛЯ ПОИСКА ТЕКСТА ПЕСНИ -->
+    <div class="fullscreen-page" id="lyricsPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromLyrics"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
+            <div class="page-title">ТЕКСТ ПЕСНИ</div>
+        </div>
+        <div class="glass-card">
+            <div class="search-box" style="flex-direction: column; gap: 12px;">
+                <input type="text" id="lyricsArtistInput" class="search-input" placeholder="Исполнитель (например: Асия)">
+                <input type="text" id="lyricsTrackInput" class="search-input" placeholder="Название трека (например: Останься)">
+                <button id="doLyricsSearchBtn" class="search-btn">🔍 Найти текст</button>
+            </div>
+            <div id="lyricsResult"></div>
+        </div>
+        <div class="user-info">📝 Введите исполнителя и название трека</div>
     </div>
 
     <div class="fullscreen-page" id="gamePage">
@@ -1179,7 +1163,8 @@
             assistant: document.getElementById('assistantPage'),
             randomizer: document.getElementById('randomizerPage'),
             mood: document.getElementById('moodPage'),
-            map: document.getElementById('mapPage')
+            map: document.getElementById('mapPage'),
+            lyrics: document.getElementById('lyricsPage')
         };
         
         function showMenu() { 
@@ -1209,8 +1194,11 @@
             else tg.showPopup({ title: "Билеты", message: "Сначала найдите артиста", buttons: [{ type: "ok" }] });
         };
         
+        // НОВАЯ КНОПКА "ТЕКСТ ПЕСНИ"
+        document.getElementById('goToLyricsBtn').onclick = () => showPage(pages.lyrics, 'lyrics');
+        
         document.getElementById('geoLocationBtn').onclick = openMyLocationOnMap;
-        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map'].forEach(p => {
+        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
             if (btn) btn.onclick = showMenu;
         });
@@ -1289,7 +1277,43 @@
             } catch { return null; }
         }
         
-        // ========== ПОКАЗ ТЕКСТА ПЕСНИ (СРАЗУ ПОИСК, БЕЗ ПРОВЕРКИ API) ==========
+        // ФУНКЦИЯ ДЛЯ ПОИСКА ТЕКСТА ПЕСНИ (ОТДЕЛЬНАЯ СТРАНИЦА)
+        async function searchLyrics() {
+            const artist = document.getElementById('lyricsArtistInput').value.trim();
+            const track = document.getElementById('lyricsTrackInput').value.trim();
+            
+            if (!artist || !track) {
+                showNote('Введите исполнителя и название трека');
+                return;
+            }
+            
+            const searchQuery = `${artist} ${track} текст песни`;
+            const resultDiv = document.getElementById('lyricsResult');
+            
+            resultDiv.innerHTML = `
+                <div class="result-card" style="text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Поиск текста песни</div>
+                    <div style="font-size: 14px; color: rgba(0,0,0,0.6); margin-bottom: 24px;">
+                        "${escapeHtml(track)}" - ${escapeHtml(artist)}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button id="searchYandexBtn" style="background: #ffcc00; border: none; padding: 14px; border-radius: 60px; color: #1a1a1a; font-weight: 600; cursor: pointer;">🌐 Поиск в Яндексе</button>
+                        <button id="searchGoogleBtn" style="background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); padding: 14px; border-radius: 60px; color: #1a1a1a; cursor: pointer;">🔎 Поиск в Google</button>
+                    </div>
+                </div>
+            `;
+            
+            const searchUrlYandex = `https://yandex.ru/search/?text=${encodeURIComponent(searchQuery)}`;
+            const searchUrlGoogle = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+            
+            resultDiv.querySelector('#searchYandexBtn').onclick = () => tg.openLink(searchUrlYandex);
+            resultDiv.querySelector('#searchGoogleBtn').onclick = () => tg.openLink(searchUrlGoogle);
+        }
+        
+        document.getElementById('doLyricsSearchBtn').onclick = searchLyrics;
+        
+        // ========== ПОКАЗ ТЕКСТА ПЕСНИ (ДЛЯ КНОПКИ В ТРЕКАХ) ==========
         async function showLyrics(artist, track) {
             const searchQuery = `${artist} ${track} текст песни`;
             
