@@ -410,7 +410,7 @@
             border-radius: 32px;
             padding: 28px;
             width: 90%;
-            max-width: 320px;
+            max-width: 340px;
             text-align: center;
         }
         .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; color: #1a1a1a; }
@@ -708,7 +708,91 @@
     </div>
 
     <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="#1a1a1a" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
-    <div id="settingsModal" class="settings-modal hidden"><div class="modal-card"><div class="modal-title">Оформление</div><div class="settings-row"><button class="appearance-btn" id="resetBgBtn">Сбросить</button><button class="appearance-btn" id="uploadBgBtn">📸 Фото</button><button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button><button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button></div><div class="gradient-row"><div class="gradient-circle" style="background:linear-gradient(135deg,#ffcc00,#ffd633);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div><div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div></div><button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button></div></div>
+    
+    <div id="settingsModal" class="settings-modal hidden">
+        <div class="modal-card">
+            <div class="modal-title">Оформление</div>
+            
+            <div class="settings-row" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px;">
+                <button class="appearance-btn" id="resetBgBtn">Сбросить</button>
+                <button class="appearance-btn" id="uploadBgBtn">📸 Фото</button>
+                <button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button>
+                <button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button>
+            </div>
+            
+            <!-- ===== СПЕЦИАЛЬНЫЕ ОБОИ (ЖЁЛТО-БЕЛЫЕ) ===== -->
+            <div style="margin: 16px 0 12px 0;">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; text-align: center;">✨ ЖЁЛТО-БЕЛЫЕ ОБОИ</div>
+                <div class="special-wallpapers" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    
+                    <!-- 1. Золотая пыль -->
+                    <div class="wallpaper-card" data-wallpaper="gold_dust" style="background: linear-gradient(135deg, #fff9e6, #fff0c0); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3); transition: all 0.2s;">
+                        <div style="font-size: 28px;">✨</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 500;">Золотая пыль</div>
+                    </div>
+                    
+                    <!-- 2. Солнечные лучи -->
+                    <div class="wallpaper-card" data-wallpaper="sun_rays" style="background: linear-gradient(135deg, #fff8e7, #ffeaa7); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 28px;">☀️</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 500;">Солнечные лучи</div>
+                    </div>
+                    
+                    <!-- 3. Шампанское -->
+                    <div class="wallpaper-card" data-wallpaper="champagne" style="background: linear-gradient(135deg, #fff5e6, #ffe4b5); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 28px;">🥂</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 500;">Шампанское</div>
+                    </div>
+                    
+                    <!-- 4. Мёд -->
+                    <div class="wallpaper-card" data-wallpaper="honey" style="background: linear-gradient(135deg, #fff3e0, #ffd580); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 28px;">🍯</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 500;">Медовый</div>
+                    </div>
+                    
+                    <!-- 5. Ваниль -->
+                    <div class="wallpaper-card" data-wallpaper="vanilla" style="background: linear-gradient(135deg, #fffef7, #fff3cf); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 28px;">🍦</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 500;">Ванильный</div>
+                    </div>
+                    
+                    <!-- 6. Лимонный щербет -->
+                    <div class="wallpaper-card" data-wallpaper="lemon" style="background: linear-gradient(135deg, #fffde7, #fff59d); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 28px;">🍋</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 500;">Лимонный</div>
+                    </div>
+                    
+                    <!-- 7. Янтарь -->
+                    <div class="wallpaper-card" data-wallpaper="amber" style="background: linear-gradient(135deg, #fff2df, #ffcc80); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 28px;">💎</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 500;">Янтарный</div>
+                    </div>
+                    
+                    <!-- 8. Белый шоколад -->
+                    <div class="wallpaper-card" data-wallpaper="white_choco" style="background: linear-gradient(135deg, #ffffff, #fff5e0); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 28px;">🍫</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 500;">Белый шоколад</div>
+                    </div>
+                    
+                    <!-- 9. RENAULT СТИЛЬ (РОМБЫ) - НОВЫЙ! -->
+                    <div class="wallpaper-card" data-wallpaper="renault_diamond" style="background: linear-gradient(135deg, #fff9e6, #ffe680); border-radius: 20px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,215,0,0.5); transition: all 0.2s;">
+                        <div style="font-size: 28px;">🔶</div>
+                        <div style="font-size: 10px; color: #8B6914; margin-top: 6px; font-weight: 600;">Renault Style</div>
+                        <div style="font-size: 8px; color: #B8860B; margin-top: 2px;">ромбы</div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <div class="gradient-row" style="margin-top: 12px;">
+                <div class="gradient-circle" style="background:linear-gradient(135deg,#ffcc00,#ffd633);"></div>
+                <div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div>
+                <div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div>
+                <div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div>
+            </div>
+            
+            <button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button>
+        </div>
+    </div>
 
     <script>
         // Скрытие заставки через 4 секунды
@@ -1724,6 +1808,8 @@
             if (bgType === 'default') {
                 localStorage.removeItem('music_bot_bg');
                 localStorage.removeItem('music_bot_bg_type');
+                localStorage.removeItem('yellow_wallpaper_active');
+                localStorage.removeItem('yellow_wallpaper_id');
             } else {
                 localStorage.setItem('music_bot_bg', bgValue);
                 localStorage.setItem('music_bot_bg_type', bgType);
@@ -1739,6 +1825,119 @@
             } else {
                 applyBackground('', 'default');
             }
+        }
+
+        // ========== ЖЁЛТО-БЕЛЫЕ СПЕЦИАЛЬНЫЕ ОБОИ (ВКЛЮЧАЯ RENAULT СТИЛЬ) ==========
+        const yellowWhiteWallpapers = {
+            gold_dust: {
+                name: 'Золотая пыль',
+                bg: 'linear-gradient(135deg, #fff9e6 0%, #fff0c0 100%)',
+                pattern: 'radial-gradient(circle at 10% 20%, rgba(255,215,0,0.15) 2px, transparent 2px), radial-gradient(circle at 30% 40%, rgba(255,215,0,0.08) 1px, transparent 1px)'
+            },
+            sun_rays: {
+                name: 'Солнечные лучи',
+                bg: 'linear-gradient(135deg, #fff8e7 0%, #ffeaa7 100%)',
+                pattern: 'repeating-linear-gradient(45deg, rgba(255,215,0,0.1) 0px, rgba(255,215,0,0.1) 2px, transparent 2px, transparent 10px), radial-gradient(ellipse at 50% 30%, rgba(255,220,100,0.08) 0%, transparent 60%)'
+            },
+            champagne: {
+                name: 'Шампанское',
+                bg: 'linear-gradient(135deg, #fff5e6 0%, #ffe4b5 100%)',
+                pattern: 'radial-gradient(circle, rgba(255,200,100,0.1) 1px, transparent 1px)'
+            },
+            honey: {
+                name: 'Медовый',
+                bg: 'linear-gradient(135deg, #fff3e0 0%, #ffd580 100%)',
+                pattern: 'repeating-linear-gradient(0deg, rgba(255,180,50,0.12) 0px, rgba(255,180,50,0.12) 2px, transparent 2px, transparent 8px)'
+            },
+            vanilla: {
+                name: 'Ванильный',
+                bg: 'linear-gradient(135deg, #fffef7 0%, #fff3cf 100%)',
+                pattern: 'radial-gradient(circle at 20% 50%, rgba(255,235,150,0.12) 4px, transparent 4px)'
+            },
+            lemon: {
+                name: 'Лимонный',
+                bg: 'linear-gradient(135deg, #fffde7 0%, #fff59d 100%)',
+                pattern: 'linear-gradient(90deg, rgba(255,235,100,0.12) 1px, transparent 1px), linear-gradient(0deg, rgba(255,235,100,0.08) 1px, transparent 1px)'
+            },
+            amber: {
+                name: 'Янтарный',
+                bg: 'linear-gradient(135deg, #fff2df 0%, #ffcc80 100%)',
+                pattern: 'radial-gradient(ellipse at 30% 40%, rgba(255,160,50,0.15) 0%, transparent 50%)'
+            },
+            white_choco: {
+                name: 'Белый шоколад',
+                bg: 'linear-gradient(135deg, #ffffff 0%, #fff5e0 100%)',
+                pattern: 'radial-gradient(circle at 80% 20%, rgba(255,215,0,0.06) 3px, transparent 3px), radial-gradient(circle at 20% 80%, rgba(255,215,0,0.06) 2px, transparent 2px)'
+            },
+            renault_diamond: {
+                name: 'Renault Style',
+                bg: 'linear-gradient(135deg, #fff9e6 0%, #ffe680 100%)',
+                pattern: 'repeating-linear-gradient(45deg, rgba(255,215,0,0) 0px, rgba(255,215,0,0) 30px, rgba(255,200,0,0.2) 30px, rgba(255,200,0,0.2) 32px, rgba(255,215,0,0) 32px, rgba(255,215,0,0) 60px), repeating-linear-gradient(-45deg, rgba(255,215,0,0) 0px, rgba(255,215,0,0) 30px, rgba(255,200,0,0.2) 30px, rgba(255,200,0,0.2) 32px, rgba(255,215,0,0) 32px, rgba(255,215,0,0) 60px), radial-gradient(circle at 50% 50%, rgba(255,215,0,0.1) 0px, rgba(255,215,0,0.1) 2px, transparent 2px, transparent 60px)'
+            }
+        };
+        
+        function applyYellowWhiteWallpaper(wallpaperId) {
+            const wp = yellowWhiteWallpapers[wallpaperId];
+            if (!wp) return;
+            const finalBg = `${wp.bg}, ${wp.pattern}`;
+            document.body.style.background = finalBg;
+            document.body.style.backgroundSize = 'auto, auto';
+            document.body.style.backgroundRepeat = 'repeat, repeat';
+            document.body.style.backgroundAttachment = 'fixed';
+            
+            localStorage.setItem('yellow_wallpaper_id', wallpaperId);
+            localStorage.setItem('yellow_wallpaper_active', 'true');
+            localStorage.removeItem('music_bot_bg');
+            localStorage.removeItem('music_bot_bg_type');
+            
+            showNote(`✨ Обои "${wp.name}" установлены!`);
+        }
+        
+        function loadSavedYellowWallpaper() {
+            const saved = localStorage.getItem('yellow_wallpaper_active');
+            const savedId = localStorage.getItem('yellow_wallpaper_id');
+            
+            if (saved === 'true' && savedId && yellowWhiteWallpapers[savedId]) {
+                applyYellowWhiteWallpaper(savedId);
+                return true;
+            }
+            return false;
+        }
+        
+        function initYellowWallpaperHandlers() {
+            const cards = document.querySelectorAll('.wallpaper-card');
+            cards.forEach(card => {
+                card.removeEventListener('click', card._wallpaperHandler);
+                
+                const handler = function(e) {
+                    const wallpaperId = this.dataset.wallpaper;
+                    if (wallpaperId && yellowWhiteWallpapers[wallpaperId]) {
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => { this.style.transform = ''; }, 150);
+                        
+                        applyYellowWhiteWallpaper(wallpaperId);
+                        
+                        setTimeout(() => {
+                            const modal = document.getElementById('settingsModal');
+                            if (modal) modal.classList.add('hidden');
+                        }, 500);
+                    }
+                };
+                
+                card.addEventListener('click', handler);
+                card._wallpaperHandler = handler;
+                
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'scale(1.02)';
+                    card.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+                    card.style.borderColor = 'rgba(255,215,0,0.8)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                    card.style.boxShadow = '';
+                    card.style.borderColor = 'rgba(255,200,0,0.3)';
+                });
+            });
         }
 
         const colorPickerBtnElem = document.getElementById('colorPickerBtn');
@@ -1784,6 +1983,7 @@
                 modal.querySelector('#applyColorFixedBtn').onclick = () => {
                     const color = colorPicker.value;
                     applyBackground(color, 'color');
+                    localStorage.removeItem('yellow_wallpaper_active');
                     showNote(`🎨 Фон изменён на ${color}`);
                     modal.remove();
                 };
@@ -1845,6 +2045,7 @@
                         
                         previewModal.querySelector('#applyPhotoFixedBtn').onclick = () => {
                             applyBackground(ev.target.result, 'image');
+                            localStorage.removeItem('yellow_wallpaper_active');
                             showNote('📸 Фоновое изображение установлено');
                             previewModal.remove();
                         };
@@ -1880,7 +2081,7 @@
                 confirmModal.innerHTML = `
                     <div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 28px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
                         <div style="font-size: 22px; font-weight: 600; margin-bottom: 12px; color: white;">🔄 Сбросить фон?</div>
-                        <div style="font-size: 14px; opacity: 0.7; margin-bottom: 24px;">Вернётся стандартный градиент</div>
+                        <div style="font-size: 14px; opacity: 0.7; margin-bottom: 24px;">Вернётся стандартный белый фон</div>
                         <div style="display: flex; gap: 12px;">
                             <button id="confirmResetFixedBtn" style="flex: 1; background: linear-gradient(135deg, #e74c3c, #c0392b); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">Да, сбросить</button>
                             <button id="cancelResetFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button>
@@ -1891,6 +2092,10 @@
                 document.body.appendChild(confirmModal);
                 
                 confirmModal.querySelector('#confirmResetFixedBtn').onclick = () => {
+                    localStorage.removeItem('yellow_wallpaper_active');
+                    localStorage.removeItem('yellow_wallpaper_id');
+                    localStorage.removeItem('music_bot_bg');
+                    localStorage.removeItem('music_bot_bg_type');
                     applyBackground('', 'default');
                     showNote('🔄 Фон сброшен к стандартному');
                     confirmModal.remove();
@@ -1935,6 +2140,7 @@
                 
                 gradModal.querySelector('#applyGradFixedBtn').onclick = () => {
                     applyBackground(gradient, 'gradient');
+                    localStorage.removeItem('yellow_wallpaper_active');
                     showNote('✨ Градиент установлен');
                     gradModal.remove();
                 };
@@ -1957,6 +2163,7 @@
                     applyBackground('#ffffff', 'color');
                     showNote('🌙 Белая тема');
                 }
+                localStorage.removeItem('yellow_wallpaper_active');
             };
         }
 
@@ -2005,11 +2212,13 @@
         }
 
         loadAppearanceFixed();
+        loadSavedYellowWallpaper();
         loadPopular();
         updateTotal();
         loadQuick();
         startCurrencyUpdates();
         showPage(pages.music, 'music');
+        initYellowWallpaperHandlers();
         
         console.log('LE MONDE MUSIC загружен!');
     </script>
