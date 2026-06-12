@@ -511,6 +511,58 @@
             font-size: 13px;
         }
 
+        /* ========== СТИЛИ ДЛЯ ПРОФИЛЯ ========== */
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffcc00, #ffd633);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 600;
+            color: white;
+            margin: 0 auto;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: rgba(0,0,0,0.5);
+        }
+        .profile-edit-btn, .profile-share-btn {
+            transition: all 0.2s ease;
+        }
+        .profile-edit-btn:active, .profile-share-btn:active {
+            transform: scale(0.96);
+        }
+        .saved-item {
+            background: rgba(0,0,0,0.03);
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
         /* ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== */
         .bottom-tab-bar {
             position: fixed;
@@ -722,6 +774,108 @@
     <div class="fullscreen-page" id="moodPage">
         <div class="page-header"><button class="back-btn" id="backFromMood"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">НАСТРОЕНИЕ</div></div>
         <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#ffcc00; border:none; padding:14px; border-radius:60px;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
+    </div>
+
+    <!-- ========== СТРАНИЦА ПРОФИЛЯ (МОЙ АККАУНТ) ========== -->
+    <div class="fullscreen-page" id="profilePage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromProfile"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
+            <div class="page-title">Профиль</div>
+            <div style="width: 40px;"></div>
+        </div>
+        
+        <!-- Шапка профиля -->
+        <div class="glass-card" style="text-align: center;">
+            <div class="profile-avatar" id="profileAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #ffcc00; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 600; color: white;">
+                👤
+            </div>
+            <div class="profile-name" id="profileName" style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">Загрузка...</div>
+            <div class="profile-username" id="profileUsername" style="font-size: 14px; color: rgba(0,0,0,0.5); margin-bottom: 16px;">@username</div>
+            
+            <!-- Статистика -->
+            <div style="display: flex; justify-content: space-around; margin-bottom: 24px;">
+                <div class="stat">
+                    <div class="stat-number" id="followersCount">0</div>
+                    <div class="stat-label">подписчиков</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="followingCount">0</div>
+                    <div class="stat-label">подписок</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="postsCount">0</div>
+                    <div class="stat-label">публикаций</div>
+                </div>
+            </div>
+            
+            <!-- Кнопки действий -->
+            <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                <button class="profile-edit-btn" id="editProfileBtn" style="flex: 1; background: rgba(0,0,0,0.05); border: none; padding: 10px; border-radius: 30px; font-weight: 600; cursor: pointer;">Редактировать профиль</button>
+                <button class="profile-share-btn" id="shareProfileBtn" style="background: rgba(0,0,0,0.05); border: none; width: 44px; border-radius: 30px; cursor: pointer;">🔗</button>
+            </div>
+        </div>
+        
+        <!-- Информация о пользователе -->
+        <div class="glass-card">
+            <div class="section-title">📋 ИНФОРМАЦИЯ</div>
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 13px; color: rgba(0,0,0,0.5); margin-bottom: 4px;">О себе</div>
+                <div id="userBio" style="font-size: 14px;">Люблю музыку 🎵</div>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 13px; color: rgba(0,0,0,0.5); margin-bottom: 4px;">ID Telegram</div>
+                <div id="userId" style="font-size: 14px; font-family: monospace;">-</div>
+            </div>
+            <div>
+                <div style="font-size: 13px; color: rgba(0,0,0,0.5); margin-bottom: 4px;">Язык</div>
+                <div style="font-size: 14px;">🇷🇺 Русский</div>
+            </div>
+        </div>
+        
+        <!-- Настройки приложения -->
+        <div class="glass-card">
+            <div class="section-title">⚙️ НАСТРОЙКИ</div>
+            
+            <div class="settings-item" id="openSettingsBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">🎨</span>
+                    <span style="font-weight: 500;">Оформление и обои</span>
+                </div>
+                <span style="color: #ffcc00;">→</span>
+            </div>
+            
+            <div class="settings-item" id="clearCacheBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">🗑️</span>
+                    <span style="font-weight: 500;">Очистить кэш</span>
+                </div>
+                <span style="color: #ffcc00;">→</span>
+            </div>
+            
+            <div class="settings-item" id="supportBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">💬</span>
+                    <span style="font-weight: 500;">Поддержка</span>
+                </div>
+                <span style="color: #ffcc00;">→</span>
+            </div>
+            
+            <div class="settings-item" id="aboutBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">ℹ️</span>
+                    <span style="font-weight: 500;">О приложении</span>
+                </div>
+                <span style="color: #ffcc00;">→</span>
+            </div>
+        </div>
+        
+        <!-- Мои публикации (избранное) -->
+        <div class="glass-card">
+            <div class="section-title">❤️ ИЗБРАННЫЕ ИСПОЛНИТЕЛИ</div>
+            <div id="favoritesList" style="text-align: center; padding: 20px; color: rgba(0,0,0,0.4);">
+                Пока нет избранных исполнителей<br>Добавляйте их через поиск!
+            </div>
+        </div>
     </div>
 
     <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="#1a1a1a" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
@@ -1386,7 +1540,8 @@
             randomizer: document.getElementById('randomizerPage'),
             mood: document.getElementById('moodPage'),
             map: document.getElementById('mapPage'),
-            lyrics: document.getElementById('lyricsPage')
+            lyrics: document.getElementById('lyricsPage'),
+            profile: document.getElementById('profilePage')
         };
         
         function showMenu() { 
@@ -1394,7 +1549,6 @@
             menu.classList.remove('hidden-menu'); 
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
             document.body.className = '';
-            // Обновляем активную вкладку в нижней панели
             updateActiveTabInBar('menu');
         }
         
@@ -1419,6 +1573,189 @@
             });
         }
         
+        // ========== СТРАНИЦА ПРОФИЛЯ (МОЙ АККАУНТ) ==========
+        let userData = {
+            firstName: '',
+            lastName: '',
+            username: '',
+            id: '',
+            bio: 'Люблю музыку 🎵',
+            followers: 128,
+            following: 89
+        };
+        
+        let favorites = [];
+        
+        function loadFavorites() {
+            try {
+                const saved = localStorage.getItem('lm_favorites');
+                if (saved) {
+                    favorites = JSON.parse(saved);
+                    updateFavoritesDisplay();
+                }
+            } catch(e) {}
+        }
+        
+        function saveFavorites() {
+            localStorage.setItem('lm_favorites', JSON.stringify(favorites));
+        }
+        
+        function addToFavorites(artistName) {
+            if (!favorites.includes(artistName)) {
+                favorites.push(artistName);
+                saveFavorites();
+                updateFavoritesDisplay();
+                showNote(`⭐ ${artistName} добавлен в избранное`);
+            } else {
+                showNote(`⚠️ ${artistName} уже в избранном`);
+            }
+        }
+        
+        function removeFromFavorites(artistName) {
+            favorites = favorites.filter(a => a !== artistName);
+            saveFavorites();
+            updateFavoritesDisplay();
+            showNote(`🗑️ ${artistName} удалён из избранного`);
+        }
+        
+        window.removeFromFavorites = removeFromFavorites;
+        
+        function updateFavoritesDisplay() {
+            const container = document.getElementById('favoritesList');
+            if (!container) return;
+            
+            if (favorites.length === 0) {
+                container.innerHTML = 'Пока нет избранных исполнителей<br>Добавляйте их через поиск!';
+                document.getElementById('postsCount').textContent = '0';
+                return;
+            }
+            
+            document.getElementById('postsCount').textContent = favorites.length;
+            
+            container.innerHTML = favorites.map(artist => `
+                <div class="saved-item">
+                    <span style="font-weight: 500;">⭐ ${escapeHtml(artist)}</span>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="removeFromFavorites('${escapeHtml(artist)}')" style="background: rgba(0,0,0,0.05); border: none; padding: 6px 14px; border-radius: 30px; font-size: 12px; cursor: pointer;">Удалить</button>
+                        <button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(artist)}')" style="background: #ffcc00; border: none; padding: 6px 14px; border-radius: 30px; font-size: 12px; cursor: pointer;">Слушать</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadTelegramUser() {
+            try {
+                const tgUser = tg.initDataUnsafe?.user;
+                if (tgUser) {
+                    userData.firstName = tgUser.first_name || '';
+                    userData.lastName = tgUser.last_name || '';
+                    userData.username = tgUser.username || '';
+                    userData.id = tgUser.id || '';
+                    
+                    document.getElementById('profileName').textContent = 
+                        `${userData.firstName} ${userData.lastName}`.trim() || 'Музыкант';
+                    document.getElementById('profileUsername').textContent = 
+                        userData.username ? `@${userData.username}` : '@music_lover';
+                    document.getElementById('userId').textContent = userData.id || '—';
+                    
+                    const initial = (userData.firstName?.charAt(0) || userData.username?.charAt(0) || '🎵').toUpperCase();
+                    const avatarDiv = document.getElementById('profileAvatar');
+                    if (avatarDiv) {
+                        avatarDiv.style.background = 'linear-gradient(135deg, #ffcc00, #ffd633)';
+                        avatarDiv.innerHTML = initial;
+                    }
+                } else {
+                    document.getElementById('profileName').textContent = 'Музыкант';
+                    document.getElementById('profileUsername').textContent = '@music_lover';
+                    document.getElementById('userId').textContent = '—';
+                }
+            } catch(e) {
+                console.log('Не удалось получить данные пользователя');
+            }
+        }
+        
+        function updateProfileStats() {
+            document.getElementById('followersCount').textContent = userData.followers;
+            document.getElementById('followingCount').textContent = userData.following;
+            document.getElementById('postsCount').textContent = favorites.length;
+            document.getElementById('userBio').textContent = userData.bio;
+        }
+        
+        function initProfile() {
+            loadTelegramUser();
+            loadFavorites();
+            updateProfileStats();
+            
+            const savedBio = localStorage.getItem('lm_user_bio');
+            if (savedBio) {
+                userData.bio = savedBio;
+                document.getElementById('userBio').textContent = savedBio;
+            }
+            
+            document.getElementById('editProfileBtn')?.addEventListener('click', () => {
+                const newBio = prompt('Редактировать информацию о себе:', userData.bio);
+                if (newBio && newBio.trim()) {
+                    userData.bio = newBio.trim();
+                    localStorage.setItem('lm_user_bio', userData.bio);
+                    document.getElementById('userBio').textContent = userData.bio;
+                    showNote('✅ Профиль обновлён');
+                }
+            });
+            
+            document.getElementById('shareProfileBtn')?.addEventListener('click', () => {
+                tg.openLink(`https://t.me/${userData.username || 'le_monde_music'}`);
+            });
+            
+            document.getElementById('openSettingsBtn')?.addEventListener('click', () => {
+                const modal = document.getElementById('settingsModal');
+                if (modal) modal.classList.remove('hidden');
+            });
+            
+            document.getElementById('clearCacheBtn')?.addEventListener('click', () => {
+                if (confirm('Очистить кэш приложения? Все настройки сохранятся.')) {
+                    localStorage.removeItem('deezer_artist_cache');
+                    showNote('🗑️ Кэш очищен');
+                }
+            });
+            
+            document.getElementById('supportBtn')?.addEventListener('click', () => {
+                tg.openLink('https://t.me/le_monde_music_support');
+                showNote('💬 Открываем поддержку');
+            });
+            
+            document.getElementById('aboutBtn')?.addEventListener('click', () => {
+                tg.showPopup({
+                    title: 'LE MONDE MUSIC',
+                    message: 'Версия 2.0.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, AI-обложками и играми.\n\n© 2024 LE MONDE MUSIC',
+                    buttons: [{ type: 'close', text: 'Закрыть' }]
+                });
+            });
+        }
+        
+        function addFavoriteButtonToSearch() {
+            const platformButtons = document.querySelector('.platform-buttons');
+            if (platformButtons && !document.querySelector('.add-to-fav-btn')) {
+                const favBtn = document.createElement('button');
+                favBtn.className = 'platform-btn';
+                favBtn.style.background = 'rgba(0,0,0,0.05)';
+                favBtn.style.border = '1px solid rgba(0,0,0,0.1)';
+                favBtn.innerHTML = '⭐ В избранное';
+                favBtn.classList.add('add-to-fav-btn');
+                favBtn.onclick = () => {
+                    const artistName = document.querySelector('.artist-name-large')?.innerText?.replace('🔄', '').trim();
+                    if (artistName) addToFavorites(artistName);
+                };
+                platformButtons.appendChild(favBtn);
+            }
+        }
+        
+        // Переопределяем search для добавления кнопки избранного
+        const originalSearchFunc = window.search;
+        window.search = async function() {
+            if (originalSearchFunc) await originalSearchFunc();
+            setTimeout(addFavoriteButtonToSearch, 300);
+        };
+        
         function initBottomTabBar() {
             const tabBar = document.getElementById('bottomTabBar');
             if (!tabBar) return;
@@ -1435,7 +1772,6 @@
                             updateActiveTabInBar('menu');
                             break;
                         case 'reels':
-                            // Reels - лента коротких видео (пока заглушка)
                             tg.showPopup({ 
                                 title: "📱 Reels", 
                                 message: "Здесь будут короткие музыкальные видео. Функция в разработке!", 
@@ -1444,7 +1780,6 @@
                             updateActiveTabInBar('reels');
                             break;
                         case 'messages':
-                            // Сообщения - открываем ассистента
                             showPage(pages.assistant, 'assistant');
                             updateActiveTabInBar('messages');
                             break;
@@ -1454,15 +1789,14 @@
                             updateActiveTabInBar('search');
                             break;
                         case 'profile':
-                            const modal = document.getElementById('settingsModal');
-                            if (modal) modal.classList.remove('hidden');
+                            showPage(pages.profile, 'music');
                             updateActiveTabInBar('profile');
+                            updateProfileStats();
                             break;
                     }
                 });
             });
             
-            // По умолчанию активна вкладка "menu"
             updateActiveTabInBar('menu');
         }
         
@@ -1481,7 +1815,7 @@
         document.getElementById('goToLyricsBtn').onclick = () => { showPage(pages.lyrics, 'lyrics'); updateActiveTabInBar('menu'); };
         
         document.getElementById('geoLocationBtn').onclick = openMyLocationOnMap;
-        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics'].forEach(p => {
+        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics', 'Profile'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
             if (btn) btn.onclick = showMenu;
         });
@@ -1529,9 +1863,7 @@
                             imgDiv.style.backgroundPosition = 'center';
                             imgDiv.innerHTML = '';
                         }
-                    } catch(e) {
-                        console.log(`Не удалось загрузить фото для ${artist.name}`);
-                    }
+                    } catch(e) {}
                 }
             }
         }
@@ -2325,6 +2657,7 @@
         showPage(pages.music, 'music');
         initYellowWallpaperHandlers();
         initBottomTabBar();
+        initProfile();
         
         console.log('LE MONDE MUSIC загружен!');
     </script>
