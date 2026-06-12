@@ -304,6 +304,7 @@
             object-fit: cover;
             background: #ffcc00;
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
         .artist-name-large { font-size: 24px; font-weight: 600; color: #1a1a1a; }
         .artist-role { font-size: 12px; color: rgba(0,0,0,0.5); }
@@ -751,7 +752,7 @@
             </div>
             <div id="musicResult"></div>
         </div>
-        <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля | 📝 Текст песни</div>
+        <div class="user-info">✨ Нажмите на карточку исполнителя для смены стиля | 📸 Нажмите на фото для увеличения | 📝 Текст песни</div>
     </div>
 
     <div class="fullscreen-page" id="lyricsPage">
@@ -1686,7 +1687,7 @@
                     }
                 } else {
                     document.getElementById('profileName').textContent = 'Музыкант';
-                    document.getElementById('profileUsername').textContent = '@music_lover';
+                    document.getElementById('profileUsername').textContent = '';
                     document.getElementById('userId').textContent = '—';
                 }
             } catch(e) {
@@ -1749,6 +1750,35 @@
                 });
             });
         }
+        
+        // Функция для увеличения фото
+        window.showFullPhoto = function(photoUrl, artistName) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.95);
+                backdrop-filter: blur(20px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10001;
+                animation: fadeInScale 0.2s ease;
+                cursor: pointer;
+            `;
+            modal.innerHTML = `
+                <div style="text-align: center; max-width: 90%; max-height: 90%;">
+                    <img src="${photoUrl}" alt="${escapeHtml(artistName)}" style="max-width: 100%; max-height: 80vh; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+                    <div style="color: white; margin-top: 16px; font-size: 18px; font-weight: 500;">${escapeHtml(artistName)}</div>
+                    <div style="color: rgba(255,255,255,0.5); margin-top: 8px; font-size: 12px;">Нажмите в любом месте, чтобы закрыть</div>
+                </div>
+            `;
+            modal.onclick = () => modal.remove();
+            document.body.appendChild(modal);
+        };
         
         function addFavoriteButtonToSearch() {
             const platformButtons = document.querySelector('.platform-buttons');
@@ -1991,8 +2021,22 @@
             const shortBio = getShortBio(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
-            const artistImageUrl = await getArtistImage(q);
-            const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffcc00'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+            
+            // Улучшенная загрузка фото
+            let finalAvatarUrl = await getArtistImageFromDeezer(q);
+            if (!finalAvatarUrl) {
+                try {
+                    const fallbackUrl = `https://api.deezer.com/search/artist?q=${encodeURIComponent(q)}&limit=1`;
+                    const fallbackResponse = await fetch(fallbackUrl);
+                    const fallbackData = await fallbackResponse.json();
+                    if (fallbackData.data && fallbackData.data[0] && fallbackData.data[0].picture_medium) {
+                        finalAvatarUrl = fallbackData.data[0].picture_medium;
+                    }
+                } catch(e) {}
+            }
+            if (!finalAvatarUrl) {
+                finalAvatarUrl = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffcc00'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+            }
             
             let bioHtml = '';
             if (wikiBio && wikiBio.text && wikiBio.text.length > 50) {
@@ -2046,10 +2090,10 @@
             resDiv.innerHTML = `
                 <div class="result-card">
                     <div class="artist-profile" onclick="toggleArtistInversion()">
-                        <img class="artist-avatar" src="${finalAvatarUrl}" alt="${escapeHtml(q)}">
+                        <img class="artist-avatar" src="${finalAvatarUrl}" alt="${escapeHtml(q)}" style="cursor: pointer;" onclick="event.stopPropagation(); showFullPhoto('${finalAvatarUrl}', '${escapeHtml(q)}')">
                         <div class="artist-info">
                             <div class="artist-name-large">${escapeHtml(q)}<span class="invert-icon">🔄</span></div>
-                            <div class="artist-role">Нажмите для смены стиля</div>
+                            <div class="artist-role">Нажмите для смены стиля | 📸 Нажмите на фото для увеличения</div>
                         </div>
                     </div>
                     ${renderAlbumsFromTracks(q)}
