@@ -965,40 +965,36 @@
         </div>
     </div>
     
-    <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM (ОРИГИНАЛЬНЫЕ ИКОНКИ) ========== -->
+    <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== -->
     <style>
         .bottom-tab-bar {
             position: fixed;
             bottom: 12px;
             left: 16px;
             right: 16px;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(20px);
             border-radius: 40px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 8px 12px;
+            padding: 10px 12px;
             z-index: 100;
-            border: 0.5px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
         }
 
         .tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 4px;
             cursor: pointer;
-            transition: all 0.1s ease;
-            padding: 6px 12px;
-            border-radius: 30px;
+            padding: 4px 0;
             background: transparent;
         }
 
         .tab-item:active {
-            transform: scale(0.92);
-            background: rgba(255, 255, 255, 0.15);
+            opacity: 0.7;
         }
 
         .tab-icon {
@@ -1010,34 +1006,24 @@
         }
 
         .tab-icon svg {
-            stroke: #ffffff;
-            stroke-width: 1.5;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+            width: 24px;
+            height: 24px;
         }
 
         .tab-label {
             font-size: 10px;
-            font-weight: 500;
-            color: #ffffff;
-            opacity: 0.7;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .tab-item.active .tab-label {
             color: #ffcc00;
-            opacity: 1;
         }
 
+        /* Активная иконка меняет цвет */
         .tab-item.active .tab-icon svg {
-            stroke: #ffcc00;
-        }
-
-        /* Активное состояние с заливкой (как в Instagram) */
-        .tab-item.active .tab-icon svg[data-active-fill="true"] {
-            fill: #ffcc00;
-            stroke: none;
+            filter: brightness(0) saturate(100%) invert(77%) sepia(61%) saturate(600%) hue-rotate(0deg) brightness(106%) contrast(104%);
         }
 
         .fullscreen-page, .menu-container {
@@ -1046,62 +1032,61 @@
     </style>
 
     <div class="bottom-tab-bar" id="bottomTabBar">
-        <!-- 1. Главная (домик) - как в Instagram -->
+        <!-- Главная -->
         <div class="tab-item" data-tab="menu">
             <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 9L12 3L21 9V20H3V9Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    <path d="M9 20V12H15V20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H4a2 2 0 0 1-2-2z"/>
                 </svg>
             </div>
             <div class="tab-label">Главная</div>
         </div>
         
-        <!-- 2. Reels / Shorts - как в Instagram -->
-        <div class="tab-item" data-tab="reels">
-            <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    <path d="M9 8L15 12L9 16V8Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <div class="tab-label">Reels</div>
-        </div>
-        
-        <!-- 3. Сообщения (Direct) - как в Instagram (бумажный самолётик) -->
-        <div class="tab-item" data-tab="messages">
-            <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <div class="tab-label">Сообщения</div>
-        </div>
-        
-        <!-- 4. Поиск (лупа) - как в Instagram -->
+        <!-- Поиск -->
         <div class="tab-item" data-tab="search">
             <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    <path d="M15 15L21 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="10" cy="10" r="7"/>
+                    <line x1="21" y1="21" x2="15" y2="15"/>
                 </svg>
             </div>
             <div class="tab-label">Поиск</div>
         </div>
         
-        <!-- 5. Профиль (человечек) - как в Instagram -->
+        <!-- Reels (квадрат с плей) -->
+        <div class="tab-item" data-tab="reels">
+            <div class="tab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <polygon points="9 8 15 12 9 16 9 8"/>
+                </svg>
+            </div>
+            <div class="tab-label">Reels</div>
+        </div>
+        
+        <!-- Сообщения (бумажный самолетик) -->
+        <div class="tab-item" data-tab="messages">
+            <div class="tab-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+            </div>
+            <div class="tab-label">Сообщения</div>
+        </div>
+        
+        <!-- Профиль -->
         <div class="tab-item" data-tab="profile">
             <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                    <path d="M5 20V19C5 14.5 8 12 12 12C16 12 19 14.5 19 19V20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
                 </svg>
             </div>
             <div class="tab-label">Профиль</div>
         </div>
     </div>
- 
-    
+   
     <script>
         // Скрытие заставки через 4 секунды
         setTimeout(function() {
