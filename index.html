@@ -818,18 +818,10 @@
             <div class="profile-username" id="profileUsername" style="font-size: 14px; color: rgba(0,0,0,0.5); margin-bottom: 16px;">@username</div>
             
             <!-- Статистика -->
-            <div style="display: flex; justify-content: space-around; margin-bottom: 24px;">
-                <div class="stat">
-                    <div class="stat-number" id="followersCount">0</div>
-                    <div class="stat-label">подписчиков</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="followingCount">0</div>
-                    <div class="stat-label">подписок</div>
-                </div>
+            <div style="display: flex; justify-content: center; margin-bottom: 24px;">
                 <div class="stat">
                     <div class="stat-number" id="postsCount">0</div>
-                    <div class="stat-label">публикаций</div>
+                    <div class="stat-label">избранных</div>
                 </div>
             </div>
             
@@ -1609,9 +1601,7 @@
             lastName: '',
             username: '',
             id: '',
-            bio: 'Люблю музыку 🎵',
-            followers: 128,
-            following: 89
+            bio: 'Люблю музыку 🎵'
         };
         
         let favorites = [];
@@ -1705,8 +1695,6 @@
         }
         
         function updateProfileStats() {
-            document.getElementById('followersCount').textContent = userData.followers;
-            document.getElementById('followingCount').textContent = userData.following;
             document.getElementById('postsCount').textContent = favorites.length;
             document.getElementById('userBio').textContent = userData.bio;
         }
