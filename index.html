@@ -563,116 +563,6 @@
             border-bottom: none;
         }
 
-        /* ========== REELS СТИЛИ (КОРОТКИЕ ВИДЕО КАК В INSTAGRAM) ========== */
-        .reels-container {
-            height: calc(100vh - 120px);
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            -webkit-overflow-scrolling: touch;
-        }
-        .reels-container::-webkit-scrollbar {
-            display: none;
-        }
-        .reel-wrapper {
-            height: calc(100vh - 120px);
-            scroll-snap-align: start;
-            position: relative;
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
-        .reel-video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .reel-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            color: white;
-        }
-        .reel-author {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        .reel-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #ffcc00;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-        }
-        .reel-name {
-            font-weight: 600;
-            font-size: 15px;
-        }
-        .reel-caption {
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        .reel-audio {
-            font-size: 12px;
-            color: #ffcc00;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .reel-actions {
-            position: absolute;
-            right: 12px;
-            bottom: 100px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .reel-action {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-        }
-        .reel-action-icon {
-            font-size: 28px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-            transition: transform 0.1s ease;
-        }
-        .reel-action:active .reel-action-icon {
-            transform: scale(0.85);
-        }
-        .reel-action-count {
-            font-size: 12px;
-            color: white;
-            font-weight: 500;
-        }
-        .reel-music-icon {
-            position: absolute;
-            right: 12px;
-            top: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
         /* ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== */
         .bottom-tab-bar {
             position: fixed;
@@ -744,8 +634,6 @@
             .artist-name-scroll { font-size: 10px; max-width: 65px; }
             .album-card { width: calc(50% - 6px); }
             .bio-section { max-height: 200px; }
-            .reels-container { height: calc(100vh - 110px); }
-            .reel-wrapper { height: calc(100vh - 110px); }
         }
     </style>
 </head>
@@ -896,32 +784,38 @@
             <div style="width: 40px;"></div>
         </div>
         
+        <!-- Шапка профиля -->
         <div class="glass-card" style="text-align: center;">
-            <div class="profile-avatar" id="profileAvatar">👤</div>
+            <div class="profile-avatar" id="profileAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #ffcc00; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 600; color: white;">
+                👤
+            </div>
             <div class="profile-name" id="profileName" style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">Загрузка...</div>
             <div class="profile-username" id="profileUsername" style="font-size: 14px; color: rgba(0,0,0,0.5); margin-bottom: 16px;">@username</div>
             
+            <!-- Статистика -->
             <div style="display: flex; justify-content: space-around; margin-bottom: 24px;">
                 <div class="stat">
-                    <div class="stat-number" id="favArtistsCount">0</div>
-                    <div class="stat-label">в избранном</div>
+                    <div class="stat-number" id="followersCount">0</div>
+                    <div class="stat-label">подписчиков</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number" id="tracksListenedCount">0</div>
-                    <div class="stat-label">прослушано</div>
+                    <div class="stat-number" id="followingCount">0</div>
+                    <div class="stat-label">подписок</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-number" id="daysActiveCount">0</div>
-                    <div class="stat-label">дней в LMM</div>
+                    <div class="stat-number" id="postsCount">0</div>
+                    <div class="stat-label">публикаций</div>
                 </div>
             </div>
             
+            <!-- Кнопки действий -->
             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                 <button class="profile-edit-btn" id="editProfileBtn" style="flex: 1; background: rgba(0,0,0,0.05); border: none; padding: 10px; border-radius: 30px; font-weight: 600; cursor: pointer;">Редактировать профиль</button>
                 <button class="profile-share-btn" id="shareProfileBtn" style="background: rgba(0,0,0,0.05); border: none; width: 44px; border-radius: 30px; cursor: pointer;">🔗</button>
             </div>
         </div>
         
+        <!-- Информация о пользователе -->
         <div class="glass-card">
             <div class="section-title">📋 ИНФОРМАЦИЯ</div>
             <div style="margin-bottom: 16px;">
@@ -938,29 +832,49 @@
             </div>
         </div>
         
+        <!-- Настройки приложения -->
         <div class="glass-card">
             <div class="section-title">⚙️ НАСТРОЙКИ</div>
-            <div class="settings-item" id="openSettingsBtn"><div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 20px;">🎨</span><span style="font-weight: 500;">Оформление и обои</span></div><span style="color: #ffcc00;">→</span></div>
-            <div class="settings-item" id="clearCacheBtn"><div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 20px;">🗑️</span><span style="font-weight: 500;">Очистить кэш</span></div><span style="color: #ffcc00;">→</span></div>
-            <div class="settings-item" id="supportBtn"><div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 20px;">💬</span><span style="font-weight: 500;">Поддержка</span></div><span style="color: #ffcc00;">→</span></div>
-            <div class="settings-item" id="aboutBtn"><div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 20px;">ℹ️</span><span style="font-weight: 500;">О приложении</span></div><span style="color: #ffcc00;">→</span></div>
+            
+            <div class="settings-item" id="openSettingsBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">🎨</span>
+                    <span style="font-weight: 500;">Оформление и обои</span>
+                </div>
+                <span style="color: #ffcc00;">→</span>
+            </div>
+            
+            <div class="settings-item" id="clearCacheBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">🗑️</span>
+                    <span style="font-weight: 500;">Очистить кэш</span>
+                </div>
+                <span style="color: #ffcc00;">→</span>
+            </div>
+            
+            <div class="settings-item" id="supportBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">💬</span>
+                    <span style="font-weight: 500;">Поддержка</span>
+                </div>
+                <span style="color: #ffcc00;">→</span>
+            </div>
+            
+            <div class="settings-item" id="aboutBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; cursor: pointer;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">ℹ️</span>
+                    <span style="font-weight: 500;">О приложении</span>
+                </div>
+                <span style="color: #ffcc00;">→</span>
+            </div>
         </div>
         
+        <!-- Мои публикации (избранное) -->
         <div class="glass-card">
             <div class="section-title">❤️ ИЗБРАННЫЕ ИСПОЛНИТЕЛИ</div>
-            <div id="favoritesList" style="text-align: center; padding: 20px; color: rgba(0,0,0,0.4);">Пока нет избранных исполнителей<br>Добавляйте их через поиск!</div>
-        </div>
-    </div>
-
-    <!-- ========== СТРАНИЦА REELS (КОРОТКИЕ ВИДЕО КАК В INSTAGRAM) ========== -->
-    <div class="fullscreen-page" id="reelsPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromReels"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
-            <div class="page-title">Reels</div>
-            <div style="width: 40px;"></div>
-        </div>
-        <div class="reels-container" id="reelsContainer">
-            <div style="text-align: center; padding: 40px; color: rgba(0,0,0,0.5);">🎬 Загрузка видео...</div>
+            <div id="favoritesList" style="text-align: center; padding: 20px; color: rgba(0,0,0,0.4);">
+                Пока нет избранных исполнителей<br>Добавляйте их через поиск!
+            </div>
         </div>
     </div>
 
@@ -969,56 +883,141 @@
     <div id="settingsModal" class="settings-modal hidden">
         <div class="modal-card">
             <div class="modal-title">Оформление</div>
+            
             <div class="settings-row" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px;">
                 <button class="appearance-btn" id="resetBgBtn">Сбросить</button>
                 <button class="appearance-btn" id="uploadBgBtn">📸 Фото</button>
                 <button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button>
                 <button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button>
             </div>
+            
+            <!-- ===== СПЕЦИАЛЬНЫЕ ОБОИ (ЖЁЛТО-БЕЛЫЕ) - 3 колонки с прокруткой ===== -->
             <div style="margin: 16px 0 12px 0;">
                 <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; text-align: center;">✨ ЖЁЛТО-БЕЛЫЕ ОБОИ</div>
                 <div class="special-wallpapers" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 260px; overflow-y: auto; padding: 4px 4px 8px 4px;">
-                    <div class="wallpaper-card" data-wallpaper="gold_dust" style="background: linear-gradient(135deg, #fff9e6, #fff0c0); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);"><div style="font-size: 24px;">✨</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Золотая пыль</div></div>
-                    <div class="wallpaper-card" data-wallpaper="sun_rays" style="background: linear-gradient(135deg, #fff8e7, #ffeaa7); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);"><div style="font-size: 24px;">☀️</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Солнечные<br>лучи</div></div>
-                    <div class="wallpaper-card" data-wallpaper="champagne" style="background: linear-gradient(135deg, #fff5e6, #ffe4b5); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);"><div style="font-size: 24px;">🥂</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Шампанское</div></div>
-                    <div class="wallpaper-card" data-wallpaper="honey" style="background: linear-gradient(135deg, #fff3e0, #ffd580); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);"><div style="font-size: 24px;">🍯</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Медовый</div></div>
-                    <div class="wallpaper-card" data-wallpaper="vanilla" style="background: linear-gradient(135deg, #fffef7, #fff3cf); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);"><div style="font-size: 24px;">🍦</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Ванильный</div></div>
-                    <div class="wallpaper-card" data-wallpaper="lemon" style="background: linear-gradient(135deg, #fffde7, #fff59d); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);"><div style="font-size: 24px;">🍋</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Лимонный</div></div>
-                    <div class="wallpaper-card" data-wallpaper="amber" style="background: linear-gradient(135deg, #fff2df, #ffcc80); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);"><div style="font-size: 24px;">💎</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Янтарный</div></div>
-                    <div class="wallpaper-card" data-wallpaper="white_choco" style="background: linear-gradient(135deg, #ffffff, #fff5e0); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);"><div style="font-size: 24px;">🍫</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Белый<br>шоколад</div></div>
-                    <div class="wallpaper-card" data-wallpaper="renault_diamond" style="background: linear-gradient(135deg, #fff9e6, #ffe680); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,215,0,0.5);"><div style="font-size: 24px;">🔶</div><div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 600; text-align: center;">Renault<br>Style</div><div style="font-size: 7px; color: #B8860B;">ромбы</div></div>
+                    
+                    <!-- 1. Золотая пыль -->
+                    <div class="wallpaper-card" data-wallpaper="gold_dust" style="background: linear-gradient(135deg, #fff9e6, #fff0c0); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3); transition: all 0.2s;">
+                        <div style="font-size: 24px;">✨</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Золотая пыль</div>
+                    </div>
+                    
+                    <!-- 2. Солнечные лучи -->
+                    <div class="wallpaper-card" data-wallpaper="sun_rays" style="background: linear-gradient(135deg, #fff8e7, #ffeaa7); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 24px;">☀️</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Солнечные<br>лучи</div>
+                    </div>
+                    
+                    <!-- 3. Шампанское -->
+                    <div class="wallpaper-card" data-wallpaper="champagne" style="background: linear-gradient(135deg, #fff5e6, #ffe4b5); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 24px;">🥂</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Шампанское</div>
+                    </div>
+                    
+                    <!-- 4. Мёд -->
+                    <div class="wallpaper-card" data-wallpaper="honey" style="background: linear-gradient(135deg, #fff3e0, #ffd580); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 24px;">🍯</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Медовый</div>
+                    </div>
+                    
+                    <!-- 5. Ваниль -->
+                    <div class="wallpaper-card" data-wallpaper="vanilla" style="background: linear-gradient(135deg, #fffef7, #fff3cf); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 24px;">🍦</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Ванильный</div>
+                    </div>
+                    
+                    <!-- 6. Лимонный -->
+                    <div class="wallpaper-card" data-wallpaper="lemon" style="background: linear-gradient(135deg, #fffde7, #fff59d); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 24px;">🍋</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Лимонный</div>
+                    </div>
+                    
+                    <!-- 7. Янтарь -->
+                    <div class="wallpaper-card" data-wallpaper="amber" style="background: linear-gradient(135deg, #fff2df, #ffcc80); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 24px;">💎</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Янтарный</div>
+                    </div>
+                    
+                    <!-- 8. Белый шоколад -->
+                    <div class="wallpaper-card" data-wallpaper="white_choco" style="background: linear-gradient(135deg, #ffffff, #fff5e0); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
+                        <div style="font-size: 24px;">🍫</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Белый<br>шоколад</div>
+                    </div>
+                    
+                    <!-- 9. RENAULT СТИЛЬ (РОМБЫ) -->
+                    <div class="wallpaper-card" data-wallpaper="renault_diamond" style="background: linear-gradient(135deg, #fff9e6, #ffe680); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,215,0,0.5); transition: all 0.2s;">
+                        <div style="font-size: 24px;">🔶</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 600; text-align: center;">Renault<br>Style</div>
+                        <div style="font-size: 7px; color: #B8860B; margin-top: 2px;">ромбы</div>
+                    </div>
+                    
                 </div>
             </div>
+            
             <div class="gradient-row" style="margin-top: 12px;">
                 <div class="gradient-circle" style="background:linear-gradient(135deg,#ffcc00,#ffd633);"></div>
                 <div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div>
                 <div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div>
                 <div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div>
             </div>
+            
             <button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button>
         </div>
     </div>
 
     <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== -->
     <div class="bottom-tab-bar" id="bottomTabBar">
+        <!-- 1. Главная (домик) -->
         <div class="tab-item" data-tab="menu">
-            <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9L12 3L21 9V20H3V9Z" stroke="currentColor" fill="none"/><path d="M9 20V12H15V20" stroke="currentColor" fill="none"/></svg></div>
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M3 9L12 3L21 9V20H3V9Z" stroke="currentColor" fill="none"/>
+                    <path d="M9 20V12H15V20" stroke="currentColor" fill="none"/>
+                </svg>
+            </div>
             <div class="tab-label">Главная</div>
         </div>
+        
+        <!-- 2. Reels (как в Instagram) - открывает YouTube Music Shorts -->
         <div class="tab-item" data-tab="reels">
-            <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" fill="none"/><path d="M9 8L15 12L9 16V8Z" stroke="currentColor" fill="none" stroke-linejoin="round"/></svg></div>
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" fill="none"/>
+                    <path d="M9 8L15 12L9 16V8Z" stroke="currentColor" fill="none" stroke-linejoin="round"/>
+                </svg>
+            </div>
             <div class="tab-label">Reels</div>
         </div>
+        
+        <!-- 3. Сообщения (как в Instagram - директ) -->
         <div class="tab-item" data-tab="messages">
-            <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
             <div class="tab-label">Сообщения</div>
         </div>
+        
+        <!-- 4. Поиск (лупа) -->
         <div class="tab-item" data-tab="search">
-            <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="10" r="7" stroke="currentColor" fill="none"/><path d="M15 15L21 21" stroke="currentColor" stroke-linecap="round"/></svg></div>
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" fill="none"/>
+                    <path d="M15 15L21 21" stroke="currentColor" stroke-linecap="round"/>
+                </svg>
+            </div>
             <div class="tab-label">Поиск</div>
         </div>
+        
+        <!-- 5. Профиль (человечек) -->
         <div class="tab-item" data-tab="profile">
-            <div class="tab-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4" stroke="currentColor" fill="none"/><path d="M5 20V19C5 14.5 8 12 12 12C16 12 19 14.5 19 19V20" stroke="currentColor" fill="none"/></svg></div>
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="8" r="4" stroke="currentColor" fill="none"/>
+                    <path d="M5 20V19C5 14.5 8 12 12 12C16 12 19 14.5 19 19V20" stroke="currentColor" fill="none"/>
+                </svg>
+            </div>
             <div class="tab-label">Профиль</div>
         </div>
     </div>
@@ -1039,7 +1038,6 @@
         tg.ready();
         tg.expand();
 
-        // ========== DEEZER API ДЛЯ ОБЛОЖЕК ==========
         const deezerImageCache = new Map();
 
         function loadDeezerCache() {
@@ -1098,7 +1096,6 @@
 
         loadDeezerCache();
 
-        // ========== DEEZER ПРЕВЬЮ ТРЕКОВ ==========
         const trackIdCache = new Map();
 
         async function getDeezerTrackId(artistName, trackName) {
@@ -1232,19 +1229,38 @@
             else artistProfile.classList.remove('inverted');
         }
 
-        // ========== ТРЕКИ ДЛЯ ПОИСКА ==========
         const tracks = [
-            { track: "Останься", artist: "Асия" }, { track: "Твой поцелуй", artist: "Асия" }, { track: "Красное платье", artist: "Асия" },
-            { track: "Помнишь", artist: "Асия" }, { track: "Детство", artist: "Асия" }, { track: "Притворяюсь", artist: "Асия" },
-            { track: "Обочины", artist: "Асия" }, { track: "Шекспир", artist: "Асия" }, { track: "О любви", artist: "Асия" },
-            { track: "Звонок", artist: "Асия" }, { track: "911", artist: "Асия" }, { track: "Крестики", artist: "Асия" },
-            { track: "Алоэ", artist: "Асия" }, { track: "Сильно так", artist: "Асия" }, { track: "Амур", artist: "Асия" },
-            { track: "Я не злюсь, милый", artist: "Асия" }, { track: "Молчу", artist: "Асия" }, { track: "Шоу Трумана", artist: "Асия" },
-            { track: "Мили", artist: "Асия" }, { track: "Говори", artist: "Асия" }, { track: "Believer", artist: "Imagine Dragons" },
-            { track: "Группа крови", artist: "Кино" }, { track: "Cadillac", artist: "Моргенштерн" }, { track: "Искала", artist: "Земфира" },
-            { track: "Radioactive", artist: "Imagine Dragons" }, { track: "Звезда по имени Солнце", artist: "Кино" },
-            { track: "El Problema", artist: "Моргенштерн" }, { track: "Лирика", artist: "Сектор Газа" }, { track: "Туман", artist: "Сектор Газа" },
-            { track: "30 лет", artist: "Сектор Газа" }, { track: "Бомж", artist: "Сектор Газа" }
+            { track: "Останься", artist: "Асия" },
+            { track: "Твой поцелуй", artist: "Асия" },
+            { track: "Красное платье", artist: "Асия" },
+            { track: "Помнишь", artist: "Асия" },
+            { track: "Детство", artist: "Асия" },
+            { track: "Притворяюсь", artist: "Асия" },
+            { track: "Обочины", artist: "Асия" },
+            { track: "Шекспир", artist: "Асия" },
+            { track: "О любви", artist: "Асия" },
+            { track: "Звонок", artist: "Асия" },
+            { track: "911", artist: "Асия" },
+            { track: "Крестики", artist: "Асия" },
+            { track: "Алоэ", artist: "Асия" },
+            { track: "Сильно так", artist: "Асия" },
+            { track: "Амур", artist: "Асия" },
+            { track: "Я не злюсь, милый", artist: "Асия" },
+            { track: "Молчу", artist: "Асия" },
+            { track: "Шоу Трумана", artist: "Асия" },
+            { track: "Мили", artist: "Асия" },
+            { track: "Говори", artist: "Асия" }, 
+            { track: "Believer", artist: "Imagine Dragons" },
+            { track: "Группа крови", artist: "Кино" },
+            { track: "Cadillac", artist: "Моргенштерн" },
+            { track: "Искала", artist: "Земфира" },
+            { track: "Radioactive", artist: "Imagine Dragons" },
+            { track: "Звезда по имени Солнце", artist: "Кино" },
+            { track: "El Problema", artist: "Моргенштерн" },
+            { track: "Лирика", artist: "Сектор Газа" },
+            { track: "Туман", artist: "Сектор Газа" },
+            { track: "30 лет", artist: "Сектор Газа" },
+            { track: "Бомж", artist: "Сектор Газа" }
         ];
         
         function getAlbumsFromTracks(artistName) {
@@ -1253,7 +1269,12 @@
             const albums = [];
             
             if (artistName.toLowerCase() === "асия") {
-                albums.push({ title: "Популярное", year: 2024, cover: "🎤", tracks: artistTracks });
+                albums.push({
+                    title: "Популярное",
+                    year: 2024,
+                    cover: "🎤",
+                    tracks: artistTracks
+                });
             }
             else if (artistName.toLowerCase() === "imagine dragons") {
                 albums.push({ title: "Evolve / Night Visions", year: 2017, cover: "🌙", tracks: artistTracks });
@@ -1334,7 +1355,6 @@
             tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(`${artist} ${track}`)}`);
         };
         
-        // ========== ФАКТЫ ОБ ИСПОЛНИТЕЛЯХ ==========
         const facts = {
             "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства"],
             "кино": ["Группа основана в 1981", "Виктор Цой — легендарный лидер", "«Группа крови» — гимн поколения"],
@@ -1344,7 +1364,6 @@
             "сектор газа": ["Основана в 1987 году в Воронеже", "Лидер — Юрий Хой (Клинских)", "Культовая группа 1990-х", "Стиль: панк-рок, шансон, фолк-рок"]
         };
         
-        // ========== КОНЦЕРТНЫЕ ПЛОЩАДКИ ==========
         const venues = [
             { name: "Gipsy", lat: 55.740117, lng: 37.609712, address: "Москва, Болотная наб., 3", metro: "Кропоткинская" },
             { name: "16 тонн", lat: 55.764279, lng: 37.564399, address: "Москва, ул. Пресненский Вал, 6", metro: "Улица 1905 года" },
@@ -1378,7 +1397,7 @@
             return `🎤 ${artist} — один из самых ярких исполнителей года!`;
         }
 
-        // ========== WIKIPEDIA API ==========
+        // ========== ПОЛУЧЕНИЕ БИОГРАФИИ ИЗ WIKIPEDIA ==========
         async function getWiki(artist) {
             try {
                 const specialMatches = {
@@ -1458,19 +1477,32 @@
             }
         }
         
-        // ========== РАСШИРЕННАЯ БИОГРАФИЯ ==========
+        // ========== РАСШИРЕННАЯ БИОГРАФИЯ ДЛЯ ПОПУЛЯРНЫХ ИСПОЛНИТЕЛЕЙ ==========
         function getShortBio(artist) {
             const bios = {
-                "асия": "Асия (Анастасия Алентьева) — российская певица и автор песен. Родилась 1 сентября 1997 года в городе Лениногорск (Татарстан). Стала известной после выхода песни «Останься», которая набрала более 100 миллионов прослушиваний.",
-                "кино": "«Кино» — советская рок-группа, основанная в 1981 году в Ленинграде Виктором Цоем и Алексеем Рыбиным.",
-                "imagine dragons": "Imagine Dragons — американская рок-группа из Лас-Вегаса, основанная в 2008 году. Обладатели трёх премий Grammy.",
-                "моргенштерн": "Моргенштерн (Алишер Тагирович Моргенштерн) — российский рэп-исполнитель, блогер и музыкант. Родился 17 февраля 1998 года в Уфе.",
-                "земфира": "Земфира (Земфира Талгатовна Рамазанова) — российская рок-певица, музыкант и автор песен. Родилась 26 августа 1976 года в Уфе.",
-                "rammstein": "Rammstein — немецкая метал-группа, образованная в 1994 году в Берлине.",
-                "billie eilish": "Billie Eilish — американская певица и автор песен. Родилась 18 декабря 2001 года в Лос-Анджелесе.",
-                "the weeknd": "The Weeknd — канадский певец, автор песен и продюсер. Родился 16 февраля 1990 года в Торонто.",
-                "eminem": "Eminem — американский рэпер, продюсер и актёр. Родился 17 октября 1972 года в Сент-Джозефе (Миссури).",
-                "сектор газа": "«Сектор Газа» — советская и российская рок-группа, основанная в 1987 году в Воронеже Юрием Клинских (известным как Юрий Хой)."
+                "асия": "Асия (Анастасия Алентьева) — российская певица и автор песен. Родилась 1 сентября 1997 года в городе Лениногорск (Татарстан). Стала известной после выхода песни «Останься», которая набрала более 100 миллионов прослушиваний. Её музыка сочетает поп, R&B и инди-звучание. Также известна по трекам: «Твой поцелуй», «Красное платье», «Детство».",
+                
+                "кино": "«Кино» — советская рок-группа, основанная в 1981 году в Ленинграде Виктором Цоем и Алексеем Рыбиным. После ухода Рыбина в 1983 году, группа продолжила существование с Юрием Каспаряном. Считается одной из самых влиятельных рок-групп в истории русской музыки. Легендарные альбомы: «Группа крови» (1988), «Звезда по имени Солнце» (1989). После гибели Виктора Цоя в 1990 году группа распалась, но навсегда осталась в сердцах миллионов.",
+                
+                "imagine dragons": "Imagine Dragons — американская рок-группа из Лас-Вегаса, основанная в 2008 году. В состав группы входят: Дэн Рейнольдс (вокал), Уэйн Сермон (гитара), Бен Макки (бас) и Дэниел Платцман (ударные). Обладатели трёх премий Grammy. Самые известные хиты: «Radioactive», «Demons», «Believer», «Thunder». Альбом «Night Visions» (2012) стал одним из самых продаваемых в десятилетии.",
+                
+                "моргенштерн": "Моргенштерн (Алишер Тагирович Моргенштерн) — российский рэп-исполнитель, блогер и музыкант. Родился 17 февраля 1998 года в Уфе. Начал карьеру с видеоблогов, затем перешёл в музыку. Стал известен благодаря трекам «Cadillac», «El Problema», «Розовое вино». Один из самых популярных и обсуждаемых артистов современной русской музыки.",
+                
+                "земфира": "Земфира (Земфира Талгатовна Рамазанова) — российская рок-певица, музыкант и автор песен. Родилась 26 августа 1976 года в Уфе. Дебютный альбом «Земфира» вышел в 1999 году и мгновенно стал культовым. Следующие альбомы: «Прости меня моя любовь» (2000), «14 недель тишины» (2002), «Вендетта» (2005). Обладательница множества музыкальных премий, включая «Муз-ТВ» и «Золотой граммофон». Первая женщина, собравшая полный «Олимпийский» стадион.",
+                
+                "rammstein": "Rammstein — немецкая метал-группа, образованная в 1994 году в Берлине. В состав входят: Тилль Линдеманн (вокал), Рихард Круспе (гитара), Пауль Ландерс (гитара), Оливер Ридель (бас), Кристоф Шнайдер (ударные) и Кристиан Лоренц (клавишные). Известна своим уникальным стилем, театральными выступлениями и пиротехническими шоу. Самые известные хиты: «Du Hast», «Sonne», «Deutschland», «Amerika». Альбом «Mutter» (2001) стал международным прорывом.",
+                
+                "billie eilish": "Billie Eilish (Билли Айлиш) — американская певица и автор песен. Родилась 18 декабря 2001 года в Лос-Анджелесе. Стала известной после выхода дебютного сингла «Ocean Eyes» в 2015 году. Обладательница 7 премий Grammy, включая «Лучший новый исполнитель», «Альбом года» («When We All Fall Asleep, Where Do We Go?»). Её музыка сочетает поп, электронику и инди-поп.",
+                
+                "the weeknd": "The Weeknd (Эйбел Макконен Тесфайе) — канадский певец, автор песен и продюсер. Родился 16 февраля 1990 года в Торонто. Известен своими хитами: «Blinding Lights», «Starboy», «Save Your Tears», «The Hills». Обладатель 4 премий Grammy. Его альбом «After Hours» (2020) стал одним из самых успешных в карьере, а сингл «Blinding Lights» побил рекорд по неделям в чартах.",
+                
+                "eminem": "Eminem (Маршалл Брюс Мэтерс III) — американский рэпер, продюсер и актёр. Родился 17 октября 1972 года в Сент-Джозефе (Миссури). Один из самых продаваемых музыкальных артистов в истории (более 220 миллионов записей). Обладатель 15 премий Grammy. Самые известные альбомы: «The Slim Shady LP», «The Marshall Mathers LP», «The Eminem Show», «Recovery». Также известен ролью в фильме «8 Миля».",
+                
+                "ариана гранде": "Ariana Grande (Ариана Гранде) — американская певица и актриса. Родилась 26 июня 1993 года во Флориде. Начала карьеру с роли в сериале «Victorious» на канале Nickelodeon. Обладательница двух премий Grammy. Известна своим уникальным вокальным диапазоном (4 октавы). Самые известные хиты: «Problem», «Thank U, Next», «7 Rings», «Bang Bang», «No Tears Left to Cry».",
+                
+                "руки вверх": "«Руки Вверх!» — российская поп-группа, основанная в 1996 году продюсером Андреем Маликовым и солистом Сергеем Жуковым. Стала культовой в конце 1990-х и начале 2000-х. Стиль группы — энергичная танцевальная поп-музыка с запоминающимися мелодиями. Самые известные хиты: «Крошка моя», «18 мне уже», «Он тебя целует», «Студент», «Алешка». В 2016 году группа воссоединилась и продолжает выступать.",
+                
+                "сектор газа": "«Сектор Газа» — советская и российская рок-группа, основанная в 1987 году в Воронеже Юрием Клинских (известным как Юрий Хой). Стиль группы сочетает панк-рок, русский шансон, фолк-рок и блатную песню. Тексты песен часто затрагивают социальные темы, жизнь простых людей, деревню, любовь и смерть. Самые известные альбомы: «Зловещие мертвецы» (1990), «Яйцо динозавра» (1992), «Нажми на газ» (1992), «Вой на Луну» (1993), «Кащей Бессмертный» (1994). Легендарные хиты: «Лирика», «Туман», «30 лет», «Пошли на хер, колхозники!», «Бомж». 4 июля 2000 года Юрий Хой трагически погиб от сердечного приступа. После его смерти группа прекратила существование, но осталась культовой и любимой миллионами. Группа «Сектор Газа» — это целая эпоха в русском роке, символ 1990-х годов."
             };
             
             const key = artist.toLowerCase();
@@ -1501,22 +1533,268 @@
 
         const menu = document.getElementById('menuContainer');
         const pages = {
-            music: document.getElementById('musicPage'), game: document.getElementById('gamePage'), ai: document.getElementById('aiPage'),
-            assistant: document.getElementById('assistantPage'), randomizer: document.getElementById('randomizerPage'),
-            mood: document.getElementById('moodPage'), map: document.getElementById('mapPage'), lyrics: document.getElementById('lyricsPage'),
-            profile: document.getElementById('profilePage'), reels: document.getElementById('reelsPage')
+            music: document.getElementById('musicPage'),
+            game: document.getElementById('gamePage'),
+            ai: document.getElementById('aiPage'),
+            assistant: document.getElementById('assistantPage'),
+            randomizer: document.getElementById('randomizerPage'),
+            mood: document.getElementById('moodPage'),
+            map: document.getElementById('mapPage'),
+            lyrics: document.getElementById('lyricsPage'),
+            profile: document.getElementById('profilePage')
         };
         
         function showMenu() { 
-            stopCurrentPreview(); menu.classList.remove('hidden-menu'); Object.values(pages).forEach(p => p && p.classList.remove('active')); document.body.className = ''; updateActiveTabInBar('menu'); 
+            stopCurrentPreview();
+            menu.classList.remove('hidden-menu'); 
+            Object.values(pages).forEach(p => p && p.classList.remove('active')); 
+            document.body.className = '';
+            updateActiveTabInBar('menu');
         }
         
         function showPage(page, mode) { 
-            stopCurrentPreview(); menu.classList.add('hidden-menu'); Object.values(pages).forEach(p => p && p.classList.remove('active')); if (page) page.classList.add('active'); document.body.className = mode + '-mode'; 
+            stopCurrentPreview();
+            menu.classList.add('hidden-menu'); 
+            Object.values(pages).forEach(p => p && p.classList.remove('active')); 
+            if (page) page.classList.add('active'); 
+            document.body.className = mode + '-mode';
         }
         
-        function updateActiveTabInBar(activeTab) { 
-            document.querySelectorAll('.tab-item').forEach(tab => { if (tab.dataset.tab === activeTab) tab.classList.add('active'); else tab.classList.remove('active'); }); 
+        // ========== НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ ==========
+        function updateActiveTabInBar(activeTab) {
+            const tabs = document.querySelectorAll('.tab-item');
+            tabs.forEach(tab => {
+                const tabName = tab.dataset.tab;
+                if (tabName === activeTab) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+        }
+        
+        // ========== СТРАНИЦА ПРОФИЛЯ (МОЙ АККАУНТ) ==========
+        let userData = {
+            firstName: '',
+            lastName: '',
+            username: '',
+            id: '',
+            bio: 'Люблю музыку 🎵',
+            followers: 128,
+            following: 89
+        };
+        
+        let favorites = [];
+        
+        function loadFavorites() {
+            try {
+                const saved = localStorage.getItem('lm_favorites');
+                if (saved) {
+                    favorites = JSON.parse(saved);
+                    updateFavoritesDisplay();
+                }
+            } catch(e) {}
+        }
+        
+        function saveFavorites() {
+            localStorage.setItem('lm_favorites', JSON.stringify(favorites));
+        }
+        
+        function addToFavorites(artistName) {
+            if (!favorites.includes(artistName)) {
+                favorites.push(artistName);
+                saveFavorites();
+                updateFavoritesDisplay();
+                showNote(`⭐ ${artistName} добавлен в избранное`);
+            } else {
+                showNote(`⚠️ ${artistName} уже в избранном`);
+            }
+        }
+        
+        function removeFromFavorites(artistName) {
+            favorites = favorites.filter(a => a !== artistName);
+            saveFavorites();
+            updateFavoritesDisplay();
+            showNote(`🗑️ ${artistName} удалён из избранного`);
+        }
+        
+        window.removeFromFavorites = removeFromFavorites;
+        
+        function updateFavoritesDisplay() {
+            const container = document.getElementById('favoritesList');
+            if (!container) return;
+            
+            if (favorites.length === 0) {
+                container.innerHTML = 'Пока нет избранных исполнителей<br>Добавляйте их через поиск!';
+                document.getElementById('postsCount').textContent = '0';
+                return;
+            }
+            
+            document.getElementById('postsCount').textContent = favorites.length;
+            
+            container.innerHTML = favorites.map(artist => `
+                <div class="saved-item">
+                    <span style="font-weight: 500;">⭐ ${escapeHtml(artist)}</span>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="removeFromFavorites('${escapeHtml(artist)}')" style="background: rgba(0,0,0,0.05); border: none; padding: 6px 14px; border-radius: 30px; font-size: 12px; cursor: pointer;">Удалить</button>
+                        <button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(artist)}')" style="background: #ffcc00; border: none; padding: 6px 14px; border-radius: 30px; font-size: 12px; cursor: pointer;">Слушать</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadTelegramUser() {
+            try {
+                const tgUser = tg.initDataUnsafe?.user;
+                if (tgUser) {
+                    userData.firstName = tgUser.first_name || '';
+                    userData.lastName = tgUser.last_name || '';
+                    userData.username = tgUser.username || '';
+                    userData.id = tgUser.id || '';
+                    
+                    document.getElementById('profileName').textContent = 
+                        `${userData.firstName} ${userData.lastName}`.trim() || 'Музыкант';
+                    document.getElementById('profileUsername').textContent = 
+                        userData.username ? `@${userData.username}` : '@music_lover';
+                    document.getElementById('userId').textContent = userData.id || '—';
+                    
+                    const initial = (userData.firstName?.charAt(0) || userData.username?.charAt(0) || '🎵').toUpperCase();
+                    const avatarDiv = document.getElementById('profileAvatar');
+                    if (avatarDiv) {
+                        avatarDiv.style.background = 'linear-gradient(135deg, #ffcc00, #ffd633)';
+                        avatarDiv.innerHTML = initial;
+                    }
+                } else {
+                    document.getElementById('profileName').textContent = 'Музыкант';
+                    document.getElementById('profileUsername').textContent = '@music_lover';
+                    document.getElementById('userId').textContent = '—';
+                }
+            } catch(e) {
+                console.log('Не удалось получить данные пользователя');
+            }
+        }
+        
+        function updateProfileStats() {
+            document.getElementById('followersCount').textContent = userData.followers;
+            document.getElementById('followingCount').textContent = userData.following;
+            document.getElementById('postsCount').textContent = favorites.length;
+            document.getElementById('userBio').textContent = userData.bio;
+        }
+        
+        function initProfile() {
+            loadTelegramUser();
+            loadFavorites();
+            updateProfileStats();
+            
+            const savedBio = localStorage.getItem('lm_user_bio');
+            if (savedBio) {
+                userData.bio = savedBio;
+                document.getElementById('userBio').textContent = savedBio;
+            }
+            
+            document.getElementById('editProfileBtn')?.addEventListener('click', () => {
+                const newBio = prompt('Редактировать информацию о себе:', userData.bio);
+                if (newBio && newBio.trim()) {
+                    userData.bio = newBio.trim();
+                    localStorage.setItem('lm_user_bio', userData.bio);
+                    document.getElementById('userBio').textContent = userData.bio;
+                    showNote('✅ Профиль обновлён');
+                }
+            });
+            
+            document.getElementById('shareProfileBtn')?.addEventListener('click', () => {
+                tg.openLink(`https://t.me/${userData.username || 'le_monde_music'}`);
+            });
+            
+            document.getElementById('openSettingsBtn')?.addEventListener('click', () => {
+                const modal = document.getElementById('settingsModal');
+                if (modal) modal.classList.remove('hidden');
+            });
+            
+            document.getElementById('clearCacheBtn')?.addEventListener('click', () => {
+                if (confirm('Очистить кэш приложения? Все настройки сохранятся.')) {
+                    localStorage.removeItem('deezer_artist_cache');
+                    showNote('🗑️ Кэш очищен');
+                }
+            });
+            
+            document.getElementById('supportBtn')?.addEventListener('click', () => {
+                tg.openLink('https://t.me/le_monde_music_support');
+                showNote('💬 Открываем поддержку');
+            });
+            
+            document.getElementById('aboutBtn')?.addEventListener('click', () => {
+                tg.showPopup({
+                    title: 'LE MONDE MUSIC',
+                    message: 'Версия 2.0.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, AI-обложками и играми.\n\n© 2024 LE MONDE MUSIC',
+                    buttons: [{ type: 'close', text: 'Закрыть' }]
+                });
+            });
+        }
+        
+        function addFavoriteButtonToSearch() {
+            const platformButtons = document.querySelector('.platform-buttons');
+            if (platformButtons && !document.querySelector('.add-to-fav-btn')) {
+                const favBtn = document.createElement('button');
+                favBtn.className = 'platform-btn';
+                favBtn.style.background = 'rgba(0,0,0,0.05)';
+                favBtn.style.border = '1px solid rgba(0,0,0,0.1)';
+                favBtn.innerHTML = '⭐ В избранное';
+                favBtn.classList.add('add-to-fav-btn');
+                favBtn.onclick = () => {
+                    const artistName = document.querySelector('.artist-name-large')?.innerText?.replace('🔄', '').trim();
+                    if (artistName) addToFavorites(artistName);
+                };
+                platformButtons.appendChild(favBtn);
+            }
+        }
+        
+        // Переопределяем search для добавления кнопки избранного
+        const originalSearchFunc = window.search;
+        window.search = async function() {
+            if (originalSearchFunc) await originalSearchFunc();
+            setTimeout(addFavoriteButtonToSearch, 300);
+        };
+        
+        function initBottomTabBar() {
+            const tabBar = document.getElementById('bottomTabBar');
+            if (!tabBar) return;
+            
+            const tabs = document.querySelectorAll('.tab-item');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    
+                    switch(tabName) {
+                        case 'menu':
+                            showMenu();
+                            updateActiveTabInBar('menu');
+                            break;
+                        case 'reels':
+                            // ОТКРЫВАЕМ YOUTUBE MUSIC С КОРОТКИМИ КЛИПАМИ (SHORTS)
+                            tg.openLink('https://music.youtube.com/shorts');
+                            updateActiveTabInBar('reels');
+                            break;
+                        case 'messages':
+                            showPage(pages.assistant, 'assistant');
+                            updateActiveTabInBar('messages');
+                            break;
+                        case 'search':
+                            showPage(pages.music, 'music');
+                            loadPopular();
+                            updateActiveTabInBar('search');
+                            break;
+                        case 'profile':
+                            showPage(pages.profile, 'music');
+                            updateActiveTabInBar('profile');
+                            updateProfileStats();
+                            break;
+                    }
+                });
+            });
+            
+            updateActiveTabInBar('menu');
         }
         
         document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); updateActiveTabInBar('search'); };
@@ -1526,13 +1804,19 @@
         document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); updateActiveTabInBar('menu'); };
         document.getElementById('goToMoodBtn').onclick = () => { showPage(pages.mood, 'music'); updateActiveTabInBar('menu'); };
         document.getElementById('goToMapBtn').onclick = () => { showPage(pages.map, 'map'); updateVenuesList(); updateActiveTabInBar('menu'); };
-        document.getElementById('goToTicketsBtn').onclick = () => { if (lastSearchedArtist) tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(lastSearchedArtist)}`); else tg.showPopup({ title: "Билеты", message: "Сначала найдите артиста", buttons: [{ type: "ok" }] }); updateActiveTabInBar('menu'); };
+        document.getElementById('goToTicketsBtn').onclick = () => {
+            if (lastSearchedArtist) tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(lastSearchedArtist)}`);
+            else tg.showPopup({ title: "Билеты", message: "Сначала найдите артиста", buttons: [{ type: "ok" }] });
+            updateActiveTabInBar('menu');
+        };
         document.getElementById('goToLyricsBtn').onclick = () => { showPage(pages.lyrics, 'lyrics'); updateActiveTabInBar('menu'); };
         
         document.getElementById('geoLocationBtn').onclick = openMyLocationOnMap;
-        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics', 'Profile', 'Reels'].forEach(p => { const btn = document.getElementById(`backFrom${p}`); if (btn) btn.onclick = showMenu; });
+        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics', 'Profile'].forEach(p => {
+            const btn = document.getElementById(`backFrom${p}`);
+            if (btn) btn.onclick = showMenu;
+        });
 
-        // ========== ЗАГРУЗКА ПОПУЛЯРНЫХ ИСПОЛНИТЕЛЕЙ ==========
         async function loadPopular() { 
             const grid = document.getElementById('popularGrid');
             if (!grid) return;
@@ -1588,39 +1872,101 @@
             updateActiveTabInBar('search');
         };
         
-        // ========== ПОИСК ТЕКСТА ПЕСНИ ==========
         async function searchLyrics() {
             const artist = document.getElementById('lyricsArtistInput').value.trim();
             const track = document.getElementById('lyricsTrackInput').value.trim();
-            if (!artist || !track) { showNote('Введите исполнителя и название трека'); return; }
+            
+            if (!artist || !track) {
+                showNote('Введите исполнителя и название трека');
+                return;
+            }
+            
             const searchQuery = `${artist} ${track} текст песни`;
             const resultDiv = document.getElementById('lyricsResult');
-            resultDiv.innerHTML = `<div class="result-card" style="text-align: center;"><div style="font-size: 48px; margin-bottom: 16px;">🔍</div><div style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Поиск текста песни</div><div style="font-size: 14px; color: rgba(0,0,0,0.6); margin-bottom: 24px;">"${escapeHtml(track)}" - ${escapeHtml(artist)}</div><div style="display: flex; flex-direction: column; gap: 12px;"><button id="searchYandexBtn" style="background: #ffcc00; border: none; padding: 14px; border-radius: 60px; color: #1a1a1a; font-weight: 600; cursor: pointer;">🌐 Поиск в Яндексе</button><button id="searchGoogleBtn" style="background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); padding: 14px; border-radius: 60px; color: #1a1a1a; cursor: pointer;">🔎 Поиск в Google</button></div></div>`;
-            resultDiv.querySelector('#searchYandexBtn').onclick = () => tg.openLink(`https://yandex.ru/search/?text=${encodeURIComponent(searchQuery)}`);
-            resultDiv.querySelector('#searchGoogleBtn').onclick = () => tg.openLink(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`);
+            
+            resultDiv.innerHTML = `
+                <div class="result-card" style="text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Поиск текста песни</div>
+                    <div style="font-size: 14px; color: rgba(0,0,0,0.6); margin-bottom: 24px;">
+                        "${escapeHtml(track)}" - ${escapeHtml(artist)}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button id="searchYandexBtn" style="background: #ffcc00; border: none; padding: 14px; border-radius: 60px; color: #1a1a1a; font-weight: 600; cursor: pointer;">🌐 Поиск в Яндексе</button>
+                        <button id="searchGoogleBtn" style="background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); padding: 14px; border-radius: 60px; color: #1a1a1a; cursor: pointer;">🔎 Поиск в Google</button>
+                    </div>
+                </div>
+            `;
+            
+            const searchUrlYandex = `https://yandex.ru/search/?text=${encodeURIComponent(searchQuery)}`;
+            const searchUrlGoogle = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+            
+            resultDiv.querySelector('#searchYandexBtn').onclick = () => tg.openLink(searchUrlYandex);
+            resultDiv.querySelector('#searchGoogleBtn').onclick = () => tg.openLink(searchUrlGoogle);
         }
         
         document.getElementById('doLyricsSearchBtn').onclick = searchLyrics;
         
         async function showLyrics(artist, track) {
             const searchQuery = `${artist} ${track} текст песни`;
+            
             const modal = document.createElement('div');
-            modal.style.cssText = `position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; z-index: 10001; animation: fadeInScale 0.2s ease; padding: 20px;`;
-            modal.innerHTML = `<div style="background: rgba(25,25,40,0.98); border-radius: 32px; padding: 28px; width: 90%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.1);"><div style="font-size: 48px; margin-bottom: 16px;">🔍</div><div style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: white;">Поиск текста песни</div><div style="font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px;">"${escapeHtml(track)}" - ${escapeHtml(artist)}</div><div style="display: flex; flex-direction: column; gap: 12px;"><button id="searchYandexBtn" style="background: #ffcc00; border: none; padding: 14px; border-radius: 60px; color: #1a1a1a; font-weight: 600; cursor: pointer;">🌐 Поиск в Яндексе</button><button id="searchGoogleBtn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; cursor: pointer;">🔎 Поиск в Google</button><button id="closeLyricsBtn" style="background: rgba(255,255,255,0.05); border: none; padding: 12px; border-radius: 60px; color: rgba(255,255,255,0.5); cursor: pointer;">Закрыть</button></div></div>`;
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.85);
+                backdrop-filter: blur(20px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10001;
+                animation: fadeInScale 0.2s ease;
+                padding: 20px;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: rgba(25,25,40,0.98); border-radius: 32px; padding: 28px; width: 90%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px; color: white;">Поиск текста песни</div>
+                    <div style="font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 24px;">
+                        "${escapeHtml(track)}" - ${escapeHtml(artist)}
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button id="searchYandexBtn" style="background: #ffcc00; border: none; padding: 14px; border-radius: 60px; color: #1a1a1a; font-weight: 600; cursor: pointer;">🌐 Поиск в Яндексе</button>
+                        <button id="searchGoogleBtn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; cursor: pointer;">🔎 Поиск в Google</button>
+                        <button id="closeLyricsBtn" style="background: rgba(255,255,255,0.05); border: none; padding: 12px; border-radius: 60px; color: rgba(255,255,255,0.5); cursor: pointer;">Закрыть</button>
+                    </div>
+                </div>
+            `;
+            
             document.body.appendChild(modal);
-            modal.querySelector('#searchYandexBtn').onclick = () => { tg.openLink(`https://yandex.ru/search/?text=${encodeURIComponent(searchQuery)}`); modal.remove(); };
-            modal.querySelector('#searchGoogleBtn').onclick = () => { tg.openLink(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`); modal.remove(); };
+            
+            const searchUrlYandex = `https://yandex.ru/search/?text=${encodeURIComponent(searchQuery)}`;
+            const searchUrlGoogle = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+            
+            modal.querySelector('#searchYandexBtn').onclick = () => {
+                tg.openLink(searchUrlYandex);
+                modal.remove();
+            };
+            modal.querySelector('#searchGoogleBtn').onclick = () => {
+                tg.openLink(searchUrlGoogle);
+                modal.remove();
+            };
             modal.querySelector('#closeLyricsBtn').onclick = () => modal.remove();
             modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
         }
         
-        // ========== ОСНОВНОЙ ПОИСК ==========
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
             if (!q) return;
+            
             lastSearchedArtist = q;
             const resDiv = document.getElementById('musicResult');
             resDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 Поиск...</div>';
+            
             const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
             const wikiBio = await getWiki(q);
             const shortBio = getShortBio(q);
@@ -1628,19 +1974,87 @@
             const aiFact = getFact(q);
             const artistImageUrl = await getArtistImage(q);
             const finalAvatarUrl = artistImageUrl || `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffcc00'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
+            
             let bioHtml = '';
             if (wikiBio && wikiBio.text && wikiBio.text.length > 50) {
-                bioHtml = `<div class="bio-section"><div class="bio-title">📖 ${escapeHtml(wikiBio.title)}</div><div class="bio-text">${escapeHtml(wikiBio.text)}</div><a href="${wikiBio.url}" target="_blank" class="bio-wiki-link">Читать полностью на Wikipedia →</a></div>`;
+                bioHtml = `
+                    <div class="bio-section">
+                        <div class="bio-title">📖 ${escapeHtml(wikiBio.title)}</div>
+                        <div class="bio-text">${escapeHtml(wikiBio.text)}</div>
+                        <a href="${wikiBio.url}" target="_blank" class="bio-wiki-link">Читать полностью на Wikipedia →</a>
+                    </div>
+                `;
             } else if (shortBio) {
-                bioHtml = `<div class="bio-section"><div class="bio-title">📖 Об исполнителе</div><div class="bio-text">${escapeHtml(shortBio)}</div></div>`;
+                bioHtml = `
+                    <div class="bio-section">
+                        <div class="bio-title">📖 Об исполнителе</div>
+                        <div class="bio-text">${escapeHtml(shortBio)}</div>
+                    </div>
+                `;
             } else {
-                bioHtml = `<div class="bio-section"><div class="bio-title">📖 Биография</div><div class="bio-text">Информация об исполнителе "${escapeHtml(q)}" временно недоступна.</div></div>`;
+                bioHtml = `
+                    <div class="bio-section">
+                        <div class="bio-title">📖 Биография</div>
+                        <div class="bio-text">Информация об исполнителе "${escapeHtml(q)}" временно недоступна. Попробуйте найти информацию в Яндекс.Музыке или Wikipedia.</div>
+                    </div>
+                `;
             }
+            
             let tracksPreviewHtml = '';
             if (artistTracks.length > 0) {
-                tracksPreviewHtml = `<div style="margin: 20px 0 16px;"><div class="section-title" style="text-align: center;">🎧 ПРЕВЬЮ ТРЕКОВ</div><div style="display: flex; flex-direction: column; gap: 10px;">${artistTracks.slice(0, 10).map((t, idx) => `<div class="preview-track-item"><div style="margin-bottom: 10px;"><div style="font-weight: 600; font-size: 16px; color: #1a1a1a;">${escapeHtml(t.track)}</div><div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div></div><div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;"><span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; opacity: 0.7;">0:00</span><button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: #ffcc00; border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">▶️</button><button class="lyrics-btn" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">📝</button></div></div>`).join('')}</div></div>`;
+                tracksPreviewHtml = `
+                    <div style="margin: 20px 0 16px;">
+                        <div class="section-title" style="text-align: center;">🎧 ПРЕВЬЮ ТРЕКОВ</div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            ${artistTracks.slice(0, 10).map((t, idx) => `
+                                <div class="preview-track-item">
+                                    <div style="margin-bottom: 10px;">
+                                        <div style="font-weight: 600; font-size: 16px; color: #1a1a1a;">${escapeHtml(t.track)}</div>
+                                        <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div>
+                                    </div>
+                                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                                        <span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; opacity: 0.7;">0:00</span>
+                                        <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: #ffcc00; border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">▶️</button>
+                                        <button class="lyrics-btn" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">📝</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
             }
-            resDiv.innerHTML = `<div class="result-card"><div class="artist-profile" onclick="toggleArtistInversion()"><img class="artist-avatar" src="${finalAvatarUrl}" alt="${escapeHtml(q)}"><div class="artist-info"><div class="artist-name-large">${escapeHtml(q)}<span class="invert-icon">🔄</span></div><div class="artist-role">Нажмите для смены стиля</div></div></div>${renderAlbumsFromTracks(q)}${tracksPreviewHtml}<div class="ai-fact-card"><div class="ai-fact-header"><div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#ffcc00" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div><div><div class="ai-fact-label">ИИ ФАКТ</div><div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div><button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">🔄 Новый факт</button></div></div></div><div class="section-title">СЛУШАТЬ ПОЛНОСТЬЮ</div><div class="platform-buttons"><button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button><button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button><button class="platform-btn add-to-fav-btn" style="background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1);">⭐ В избранное</button></div>${bioHtml}<button class="search-btn" style="margin-top: 16px;" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button></div>`;
+            
+            resDiv.innerHTML = `
+                <div class="result-card">
+                    <div class="artist-profile" onclick="toggleArtistInversion()">
+                        <img class="artist-avatar" src="${finalAvatarUrl}" alt="${escapeHtml(q)}">
+                        <div class="artist-info">
+                            <div class="artist-name-large">${escapeHtml(q)}<span class="invert-icon">🔄</span></div>
+                            <div class="artist-role">Нажмите для смены стиля</div>
+                        </div>
+                    </div>
+                    ${renderAlbumsFromTracks(q)}
+                    ${tracksPreviewHtml}
+                    <div class="ai-fact-card">
+                        <div class="ai-fact-header">
+                            <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#ffcc00" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
+                            <div>
+                                <div class="ai-fact-label">ИИ ФАКТ</div>
+                                <div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div>
+                                <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">🔄 Новый факт</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">СЛУШАТЬ ПОЛНОСТЬЮ</div>
+                    <div class="platform-buttons">
+                        <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
+                        <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                    </div>
+                    ${bioHtml}
+                    <button class="search-btn" style="margin-top: 16px;" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
+                </div>
+            `;
+            
             if (artistTracks.length > 0) {
                 artistTracks.slice(0, 10).forEach((t, idx) => {
                     const btn = resDiv.querySelector(`.preview-btn-${idx}`);
@@ -1652,9 +2066,11 @@
                     }
                 });
             }
-            document.querySelectorAll('.lyrics-btn').forEach(btn => { btn.onclick = () => showLyrics(btn.dataset.artist, btn.dataset.track); });
-            const favBtn = document.querySelector('.add-to-fav-btn');
-            if (favBtn) favBtn.onclick = () => addToFavorites(q);
+            
+            document.querySelectorAll('.lyrics-btn').forEach(btn => {
+                btn.onclick = () => showLyrics(btn.dataset.artist, btn.dataset.track);
+            });
+            
             loadInvertedState(q);
         }
         
@@ -1669,7 +2085,6 @@
         const searchInputElem = document.getElementById('searchInput');
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
-        // ========== ИГРА ==========
         function genQ() { 
             const t = tracks[Math.floor(Math.random() * tracks.length)]; 
             const others = [...new Set(tracks.map(t => t.artist))].filter(a => a !== t.artist).slice(0, 3); 
@@ -1703,7 +2118,6 @@
         const startGameBtn = document.getElementById('startGameBtn');
         if (startGameBtn) startGameBtn.onclick = startGame;
 
-        // ========== AI ГЕНЕРАЦИЯ ОБЛОЖЕК ==========
         async function genCover(p) {
             const div = document.getElementById('aiResult');
             div.innerHTML = '<div style="text-align:center; padding:20px;">🎨 Генерация...</div>';
@@ -1719,7 +2133,6 @@
         const generateBtn = document.getElementById('generateAIBtn');
         if (generateBtn) generateBtn.onclick = () => { const p = document.getElementById('aiPrompt').value.trim(); if (p) genCover(p); };
 
-        // ========== AI АССИСТЕНТ ==========
         async function askBot(q) {
             const low = q.toLowerCase();
             if (!low.includes("песн") && !low.includes("трек") && low.length > 2) {
@@ -1760,7 +2173,6 @@
         const chatInputElem = document.getElementById('chatInput');
         if (chatInputElem) chatInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
 
-        // ========== РАНДОМАЙЗЕР ==========
         function parseArtists(t) { 
             if (!t.trim()) return []; 
             const lines = t.split(/\r?\n/); 
@@ -1800,11 +2212,9 @@
         const artistListElem = document.getElementById('artistListInput');
         if (artistListElem) artistListElem.addEventListener('input', updateTotal);
 
-        // ========== НАСТРОЕНИЕ ==========
         const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Lo-Fi Hip Hop"] };
         document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const track = moodTracks[btn.dataset.mood][0]; tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(track)}`); }; });
         
-        // ========== НАСТРОЙКИ ФОНА ==========
         function applyBackground(bgValue, bgType) {
             document.body.style.background = '';
             document.body.style.backgroundColor = '';
@@ -1844,21 +2254,61 @@
         function loadAppearanceFixed() {
             const savedBg = localStorage.getItem('music_bot_bg');
             const savedType = localStorage.getItem('music_bot_bg_type');
-            if (savedBg && savedType) { applyBackground(savedBg, savedType); }
-            else { applyBackground('', 'default'); }
+            
+            if (savedBg && savedType) {
+                applyBackground(savedBg, savedType);
+            } else {
+                applyBackground('', 'default');
+            }
         }
 
-        // ========== ЖЁЛТО-БЕЛЫЕ ОБОИ (RENAULT СТИЛЬ) ==========
+        // ========== ЖЁЛТО-БЕЛЫЕ СПЕЦИАЛЬНЫЕ ОБОИ (ВКЛЮЧАЯ RENAULT СТИЛЬ) ==========
         const yellowWhiteWallpapers = {
-            gold_dust: { name: 'Золотая пыль', bg: 'linear-gradient(135deg, #fff9e6 0%, #fff0c0 100%)', pattern: 'radial-gradient(circle at 10% 20%, rgba(255,215,0,0.15) 2px, transparent 2px), radial-gradient(circle at 30% 40%, rgba(255,215,0,0.08) 1px, transparent 1px)' },
-            sun_rays: { name: 'Солнечные лучи', bg: 'linear-gradient(135deg, #fff8e7 0%, #ffeaa7 100%)', pattern: 'repeating-linear-gradient(45deg, rgba(255,215,0,0.1) 0px, rgba(255,215,0,0.1) 2px, transparent 2px, transparent 10px), radial-gradient(ellipse at 50% 30%, rgba(255,220,100,0.08) 0%, transparent 60%)' },
-            champagne: { name: 'Шампанское', bg: 'linear-gradient(135deg, #fff5e6 0%, #ffe4b5 100%)', pattern: 'radial-gradient(circle, rgba(255,200,100,0.1) 1px, transparent 1px)' },
-            honey: { name: 'Медовый', bg: 'linear-gradient(135deg, #fff3e0 0%, #ffd580 100%)', pattern: 'repeating-linear-gradient(0deg, rgba(255,180,50,0.12) 0px, rgba(255,180,50,0.12) 2px, transparent 2px, transparent 8px)' },
-            vanilla: { name: 'Ванильный', bg: 'linear-gradient(135deg, #fffef7 0%, #fff3cf 100%)', pattern: 'radial-gradient(circle at 20% 50%, rgba(255,235,150,0.12) 4px, transparent 4px)' },
-            lemon: { name: 'Лимонный', bg: 'linear-gradient(135deg, #fffde7 0%, #fff59d 100%)', pattern: 'linear-gradient(90deg, rgba(255,235,100,0.12) 1px, transparent 1px), linear-gradient(0deg, rgba(255,235,100,0.08) 1px, transparent 1px)' },
-            amber: { name: 'Янтарный', bg: 'linear-gradient(135deg, #fff2df 0%, #ffcc80 100%)', pattern: 'radial-gradient(ellipse at 30% 40%, rgba(255,160,50,0.15) 0%, transparent 50%)' },
-            white_choco: { name: 'Белый шоколад', bg: 'linear-gradient(135deg, #ffffff 0%, #fff5e0 100%)', pattern: 'radial-gradient(circle at 80% 20%, rgba(255,215,0,0.06) 3px, transparent 3px), radial-gradient(circle at 20% 80%, rgba(255,215,0,0.06) 2px, transparent 2px)' },
-            renault_diamond: { name: 'Renault Style', bg: 'linear-gradient(135deg, #fff9e6 0%, #ffe680 100%)', pattern: 'repeating-linear-gradient(45deg, rgba(255,215,0,0) 0px, rgba(255,215,0,0) 30px, rgba(255,200,0,0.2) 30px, rgba(255,200,0,0.2) 32px, rgba(255,215,0,0) 32px, rgba(255,215,0,0) 60px), repeating-linear-gradient(-45deg, rgba(255,215,0,0) 0px, rgba(255,215,0,0) 30px, rgba(255,200,0,0.2) 30px, rgba(255,200,0,0.2) 32px, rgba(255,215,0,0) 32px, rgba(255,215,0,0) 60px), radial-gradient(circle at 50% 50%, rgba(255,215,0,0.1) 0px, rgba(255,215,0,0.1) 2px, transparent 2px, transparent 60px)' }
+            gold_dust: {
+                name: 'Золотая пыль',
+                bg: 'linear-gradient(135deg, #fff9e6 0%, #fff0c0 100%)',
+                pattern: 'radial-gradient(circle at 10% 20%, rgba(255,215,0,0.15) 2px, transparent 2px), radial-gradient(circle at 30% 40%, rgba(255,215,0,0.08) 1px, transparent 1px)'
+            },
+            sun_rays: {
+                name: 'Солнечные лучи',
+                bg: 'linear-gradient(135deg, #fff8e7 0%, #ffeaa7 100%)',
+                pattern: 'repeating-linear-gradient(45deg, rgba(255,215,0,0.1) 0px, rgba(255,215,0,0.1) 2px, transparent 2px, transparent 10px), radial-gradient(ellipse at 50% 30%, rgba(255,220,100,0.08) 0%, transparent 60%)'
+            },
+            champagne: {
+                name: 'Шампанское',
+                bg: 'linear-gradient(135deg, #fff5e6 0%, #ffe4b5 100%)',
+                pattern: 'radial-gradient(circle, rgba(255,200,100,0.1) 1px, transparent 1px)'
+            },
+            honey: {
+                name: 'Медовый',
+                bg: 'linear-gradient(135deg, #fff3e0 0%, #ffd580 100%)',
+                pattern: 'repeating-linear-gradient(0deg, rgba(255,180,50,0.12) 0px, rgba(255,180,50,0.12) 2px, transparent 2px, transparent 8px)'
+            },
+            vanilla: {
+                name: 'Ванильный',
+                bg: 'linear-gradient(135deg, #fffef7 0%, #fff3cf 100%)',
+                pattern: 'radial-gradient(circle at 20% 50%, rgba(255,235,150,0.12) 4px, transparent 4px)'
+            },
+            lemon: {
+                name: 'Лимонный',
+                bg: 'linear-gradient(135deg, #fffde7 0%, #fff59d 100%)',
+                pattern: 'linear-gradient(90deg, rgba(255,235,100,0.12) 1px, transparent 1px), linear-gradient(0deg, rgba(255,235,100,0.08) 1px, transparent 1px)'
+            },
+            amber: {
+                name: 'Янтарный',
+                bg: 'linear-gradient(135deg, #fff2df 0%, #ffcc80 100%)',
+                pattern: 'radial-gradient(ellipse at 30% 40%, rgba(255,160,50,0.15) 0%, transparent 50%)'
+            },
+            white_choco: {
+                name: 'Белый шоколад',
+                bg: 'linear-gradient(135deg, #ffffff 0%, #fff5e0 100%)',
+                pattern: 'radial-gradient(circle at 80% 20%, rgba(255,215,0,0.06) 3px, transparent 3px), radial-gradient(circle at 20% 80%, rgba(255,215,0,0.06) 2px, transparent 2px)'
+            },
+            renault_diamond: {
+                name: 'Renault Style',
+                bg: 'linear-gradient(135deg, #fff9e6 0%, #ffe680 100%)',
+                pattern: 'repeating-linear-gradient(45deg, rgba(255,215,0,0) 0px, rgba(255,215,0,0) 30px, rgba(255,200,0,0.2) 30px, rgba(255,200,0,0.2) 32px, rgba(255,215,0,0) 32px, rgba(255,215,0,0) 60px), repeating-linear-gradient(-45deg, rgba(255,215,0,0) 0px, rgba(255,215,0,0) 30px, rgba(255,200,0,0.2) 30px, rgba(255,200,0,0.2) 32px, rgba(255,215,0,0) 32px, rgba(255,215,0,0) 60px), radial-gradient(circle at 50% 50%, rgba(255,215,0,0.1) 0px, rgba(255,215,0,0.1) 2px, transparent 2px, transparent 60px)'
+            }
         };
         
         function applyYellowWhiteWallpaper(wallpaperId) {
@@ -1869,17 +2319,23 @@
             document.body.style.backgroundSize = 'auto, auto';
             document.body.style.backgroundRepeat = 'repeat, repeat';
             document.body.style.backgroundAttachment = 'fixed';
+            
             localStorage.setItem('yellow_wallpaper_id', wallpaperId);
             localStorage.setItem('yellow_wallpaper_active', 'true');
             localStorage.removeItem('music_bot_bg');
             localStorage.removeItem('music_bot_bg_type');
+            
             showNote(`✨ Обои "${wp.name}" установлены!`);
         }
         
         function loadSavedYellowWallpaper() {
             const saved = localStorage.getItem('yellow_wallpaper_active');
             const savedId = localStorage.getItem('yellow_wallpaper_id');
-            if (saved === 'true' && savedId && yellowWhiteWallpapers[savedId]) { applyYellowWhiteWallpaper(savedId); return true; }
+            
+            if (saved === 'true' && savedId && yellowWhiteWallpapers[savedId]) {
+                applyYellowWhiteWallpaper(savedId);
+                return true;
+            }
             return false;
         }
         
@@ -1887,235 +2343,86 @@
             const cards = document.querySelectorAll('.wallpaper-card');
             cards.forEach(card => {
                 card.removeEventListener('click', card._wallpaperHandler);
+                
                 const handler = function(e) {
                     const wallpaperId = this.dataset.wallpaper;
                     if (wallpaperId && yellowWhiteWallpapers[wallpaperId]) {
                         this.style.transform = 'scale(0.95)';
                         setTimeout(() => { this.style.transform = ''; }, 150);
+                        
                         applyYellowWhiteWallpaper(wallpaperId);
-                        setTimeout(() => { const modal = document.getElementById('settingsModal'); if (modal) modal.classList.add('hidden'); }, 500);
+                        
+                        setTimeout(() => {
+                            const modal = document.getElementById('settingsModal');
+                            if (modal) modal.classList.add('hidden');
+                        }, 500);
                     }
                 };
+                
                 card.addEventListener('click', handler);
                 card._wallpaperHandler = handler;
-                card.addEventListener('mouseenter', () => { card.style.transform = 'scale(1.02)'; card.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)'; card.style.borderColor = 'rgba(255,215,0,0.8)'; });
-                card.addEventListener('mouseleave', () => { card.style.transform = ''; card.style.boxShadow = ''; card.style.borderColor = 'rgba(255,200,0,0.3)'; });
-            });
-        }
-
-        // ========== ПРОФИЛЬ СТАТИСТИКА ==========
-        let favorites = [];
-        let tracksListened = 0;
-        
-        function loadTracksListened() { try { const saved = localStorage.getItem('lm_tracks_listened'); tracksListened = saved ? parseInt(saved) : 0; document.getElementById('tracksListenedCount').textContent = tracksListened; } catch(e) {} }
-        function incrementTracksListened() { tracksListened++; localStorage.setItem('lm_tracks_listened', tracksListened); document.getElementById('tracksListenedCount').textContent = tracksListened; }
-        
-        function loadDaysActive() {
-            try {
-                let firstVisit = localStorage.getItem('lm_first_visit');
-                if (!firstVisit) { firstVisit = new Date().toISOString(); localStorage.setItem('lm_first_visit', firstVisit); }
-                const diffDays = Math.ceil((new Date() - new Date(firstVisit)) / (1000 * 60 * 60 * 24));
-                document.getElementById('daysActiveCount').textContent = diffDays || 1;
-            } catch(e) { document.getElementById('daysActiveCount').textContent = '1'; }
-        }
-        
-        function loadFavorites() { try { const saved = localStorage.getItem('lm_favorites'); if (saved) { favorites = JSON.parse(saved); updateFavoritesDisplay(); document.getElementById('favArtistsCount').textContent = favorites.length; } } catch(e) {} }
-        function saveFavorites() { localStorage.setItem('lm_favorites', JSON.stringify(favorites)); document.getElementById('favArtistsCount').textContent = favorites.length; }
-        
-        function updateFavoritesDisplay() {
-            const container = document.getElementById('favoritesList');
-            if (!container) return;
-            if (favorites.length === 0) { container.innerHTML = 'Пока нет избранных исполнителей<br>Добавляйте их через поиск!'; return; }
-            container.innerHTML = favorites.map(artist => `<div class="saved-item"><span style="font-weight: 500;">⭐ ${escapeHtml(artist)}</span><div style="display: flex; gap: 10px;"><button onclick="removeFromFavorites('${escapeHtml(artist)}')" style="background: rgba(0,0,0,0.05); border: none; padding: 6px 14px; border-radius: 30px; font-size: 12px; cursor: pointer;">Удалить</button><button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(artist)}')" style="background: #ffcc00; border: none; padding: 6px 14px; border-radius: 30px; font-size: 12px; cursor: pointer;">Слушать</button></div></div>`).join('');
-        }
-        
-        window.removeFromFavorites = function(artistName) { favorites = favorites.filter(a => a !== artistName); saveFavorites(); updateFavoritesDisplay(); showNote(`🗑️ ${artistName} удалён`); };
-        function addToFavorites(artistName) { if (!favorites.includes(artistName)) { favorites.push(artistName); saveFavorites(); updateFavoritesDisplay(); showNote(`⭐ ${artistName} добавлен в избранное`); } else { showNote(`⚠️ ${artistName} уже в избранном`); } }
-        
-        function loadTelegramUser() {
-            try {
-                const tgUser = tg.initDataUnsafe?.user;
-                if (tgUser) {
-                    document.getElementById('profileName').textContent = `${tgUser.first_name || ''} ${tgUser.last_name || ''}`.trim() || 'Музыкант';
-                    document.getElementById('profileUsername').textContent = tgUser.username ? `@${tgUser.username}` : '@music_lover';
-                    document.getElementById('userId').textContent = tgUser.id || '—';
-                    const initial = (tgUser.first_name?.charAt(0) || tgUser.username?.charAt(0) || '🎵').toUpperCase();
-                    document.getElementById('profileAvatar').innerHTML = initial;
-                } else {
-                    document.getElementById('profileName').textContent = 'Музыкант';
-                    document.getElementById('profileUsername').textContent = '@music_lover';
-                    document.getElementById('userId').textContent = '—';
-                }
-            } catch(e) {}
-        }
-        
-        function initProfile() {
-            loadTelegramUser();
-            loadFavorites();
-            loadTracksListened();
-            loadDaysActive();
-            const savedBio = localStorage.getItem('lm_user_bio');
-            if (savedBio) document.getElementById('userBio').textContent = savedBio;
-            document.getElementById('editProfileBtn')?.addEventListener('click', () => { const newBio = prompt('Редактировать информацию о себе:', document.getElementById('userBio').textContent); if (newBio && newBio.trim()) { document.getElementById('userBio').textContent = newBio.trim(); localStorage.setItem('lm_user_bio', newBio.trim()); showNote('✅ Профиль обновлён'); } });
-            document.getElementById('shareProfileBtn')?.addEventListener('click', () => { tg.openLink(`https://t.me/${tg.initDataUnsafe?.user?.username || 'le_monde_music'}`); });
-            document.getElementById('openSettingsBtn')?.addEventListener('click', () => { document.getElementById('settingsModal').classList.remove('hidden'); });
-            document.getElementById('clearCacheBtn')?.addEventListener('click', () => { if (confirm('Очистить кэш?')) { localStorage.removeItem('deezer_artist_cache'); showNote('🗑️ Кэш очищен'); } });
-            document.getElementById('supportBtn')?.addEventListener('click', () => { tg.openLink('https://t.me/le_monde_music_support'); showNote('💬 Открываем поддержку'); });
-            document.getElementById('aboutBtn')?.addEventListener('click', () => { tg.showPopup({ title: 'LE MONDE MUSIC', message: 'Версия 2.0.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, AI-обложками, играми и Reels.\n\n© 2024 LE MONDE MUSIC', buttons: [{ type: 'close', text: 'Закрыть' }] }); });
-        }
-
-        // ========== REELS (КОРОТКИЕ ВИДЕО) ==========
-        const reelsData = [
-            { id: 1, videoUrl: "https://videos.pexels.com/video-files/855896/855896-hd_1920_1080_30fps.mp4", author: "music_lover", avatarInitial: "M", caption: "🎵 Лучший момент концерта! 🔥", audioName: "Live Performance", likes: 15234, comments: 891 },
-            { id: 2, videoUrl: "https://videos.pexels.com/video-files/855900/855900-hd_1920_1080_25fps.mp4", author: "guitar_master", avatarInitial: "G", caption: "🎸 Соло на гитаре #music", audioName: "Guitar Solo", likes: 89234, comments: 4567 },
-            { id: 3, videoUrl: "https://videos.pexels.com/video-files/855901/855901-hd_1920_1080_25fps.mp4", author: "dj_night", avatarInitial: "D", caption: "💃 Ночной сет в клубе", audioName: "Club Mix", likes: 67345, comments: 2341 },
-            { id: 4, videoUrl: "https://videos.pexels.com/video-files/855899/855899-hd_1920_1080_25fps.mp4", author: "piano_studio", avatarInitial: "P", caption: "🎹 Красивая мелодия на пианино", audioName: "Piano Melody", likes: 124567, comments: 8901 },
-            { id: 5, videoUrl: "https://videos.pexels.com/video-files/855898/855898-hd_1920_1080_30fps.mp4", author: "festival_day", avatarInitial: "F", caption: "🎤 Фестиваль этим летом!", audioName: "Festival Vibes", likes: 45234, comments: 2345 },
-            { id: 6, videoUrl: "https://videos.pexels.com/video-files/855897/855897-hd_1920_1080_30fps.mp4", author: "street_musician", avatarInitial: "S", caption: "🎶 Уличный музыкант, Братислава", audioName: "Street Music", likes: 234567, comments: 12345 },
-            { id: 7, videoUrl: "https://videos.pexels.com/video-files/855895/855895-hd_1920_1080_30fps.mp4", author: "drummer_life", avatarInitial: "D", caption: "🥁 Драм-соло!", audioName: "Drum Solo", likes: 34567, comments: 1234 },
-            { id: 8, videoUrl: "https://videos.pexels.com/video-files/855894/855894-hd_1920_1080_30fps.mp4", author: "singer_soul", avatarInitial: "S", caption: "🎤 Кавер на популярную песню", audioName: "Soul Cover", likes: 78901, comments: 3456 },
-            { id: 9, videoUrl: "https://videos.pexels.com/video-files/855893/855893-hd_1920_1080_30fps.mp4", author: "beatmaker", avatarInitial: "B", caption: "🎧 Создаю бит в студии", audioName: "Beat Making", likes: 56789, comments: 2345 },
-            { id: 10, videoUrl: "https://videos.pexels.com/video-files/855892/855892-hd_1920_1080_30fps.mp4", author: "music_teacher", avatarInitial: "M", caption: "📚 Учим ноты вместе!", audioName: "Music Theory", likes: 12345, comments: 789 }
-        ];
-
-        let currentVideoPlaying = null;
-        let observer = null;
-
-        function createReelElement(reel, index) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'reel-wrapper';
-            wrapper.setAttribute('data-id', reel.id);
-            wrapper.setAttribute('data-index', index);
-            wrapper.innerHTML = `<video class="reel-video" src="${reel.videoUrl}" loop muted playsinline preload="metadata"></video><div class="reel-overlay"><div class="reel-author"><div class="reel-avatar">${reel.avatarInitial}</div><div class="reel-name">${reel.author}</div></div><div class="reel-caption">${reel.caption}</div><div class="reel-audio"><span>🎵</span><span>${reel.audioName}</span></div></div><div class="reel-actions"><div class="reel-action" data-action="like" data-id="${reel.id}"><div class="reel-action-icon">❤️</div><div class="reel-action-count" id="likes-${reel.id}">${formatNumber(reel.likes)}</div></div><div class="reel-action" data-action="comment" data-id="${reel.id}"><div class="reel-action-icon">💬</div><div class="reel-action-count" id="comments-${reel.id}">${formatNumber(reel.comments)}</div></div><div class="reel-action" data-action="share" data-id="${reel.id}"><div class="reel-action-icon">📤</div><div class="reel-action-count">Поделиться</div></div></div><div class="reel-music-icon" data-action="music" data-id="${reel.id}">🎵</div>`;
-            return wrapper;
-        }
-
-        function formatNumber(num) {
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
-            return num.toString();
-        }
-
-        function loadReels() {
-            const container = document.getElementById('reelsContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            const shuffled = [...reelsData].sort(() => Math.random() - 0.5);
-            shuffled.forEach((reel, index) => { container.appendChild(createReelElement(reel, index)); });
-            setupReelsObserver();
-            setupReelsActions();
-        }
-
-        function setupReelsObserver() {
-            const container = document.getElementById('reelsContainer');
-            if (!container) return;
-            if (observer) observer.disconnect();
-            observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const wrapper = entry.target;
-                    const video = wrapper.querySelector('.reel-video');
-                    if (entry.isIntersecting) {
-                        if (video) { video.play().catch(e => console.log('Автовоспроизведение заблокировано')); currentVideoPlaying = video; }
-                    } else {
-                        if (video) { video.pause(); if (currentVideoPlaying === video) currentVideoPlaying = null; }
-                    }
+                
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'scale(1.02)';
+                    card.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+                    card.style.borderColor = 'rgba(255,215,0,0.8)';
                 });
-            }, { threshold: 0.6 });
-            document.querySelectorAll('.reel-wrapper').forEach(wrapper => observer.observe(wrapper));
-        }
-
-        function setupReelsActions() {
-            document.querySelectorAll('[data-action="like"]').forEach(btn => {
-                btn.removeEventListener('click', btn._likeHandler);
-                const handler = (e) => {
-                    e.stopPropagation();
-                    const reelId = parseInt(btn.dataset.id);
-                    const reel = reelsData.find(r => r.id === reelId);
-                    if (reel) {
-                        const likesSpan = document.getElementById(`likes-${reelId}`);
-                        const isLiked = btn.classList.contains('liked');
-                        if (!isLiked) { reel.likes++; likesSpan.textContent = formatNumber(reel.likes); btn.classList.add('liked'); showNote(`❤️ Лайк для ${reel.author}`); }
-                    }
-                };
-                btn.addEventListener('click', handler);
-                btn._likeHandler = handler;
-            });
-            
-            document.querySelectorAll('[data-action="comment"]').forEach(btn => {
-                btn.removeEventListener('click', btn._commentHandler);
-                const handler = (e) => {
-                    e.stopPropagation();
-                    const reelId = parseInt(btn.dataset.id);
-                    const reel = reelsData.find(r => r.id === reelId);
-                    if (reel) { tg.showPopup({ title: `💬 Комментарии к ${reel.author}`, message: `Всего комментариев: ${reel.comments}\n\nФункция добавления комментариев в разработке!`, buttons: [{ type: 'close', text: 'Закрыть' }] }); }
-                };
-                btn.addEventListener('click', handler);
-                btn._commentHandler = handler;
-            });
-            
-            document.querySelectorAll('[data-action="share"]').forEach(btn => {
-                btn.removeEventListener('click', btn._shareHandler);
-                const handler = (e) => {
-                    e.stopPropagation();
-                    const reelId = parseInt(btn.dataset.id);
-                    const reel = reelsData.find(r => r.id === reelId);
-                    if (reel) {
-                        tg.showPopup({ title: `📤 Поделиться видео ${reel.author}`, message: `Скопируйте ссылку на видео:\n\nhttps://t.me/le_monde_music/reel/${reel.id}`, buttons: [{ type: 'default', text: '📋 Копировать' }, { type: 'close', text: 'Закрыть' }] }, (buttonId) => { if (buttonId === '0') { navigator.clipboard.writeText(`https://t.me/le_monde_music/reel/${reel.id}`); showNote('✅ Ссылка скопирована'); } });
-                    }
-                };
-                btn.addEventListener('click', handler);
-                btn._shareHandler = handler;
-            });
-            
-            document.querySelectorAll('.reel-music-icon').forEach(icon => {
-                icon.removeEventListener('click', icon._musicHandler);
-                const handler = (e) => {
-                    e.stopPropagation();
-                    const reelId = parseInt(icon.dataset.id);
-                    const reel = reelsData.find(r => r.id === reelId);
-                    if (reel) { tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(reel.audioName)}`); }
-                };
-                icon.addEventListener('click', handler);
-                icon._musicHandler = handler;
-            });
-            
-            document.querySelectorAll('.reel-video').forEach(video => {
-                video.removeEventListener('click', video._clickHandler);
-                const handler = (e) => { e.stopPropagation(); if (video.paused) video.play(); else video.pause(); };
-                video.addEventListener('click', handler);
-                video._clickHandler = handler;
-            });
-        }
-
-        function refreshReelsObserver() { setTimeout(() => { if (observer) { observer.disconnect(); setupReelsObserver(); } }, 100); }
-
-        function initBottomTabBar() {
-            document.querySelectorAll('.tab-item').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    switch(tab.dataset.tab) {
-                        case 'menu': showMenu(); break;
-                        case 'reels': showPage(pages.reels, 'music'); updateActiveTabInBar('reels'); setTimeout(() => { loadReels(); refreshReelsObserver(); }, 100); break;
-                        case 'messages': showPage(pages.assistant, 'assistant'); updateActiveTabInBar('messages'); break;
-                        case 'search': showPage(pages.music, 'music'); loadPopular(); updateActiveTabInBar('search'); break;
-                        case 'profile': showPage(pages.profile, 'music'); updateActiveTabInBar('profile'); loadFavorites(); loadTracksListened(); loadDaysActive(); break;
-                    }
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                    card.style.boxShadow = '';
+                    card.style.borderColor = 'rgba(255,200,0,0.3)';
                 });
             });
-            updateActiveTabInBar('menu');
         }
 
-        // ========== ОСТАЛЬНЫЕ НАСТРОЙКИ ==========
         const colorPickerBtnElem = document.getElementById('colorPickerBtn');
         if (colorPickerBtnElem) {
             colorPickerBtnElem.onclick = () => {
                 const modal = document.createElement('div');
-                modal.style.cssText = `position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; z-index: 10000; animation: fadeInScale 0.2s ease;`;
-                modal.innerHTML = `<div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 28px; width: 90%; max-width: 340px; border: 1px solid rgba(255,255,255,0.1); text-align: center;"><div style="font-size: 22px; font-weight: 600; margin-bottom: 20px; color: white;">🎨 Цвет фона</div><input type="color" id="colorPickerModal" value="#1a1a3e" style="width: 100%; height: 60px; border: none; border-radius: 20px; cursor: pointer; margin-bottom: 20px; background: transparent;"><div id="previewBlock" style="width: 100%; height: 70px; border-radius: 20px; margin-bottom: 24px; background: #1a1a3e; border: 1px solid rgba(255,255,255,0.2);"></div><div style="display: flex; gap: 12px;"><button id="applyColorFixedBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; font-size: 16px; cursor: pointer;">✅ Применить</button><button id="cancelColorFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button></div></div>`;
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.9);
+                    backdrop-filter: blur(20px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    animation: fadeInScale 0.2s ease;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 28px; width: 90%; max-width: 340px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                        <div style="font-size: 22px; font-weight: 600; margin-bottom: 20px; color: white;">🎨 Цвет фона</div>
+                        <input type="color" id="colorPickerModal" value="#1a1a3e" style="width: 100%; height: 60px; border: none; border-radius: 20px; cursor: pointer; margin-bottom: 20px; background: transparent;">
+                        <div id="previewBlock" style="width: 100%; height: 70px; border-radius: 20px; margin-bottom: 24px; background: #1a1a3e; border: 1px solid rgba(255,255,255,0.2);"></div>
+                        <div style="display: flex; gap: 12px;">
+                            <button id="applyColorFixedBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; font-size: 16px; cursor: pointer;">✅ Применить</button>
+                            <button id="cancelColorFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button>
+                        </div>
+                    </div>
+                `;
+                
                 document.body.appendChild(modal);
+                
                 const colorPicker = modal.querySelector('#colorPickerModal');
                 const preview = modal.querySelector('#previewBlock');
-                colorPicker.oninput = (e) => { preview.style.background = e.target.value; };
-                modal.querySelector('#applyColorFixedBtn').onclick = () => { const color = colorPicker.value; applyBackground(color, 'color'); localStorage.removeItem('yellow_wallpaper_active'); showNote(`🎨 Фон изменён на ${color}`); modal.remove(); };
+                
+                colorPicker.oninput = (e) => {
+                    preview.style.background = e.target.value;
+                };
+                
+                modal.querySelector('#applyColorFixedBtn').onclick = () => {
+                    const color = colorPicker.value;
+                    applyBackground(color, 'color');
+                    localStorage.removeItem('yellow_wallpaper_active');
+                    showNote(`🎨 Фон изменён на ${color}`);
+                    modal.remove();
+                };
+                
                 modal.querySelector('#cancelColorFixedBtn').onclick = () => modal.remove();
                 modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
             };
@@ -2132,16 +2439,52 @@
                 input.style.left = '-100px';
                 document.body.appendChild(input);
                 input.click();
+                
                 input.onchange = (e) => {
                     const file = e.target.files[0];
-                    if (!file) { input.remove(); return; }
+                    if (!file) {
+                        input.remove();
+                        return;
+                    }
+                    
                     const reader = new FileReader();
                     reader.onload = (ev) => {
                         const previewModal = document.createElement('div');
-                        previewModal.style.cssText = `position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; z-index: 10000; animation: fadeInScale 0.2s ease;`;
-                        previewModal.innerHTML = `<div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 24px; width: 90%; max-width: 340px; border: 1px solid rgba(255,255,255,0.1); text-align: center;"><div style="font-size: 20px; font-weight: 600; margin-bottom: 16px; color: white;">📸 Предпросмотр</div><img src="${ev.target.result}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 24px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.2);"><div style="display: flex; gap: 12px;"><button id="applyPhotoFixedBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">✅ Установить</button><button id="cancelPhotoFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button></div></div>`;
+                        previewModal.style.cssText = `
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            background: rgba(0,0,0,0.9);
+                            backdrop-filter: blur(20px);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            z-index: 10000;
+                            animation: fadeInScale 0.2s ease;
+                        `;
+                        
+                        previewModal.innerHTML = `
+                            <div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 24px; width: 90%; max-width: 340px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                                <div style="font-size: 20px; font-weight: 600; margin-bottom: 16px; color: white;">📸 Предпросмотр</div>
+                                <img src="${ev.target.result}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 24px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.2);">
+                                <div style="display: flex; gap: 12px;">
+                                    <button id="applyPhotoFixedBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">✅ Установить</button>
+                                    <button id="cancelPhotoFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button>
+                                </div>
+                            </div>
+                        `;
+                        
                         document.body.appendChild(previewModal);
-                        previewModal.querySelector('#applyPhotoFixedBtn').onclick = () => { applyBackground(ev.target.result, 'image'); localStorage.removeItem('yellow_wallpaper_active'); showNote('📸 Фоновое изображение установлено'); previewModal.remove(); };
+                        
+                        previewModal.querySelector('#applyPhotoFixedBtn').onclick = () => {
+                            applyBackground(ev.target.result, 'image');
+                            localStorage.removeItem('yellow_wallpaper_active');
+                            showNote('📸 Фоновое изображение установлено');
+                            previewModal.remove();
+                        };
+                        
                         previewModal.querySelector('#cancelPhotoFixedBtn').onclick = () => previewModal.remove();
                         previewModal.onclick = (e) => { if (e.target === previewModal) previewModal.remove(); };
                     };
@@ -2155,10 +2498,44 @@
         if (resetBgBtnElem) {
             resetBgBtnElem.onclick = () => {
                 const confirmModal = document.createElement('div');
-                confirmModal.style.cssText = `position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; z-index: 10000; animation: fadeInScale 0.2s ease;`;
-                confirmModal.innerHTML = `<div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 28px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;"><div style="font-size: 22px; font-weight: 600; margin-bottom: 12px; color: white;">🔄 Сбросить фон?</div><div style="font-size: 14px; opacity: 0.7; margin-bottom: 24px;">Вернётся стандартный белый фон</div><div style="display: flex; gap: 12px;"><button id="confirmResetFixedBtn" style="flex: 1; background: linear-gradient(135deg, #e74c3c, #c0392b); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">Да, сбросить</button><button id="cancelResetFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button></div></div>`;
+                confirmModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.85);
+                    backdrop-filter: blur(20px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    animation: fadeInScale 0.2s ease;
+                `;
+                
+                confirmModal.innerHTML = `
+                    <div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 28px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                        <div style="font-size: 22px; font-weight: 600; margin-bottom: 12px; color: white;">🔄 Сбросить фон?</div>
+                        <div style="font-size: 14px; opacity: 0.7; margin-bottom: 24px;">Вернётся стандартный белый фон</div>
+                        <div style="display: flex; gap: 12px;">
+                            <button id="confirmResetFixedBtn" style="flex: 1; background: linear-gradient(135deg, #e74c3c, #c0392b); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">Да, сбросить</button>
+                            <button id="cancelResetFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button>
+                        </div>
+                    </div>
+                `;
+                
                 document.body.appendChild(confirmModal);
-                confirmModal.querySelector('#confirmResetFixedBtn').onclick = () => { localStorage.removeItem('yellow_wallpaper_active'); localStorage.removeItem('yellow_wallpaper_id'); localStorage.removeItem('music_bot_bg'); localStorage.removeItem('music_bot_bg_type'); applyBackground('', 'default'); showNote('🔄 Фон сброшен к стандартному'); confirmModal.remove(); };
+                
+                confirmModal.querySelector('#confirmResetFixedBtn').onclick = () => {
+                    localStorage.removeItem('yellow_wallpaper_active');
+                    localStorage.removeItem('yellow_wallpaper_id');
+                    localStorage.removeItem('music_bot_bg');
+                    localStorage.removeItem('music_bot_bg_type');
+                    applyBackground('', 'default');
+                    showNote('🔄 Фон сброшен к стандартному');
+                    confirmModal.remove();
+                };
+                
                 confirmModal.querySelector('#cancelResetFixedBtn').onclick = () => confirmModal.remove();
                 confirmModal.onclick = (e) => { if (e.target === confirmModal) confirmModal.remove(); };
             };
@@ -2168,10 +2545,41 @@
             circle.onclick = () => {
                 const gradient = circle.style.background;
                 const gradModal = document.createElement('div');
-                gradModal.style.cssText = `position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; z-index: 10000; animation: fadeInScale 0.2s ease;`;
-                gradModal.innerHTML = `<div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 28px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;"><div style="font-size: 22px; font-weight: 600; margin-bottom: 16px; color: white;">✨ Установить градиент?</div><div style="width: 100%; height: 70px; border-radius: 20px; margin-bottom: 24px; background: ${gradient}; border: 1px solid rgba(255,255,255,0.2);"></div><div style="display: flex; gap: 12px;"><button id="applyGradFixedBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">✅ Применить</button><button id="cancelGradFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button></div></div>`;
+                gradModal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.85);
+                    backdrop-filter: blur(20px);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    animation: fadeInScale 0.2s ease;
+                `;
+                
+                gradModal.innerHTML = `
+                    <div style="background: rgba(25,25,40,0.98); border-radius: 40px; padding: 28px; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); text-align: center;">
+                        <div style="font-size: 22px; font-weight: 600; margin-bottom: 16px; color: white;">✨ Установить градиент?</div>
+                        <div style="width: 100%; height: 70px; border-radius: 20px; margin-bottom: 24px; background: ${gradient}; border: 1px solid rgba(255,255,255,0.2);"></div>
+                        <div style="display: flex; gap: 12px;">
+                            <button id="applyGradFixedBtn" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); border: none; padding: 14px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">✅ Применить</button>
+                            <button id="cancelGradFixedBtn" style="flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 60px; color: white; font-weight: 500; cursor: pointer;">Отмена</button>
+                        </div>
+                    </div>
+                `;
+                
                 document.body.appendChild(gradModal);
-                gradModal.querySelector('#applyGradFixedBtn').onclick = () => { applyBackground(gradient, 'gradient'); localStorage.removeItem('yellow_wallpaper_active'); showNote('✨ Градиент установлен'); gradModal.remove(); };
+                
+                gradModal.querySelector('#applyGradFixedBtn').onclick = () => {
+                    applyBackground(gradient, 'gradient');
+                    localStorage.removeItem('yellow_wallpaper_active');
+                    showNote('✨ Градиент установлен');
+                    gradModal.remove();
+                };
+                
                 gradModal.querySelector('#cancelGradFixedBtn').onclick = () => gradModal.remove();
                 gradModal.onclick = (e) => { if (e.target === gradModal) gradModal.remove(); };
             };
@@ -2182,8 +2590,14 @@
             toggleThemeBtnElem.onclick = () => {
                 const currentBg = localStorage.getItem('music_bot_bg');
                 const currentType = localStorage.getItem('music_bot_bg_type');
-                if (currentType === 'color' && currentBg === '#000000') { applyBackground('#ffcc00', 'color'); showNote('🌞 Жёлтая тема'); }
-                else { applyBackground('#ffffff', 'color'); showNote('🌙 Белая тема'); }
+                
+                if (currentType === 'color' && currentBg === '#000000') {
+                    applyBackground('#ffcc00', 'color');
+                    showNote('🌞 Жёлтая тема');
+                } else {
+                    applyBackground('#ffffff', 'color');
+                    showNote('🌙 Белая тема');
+                }
                 localStorage.removeItem('yellow_wallpaper_active');
             };
         }
@@ -2213,15 +2627,23 @@
                 const color = e.target.value;
                 const style = document.createElement('style');
                 style.id = 'dynamic-button-style';
-                style.textContent = `.search-btn, .preview-track-item button, .random-artist-link, .platform-btn.yandex-btn, .mood-btn[data-mood="happy"] { background: ${color} !important; }`;
+                style.textContent = `
+                    .search-btn, .preview-track-item button, .random-artist-link, .platform-btn.yandex-btn, .mood-btn[data-mood="happy"] {
+                        background: ${color} !important;
+                    }
+                `;
                 const oldStyle = document.getElementById('dynamic-button-style');
                 if (oldStyle) oldStyle.remove();
                 document.head.appendChild(style);
                 localStorage.setItem('button_color', color);
                 showNote('🎨 Цвет кнопок изменён');
             };
+            
             const savedColor = localStorage.getItem('button_color');
-            if (savedColor) { buttonColorPicker.value = savedColor; buttonColorPicker.onchange({ target: buttonColorPicker }); }
+            if (savedColor) {
+                buttonColorPicker.value = savedColor;
+                buttonColorPicker.onchange({ target: buttonColorPicker });
+            }
         }
 
         loadAppearanceFixed();
