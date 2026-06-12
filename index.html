@@ -813,6 +813,7 @@
 
     <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== -->
     <div class="bottom-tab-bar" id="bottomTabBar">
+        <!-- 1. Главная (домик) -->
         <div class="tab-item" data-tab="menu">
             <div class="tab-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -822,6 +823,29 @@
             </div>
             <div class="tab-label">Главная</div>
         </div>
+        
+        <!-- 2. Reels (как в Instagram) -->
+        <div class="tab-item" data-tab="reels">
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" fill="none"/>
+                    <path d="M9 8L15 12L9 16V8Z" stroke="currentColor" fill="none" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="tab-label">Reels</div>
+        </div>
+        
+        <!-- 3. Сообщения (как в Instagram - директ) -->
+        <div class="tab-item" data-tab="messages">
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="tab-label">Сообщения</div>
+        </div>
+        
+        <!-- 4. Поиск (лупа) -->
         <div class="tab-item" data-tab="search">
             <div class="tab-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -831,22 +855,8 @@
             </div>
             <div class="tab-label">Поиск</div>
         </div>
-        <div class="tab-item" data-tab="add">
-            <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-linecap="round"/>
-                </svg>
-            </div>
-            <div class="tab-label">Добавить</div>
-        </div>
-        <div class="tab-item" data-tab="likes">
-            <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.54L12 21.35Z" stroke="currentColor" fill="none"/>
-                </svg>
-            </div>
-            <div class="tab-label">Избранное</div>
-        </div>
+        
+        <!-- 5. Профиль (человечек) -->
         <div class="tab-item" data-tab="profile">
             <div class="tab-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -1424,24 +1434,24 @@
                             showMenu();
                             updateActiveTabInBar('menu');
                             break;
+                        case 'reels':
+                            // Reels - лента коротких видео (пока заглушка)
+                            tg.showPopup({ 
+                                title: "📱 Reels", 
+                                message: "Здесь будут короткие музыкальные видео. Функция в разработке!", 
+                                buttons: [{ type: "close", text: "Закрыть" }] 
+                            });
+                            updateActiveTabInBar('reels');
+                            break;
+                        case 'messages':
+                            // Сообщения - открываем ассистента
+                            showPage(pages.assistant, 'assistant');
+                            updateActiveTabInBar('messages');
+                            break;
                         case 'search':
                             showPage(pages.music, 'music');
                             loadPopular();
                             updateActiveTabInBar('search');
-                            break;
-                        case 'add':
-                            showPage(pages.randomizer, 'music');
-                            updateTotal();
-                            loadQuick();
-                            updateActiveTabInBar('add');
-                            break;
-                        case 'likes':
-                            tg.showPopup({ 
-                                title: "❤️ Избранное", 
-                                message: "Здесь будут ваши любимые исполнители", 
-                                buttons: [{ type: "close", text: "Закрыть" }] 
-                            });
-                            updateActiveTabInBar('likes');
                             break;
                         case 'profile':
                             const modal = document.getElementById('settingsModal');
@@ -1459,8 +1469,8 @@
         document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); updateActiveTabInBar('search'); };
         document.getElementById('goToGameBtn').onclick = () => { showPage(pages.game, 'game'); updateActiveTabInBar('menu'); };
         document.getElementById('goToAIBtn').onclick = () => { showPage(pages.ai, 'ai'); updateActiveTabInBar('menu'); };
-        document.getElementById('goToAssistantBtn').onclick = () => { showPage(pages.assistant, 'assistant'); updateActiveTabInBar('menu'); };
-        document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); updateActiveTabInBar('add'); };
+        document.getElementById('goToAssistantBtn').onclick = () => { showPage(pages.assistant, 'assistant'); updateActiveTabInBar('messages'); };
+        document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); updateActiveTabInBar('menu'); };
         document.getElementById('goToMoodBtn').onclick = () => { showPage(pages.mood, 'music'); updateActiveTabInBar('menu'); };
         document.getElementById('goToMapBtn').onclick = () => { showPage(pages.map, 'map'); updateVenuesList(); updateActiveTabInBar('menu'); };
         document.getElementById('goToTicketsBtn').onclick = () => {
