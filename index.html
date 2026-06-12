@@ -126,39 +126,6 @@
             font-weight: 500;
         }
 
-        .currency-chart {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 10px 16px;
-            z-index: 6;
-            border: 1px solid rgba(0,0,0,0.06);
-            animation: slideUp 0.5s ease;
-        }
-        .currency-title {
-            font-size: 9px;
-            font-weight: 500;
-            color: rgba(0,0,0,0.5);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .currency-update-time { font-size: 8px; color: #ffcc00; }
-        .currency-item { margin-bottom: 8px; }
-        .currency-row { display: flex; align-items: center; gap: 8px; }
-        .currency-icon { font-size: 16px; min-width: 32px; }
-        .currency-value { font-size: 13px; font-weight: 600; color: #1a1a1a; min-width: 60px; }
-        .bar-container { flex: 1; height: 6px; background: rgba(0,0,0,0.08); border-radius: 10px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .usd-fill { background: linear-gradient(90deg, #ffcc00, #ffd633); }
-        .eur-fill { background: linear-gradient(90deg, #ffcc00, #ffd633); }
-
         .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 8px; }
         .back-btn {
             background: rgba(0,0,0,0.05);
@@ -544,6 +511,64 @@
             font-size: 13px;
         }
 
+        /* ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== */
+        .bottom-tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 16px 12px 16px;
+            z-index: 100;
+            border-top: 0.5px solid rgba(0,0,0,0.1);
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            padding: 4px 0;
+            border-radius: 30px;
+        }
+        .tab-item:active { transform: scale(0.92); }
+        .tab-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a1a1a;
+        }
+        .tab-icon svg {
+            stroke: #1a1a1a;
+            transition: all 0.1s ease;
+        }
+        .tab-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: #8e8e8e;
+        }
+        .tab-item.active .tab-label {
+            color: #ffcc00;
+        }
+        .tab-item.active .tab-icon svg {
+            stroke: #ffcc00;
+        }
+        
+        /* Отступ снизу для контента, чтобы не перекрывался панелью */
+        .menu-container {
+            padding-bottom: 70px;
+        }
+        .fullscreen-page {
+            padding-bottom: 80px;
+        }
+
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
             .menu-screen { max-width: 300px; gap: 10px; padding: 12px; }
@@ -591,14 +616,6 @@
 
     <!-- ========== ГЛАВНОЕ МЕНЮ ========== -->
     <div class="menu-container" id="menuContainer">
-        <div class="currency-chart" id="currencyChart">
-            <div class="currency-title">
-                <span>💎 КУРС ВАЛЮТ</span>
-                <span class="currency-update-time" id="updateTime">загрузка...</span>
-            </div>
-            <div id="currencyContent"><div style="text-align:center; padding:10px;">Загрузка...</div></div>
-        </div>
-
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
@@ -791,6 +808,53 @@
             </div>
             
             <button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== -->
+    <div class="bottom-tab-bar" id="bottomTabBar">
+        <div class="tab-item" data-tab="menu">
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M3 9L12 3L21 9V20H3V9Z" stroke="currentColor" fill="none"/>
+                    <path d="M9 20V12H15V20" stroke="currentColor" fill="none"/>
+                </svg>
+            </div>
+            <div class="tab-label">Главная</div>
+        </div>
+        <div class="tab-item" data-tab="search">
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" fill="none"/>
+                    <path d="M15 15L21 21" stroke="currentColor" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="tab-label">Поиск</div>
+        </div>
+        <div class="tab-item" data-tab="add">
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="tab-label">Добавить</div>
+        </div>
+        <div class="tab-item" data-tab="likes">
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.54L12 21.35Z" stroke="currentColor" fill="none"/>
+                </svg>
+            </div>
+            <div class="tab-label">Избранное</div>
+        </div>
+        <div class="tab-item" data-tab="profile">
+            <div class="tab-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="8" r="4" stroke="currentColor" fill="none"/>
+                    <path d="M5 20V19C5 14.5 8 12 12 12C16 12 19 14.5 19 19V20" stroke="currentColor" fill="none"/>
+                </svg>
+            </div>
+            <div class="tab-label">Профиль</div>
         </div>
     </div>
 
@@ -1145,7 +1209,6 @@
         ];
 
         let lastSearchedArtist = "";
-        let currencyInterval = null;
         let gameQ = [], gameIdx = 0, gameScore = 0, gameActive = false;
         let recognition = null;
 
@@ -1285,36 +1348,6 @@
             return null;
         }
 
-        async function getExchangeRates() {
-            try {
-                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-                const data = await response.json();
-                return { usd: data.rates.RUB, eur: data.rates.RUB / data.rates.EUR };
-            } catch(e) { return null; }
-        }
-
-        async function updateCurrencyChart() {
-            const container = document.getElementById('currencyContent');
-            if (!container) return;
-            const rates = await getExchangeRates();
-            if (!rates) {
-                container.innerHTML = '<div style="text-align:center; padding:15px;">Ошибка</div>';
-                return;
-            }
-            const timeElement = document.getElementById('updateTime');
-            if (timeElement) timeElement.textContent = new Date().toLocaleTimeString('ru-RU');
-            container.innerHTML = `
-                <div class="currency-item"><div class="currency-row"><span class="currency-icon">🇺🇸 USD</span><span class="currency-value">${rates.usd.toFixed(2)} ₽</span><div class="bar-container"><div class="bar-fill usd-fill" style="width: ${Math.min(50 + (rates.usd - 90), 100)}%;"></div></div></div></div>
-                <div class="currency-item"><div class="currency-row"><span class="currency-icon">🇪🇺 EUR</span><span class="currency-value">${rates.eur.toFixed(2)} ₽</span><div class="bar-container"><div class="bar-fill eur-fill" style="width: ${Math.min(50 + (rates.eur - 90), 100)}%;"></div></div></div></div>
-            `;
-        }
-
-        function startCurrencyUpdates() {
-            updateCurrencyChart();
-            if (currencyInterval) clearInterval(currencyInterval);
-            currencyInterval = setInterval(updateCurrencyChart, 30000);
-        }
-
         function openYandexMap(lat, lng, name) {
             tg.openLink(`https://yandex.ru/maps/?pt=${lng},${lat}&z=18&l=map`);
             showNote(`🗺️ Открываем ${name}`);
@@ -1351,6 +1384,8 @@
             menu.classList.remove('hidden-menu'); 
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
             document.body.className = '';
+            // Обновляем активную вкладку в нижней панели
+            updateActiveTabInBar('menu');
         }
         
         function showPage(page, mode) { 
@@ -1361,19 +1396,79 @@
             document.body.className = mode + '-mode';
         }
         
-        document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); };
-        document.getElementById('goToGameBtn').onclick = () => showPage(pages.game, 'game');
-        document.getElementById('goToAIBtn').onclick = () => showPage(pages.ai, 'ai');
-        document.getElementById('goToAssistantBtn').onclick = () => showPage(pages.assistant, 'assistant');
-        document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); };
-        document.getElementById('goToMoodBtn').onclick = () => showPage(pages.mood, 'music');
-        document.getElementById('goToMapBtn').onclick = () => { showPage(pages.map, 'map'); updateVenuesList(); };
+        // ========== НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ ==========
+        function updateActiveTabInBar(activeTab) {
+            const tabs = document.querySelectorAll('.tab-item');
+            tabs.forEach(tab => {
+                const tabName = tab.dataset.tab;
+                if (tabName === activeTab) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+        }
+        
+        function initBottomTabBar() {
+            const tabBar = document.getElementById('bottomTabBar');
+            if (!tabBar) return;
+            
+            const tabs = document.querySelectorAll('.tab-item');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    
+                    switch(tabName) {
+                        case 'menu':
+                            showMenu();
+                            updateActiveTabInBar('menu');
+                            break;
+                        case 'search':
+                            showPage(pages.music, 'music');
+                            loadPopular();
+                            updateActiveTabInBar('search');
+                            break;
+                        case 'add':
+                            showPage(pages.randomizer, 'music');
+                            updateTotal();
+                            loadQuick();
+                            updateActiveTabInBar('add');
+                            break;
+                        case 'likes':
+                            tg.showPopup({ 
+                                title: "❤️ Избранное", 
+                                message: "Здесь будут ваши любимые исполнители", 
+                                buttons: [{ type: "close", text: "Закрыть" }] 
+                            });
+                            updateActiveTabInBar('likes');
+                            break;
+                        case 'profile':
+                            const modal = document.getElementById('settingsModal');
+                            if (modal) modal.classList.remove('hidden');
+                            updateActiveTabInBar('profile');
+                            break;
+                    }
+                });
+            });
+            
+            // По умолчанию активна вкладка "menu"
+            updateActiveTabInBar('menu');
+        }
+        
+        document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); updateActiveTabInBar('search'); };
+        document.getElementById('goToGameBtn').onclick = () => { showPage(pages.game, 'game'); updateActiveTabInBar('menu'); };
+        document.getElementById('goToAIBtn').onclick = () => { showPage(pages.ai, 'ai'); updateActiveTabInBar('menu'); };
+        document.getElementById('goToAssistantBtn').onclick = () => { showPage(pages.assistant, 'assistant'); updateActiveTabInBar('menu'); };
+        document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); updateActiveTabInBar('add'); };
+        document.getElementById('goToMoodBtn').onclick = () => { showPage(pages.mood, 'music'); updateActiveTabInBar('menu'); };
+        document.getElementById('goToMapBtn').onclick = () => { showPage(pages.map, 'map'); updateVenuesList(); updateActiveTabInBar('menu'); };
         document.getElementById('goToTicketsBtn').onclick = () => {
             if (lastSearchedArtist) tg.openLink(`https://afisha.yandex.ru/search?text=${encodeURIComponent(lastSearchedArtist)}`);
             else tg.showPopup({ title: "Билеты", message: "Сначала найдите артиста", buttons: [{ type: "ok" }] });
+            updateActiveTabInBar('menu');
         };
-        
-        document.getElementById('goToLyricsBtn').onclick = () => showPage(pages.lyrics, 'lyrics');
+        document.getElementById('goToLyricsBtn').onclick = () => { showPage(pages.lyrics, 'lyrics'); updateActiveTabInBar('menu'); };
         
         document.getElementById('geoLocationBtn').onclick = openMyLocationOnMap;
         ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics'].forEach(p => {
@@ -1435,6 +1530,7 @@
             const input = document.getElementById('searchInput');
             if (input) input.value = a; 
             search(); 
+            updateActiveTabInBar('search');
         };
         
         async function searchLyrics() {
@@ -2216,9 +2312,9 @@
         loadPopular();
         updateTotal();
         loadQuick();
-        startCurrencyUpdates();
         showPage(pages.music, 'music');
         initYellowWallpaperHandlers();
+        initBottomTabBar();
         
         console.log('LE MONDE MUSIC загружен!');
     </script>
