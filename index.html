@@ -964,8 +964,8 @@
             <button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button>
         </div>
     </div>
-   
-    <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM (ПРОЗРАЧНЫЙ ОВАЛ) ========== -->
+    
+    <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM (ОРИГИНАЛЬНЫЕ ИКОНКИ) ========== -->
     <style>
         .bottom-tab-bar {
             position: fixed;
@@ -1002,8 +1002,8 @@
         }
 
         .tab-icon {
-            width: 26px;
-            height: 26px;
+            width: 28px;
+            height: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1011,8 +1011,10 @@
 
         .tab-icon svg {
             stroke: #ffffff;
-            stroke-width: 1.8;
+            stroke-width: 1.5;
             fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .tab-label {
@@ -1020,6 +1022,7 @@
             font-weight: 500;
             color: #ffffff;
             opacity: 0.7;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         .tab-item.active .tab-label {
@@ -1031,61 +1034,73 @@
             stroke: #ffcc00;
         }
 
+        /* Активное состояние с заливкой (как в Instagram) */
+        .tab-item.active .tab-icon svg[data-active-fill="true"] {
+            fill: #ffcc00;
+            stroke: none;
+        }
+
         .fullscreen-page, .menu-container {
             padding-bottom: 90px;
         }
     </style>
 
     <div class="bottom-tab-bar" id="bottomTabBar">
+        <!-- 1. Главная (домик) - как в Instagram -->
         <div class="tab-item" data-tab="menu">
             <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M3 9L12 3L21 9V20H3V9Z" stroke="currentColor" fill="none"/>
-                    <path d="M9 20V12H15V20" stroke="currentColor" fill="none"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 9L12 3L21 9V20H3V9Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <path d="M9 20V12H15V20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="tab-label">Главная</div>
         </div>
         
+        <!-- 2. Reels / Shorts - как в Instagram -->
         <div class="tab-item" data-tab="reels">
             <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" fill="none"/>
-                    <path d="M9 8L15 12L9 16V8Z" stroke="currentColor" fill="none" stroke-linejoin="round"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <path d="M9 8L15 12L9 16V8Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="tab-label">Reels</div>
         </div>
         
+        <!-- 3. Сообщения (Direct) - как в Instagram (бумажный самолётик) -->
         <div class="tab-item" data-tab="messages">
             <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="tab-label">Сообщения</div>
         </div>
         
+        <!-- 4. Поиск (лупа) - как в Instagram -->
         <div class="tab-item" data-tab="search">
             <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="10" cy="10" r="7" stroke="currentColor" fill="none"/>
-                    <path d="M15 15L21 21" stroke="currentColor" stroke-linecap="round"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <path d="M15 15L21 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
                 </svg>
             </div>
             <div class="tab-label">Поиск</div>
         </div>
         
+        <!-- 5. Профиль (человечек) - как в Instagram -->
         <div class="tab-item" data-tab="profile">
             <div class="tab-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="12" cy="8" r="4" stroke="currentColor" fill="none"/>
-                    <path d="M5 20V19C5 14.5 8 12 12 12C16 12 19 14.5 19 19V20" stroke="currentColor" fill="none"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                    <path d="M5 20V19C5 14.5 8 12 12 12C16 12 19 14.5 19 19V20" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
                 </svg>
             </div>
             <div class="tab-label">Профиль</div>
         </div>
     </div>
+ 
     
     <script>
         // Скрытие заставки через 4 секунды
