@@ -964,36 +964,37 @@
             <button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button>
         </div>
     </div>
-       <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== -->
+    
+    <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== -->
     <style>
         .bottom-tab-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.88);
-            backdrop-filter: blur(25px);
+            bottom: 12px;
+            left: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 8px 12px 22px 12px;
+            padding: 10px 12px;
             z-index: 100;
-            border-top: 0.3px solid rgba(255, 255, 255, 0.12);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
         }
 
         .tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             cursor: pointer;
             padding: 4px 0;
             background: transparent;
-            transition: all 0.1s ease;
         }
 
         .tab-item:active {
-            opacity: 0.6;
+            opacity: 0.7;
         }
 
         .tab-icon {
@@ -1007,50 +1008,44 @@
         .tab-icon svg {
             width: 24px;
             height: 24px;
-            stroke: #8e8e8e;
-            stroke-width: 1.8;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
         }
 
         .tab-label {
             font-size: 10px;
             font-weight: 400;
-            color: #8e8e8e;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        /* Активное состояние */
-        .tab-item.active .tab-icon svg {
-            stroke: #ffcc00;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .tab-item.active .tab-label {
             color: #ffcc00;
         }
 
+        /* Активная иконка меняет цвет */
+        .tab-item.active .tab-icon svg {
+            filter: brightness(0) saturate(100%) invert(77%) sepia(61%) saturate(600%) hue-rotate(0deg) brightness(106%) contrast(104%);
+        }
+
         .fullscreen-page, .menu-container {
-            padding-bottom: 75px;
+            padding-bottom: 90px;
         }
     </style>
 
     <div class="bottom-tab-bar" id="bottomTabBar">
-        <!-- 1. Главная (домик) - гладкий -->
+        <!-- Главная -->
         <div class="tab-item" data-tab="menu">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M3 9L12 3L21 9V20H3V9Z"/>
-                    <path d="M9 20V12H15V20"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H4a2 2 0 0 1-2-2z"/>
                 </svg>
             </div>
             <div class="tab-label">Главная</div>
         </div>
         
-        <!-- 2. Поиск (лупа) - гладкая -->
+        <!-- Поиск -->
         <div class="tab-item" data-tab="search">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="10" cy="10" r="7"/>
                     <line x1="21" y1="21" x2="15" y2="15"/>
                 </svg>
@@ -1058,10 +1053,10 @@
             <div class="tab-label">Поиск</div>
         </div>
         
-        <!-- 3. Reels (квадрат с треугольником) -->
+        <!-- Reels (квадрат с плей) -->
         <div class="tab-item" data-tab="reels">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="4" width="20" height="16" rx="2"/>
                     <polygon points="9 8 15 12 9 16 9 8"/>
                 </svg>
@@ -1069,10 +1064,10 @@
             <div class="tab-label">Reels</div>
         </div>
         
-        <!-- 4. Сообщения (бумажный самолётик) -->
+        <!-- Сообщения (бумажный самолетик) -->
         <div class="tab-item" data-tab="messages">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"/>
                     <polygon points="22 2 15 22 11 13 2 9 22 2"/>
                 </svg>
@@ -1080,18 +1075,17 @@
             <div class="tab-label">Сообщения</div>
         </div>
         
-        <!-- 5. Профиль (человек) - гладкий -->
+        <!-- Профиль -->
         <div class="tab-item" data-tab="profile">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
                 </svg>
             </div>
             <div class="tab-label">Профиль</div>
         </div>
-    </div> 
- 
+    </div>
    
     <script>
         // Скрытие заставки через 4 секунды
