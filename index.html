@@ -966,7 +966,7 @@
     </div>
     
     <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== -->
-    <style>
+     <style>
         .bottom-tab-bar {
             position: fixed;
             bottom: 16px;
@@ -1011,7 +1011,7 @@
         .tab-icon svg {
             width: 24px;
             height: 24px;
-            stroke: #8e8e8e;
+            stroke: #1a1a1a;
             stroke-width: 1.8;
             fill: none;
             stroke-linecap: round;
@@ -1028,6 +1028,7 @@
     </style>
 
     <div class="bottom-tab-bar" id="bottomTabBar">
+        <!-- Главная (домик) -->
         <div class="tab-item" data-tab="menu">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1037,6 +1038,7 @@
             </div>
         </div>
         
+        <!-- Поиск (лупа) -->
         <div class="tab-item" data-tab="search">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1046,15 +1048,16 @@
             </div>
         </div>
         
+        <!-- Reels (только треугольник, без квадрата) -->
         <div class="tab-item" data-tab="reels">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <rect x="2" y="4" width="20" height="16" rx="2"/>
-                    <polygon points="9 8 15 12 9 16 9 8"/>
+                    <polygon points="8 5 19 12 8 19 8 5"/>
                 </svg>
             </div>
         </div>
         
+        <!-- Сообщения (бумажный самолётик) -->
         <div class="tab-item" data-tab="messages">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1064,6 +1067,7 @@
             </div>
         </div>
         
+        <!-- Профиль (человек) -->
         <div class="tab-item" data-tab="profile">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
