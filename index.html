@@ -1777,11 +1777,10 @@
                             updateActiveTabInBar('reels');
                             break;
                         case 'messages':
-                            // Открываем диалог для отправки сообщения текущему боту
-                            const botUsername = tg.initDataUnsafe?.user?.username || 'le_monde_music_bot';
-                            tg.openTelegramLink(`https://t.me/${botUsername}`);
+                            showPage(pages.assistant, 'assistant');
                             updateActiveTabInBar('messages');
                             break;
+
                         case 'search':
                             showPage(pages.music, 'music');
                             loadPopular();
