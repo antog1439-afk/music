@@ -671,11 +671,11 @@
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
-                <div class="menu-text">Музыка</div>
+                <div class="menu-text">MUSIC</div>
             </div>
             <div class="menu-btn" id="goToGameBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
-                <div class="menu-text">Игра</div>
+                <div class="menu-text">PLAY</div>
             </div>
             <div class="menu-btn" id="goToAIBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div>
@@ -683,27 +683,27 @@
             </div>
             <div class="menu-btn" id="goToAssistantBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
-                <div class="menu-text">Ассистент</div>
+                <div class="menu-text">ASSISTANTE</div>
             </div>
             <div class="menu-btn" id="goToRandomizerBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
-                <div class="menu-text">Рандом</div>
+                <div class="menu-text">RANDOM</div>
             </div>
             <div class="menu-btn" id="goToMoodBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 2.5 3 4 3s3-1 4-3"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/></svg></div>
-                <div class="menu-text">Настроение</div>
+                <div class="menu-text">MOOD</div>
             </div>
             <div class="menu-btn" id="goToMapBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-                <div class="menu-text">Карта</div>
+                <div class="menu-text">MAP</div>
             </div>
             <div class="menu-btn" id="goToTicketsBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
-                <div class="menu-text">Билеты</div>
+                <div class="menu-text">TICKETS</div>
             </div>
             <div class="menu-btn" id="goToLyricsBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
-                <div class="menu-text">Текст песни</div>
+                <div class="menu-text">LYRICS MUSIC</div>
             </div>
         </div>
     </div>
@@ -969,32 +969,33 @@
     <style>
         .bottom-tab-bar {
             position: fixed;
-            bottom: 12px;
-            left: 16px;
-            right: 16px;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(20px);
-            border-radius: 40px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(25px);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 10px 12px;
+            padding: 10px 12px 22px 12px;
             z-index: 100;
-            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border-top: 0.3px solid rgba(255, 255, 255, 0.12);
         }
 
         .tab-item {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
             cursor: pointer;
-            padding: 4px 0;
+            padding: 8px 12px;
             background: transparent;
+            transition: all 0.1s ease;
+            border-radius: 30px;
         }
 
         .tab-item:active {
-            opacity: 0.7;
+            opacity: 0.6;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .tab-icon {
@@ -1008,85 +1009,69 @@
         .tab-icon svg {
             width: 24px;
             height: 24px;
+            stroke: #8e8e8e;
+            stroke-width: 1.8;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .tab-label {
-            font-size: 10px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.8);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        .tab-item.active .tab-label {
-            color: #ffcc00;
-        }
-
-        /* Активная иконка меняет цвет */
         .tab-item.active .tab-icon svg {
-            filter: brightness(0) saturate(100%) invert(77%) sepia(61%) saturate(600%) hue-rotate(0deg) brightness(106%) contrast(104%);
+            stroke: #ffcc00;
         }
 
         .fullscreen-page, .menu-container {
-            padding-bottom: 90px;
+            padding-bottom: 75px;
         }
     </style>
 
     <div class="bottom-tab-bar" id="bottomTabBar">
-        <!-- Главная -->
         <div class="tab-item" data-tab="menu">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H4a2 2 0 0 1-2-2z"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M3 9L12 3L21 9V20H3V9Z"/>
+                    <path d="M9 20V12H15V20"/>
                 </svg>
             </div>
-            <div class="tab-label">Главная</div>
         </div>
         
-        <!-- Поиск -->
         <div class="tab-item" data-tab="search">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <circle cx="10" cy="10" r="7"/>
                     <line x1="21" y1="21" x2="15" y2="15"/>
                 </svg>
             </div>
-            <div class="tab-label">Поиск</div>
         </div>
         
-        <!-- Reels (квадрат с плей) -->
         <div class="tab-item" data-tab="reels">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <rect x="2" y="4" width="20" height="16" rx="2"/>
                     <polygon points="9 8 15 12 9 16 9 8"/>
                 </svg>
             </div>
-            <div class="tab-label">Reels</div>
         </div>
         
-        <!-- Сообщения (бумажный самолетик) -->
         <div class="tab-item" data-tab="messages">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <line x1="22" y1="2" x2="11" y2="13"/>
                     <polygon points="22 2 15 22 11 13 2 9 22 2"/>
                 </svg>
             </div>
-            <div class="tab-label">Сообщения</div>
         </div>
         
-        <!-- Профиль -->
         <div class="tab-item" data-tab="profile">
             <div class="tab-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
                 </svg>
             </div>
-            <div class="tab-label">Профиль</div>
         </div>
     </div>
-   
+ 
     <script>
         // Скрытие заставки через 4 секунды
         setTimeout(function() {
