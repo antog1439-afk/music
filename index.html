@@ -1777,31 +1777,9 @@
                             updateActiveTabInBar('reels');
                             break;
                         case 'messages':
-                            // Открываем окно с вариантами отправки ссылок
-                            tg.showPopup({
-                                title: "📤 ПОДЕЛИТЬСЯ",
-                                message: "Выберите, чем хотите поделиться:",
-                                buttons: [
-                                    { type: "default", text: "🎵 Текущий исполнитель" },
-                                    { type: "default", text: "🎤 Популярные артисты" },
-                                    { type: "default", text: "📱 Приложение LE MONDE" },
-                                    { type: "cancel", text: "Отмена" }
-                                ]
-                            }, (buttonId) => {
-                                if (buttonId === "0") {
-                                    const artistName = lastSearchedArtist || document.querySelector('.artist-name-large')?.innerText?.replace('🔄', '').trim() || 'Асия';
-                                    const shareText = `🎵 Рекомендую послушать ${artistName} в LE MONDE MUSIC!\n\nСлушать: https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}\n\n✨ Музыкальный центр в Telegram: https://t.me/share?url=https://t.me/le_monde_music_bot`;
-                                    tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(`https://music.yandex.ru/search?text=${encodeURIComponent(artistName)}`)}&text=${encodeURIComponent(`🎵 Рекомендую послушать ${artistName} в LE MONDE MUSIC!`)}`);
-                                    showNote(`📤 Открываем отправку ссылки на ${artistName}`);
-                                } else if (buttonId === "1") {
-                                    const shareText = `🎤 Популярные исполнители в LE MONDE MUSIC:\n\n🎵 Асия - https://music.yandex.ru/search?text=Асия\n🎸 Imagine Dragons - https://music.yandex.ru/search?text=Imagine%20Dragons\n🎸 Кино - https://music.yandex.ru/search?text=Кино\n🎤 Моргенштерн - https://music.yandex.ru/search?text=Моргенштерн\n🎶 Земфира - https://music.yandex.ru/search?text=Земфира\n\n✨ Слушай музыку в Telegram!`;
-                                    tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(`https://t.me/le_monde_music_bot`)}&text=${encodeURIComponent(`🎤 Популярные исполнители в LE MONDE MUSIC!\n\nАсия, Imagine Dragons, Кино, Моргенштерн, Земфира и другие!`)}`);
-                                    showNote(`📤 Открываем отправку списка исполнителей`);
-                                } else if (buttonId === "2") {
-                                    tg.openLink(`https://t.me/share/url?url=${encodeURIComponent(`https://t.me/le_monde_music_bot`)}&text=${encodeURIComponent(`🎵 LE MONDE MUSIC - музыкальный центр в Telegram!\n\n✨ Ищи музыку, играй в игры, смотри Reels и делись впечатлениями!`)}`);
-                                    showNote(`📤 Открываем отправку ссылки на приложение`);
-                                }
-                            });
+                            // Открываем диалог для отправки сообщения текущему боту
+                            const botUsername = tg.initDataUnsafe?.user?.username || 'le_monde_music_bot';
+                            tg.openTelegramLink(`https://t.me/${botUsername}`);
                             updateActiveTabInBar('messages');
                             break;
                         case 'search':
