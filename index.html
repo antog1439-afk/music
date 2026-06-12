@@ -573,13 +573,13 @@
             border-bottom: none;
         }
 
-        /* ========== НИЖНЯЯ ПАНЕЛЬ (СВЕТЛАЯ ОВАЛЬНАЯ, ТОЛЬКО ИКОНКИ) ========== */
+        /* ========== НИЖНЯЯ ПАНЕЛЬ (ПРОЗРАЧНЫЙ ОВАЛ) ========== */
         .bottom-tab-bar {
             position: fixed;
             bottom: 16px;
             left: 16px;
             right: 16px;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(20px);
             border-radius: 60px;
             display: flex;
@@ -587,8 +587,8 @@
             align-items: center;
             padding: 8px 12px;
             z-index: 100;
-            border: 0.5px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 0.5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .tab-item {
@@ -604,7 +604,7 @@
 
         .tab-item:active {
             opacity: 0.6;
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .tab-icon {
@@ -910,15 +910,15 @@
                 <button class="appearance-btn" id="toggleThemeBtn">🌙 Тёмная</button>
             </div>
             
-            <!-- ===== СПЕЦИАЛЬНЫЕ ОБОИ (ЖЁЛТО-БЕЛЫЕ) - 3 колонки с прокруткой ===== -->
+            <!-- ===== СПЕЦИАЛЬНЫЕ ОБОИ (ЖЁЛТО-БЕЛЫЕ + ПРОЗРАЧНЫЕ) ===== -->
             <div style="margin: 16px 0 12px 0;">
-                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; text-align: center;">✨ ЖЁЛТО-БЕЛЫЕ ОБОИ</div>
-                <div class="special-wallpapers" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 260px; overflow-y: auto; padding: 4px 4px 8px 4px;">
+                <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; text-align: center;">✨ СПЕЦИАЛЬНЫЕ ОБОИ</div>
+                <div class="special-wallpapers" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 300px; overflow-y: auto; padding: 4px 4px 8px 4px;">
                     
                     <!-- 1. Золотая пыль -->
                     <div class="wallpaper-card" data-wallpaper="gold_dust" style="background: linear-gradient(135deg, #fff9e6, #fff0c0); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3); transition: all 0.2s;">
                         <div style="font-size: 24px;">✨</div>
-                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Золотая пыль</div>
+                        <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Золотая<br>пыль</div>
                     </div>
                     
                     <!-- 2. Солнечные лучи -->
@@ -969,6 +969,18 @@
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 600; text-align: center;">Renault<br>Style</div>
                         <div style="font-size: 7px; color: #B8860B; margin-top: 2px;">ромбы</div>
                     </div>
+
+                    <!-- 10. ПРОЗРАЧНЫЙ СТЕКЛЯННЫЙ (GLASS) -->
+                    <div class="wallpaper-card" data-wallpaper="glass" style="background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1)); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,255,255,0.5); backdrop-filter: blur(10px); transition: all 0.2s;">
+                        <div style="font-size: 24px;">🔮</div>
+                        <div style="font-size: 9px; color: #ffffff; margin-top: 6px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.2); text-align: center;">Glass<br>прозрачный</div>
+                    </div>
+
+                    <!-- 11. СОВСЕМ ПРОЗРАЧНЫЙ -->
+                    <div class="wallpaper-card" data-wallpaper="clear" style="background: rgba(255,255,255,0.05); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); transition: all 0.2s;">
+                        <div style="font-size: 24px;">💎</div>
+                        <div style="font-size: 9px; color: #ffffff; margin-top: 6px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.2); text-align: center;">Clear<br>прозрачный</div>
+                    </div>
                     
                 </div>
             </div>
@@ -984,7 +996,7 @@
         </div>
     </div>
     
-    <!-- ========== НИЖНЯЯ ПАНЕЛЬ (СВЕТЛАЯ ОВАЛЬНАЯ, ТОЛЬКО ИКОНКИ) ========== -->
+    <!-- ========== НИЖНЯЯ ПАНЕЛЬ (ПРОЗРАЧНЫЙ ОВАЛ) ========== -->
     <div class="bottom-tab-bar" id="bottomTabBar">
         <!-- Главная (домик) -->
         <div class="tab-item" data-tab="menu">
@@ -2277,7 +2289,7 @@
             }
         }
 
-        // ========== ЖЁЛТО-БЕЛЫЕ СПЕЦИАЛЬНЫЕ ОБОИ (ВКЛЮЧАЯ RENAULT СТИЛЬ) ==========
+        // ========== ЖЁЛТО-БЕЛЫЕ + ПРОЗРАЧНЫЕ СПЕЦИАЛЬНЫЕ ОБОИ ==========
         const yellowWhiteWallpapers = {
             gold_dust: {
                 name: 'Золотая пыль',
@@ -2323,6 +2335,16 @@
                 name: 'Renault Style',
                 bg: 'linear-gradient(135deg, #fff9e6 0%, #ffe680 100%)',
                 pattern: 'repeating-linear-gradient(45deg, rgba(255,215,0,0) 0px, rgba(255,215,0,0) 30px, rgba(255,200,0,0.2) 30px, rgba(255,200,0,0.2) 32px, rgba(255,215,0,0) 32px, rgba(255,215,0,0) 60px), repeating-linear-gradient(-45deg, rgba(255,215,0,0) 0px, rgba(255,215,0,0) 30px, rgba(255,200,0,0.2) 30px, rgba(255,200,0,0.2) 32px, rgba(255,215,0,0) 32px, rgba(255,215,0,0) 60px), radial-gradient(circle at 50% 50%, rgba(255,215,0,0.1) 0px, rgba(255,215,0,0.1) 2px, transparent 2px, transparent 60px)'
+            },
+            glass: {
+                name: 'Glass прозрачный',
+                bg: 'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 100%)',
+                pattern: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 2px, transparent 2px, transparent 20px)'
+            },
+            clear: {
+                name: 'Clear прозрачный',
+                bg: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%)',
+                pattern: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 1px, transparent 1px)'
             }
         };
         
