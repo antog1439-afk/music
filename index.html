@@ -126,6 +126,35 @@
             font-weight: 500;
         }
 
+        /* Кнопка меню (три полоски) в правом верхнем углу */
+        .menu-button {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        .menu-button:active {
+            transform: scale(0.92);
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .menu-button svg {
+            stroke: #1a1a1a;
+            stroke-width: 1.8;
+            fill: none;
+        }
+
         .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 8px; }
         .back-btn {
             background: rgba(0,0,0,0.05);
@@ -340,25 +369,6 @@
         .bio-text { font-size: 13px; line-height: 1.5; color: rgba(0,0,0,0.75); }
         .bio-wiki-link { color: #ffcc00; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 8px; }
 
-        .settings-fab {
-            position: fixed;
-            bottom: 140px;
-            right: 22px;
-            width: 52px;
-            height: 52px;
-            border-radius: 52px;
-            background: rgba(0,0,0,0.05);
-            backdrop-filter: blur(16px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            border: 1px solid rgba(0,0,0,0.06);
-        }
-        .settings-fab svg { stroke: #1a1a1a; }
-        .settings-fab:active { transform: scale(0.92); }
-
         .settings-modal {
             position: fixed;
             top: 0;
@@ -563,61 +573,63 @@
             border-bottom: none;
         }
 
-        /* ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== */
+        /* ========== НИЖНЯЯ ПАНЕЛЬ (СВЕТЛАЯ ОВАЛЬНАЯ, ТОЛЬКО ИКОНКИ) ========== */
         .bottom-tab-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255,255,255,0.96);
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(20px);
+            border-radius: 60px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 8px 16px 12px 16px;
+            padding: 8px 12px;
             z-index: 100;
-            border-top: 0.5px solid rgba(0,0,0,0.1);
+            border: 0.5px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
+
         .tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            padding: 4px 0;
-            border-radius: 30px;
-        }
-        .tab-item:active { transform: scale(0.92); }
-        .tab-icon {
-            width: 24px;
-            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #1a1a1a;
-        }
-        .tab-icon svg {
-            stroke: #1a1a1a;
+            cursor: pointer;
+            padding: 6px 10px;
+            background: transparent;
             transition: all 0.1s ease;
+            border-radius: 40px;
         }
-        .tab-label {
-            font-size: 10px;
-            font-weight: 500;
-            color: #8e8e8e;
+
+        .tab-item:active {
+            opacity: 0.6;
+            background: rgba(0, 0, 0, 0.05);
         }
-        .tab-item.active .tab-label {
-            color: #ffcc00;
+
+        .tab-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        .tab-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #1a1a1a;
+            stroke-width: 1.8;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
         .tab-item.active .tab-icon svg {
             stroke: #ffcc00;
         }
-        
-        /* Отступ снизу для контента, чтобы не перекрывался панелью */
-        .menu-container {
-            padding-bottom: 70px;
-        }
-        .fullscreen-page {
+
+        .fullscreen-page, .menu-container {
             padding-bottom: 80px;
         }
 
@@ -664,6 +676,15 @@
             <div style="width: 60px; height: 2px; background: #ffcc00; margin: 0 auto 14px auto;"></div>
             <div style="font-family: 'Montserrat', sans-serif; font-size: 9px; color: #888; letter-spacing: 2px;">PLATFORM OF YANDEX MUSIC</div>
         </div>
+    </div>
+
+    <!-- Кнопка меню (три полоски) -->
+    <div class="menu-button" id="menuButton">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
     </div>
 
     <!-- ========== ГЛАВНОЕ МЕНЮ ========== -->
@@ -878,8 +899,6 @@
         </div>
     </div>
 
-    <div class="settings-fab" id="settingsFab"><svg viewBox="0 0 24 24" stroke="#1a1a1a" fill="none"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/><path d="M18.2 8.96a1.65 1.65 0 0 0-1.51-1H7.31a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04a10 10 0 0 0 14.72 0z"/></svg></div>
-    
     <div id="settingsModal" class="settings-modal hidden">
         <div class="modal-card">
             <div class="modal-title">Оформление</div>
@@ -965,68 +984,7 @@
         </div>
     </div>
     
-    <!-- ========== НИЖНЯЯ ПАНЕЛЬ КАК В INSTAGRAM ========== -->
-     <style>
-        .bottom-tab-bar {
-            position: fixed;
-            bottom: 16px;
-            left: 16px;
-            right: 16px;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(20px);
-            border-radius: 60px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 8px 12px;
-            z-index: 100;
-            border: 0.5px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .tab-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            padding: 6px 10px;
-            background: transparent;
-            transition: all 0.1s ease;
-            border-radius: 40px;
-        }
-
-        .tab-item:active {
-            opacity: 0.6;
-            background: rgba(0, 0, 0, 0.05);
-        }
-
-        .tab-icon {
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tab-icon svg {
-            width: 24px;
-            height: 24px;
-            stroke: #1a1a1a;
-            stroke-width: 1.8;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .tab-item.active .tab-icon svg {
-            stroke: #ffcc00;
-        }
-
-        .fullscreen-page, .menu-container {
-            padding-bottom: 80px;
-        }
-    </style>
-
+    <!-- ========== НИЖНЯЯ ПАНЕЛЬ (СВЕТЛАЯ ОВАЛЬНАЯ, ТОЛЬКО ИКОНКИ) ========== -->
     <div class="bottom-tab-bar" id="bottomTabBar">
         <!-- Главная (домик) -->
         <div class="tab-item" data-tab="menu">
@@ -2659,11 +2617,11 @@
             };
         }
 
-        const fab = document.getElementById('settingsFab');
+        const menuButton = document.getElementById('menuButton');
         const modalElem = document.getElementById('settingsModal');
         const closeModalBtnElem = document.getElementById('closeSettingsBtn');
         
-        if (fab) fab.onclick = () => modalElem.classList.remove('hidden');
+        if (menuButton) menuButton.onclick = () => modalElem.classList.remove('hidden');
         if (closeModalBtnElem) closeModalBtnElem.onclick = () => modalElem.classList.add('hidden');
         if (modalElem) modalElem.onclick = (e) => { if (e.target === modalElem) modalElem.classList.add('hidden'); };
       
