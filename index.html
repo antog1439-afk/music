@@ -2022,22 +2022,30 @@
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             
-            // Улучшенная загрузка фото
-            let finalAvatarUrl = await getArtistImageFromDeezer(q);
-            if (!finalAvatarUrl) {
-                try {
-                    const fallbackUrl = `https://api.deezer.com/search/artist?q=${encodeURIComponent(q)}&limit=1`;
-                    const fallbackResponse = await fetch(fallbackUrl);
-                    const fallbackData = await fallbackResponse.json();
-                    if (fallbackData.data && fallbackData.data[0] && fallbackData.data[0].picture_medium) {
-                        finalAvatarUrl = fallbackData.data[0].picture_medium;
+            // Улучшенная загрузка фото через несколько источников
+            let finalAvatarUrl = null;
+            
+            // 1. Пробуем Deezer API
+            try {
+                const deezerUrl = `https://api.deezer.com/search/artist?q=${encodeURIComponent(q)}&limit=3`;
+                const deezerResponse = await fetch(deezerUrl);
+                const deezerData = await deezerResponse.json();
+                if (deezerData.data && deezerData.data.length > 0) {
+                    const artistId = deezerData.data[0].id;
+                    const artistUrl = `https://api.deezer.com/artist/${artistId}`;
+                    const artistResponse = await fetch(artistUrl);
+                    const artistData = await artistResponse.json();
+                    if (artistData.picture_medium) {
+                        finalAvatarUrl = artistData.picture_medium;
                     }
-                } catch(e) {}
-            }
+                }
+            } catch(e) { console.log('Deezer error:', e); }
+            
+            // 2. Если Deezer не дал фото — используем заглушку с первой буквой
             if (!finalAvatarUrl) {
                 finalAvatarUrl = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffcc00'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             }
-            
+          
             let bioHtml = '';
             if (wikiBio && wikiBio.text && wikiBio.text.length > 50) {
                 bioHtml = `
