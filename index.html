@@ -196,6 +196,11 @@
             opacity: 0.5;
         }
 
+        /* Скрываем погоду на страницах */
+        body:not(.menu-visible) .weather-widget {
+            display: none !important;
+        }
+
         .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 8px; }
         .back-btn {
             background: rgba(0,0,0,0.05);
@@ -903,7 +908,7 @@
         </svg>
     </div>
 
-    <!-- Погода в правом верхнем углу -->
+    <!-- Погода в правом верхнем углу (только на главном меню) -->
     <div class="weather-widget" id="weatherWidget">
         <span class="weather-icon" id="weatherIcon">🌍</span>
         <span class="weather-temp" id="weatherTemp">--°</span>
@@ -1790,6 +1795,7 @@
             menu.classList.remove('hidden-menu'); 
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
             document.body.className = '';
+            document.body.classList.add('menu-visible');
             updateActiveTabInBar('menu');
         }
         
@@ -1799,6 +1805,7 @@
             Object.values(pages).forEach(p => p && p.classList.remove('active')); 
             if (page) page.classList.add('active'); 
             document.body.className = mode + '-mode';
+            document.body.classList.remove('menu-visible');
         }
         
         // ========== НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ ==========
@@ -2910,7 +2917,7 @@
             }
         }
 
-        // ========== ПОГОДА В ПРАВОМ ВЕРХНЕМ УГЛУ ==========
+        // ========== ПОГОДА В ПРАВОМ ВЕРХНЕМ УГЛУ (ТОЛЬКО НА ГЛАВНОМ МЕНЮ) ==========
         async function updateWeather() {
             const widget = document.getElementById('weatherWidget');
             const iconEl = document.getElementById('weatherIcon');
@@ -3060,6 +3067,9 @@
         initYellowWallpaperHandlers();
         initBottomTabBar();
         initProfile();
+        
+        // Показываем погоду только на главном меню
+        document.body.classList.add('menu-visible');
         
         console.log('LE MONDE MUSIC загружен!');
     </script>
