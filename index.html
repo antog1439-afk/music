@@ -910,9 +910,9 @@
 
     <!-- Погода в правом верхнем углу (только на главном меню) -->
     <div class="weather-widget" id="weatherWidget">
-        <span class="weather-icon" id="weatherIcon">🌍</span>
-        <span class="weather-temp" id="weatherTemp">--°</span>
-        <span class="weather-city" id="weatherCity">Загрузка...</span>
+        <span class="weather-icon" id="weatherIcon">☀️</span>
+        <span class="weather-temp" id="weatherTemp">22°</span>
+        <span class="weather-city" id="weatherCity">Москва</span>
     </div>
 
     <!-- ========== ГЛАВНОЕ МЕНЮ ========== -->
@@ -2918,6 +2918,19 @@
         }
 
         // ========== ПОГОДА В ПРАВОМ ВЕРХНЕМ УГЛУ (ТОЛЬКО НА ГЛАВНОМ МЕНЮ) ==========
+        // Функция для показа тестовой погоды
+        function setDefaultWeather() {
+            const iconEl = document.getElementById('weatherIcon');
+            const tempEl = document.getElementById('weatherTemp');
+            const cityEl = document.getElementById('weatherCity');
+            const widget = document.getElementById('weatherWidget');
+            
+            if (iconEl) iconEl.textContent = '☀️';
+            if (tempEl) tempEl.textContent = '22°';
+            if (cityEl) cityEl.textContent = 'Москва';
+            if (widget) widget.classList.remove('loading');
+        }
+        
         async function updateWeather() {
             const widget = document.getElementById('weatherWidget');
             const iconEl = document.getElementById('weatherIcon');
@@ -2926,12 +2939,11 @@
             
             if (!widget) return;
             
-            widget.classList.add('loading');
+            // Сразу показываем тестовую погоду
+            setDefaultWeather();
             
-            // Пробуем получить геолокацию
+            // Пробуем получить реальную геолокацию
             if (!navigator.geolocation) {
-                cityEl.textContent = 'Гео недоступно';
-                widget.classList.remove('loading');
                 return;
             }
             
@@ -2946,17 +2958,17 @@
                         const cityResponse = await fetch(cityUrl);
                         const cityData = await cityResponse.json();
                         
-                        let cityName = 'Мир';
+                        let cityName = 'Москва';
                         if (cityData.address) {
                             cityName = cityData.address.city || 
                                       cityData.address.town || 
                                       cityData.address.village || 
                                       cityData.address.county ||
-                                      'Мир';
+                                      'Москва';
                         }
-                        cityEl.textContent = cityName;
+                        if (cityEl) cityEl.textContent = cityName;
                         
-                        // Получаем погоду
+                        // Получаем реальную погоду
                         const apiKey = 'bd5e378503939ddaee76f12ad7a97608';
                         const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=ru`;
                         const weatherResponse = await fetch(weatherUrl);
@@ -2964,12 +2976,10 @@
                         
                         if (weatherData.cod === 200) {
                             const temp = Math.round(weatherData.main.temp);
-                            const description = weatherData.weather[0].description;
                             const icon = weatherData.weather[0].icon;
                             
-                            tempEl.textContent = `${temp}°`;
+                            if (tempEl) tempEl.textContent = `${temp}°`;
                             
-                            // Иконка погоды
                             const iconMap = {
                                 '01d': '☀️', '01n': '🌙',
                                 '02d': '⛅', '02n': '☁️',
@@ -2981,35 +2991,23 @@
                                 '13d': '❄️', '13n': '❄️',
                                 '50d': '🌫️', '50n': '🌫️'
                             };
-                            iconEl.textContent = iconMap[icon] || '🌤️';
+                            if (iconEl) iconEl.textContent = iconMap[icon] || '☀️';
                             
-                            // Подсказка при наведении
-                            widget.title = `${cityName}: ${temp}°C, ${description}`;
-                        } else {
-                            tempEl.textContent = '--°';
-                            iconEl.textContent = '🌤️';
+                            if (widget) widget.title = `${cityName}: ${temp}°C, ${weatherData.weather[0].description}`;
                         }
                     } catch(e) {
                         console.log('Weather error:', e);
-                        tempEl.textContent = '--°';
-                        iconEl.textContent = '🌤️';
                     }
-                    
-                    widget.classList.remove('loading');
                 },
                 (error) => {
                     console.log('Geolocation error:', error);
-                    cityEl.textContent = '📍';
-                    tempEl.textContent = '--°';
-                    iconEl.textContent = '🌤️';
-                    widget.classList.remove('loading');
                 },
                 { timeout: 5000, enableHighAccuracy: true }
             );
         }
         
         // Запускаем погоду при загрузке
-        setTimeout(updateWeather, 1000);
+        setTimeout(updateWeather, 500);
         
         // Обновляем погоду каждые 10 минут
         setInterval(updateWeather, 600000);
