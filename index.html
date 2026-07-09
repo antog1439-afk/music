@@ -26,10 +26,10 @@
 
         body.music-mode { background: #ffffff; }
         body.game-mode { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #0f2027 100%); }
-        body.ai-mode { background: linear-gradient(135deg, #4a00e0 0%, #8e2de2 50%, #1a0033 100%); }
         body.assistant-mode { background: linear-gradient(135deg, #0b8793 0%, #360033 50%, #1a0033 100%); }
         body.map-mode { background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
         body.lyrics-mode { background: #ffffff; }
+        body.charts-mode { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
@@ -126,7 +126,6 @@
             font-weight: 500;
         }
 
-        /* Кнопка меню (три полоски) в правом верхнем углу — без круга */
         .menu-button {
             position: fixed;
             top: 16px;
@@ -196,7 +195,6 @@
             opacity: 0.5;
         }
 
-        /* Скрываем погоду на страницах */
         body:not(.menu-visible) .weather-widget {
             display: none !important;
         }
@@ -371,39 +369,6 @@
             border: 1px solid rgba(0,0,0,0.06);
         }
 
-        .ai-fact-card {
-            background: rgba(255,204,0,0.08);
-            border-left: 2px solid #ffcc00;
-            border-radius: 20px;
-            padding: 16px;
-            margin: 20px 0;
-        }
-        .ai-fact-label { font-size: 10px; color: #ffcc00; font-weight: 600; margin-bottom: 6px; }
-        .ai-fact-text { font-size: 14px; color: #1a1a1a; }
-        .ai-fact-refresh {
-            background: rgba(255,204,0,0.15);
-            border: 1px solid rgba(255,204,0,0.3);
-            padding: 6px 14px;
-            border-radius: 40px;
-            color: #1a1a1a;
-            font-size: 11px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        .platform-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
-        .platform-btn {
-            padding: 12px;
-            border-radius: 60px;
-            text-align: center;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            font-size: 14px;
-        }
-        .yandex-btn { background: #ffcc00; color: #1a1a1a; }
-        .youtube-btn { background: #ff0000; color: white; }
-
         .bio-section {
             background: rgba(0,0,0,0.03);
             border-radius: 20px;
@@ -549,15 +514,6 @@
             cursor: pointer;
         }
 
-        .ai-cover-img {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 24px;
-            margin: 0 auto;
-            display: block;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
         .popular-tag {
             display: inline-block;
             background: rgba(0,0,0,0.05);
@@ -568,7 +524,6 @@
             font-size: 13px;
         }
 
-        /* ========== СТИЛИ ДЛЯ ПРОФИЛЯ ========== */
         .profile-avatar {
             width: 100px;
             height: 100px;
@@ -593,12 +548,7 @@
             font-size: 11px;
             color: rgba(0,0,0,0.5);
         }
-        .profile-edit-btn, .profile-share-btn {
-            transition: all 0.2s ease;
-        }
-        .profile-edit-btn:active, .profile-share-btn:active {
-            transform: scale(0.96);
-        }
+
         .saved-item {
             background: rgba(0,0,0,0.03);
             border-radius: 20px;
@@ -620,7 +570,6 @@
             border-bottom: none;
         }
 
-        /* ========== НИЖНЯЯ ПАНЕЛЬ (ПРОЗРАЧНЫЙ ОВАЛ) ========== */
         .bottom-tab-bar {
             position: fixed;
             bottom: 16px;
@@ -680,6 +629,25 @@
         .fullscreen-page, .menu-container {
             padding-bottom: 80px;
         }
+
+        /* ========== СТИЛИ ДЛЯ ЧАРТОВ ========== */
+        .chart-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .chart-item:last-child { border-bottom: none; }
+        .chart-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffcc00;
+            width: 30px;
+        }
+        .chart-info { flex: 1; }
+        .chart-title { font-weight: 600; color: #1a1a1a; }
+        .chart-artist { font-size: 12px; opacity: 0.6; color: #1a1a1a; }
 
         @media (max-width: 480px) {
             .fullscreen-page { padding: 16px; }
@@ -760,12 +728,6 @@
             background: rgba(255,255,255,0.06);
         }
         body.dark-theme .preview-track-item div {
-            color: #ffffff;
-        }
-        body.dark-theme .ai-fact-card {
-            background: rgba(255,204,0,0.1);
-        }
-        body.dark-theme .ai-fact-text {
             color: #ffffff;
         }
         body.dark-theme .bio-section {
@@ -853,13 +815,12 @@
             color: rgba(255,255,255,0.5);
         }
         
-        /* Тёмная тема для страниц */
         body.dark-theme.music-mode { background: #0a0a0a !important; }
         body.dark-theme.game-mode { background: #0a0a0a !important; }
-        body.dark-theme.ai-mode { background: #0a0a0a !important; }
         body.dark-theme.assistant-mode { background: #0a0a0a !important; }
         body.dark-theme.map-mode { background: #0a0a0a !important; }
         body.dark-theme.lyrics-mode { background: #0a0a0a !important; }
+        body.dark-theme.charts-mode { background: #0a0a0a !important; }
         
         body.dark-theme .fullscreen-page {
             background: rgba(0,0,0,0.7);
@@ -867,6 +828,16 @@
         }
         body.dark-theme .menu-screen {
             background: transparent;
+        }
+        
+        body.dark-theme .chart-item {
+            border-color: rgba(255,255,255,0.08);
+        }
+        body.dark-theme .chart-title {
+            color: #ffffff;
+        }
+        body.dark-theme .chart-artist {
+            color: rgba(255,255,255,0.6);
         }
     </style>
 </head>
@@ -899,7 +870,6 @@
         </div>
     </div>
 
-    <!-- Кнопка меню (три полоски) — без круга -->
     <div class="menu-button" id="menuButton">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="12" x2="21" y2="12"/>
@@ -908,7 +878,6 @@
         </svg>
     </div>
 
-    <!-- Погода в правом верхнем углу (только на главном меню) -->
     <div class="weather-widget" id="weatherWidget">
         <span class="weather-icon" id="weatherIcon">☀️</span>
         <span class="weather-temp" id="weatherTemp">22°</span>
@@ -926,13 +895,13 @@
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M6 11h4M8 9v4"/><path d="M15 12h.01M18 10h.01"/><path d="M4 4h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2l-2 4-2-4H6l-2 4-2-4H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></div>
                 <div class="menu-text">PLAY</div>
             </div>
-            <div class="menu-btn" id="goToAIBtn">
-                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/></svg></div>
-                <div class="menu-text">AI</div>
+            <div class="menu-btn" id="goToChartsBtn">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+                <div class="menu-text">CHARTS</div>
             </div>
             <div class="menu-btn" id="goToAssistantBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H7L3 15l4-4"/><path d="M17 3.5L3 13"/><path d="M17 3.5a4.5 4.5 0 0 1 4 4"/></svg></div>
-                <div class="menu-text">ASSISTANTE</div>
+                <div class="menu-text">ASSISTANT</div>
             </div>
             <div class="menu-btn" id="goToRandomizerBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M18 4L21 7L18 10"/><path d="M18 14L21 17L18 20"/><path d="M5 7h5a3 3 0 0 1 3 3v4a3 3 0 0 0 3 3h5"/><path d="M3 17h5"/></svg></div>
@@ -952,7 +921,7 @@
             </div>
             <div class="menu-btn" id="goToLyricsBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
-                <div class="menu-text">LYRICS MUSIC</div>
+                <div class="menu-text">LYRICS</div>
             </div>
         </div>
     </div>
@@ -999,9 +968,15 @@
         <div class="glass-card"><button id="startGameBtn" class="search-btn" style="width:100%; margin-bottom:16px;">▶ Начать игру</button><div id="gameContent"><div style="text-align:center; padding:30px; color:rgba(0,0,0,0.4);">Нажмите «Начать игру»</div></div></div>
     </div>
 
-    <div class="fullscreen-page" id="aiPage">
-        <div class="page-header"><button class="back-btn" id="backFromAI"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button><div class="page-title">AI ОБЛОЖКИ</div></div>
-        <div class="glass-card"><div class="search-box"><input type="text" id="aiPrompt" class="search-input" placeholder="рок группа, гитара..."><button id="generateAIBtn" class="search-btn">Создать</button></div><div id="aiResult" style="text-align:center; margin-top:12px;"><div style="padding:30px; color:rgba(0,0,0,0.4);">✨ Введите описание</div></div></div>
+    <div class="fullscreen-page" id="chartsPage">
+        <div class="page-header">
+            <button class="back-btn" id="backFromCharts"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
+            <div class="page-title">ТОП-ЧАРТЫ</div>
+        </div>
+        <div class="glass-card" id="chartsContent">
+            <div style="text-align:center; padding:20px; color:rgba(0,0,0,0.4);">🏆 Загрузка чартов...</div>
+        </div>
+        <div class="user-info">🏆 Еженедельный топ-10 треков</div>
     </div>
 
     <div class="fullscreen-page" id="assistantPage">
@@ -1025,7 +1000,6 @@
         <div class="glass-card"><div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:20px;"><button class="mood-btn" data-mood="happy" style="background:#ffcc00; border:none; padding:14px; border-radius:60px;">😊 Счастлив</button><button class="mood-btn" data-mood="sad" style="background:#3498db; border:none; padding:14px; border-radius:60px; color:white;">😢 Грустный</button><button class="mood-btn" data-mood="energetic" style="background:#e74c3c; border:none; padding:14px; border-radius:60px; color:white;">⚡ Энергичный</button><button class="mood-btn" data-mood="relax" style="background:#2ecc71; border:none; padding:14px; border-radius:60px; color:white;">😌 Расслабленный</button><button class="mood-btn" data-mood="romantic" style="background:#e84393; border:none; padding:14px; border-radius:60px; color:white;">💖 Романтичный</button><button class="mood-btn" data-mood="focus" style="background:#1abc9c; border:none; padding:14px; border-radius:60px; color:white;">📚 Фокус</button></div><div id="moodResult"></div></div>
     </div>
 
-    <!-- ========== СТРАНИЦА ПРОФИЛЯ (МОЙ АККАУНТ) ========== -->
     <div class="fullscreen-page" id="profilePage">
         <div class="page-header">
             <button class="back-btn" id="backFromProfile"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -1033,7 +1007,6 @@
             <div style="width: 40px;"></div>
         </div>
         
-        <!-- Шапка профиля -->
         <div class="glass-card" style="text-align: center;">
             <div class="profile-avatar" id="profileAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #ffcc00; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 600; color: white;">
                 👤
@@ -1041,7 +1014,6 @@
             <div class="profile-name" id="profileName" style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">Загрузка...</div>
             <div class="profile-username" id="profileUsername" style="font-size: 14px; color: rgba(0,0,0,0.5); margin-bottom: 16px;">@username</div>
             
-            <!-- Статистика -->
             <div style="display: flex; justify-content: center; margin-bottom: 24px;">
                 <div class="stat">
                     <div class="stat-number" id="postsCount">0</div>
@@ -1049,14 +1021,12 @@
                 </div>
             </div>
             
-            <!-- Кнопки действий -->
             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                 <button class="profile-edit-btn" id="editProfileBtn" style="flex: 1; background: rgba(0,0,0,0.05); border: none; padding: 10px; border-radius: 30px; font-weight: 600; cursor: pointer;">Редактировать профиль</button>
                 <button class="profile-share-btn" id="shareProfileBtn" style="background: rgba(0,0,0,0.05); border: none; width: 44px; border-radius: 30px; cursor: pointer;">🔗</button>
             </div>
         </div>
         
-        <!-- Информация о пользователе -->
         <div class="glass-card">
             <div class="section-title">📋 ИНФОРМАЦИЯ</div>
             <div style="margin-bottom: 16px;">
@@ -1073,7 +1043,6 @@
             </div>
         </div>
         
-        <!-- Настройки приложения -->
         <div class="glass-card">
             <div class="section-title">⚙️ НАСТРОЙКИ</div>
             
@@ -1110,7 +1079,6 @@
             </div>
         </div>
         
-        <!-- Мои публикации (избранное) -->
         <div class="glass-card">
             <div class="section-title">❤️ ИЗБРАННЫЕ ИСПОЛНИТЕЛИ</div>
             <div id="favoritesList" style="text-align: center; padding: 20px; color: rgba(0,0,0,0.4);">
@@ -1130,73 +1098,61 @@
                 <button class="appearance-btn" id="toggleThemeBtn">🌓 Тема</button>
             </div>
             
-            <!-- ===== СПЕЦИАЛЬНЫЕ ОБОИ (ЖЁЛТО-БЕЛЫЕ + ПРОЗРАЧНЫЕ) ===== -->
             <div style="margin: 16px 0 12px 0;">
                 <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; text-align: center;">✨ СПЕЦИАЛЬНЫЕ ОБОИ</div>
                 <div class="special-wallpapers" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 300px; overflow-y: auto; padding: 4px 4px 8px 4px;">
                     
-                    <!-- 1. Золотая пыль -->
                     <div class="wallpaper-card" data-wallpaper="gold_dust" style="background: linear-gradient(135deg, #fff9e6, #fff0c0); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3); transition: all 0.2s;">
                         <div style="font-size: 24px;">✨</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Золотая<br>пыль</div>
                     </div>
                     
-                    <!-- 2. Солнечные лучи -->
                     <div class="wallpaper-card" data-wallpaper="sun_rays" style="background: linear-gradient(135deg, #fff8e7, #ffeaa7); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
                         <div style="font-size: 24px;">☀️</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Солнечные<br>лучи</div>
                     </div>
                     
-                    <!-- 3. Шампанское -->
                     <div class="wallpaper-card" data-wallpaper="champagne" style="background: linear-gradient(135deg, #fff5e6, #ffe4b5); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
                         <div style="font-size: 24px;">🥂</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Шампанское</div>
                     </div>
                     
-                    <!-- 4. Мёд -->
                     <div class="wallpaper-card" data-wallpaper="honey" style="background: linear-gradient(135deg, #fff3e0, #ffd580); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
                         <div style="font-size: 24px;">🍯</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Медовый</div>
                     </div>
                     
-                    <!-- 5. Ваниль -->
                     <div class="wallpaper-card" data-wallpaper="vanilla" style="background: linear-gradient(135deg, #fffef7, #fff3cf); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
                         <div style="font-size: 24px;">🍦</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Ванильный</div>
                     </div>
                     
-                    <!-- 6. Лимонный -->
                     <div class="wallpaper-card" data-wallpaper="lemon" style="background: linear-gradient(135deg, #fffde7, #fff59d); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
                         <div style="font-size: 24px;">🍋</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Лимонный</div>
                     </div>
                     
-                    <!-- 7. Янтарь -->
                     <div class="wallpaper-card" data-wallpaper="amber" style="background: linear-gradient(135deg, #fff2df, #ffcc80); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
                         <div style="font-size: 24px;">💎</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Янтарный</div>
                     </div>
                     
-                    <!-- 8. Белый шоколад -->
                     <div class="wallpaper-card" data-wallpaper="white_choco" style="background: linear-gradient(135deg, #ffffff, #fff5e0); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,200,0,0.3);">
                         <div style="font-size: 24px;">🍫</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 500; text-align: center;">Белый<br>шоколад</div>
                     </div>
                     
-                    <!-- 9. RENAULT СТИЛЬ (РОМБЫ) -->
                     <div class="wallpaper-card" data-wallpaper="renault_diamond" style="background: linear-gradient(135deg, #fff9e6, #ffe680); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,215,0,0.5); transition: all 0.2s;">
                         <div style="font-size: 24px;">🔶</div>
                         <div style="font-size: 9px; color: #8B6914; margin-top: 6px; font-weight: 600; text-align: center;">Renault<br>Style</div>
                         <div style="font-size: 7px; color: #B8860B; margin-top: 2px;">ромбы</div>
                     </div>
 
-                    <!-- 10. ПРОЗРАЧНЫЙ СТЕКЛЯННЫЙ (GLASS) -->
                     <div class="wallpaper-card" data-wallpaper="glass" style="background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1)); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,255,255,0.5); backdrop-filter: blur(10px); transition: all 0.2s;">
                         <div style="font-size: 24px;">🔮</div>
                         <div style="font-size: 9px; color: #ffffff; margin-top: 6px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.2); text-align: center;">Glass<br>прозрачный</div>
                     </div>
 
-                    <!-- 11. СОВСЕМ ПРОЗРАЧНЫЙ -->
                     <div class="wallpaper-card" data-wallpaper="clear" style="background: rgba(255,255,255,0.05); border-radius: 16px; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); transition: all 0.2s;">
                         <div style="font-size: 24px;">💎</div>
                         <div style="font-size: 9px; color: #ffffff; margin-top: 6px; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.2); text-align: center;">Clear<br>прозрачный</div>
@@ -1216,9 +1172,7 @@
         </div>
     </div>
     
-    <!-- ========== НИЖНЯЯ ПАНЕЛЬ (ПРОЗРАЧНЫЙ ОВАЛ) ========== -->
     <div class="bottom-tab-bar" id="bottomTabBar">
-        <!-- Главная (домик) -->
         <div class="tab-item" data-tab="menu">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1228,7 +1182,6 @@
             </div>
         </div>
         
-        <!-- Поиск (лупа) -->
         <div class="tab-item" data-tab="search">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1238,7 +1191,6 @@
             </div>
         </div>
         
-        <!-- Reels (только треугольник, без квадрата) -->
         <div class="tab-item" data-tab="reels">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1247,7 +1199,6 @@
             </div>
         </div>
         
-        <!-- Сообщения (бумажный самолётик) -->
         <div class="tab-item" data-tab="messages">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1257,7 +1208,6 @@
             </div>
         </div>
         
-        <!-- Профиль (человек) -->
         <div class="tab-item" data-tab="profile">
             <div class="tab-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -1269,7 +1219,6 @@
     </div>
  
     <script>
-        // Скрытие заставки через 4 секунды
         setTimeout(function() {
             var splash = document.getElementById('splashScreen');
             if (splash) {
@@ -1643,7 +1592,6 @@
             return `🎤 ${artist} — один из самых ярких исполнителей года!`;
         }
 
-        // ========== ПОЛУЧЕНИЕ БИОГРАФИИ ИЗ WIKIPEDIA ==========
         async function getWiki(artist) {
             try {
                 const specialMatches = {
@@ -1723,7 +1671,6 @@
             }
         }
         
-        // ========== РАСШИРЕННАЯ БИОГРАФИЯ ДЛЯ ПОПУЛЯРНЫХ ИСПОЛНИТЕЛЕЙ ==========
         function getShortBio(artist) {
             const bios = {
                 "асия": "Асия (Анастасия Алентьева) — российская певица и автор песен. Родилась 1 сентября 1997 года в городе Лениногорск (Татарстан). Стала известной после выхода песни «Останься», которая набрала более 100 миллионов прослушиваний. Её музыка сочетает поп, R&B и инди-звучание. Также известна по трекам: «Твой поцелуй», «Красное платье», «Детство».",
@@ -1748,7 +1695,7 @@
                 
                 "руки вверх": "«Руки Вверх!» — российская поп-группа, основанная в 1996 году продюсером Андреем Маликовым и солистом Сергеем Жуковым. Стала культовой в конце 1990-х и начале 2000-х. Стиль группы — энергичная танцевальная поп-музыка с запоминающимися мелодиями. Самые известные хиты: «Крошка моя», «18 мне уже», «Он тебя целует», «Студент», «Алешка». В 2016 году группа воссоединилась и продолжает выступать.",
                 
-                "сектор газа": "«Сектор Газа» — советская и российская рок-группа, основанная в 1987 году в Воронеже Юрием Клинских (известным как Юрий Хой). Стиль группы сочетает панк-рок, русский шансон, фолк-рок и блатную песню. Тексты песен часто затрагивают социальные темы, жизнь простых людей, деревню, любовь и смерть. Самые известные альбомы: «Зловещие мертвецы» (1990), «Яйцо динозавра» (1992), «Нажми на газ» (1992), «Вой на Луну» (1993), «Кащей Бессмертный» (1994). Легендарные хиты: «Лирика», «Туман», «30 лет», «Пошли на хер, колхозники!», «Бомж». 4 июля 2000 года Юрий Хой трагически погиб от сердечного приступа. После его смерти группа прекратила существование, но осталась культовой и любимой миллионами. Группа «Сектор Газа» — это целая эпоха в русском роке, символ 1990-х годов."
+                "сектор газа": "«Сектор Газа» — советская и российская рок-группа, основанная в 1987 году в Воронеже Юрием Клинских (известным как Юрий Хой). Стиль группы сочетает панк-рок, русский шансон, фолк-рок и блатную песню. Тексты песен часто затрагивают социальные темы, жизнь простых людей, деревню, любовь и смерть. Самые известные альбомы: «Зловещие мертвецы» (1990), «Яйцо динозавра» (1992), «Нажми на газ» (1992), «Вой на Луну» (1993), «Кащей Бессмертный» (1994). Легендарные хиты: «Лирика», «Туман», «30 лет», «Пошли на хер, колхозники!», «Бомж». 4 июля 2000 года Юрий Хой трагически погиб от сердечного приступа. После его смерти группа прекратила существование, но осталась культовой и любимой миллионами."
             };
             
             const key = artist.toLowerCase();
@@ -1777,11 +1724,57 @@
             listContainer.innerHTML = venues.map(venue => `<div onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')" style="background: rgba(0,0,0,0.03); border-radius: 20px; padding: 12px; margin-bottom: 8px; cursor: pointer;"><div style="font-weight: 500;">🎤 ${escapeHtml(venue.name)}</div><div style="font-size: 11px; opacity: 0.6;">📍 ${escapeHtml(venue.address)}</div><div style="font-size: 11px; opacity: 0.6;">🚇 ${escapeHtml(venue.metro)}</div></div>`).join('');
         }
 
+        // ========== ЗАГРУЗКА ЧАРТОВ ИЗ DEEZER ==========
+        async function loadCharts() {
+            try {
+                const response = await fetch('https://api.deezer.com/chart/0/tracks?limit=10');
+                const data = await response.json();
+                const container = document.getElementById('chartsContent');
+                if (!container) return;
+                
+                if (!data.data || data.data.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:20px; color:rgba(0,0,0,0.4);">
+                            ❌ Не удалось загрузить чарты
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '<div class="section-title">🏆 ТОП-10 ТРЕКОВ</div>';
+                data.data.forEach((track, i) => {
+                    const artistName = track.artist?.name || 'Unknown';
+                    html += `
+                        <div class="chart-item">
+                            <div class="chart-number">#${i+1}</div>
+                            <div class="chart-info">
+                                <div class="chart-title">${escapeHtml(track.title)}</div>
+                                <div class="chart-artist">${escapeHtml(artistName)}</div>
+                            </div>
+                            <button onclick="tg.openLink('${track.link || `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' ' + track.title)}`}')" style="background: #ffcc00; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 600; cursor: pointer;">▶️</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch(e) {
+                console.error('Charts error:', e);
+                const container = document.getElementById('chartsContent');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:20px; color:rgba(0,0,0,0.4);">
+                            ❌ Ошибка загрузки чартов<br>
+                            <button onclick="loadCharts()" style="margin-top: 12px; background: #ffcc00; border: none; padding: 10px 24px; border-radius: 30px; font-weight: 600; cursor: pointer;">🔄 Повторить</button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
         const menu = document.getElementById('menuContainer');
         const pages = {
             music: document.getElementById('musicPage'),
             game: document.getElementById('gamePage'),
-            ai: document.getElementById('aiPage'),
+            charts: document.getElementById('chartsPage'),
             assistant: document.getElementById('assistantPage'),
             randomizer: document.getElementById('randomizerPage'),
             mood: document.getElementById('moodPage'),
@@ -1808,7 +1801,6 @@
             document.body.classList.remove('menu-visible');
         }
         
-        // ========== НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ ==========
         function updateActiveTabInBar(activeTab) {
             const tabs = document.querySelectorAll('.tab-item');
             tabs.forEach(tab => {
@@ -1821,7 +1813,6 @@
             });
         }
         
-        // ========== СТРАНИЦА ПРОФИЛЯ (МОЙ АККАУНТ) ==========
         let userData = {
             firstName: '',
             lastName: '',
@@ -1970,13 +1961,12 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 2.0.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, AI-обложками и играми.\n\n© 2024 LE MONDE MUSIC',
+                    message: 'Версия 2.0.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, чартами и играми.\n\n© 2024 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
         }
         
-        // Функция для увеличения фото
         window.showFullPhoto = function(photoUrl, artistName) {
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -2022,13 +2012,6 @@
             }
         }
         
-        // Переопределяем search для добавления кнопки избранного
-        const originalSearchFunc = window.search;
-        window.search = async function() {
-            if (originalSearchFunc) await originalSearchFunc();
-            setTimeout(addFavoriteButtonToSearch, 300);
-        };
-        
         function initBottomTabBar() {
             const tabBar = document.getElementById('bottomTabBar');
             if (!tabBar) return;
@@ -2045,7 +2028,6 @@
                             updateActiveTabInBar('menu');
                             break;
                         case 'reels':
-                            // Открываем YouTube Music с короткими клипами
                             tg.openLink('https://music.youtube.com/shorts');
                             updateActiveTabInBar('reels');
                             break;
@@ -2053,7 +2035,6 @@
                             showPage(pages.assistant, 'assistant');
                             updateActiveTabInBar('messages');
                             break;
-
                         case 'search':
                             showPage(pages.music, 'music');
                             loadPopular();
@@ -2073,7 +2054,7 @@
         
         document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); updateActiveTabInBar('search'); };
         document.getElementById('goToGameBtn').onclick = () => { showPage(pages.game, 'game'); updateActiveTabInBar('menu'); };
-        document.getElementById('goToAIBtn').onclick = () => { showPage(pages.ai, 'ai'); updateActiveTabInBar('menu'); };
+        document.getElementById('goToChartsBtn').onclick = () => { showPage(pages.charts, 'charts'); loadCharts(); updateActiveTabInBar('menu'); };
         document.getElementById('goToAssistantBtn').onclick = () => { showPage(pages.assistant, 'assistant'); updateActiveTabInBar('messages'); };
         document.getElementById('goToRandomizerBtn').onclick = () => { showPage(pages.randomizer, 'music'); updateTotal(); loadQuick(); updateActiveTabInBar('menu'); };
         document.getElementById('goToMoodBtn').onclick = () => { showPage(pages.mood, 'music'); updateActiveTabInBar('menu'); };
@@ -2086,7 +2067,7 @@
         document.getElementById('goToLyricsBtn').onclick = () => { showPage(pages.lyrics, 'lyrics'); updateActiveTabInBar('menu'); };
         
         document.getElementById('geoLocationBtn').onclick = openMyLocationOnMap;
-        ['Music', 'Game', 'AI', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics', 'Profile'].forEach(p => {
+        ['Music', 'Game', 'Charts', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics', 'Profile'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
             if (btn) btn.onclick = showMenu;
         });
@@ -2245,12 +2226,9 @@
             const wikiBio = await getWiki(q);
             const shortBio = getShortBio(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
-            const aiFact = getFact(q);
             
-            // Улучшенная загрузка фото через несколько источников
             let finalAvatarUrl = null;
             
-            // 1. Пробуем Deezer API
             try {
                 const deezerUrl = `https://api.deezer.com/search/artist?q=${encodeURIComponent(q)}&limit=3`;
                 const deezerResponse = await fetch(deezerUrl);
@@ -2266,7 +2244,6 @@
                 }
             } catch(e) { console.log('Deezer error:', e); }
             
-            // 2. Если Deezer не дал фото — используем заглушку с первой буквой
             if (!finalAvatarUrl) {
                 finalAvatarUrl = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ffcc00'/%3E%3Ctext x='50' y='67' font-size='40' text-anchor='middle' fill='white' font-weight='bold'%3E${q.charAt(0).toUpperCase()}%3C/text%3E%3C/svg%3E`;
             }
@@ -2331,16 +2308,6 @@
                     </div>
                     ${renderAlbumsFromTracks(q)}
                     ${tracksPreviewHtml}
-                    <div class="ai-fact-card">
-                        <div class="ai-fact-header">
-                            <div class="ai-fact-icon"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#ffcc00" fill="none"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/></svg></div>
-                            <div>
-                                <div class="ai-fact-label">ИИ ФАКТ</div>
-                                <div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div>
-                                <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">🔄 Новый факт</button>
-                            </div>
-                        </div>
-                    </div>
                     <div class="section-title">СЛУШАТЬ ПОЛНОСТЬЮ</div>
                     <div class="platform-buttons">
                         <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -2349,7 +2316,6 @@
                     ${bioHtml}
                     <button class="search-btn" style="margin-top: 16px;" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
                     
-                    <!-- ===== НОВЫЕ КНОПКИ ДЛЯ ОТСЛЕЖИВАНИЯ РЕЛИЗОВ ===== -->
                     <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
                         <button class="search-btn" style="flex: 1; background: #ff6b6b; padding: 12px 16px; border: none; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;" onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(q)}&type=artists')">🆕 Новинки</button>
                         <button class="search-btn" style="flex: 1; background: #4a6cf7; padding: 12px 16px; border: none; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;" onclick="tg.openLink('https://www.google.com/search?q=${encodeURIComponent(q + ' новый альбом дата выхода')}')">🔍 Альбомы</button>
@@ -2376,12 +2342,6 @@
             
             loadInvertedState(q);
         }
-        
-        window.refreshFact = function(artistName) {
-            const newFact = getFact(artistName);
-            const factTextDiv = document.getElementById('aiFactText');
-            if (factTextDiv) factTextDiv.innerHTML = escapeHtml(newFact);
-        };
         
         const doSearchBtn = document.getElementById('doSearchBtn');
         if (doSearchBtn) doSearchBtn.onclick = search;
@@ -2420,21 +2380,6 @@
         
         const startGameBtn = document.getElementById('startGameBtn');
         if (startGameBtn) startGameBtn.onclick = startGame;
-
-        async function genCover(p) {
-            const div = document.getElementById('aiResult');
-            div.innerHTML = '<div style="text-align:center; padding:20px;">🎨 Генерация...</div>';
-            const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(p)}?width=512&height=512&nologo=true`;
-            const img = new Image();
-            img.onload = () => { div.innerHTML = `<div><img src="${url}" class="ai-cover-img"><div style="text-align:center; margin:12px;">${escapeHtml(p)}</div><button onclick="downloadImg('${url}')" class="search-btn" style="margin-top:12px;">💾 Скачать</button></div>`; };
-            img.onerror = () => div.innerHTML = '<div style="text-align:center; padding:40px;">❌ Ошибка генерации</div>';
-            img.src = url;
-        }
-        
-        window.downloadImg = (url) => { const a = document.createElement('a'); a.href = url; a.download = `cover_${Date.now()}.jpg`; a.click(); showNote('Скачивание начато'); };
-        
-        const generateBtn = document.getElementById('generateAIBtn');
-        if (generateBtn) generateBtn.onclick = () => { const p = document.getElementById('aiPrompt').value.trim(); if (p) genCover(p); };
 
         async function askBot(q) {
             const low = q.toLowerCase();
@@ -2565,7 +2510,6 @@
             }
         }
 
-        // ========== ЖЁЛТО-БЕЛЫЕ + ПРОЗРАЧНЫЕ СПЕЦИАЛЬНЫЕ ОБОИ ==========
         const yellowWhiteWallpapers = {
             gold_dust: {
                 name: 'Золотая пыль',
@@ -2898,7 +2842,6 @@
             };
         });
 
-        // ========== ПЕРЕКЛЮЧЕНИЕ ТЁМНОЙ ТЕМЫ ==========
         const toggleThemeBtnElem = document.getElementById('toggleThemeBtn');
         if (toggleThemeBtnElem) {
             toggleThemeBtnElem.onclick = () => {
@@ -2909,7 +2852,6 @@
                 showNote(isDark ? '🌙 Тёмная тема включена' : '☀️ Светлая тема включена');
             };
             
-            // Загружаем сохранённую тему
             const savedTheme = localStorage.getItem('lemonde_theme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-theme');
@@ -2917,8 +2859,6 @@
             }
         }
 
-        // ========== ПОГОДА В ПРАВОМ ВЕРХНЕМ УГЛУ (ТОЛЬКО НА ГЛАВНОМ МЕНЮ) ==========
-        // Функция для показа тестовой погоды
         function setDefaultWeather() {
             const iconEl = document.getElementById('weatherIcon');
             const tempEl = document.getElementById('weatherTemp');
@@ -2939,10 +2879,8 @@
             
             if (!widget) return;
             
-            // Сразу показываем тестовую погоду
             setDefaultWeather();
             
-            // Пробуем получить реальную геолокацию
             if (!navigator.geolocation) {
                 return;
             }
@@ -2953,7 +2891,6 @@
                     const lon = position.coords.longitude;
                     
                     try {
-                        // Определяем город
                         const cityUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ru`;
                         const cityResponse = await fetch(cityUrl);
                         const cityData = await cityResponse.json();
@@ -2968,7 +2905,6 @@
                         }
                         if (cityEl) cityEl.textContent = cityName;
                         
-                        // Получаем реальную погоду
                         const apiKey = 'bd5e378503939ddaee76f12ad7a97608';
                         const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=ru`;
                         const weatherResponse = await fetch(weatherUrl);
@@ -3006,10 +2942,7 @@
             );
         }
         
-        // Запускаем погоду при загрузке
         setTimeout(updateWeather, 500);
-        
-        // Обновляем погоду каждые 10 минут
         setInterval(updateWeather, 600000);
 
         const menuButton = document.getElementById('menuButton');
@@ -3031,31 +2964,6 @@
             vBtn.onclick = () => recognition.start();
         } else if (vBtn) vBtn.style.opacity = '0.5';
 
-        const buttonColorPicker = document.getElementById('buttonColorPicker');
-        if (buttonColorPicker) {
-            buttonColorPicker.onchange = (e) => {
-                const color = e.target.value;
-                const style = document.createElement('style');
-                style.id = 'dynamic-button-style';
-                style.textContent = `
-                    .search-btn, .preview-track-item button, .random-artist-link, .platform-btn.yandex-btn, .mood-btn[data-mood="happy"] {
-                        background: ${color} !important;
-                    }
-                `;
-                const oldStyle = document.getElementById('dynamic-button-style');
-                if (oldStyle) oldStyle.remove();
-                document.head.appendChild(style);
-                localStorage.setItem('button_color', color);
-                showNote('🎨 Цвет кнопок изменён');
-            };
-            
-            const savedColor = localStorage.getItem('button_color');
-            if (savedColor) {
-                buttonColorPicker.value = savedColor;
-                buttonColorPicker.onchange({ target: buttonColorPicker });
-            }
-        }
-
         loadAppearanceFixed();
         loadSavedYellowWallpaper();
         loadPopular();
@@ -3066,7 +2974,6 @@
         initBottomTabBar();
         initProfile();
         
-        // Показываем погоду только на главном меню
         document.body.classList.add('menu-visible');
         
         console.log('LE MONDE MUSIC загружен!');
