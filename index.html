@@ -68,7 +68,6 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* ========== ГЛАВНОЕ МЕНЮ - 3x3 ========== */
         .menu-container {
             position: fixed;
             top: 0;
@@ -157,7 +156,6 @@
             height: 22px;
         }
 
-        /* ========== ПОГОДА В ПРАВОМ ВЕРХНЕМ УГЛУ ========== */
         .weather-widget {
             position: fixed;
             top: 16px;
@@ -630,7 +628,6 @@
             padding-bottom: 80px;
         }
 
-        /* ========== СТИЛИ ДЛЯ ЧАРТОВ ========== */
         .chart-item {
             display: flex;
             align-items: center;
@@ -664,7 +661,6 @@
             .bio-section { max-height: 200px; }
         }
 
-        /* ========== ТЁМНАЯ ТЕМА ========== */
         body.dark-theme {
             background: #0a0a0a !important;
         }
@@ -843,7 +839,6 @@
 </head>
 <body>
 
-    <!-- ========== ЗАСТАВКА ========== -->
     <div id="splashScreen" style="
         position: fixed;
         top: 0;
@@ -884,7 +879,6 @@
         <span class="weather-city" id="weatherCity">Москва</span>
     </div>
 
-    <!-- ========== ГЛАВНОЕ МЕНЮ ========== -->
     <div class="menu-container" id="menuContainer">
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
@@ -926,7 +920,6 @@
         </div>
     </div>
 
-    <!-- ========== СТРАНИЦЫ ========== -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -1724,50 +1717,98 @@
             listContainer.innerHTML = venues.map(venue => `<div onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')" style="background: rgba(0,0,0,0.03); border-radius: 20px; padding: 12px; margin-bottom: 8px; cursor: pointer;"><div style="font-weight: 500;">🎤 ${escapeHtml(venue.name)}</div><div style="font-size: 11px; opacity: 0.6;">📍 ${escapeHtml(venue.address)}</div><div style="font-size: 11px; opacity: 0.6;">🚇 ${escapeHtml(venue.metro)}</div></div>`).join('');
         }
 
-        // ========== ЗАГРУЗКА ЧАРТОВ ИЗ DEEZER ==========
+        // ========== ОБНОВЛЁННАЯ ЗАГРУЗКА ЧАРТОВ (ПРОКСИ + МОК-ДАННЫЕ) ==========
         async function loadCharts() {
+            const container = document.getElementById('chartsContent');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <div style="text-align:center; padding:20px; color:rgba(0,0,0,0.4);">
+                    🏆 Загрузка чартов...
+                </div>
+            `;
+            
             try {
-                const response = await fetch('https://api.deezer.com/chart/0/tracks?limit=10');
+                // Пробуем через прокси
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const deezerUrl = 'https://api.deezer.com/chart/0/tracks?limit=10';
+                const response = await fetch(proxyUrl + encodeURIComponent(deezerUrl));
+                
+                if (!response.ok) throw new Error('Network error');
                 const data = await response.json();
-                const container = document.getElementById('chartsContent');
-                if (!container) return;
                 
                 if (!data.data || data.data.length === 0) {
-                    container.innerHTML = `
-                        <div style="text-align:center; padding:20px; color:rgba(0,0,0,0.4);">
-                            ❌ Не удалось загрузить чарты
-                        </div>
-                    `;
-                    return;
+                    throw new Error('No data');
                 }
                 
-                let html = '<div class="section-title">🏆 ТОП-10 ТРЕКОВ</div>';
-                data.data.forEach((track, i) => {
-                    const artistName = track.artist?.name || 'Unknown';
-                    html += `
-                        <div class="chart-item">
-                            <div class="chart-number">#${i+1}</div>
-                            <div class="chart-info">
-                                <div class="chart-title">${escapeHtml(track.title)}</div>
-                                <div class="chart-artist">${escapeHtml(artistName)}</div>
-                            </div>
-                            <button onclick="tg.openLink('${track.link || `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' ' + track.title)}`}')" style="background: #ffcc00; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 600; cursor: pointer;">▶️</button>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
+                renderCharts(data.data, container, false);
             } catch(e) {
-                console.error('Charts error:', e);
-                const container = document.getElementById('chartsContent');
-                if (container) {
-                    container.innerHTML = `
-                        <div style="text-align:center; padding:20px; color:rgba(0,0,0,0.4);">
-                            ❌ Ошибка загрузки чартов<br>
-                            <button onclick="loadCharts()" style="margin-top: 12px; background: #ffcc00; border: none; padding: 10px 24px; border-radius: 30px; font-weight: 600; cursor: pointer;">🔄 Повторить</button>
-                        </div>
-                    `;
+                console.error('Charts proxy error:', e);
+                // Пробуем без прокси
+                try {
+                    const response = await fetch('https://api.deezer.com/chart/0/tracks?limit=10');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.data && data.data.length > 0) {
+                            renderCharts(data.data, container, false);
+                            return;
+                        }
+                    }
+                    throw new Error('Direct fetch failed');
+                } catch(e2) {
+                    console.error('Charts direct error:', e2);
+                    // Показываем мок-данные
+                    renderMockCharts(container);
                 }
             }
+        }
+
+        function renderCharts(data, container, isMock = false) {
+            let html = `<div class="section-title">🏆 ${isMock ? 'ПОПУЛЯРНЫЕ ТРЕКИ' : 'ТОП-10 ТРЕКОВ'}</div>`;
+            
+            data.slice(0, 10).forEach((track, i) => {
+                const artistName = track.artist?.name || 'Unknown';
+                const trackTitle = track.title || 'Без названия';
+                const trackLink = track.link || `https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' ' + trackTitle)}`;
+                
+                html += `
+                    <div class="chart-item">
+                        <div class="chart-number">#${i+1}</div>
+                        <div class="chart-info">
+                            <div class="chart-title">${escapeHtml(trackTitle)}</div>
+                            <div class="chart-artist">${escapeHtml(artistName)}</div>
+                        </div>
+                        <button onclick="tg.openLink('${trackLink}')" style="background: #ffcc00; border: none; padding: 8px 16px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">▶️</button>
+                    </div>
+                `;
+            });
+            
+            if (isMock) {
+                html += `
+                    <div style="text-align:center; font-size:11px; color:rgba(0,0,0,0.4); margin-top:12px; padding: 8px; background: rgba(255,204,0,0.1); border-radius: 12px;">
+                        ⚠️ Загружены локальные данные (офлайн-режим)
+                        <button onclick="loadCharts()" style="margin-left: 8px; background: #ffcc00; border: none; padding: 4px 12px; border-radius: 20px; font-weight: 600; cursor: pointer;">🔄 Обновить</button>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function renderMockCharts(container) {
+            const mockData = [
+                { title: "Останься", artist: { name: "Асия" } },
+                { title: "Believer", artist: { name: "Imagine Dragons" } },
+                { title: "Группа крови", artist: { name: "Кино" } },
+                { title: "Cadillac", artist: { name: "Моргенштерн" } },
+                { title: "Искала", artist: { name: "Земфира" } },
+                { title: "Radioactive", artist: { name: "Imagine Dragons" } },
+                { title: "Твой поцелуй", artist: { name: "Асия" } },
+                { title: "Звезда по имени Солнце", artist: { name: "Кино" } },
+                { title: "El Problema", artist: { name: "Моргенштерн" } },
+                { title: "Du Hast", artist: { name: "Rammstein" } }
+            ];
+            renderCharts(mockData, container, true);
         }
 
         const menu = document.getElementById('menuContainer');
