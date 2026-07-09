@@ -1717,7 +1717,7 @@
             listContainer.innerHTML = venues.map(venue => `<div onclick="openYandexMap(${venue.lat}, ${venue.lng}, '${escapeHtml(venue.name)}')" style="background: rgba(0,0,0,0.03); border-radius: 20px; padding: 12px; margin-bottom: 8px; cursor: pointer;"><div style="font-weight: 500;">🎤 ${escapeHtml(venue.name)}</div><div style="font-size: 11px; opacity: 0.6;">📍 ${escapeHtml(venue.address)}</div><div style="font-size: 11px; opacity: 0.6;">🚇 ${escapeHtml(venue.metro)}</div></div>`).join('');
         }
 
-        // ========== ОБНОВЛЁННАЯ ЗАГРУЗКА ЧАРТОВ (ПРОКСИ + МОК-ДАННЫЕ) ==========
+        // ========== ЗАГРУЗКА ЧАРТОВ ==========
         async function loadCharts() {
             const container = document.getElementById('chartsContent');
             if (!container) return;
@@ -1729,7 +1729,6 @@
             `;
             
             try {
-                // Пробуем через прокси
                 const proxyUrl = 'https://api.allorigins.win/raw?url=';
                 const deezerUrl = 'https://api.deezer.com/chart/0/tracks?limit=10';
                 const response = await fetch(proxyUrl + encodeURIComponent(deezerUrl));
@@ -1744,7 +1743,6 @@
                 renderCharts(data.data, container, false);
             } catch(e) {
                 console.error('Charts proxy error:', e);
-                // Пробуем без прокси
                 try {
                     const response = await fetch('https://api.deezer.com/chart/0/tracks?limit=10');
                     if (response.ok) {
@@ -1757,7 +1755,6 @@
                     throw new Error('Direct fetch failed');
                 } catch(e2) {
                     console.error('Charts direct error:', e2);
-                    // Показываем мок-данные
                     renderMockCharts(container);
                 }
             }
@@ -3010,7 +3007,7 @@
         loadPopular();
         updateTotal();
         loadQuick();
-        showPage(pages.music, 'music');
+        showMenu(); // ← ОТКРЫВАЕМ ГЛАВНОЕ МЕНЮ ВМЕСТО МУЗЫКИ
         initYellowWallpaperHandlers();
         initBottomTabBar();
         initProfile();
