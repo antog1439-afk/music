@@ -3659,7 +3659,7 @@
         }
 
         // =============================================================
-        // 26. KINO — ОСНОВНАЯ ЛОГИКА (С ПАРАМЕТРАМИ И ФИЛЬТРАМИ)
+        // 26. KINO — ОСНОВНАЯ ЛОГИКА (С ФИКСИРОВАННЫМИ ССЫЛКАМИ)
         // =============================================================
         var kinoCurrentTab = 'movies';
         var KINOPOISK_API_KEY = 'P2RCP6B-3V24Q4W-N7RQSW3-0488PH9';
@@ -3688,9 +3688,8 @@
 
         // ===== ОБРАБОТЧИКИ ПАРАМЕТРОВ =====
         document.getElementById('kinoParamsBtn').addEventListener('click', function() {
-            var modal = document.getElementById('kinoParamsModal');
-            modal.classList.add('active');
-            modal.style.display = 'flex';
+            document.getElementById('kinoParamsModal').classList.add('active');
+            document.getElementById('kinoParamsModal').style.display = 'flex';
         });
 
         document.getElementById('kinoParamsCloseBtn').addEventListener('click', function() {
@@ -3833,82 +3832,80 @@
             .then(function(data) {
                 if (!data.docs || data.docs.length === 0) {
                     error.classList.add('active');
+                    loader.classList.remove('active');
+                    searchBtn.disabled = false;
                     return;
                 }
                 
                 // ===== ФИЛЬТРУЕМ ВРУЧНУЮ =====
                 var filteredMovies = data.docs;
-                var filterApplied = false;
                 var filterInfo = [];
                 
                 // Фильтр по году
                 if (searchYear) {
-                    filterApplied = true;
-                    filterInfo.push(searchYear);
                     filteredMovies = filteredMovies.filter(function(movie) {
                         return movie.year === searchYear;
                     });
+                    if (filteredMovies.length > 0) filterInfo.push(searchYear);
                 }
                 
                 // Фильтр по стране
                 if (searchCountry && filteredMovies.length > 0) {
-                    filterApplied = true;
-                    filterInfo.push(searchCountry);
-                    filteredMovies = filteredMovies.filter(function(movie) {
+                    var countryFiltered = filteredMovies.filter(function(movie) {
                         if (!movie.countries) return false;
                         return movie.countries.some(function(c) {
                             return c.name && c.name.toLowerCase().includes(searchCountry.toLowerCase());
                         });
                     });
+                    if (countryFiltered.length > 0) {
+                        filteredMovies = countryFiltered;
+                        filterInfo.push(searchCountry);
+                    }
                 }
                 
-                // Фильтр по актёру (через persons)
+                // Фильтр по актёру
                 if (searchActor && filteredMovies.length > 0) {
-                    filterApplied = true;
-                    filterInfo.push('актёр: ' + searchActor);
-                    
-                    var moviesWithActor = [];
                     var promises = filteredMovies.map(function(movie) {
                         var detailUrl = 'https://api.poiskkino.dev/v1.4/movie/' + movie.id;
-                        var cleanKeyLocal = KINOPOISK_API_KEY.replace(/[^A-Za-z0-9\-]/g, '');
                         return fetch(detailUrl, {
                             method: 'GET',
                             headers: {
-                                'X-API-KEY': cleanKeyLocal,
+                                'X-API-KEY': cleanKey,
                                 'Content-Type': 'application/json'
                             }
                         })
                         .then(function(res) {
-                            if (!res.ok) return null;
-                            return res.json();
-                        })
-                        .then(function(detail) {
-                            if (!detail || !detail.persons) return null;
-                            var hasActor = detail.persons.some(function(p) {
-                                var name = (p.name || p.enName || '').toLowerCase();
-                                return name.includes(searchActor.toLowerCase());
+                            if (!res.ok) return { movie: movie, hasActor: false };
+                            return res.json().then(function(detail) {
+                                if (!detail || !detail.persons) return { movie: movie, hasActor: false };
+                                var hasActor = detail.persons.some(function(p) {
+                                    var name = (p.name || p.enName || '').toLowerCase();
+                                    return name.includes(searchActor.toLowerCase());
+                                });
+                                return { movie: movie, hasActor: hasActor };
                             });
-                            if (hasActor) {
-                                moviesWithActor.push(movie);
-                            }
-                            return null;
                         })
-                        .catch(function() { return null; });
+                        .catch(function() {
+                            return { movie: movie, hasActor: false };
+                        });
                     });
                     
-                    Promise.all(promises).then(function() {
-                        if (moviesWithActor.length > 0) {
-                            filteredMovies = moviesWithActor;
+                    Promise.all(promises).then(function(results) {
+                        var actorFiltered = results.filter(function(r) { return r.hasActor; }).map(function(r) { return r.movie; });
+                        
+                        if (actorFiltered.length > 0) {
+                            filteredMovies = actorFiltered;
+                            filterInfo.push('актёр: ' + searchActor);
                         } else {
-                            filteredMovies = data.docs;
                             tg.showAlert('⚠️ Фильмы с актёром "' + searchActor + '" не найдены, показываем все результаты');
                         }
-                        finishSearch(filteredMovies, filterInfo, filterApplied, searchYear, searchCountry, searchActor);
+                        
+                        finishKinoSearch(filteredMovies, filterInfo);
                     });
                     return;
                 }
                 
-                finishSearch(filteredMovies, filterInfo, filterApplied, searchYear, searchCountry, searchActor);
+                finishKinoSearch(filteredMovies, filterInfo);
             })
             .catch(function(err) {
                 console.error('Ошибка:', err);
@@ -3921,45 +3918,7 @@
             });
         }
 
-        function finishSearch(filteredMovies, filterInfo, filterApplied, searchYear, searchCountry, searchActor) {
-            if (filteredMovies.length === 0 && filterApplied) {
-                var cleanQuery = document.getElementById('kinoSearchInput').value.trim()
-                    .replace(/\b(19\d{2}|20\d{2})\b/g, '')
-                    .replace(/\b(Россия|США|Франция|Германия|Великобритания|Китай|Япония|Корея|Италия|Испания|Канада|Австралия|Индия|Бразилия|Мексика)\b/gi, '')
-                    .trim() || document.getElementById('kinoSearchInput').value.trim();
-                
-                var url = 'https://api.poiskkino.dev/v1.4/movie/search?query=' + encodeURIComponent(cleanQuery);
-                if (kinoCurrentTab === 'series') {
-                    url += '&type=series';
-                }
-                var cleanKey = KINOPOISK_API_KEY.replace(/[^A-Za-z0-9\-]/g, '');
-                fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'X-API-KEY': cleanKey,
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(function(response) {
-                    if (!response.ok) throw new Error('Ошибка');
-                    return response.json();
-                })
-                .then(function(data) {
-                    if (data.docs && data.docs.length > 0) {
-                        displayKinoMovies(data.docs);
-                        var msg = '⚠️ По вашему запросу ничего не найдено, показаны все результаты';
-                        document.getElementById('kinoResultsCount').textContent = data.docs.length + ' ' + (kinoCurrentTab === 'series' ? 'сериалов' : 'фильмов') + ' — ' + msg;
-                        tg.showAlert(msg);
-                    } else {
-                        document.getElementById('kinoError').classList.add('active');
-                    }
-                })
-                .catch(function() {
-                    document.getElementById('kinoError').classList.add('active');
-                });
-                return;
-            }
-            
+        function finishKinoSearch(filteredMovies, filterInfo) {
             if (filteredMovies.length === 0) {
                 document.getElementById('kinoError').classList.add('active');
                 return;
@@ -3968,27 +3927,27 @@
             displayKinoMovies(filteredMovies);
             
             var paramsText = '';
-            if (searchYear) paramsText += ' ' + searchYear;
-            if (searchCountry) paramsText += ' · ' + searchCountry;
-            if (searchActor) paramsText += ' · актёр: ' + searchActor;
-            if (paramsText) {
-                document.getElementById('kinoResultsCount').textContent = filteredMovies.length + ' ' + (kinoCurrentTab === 'series' ? 'сериалов' : 'фильмов') + ' ' + paramsText;
+            if (filterInfo.length > 0) {
+                paramsText = ' · ' + filterInfo.join(' · ');
             }
+            var label = kinoCurrentTab === 'series' ? 'сериалов' : 'фильмов';
+            document.getElementById('kinoResultsCount').textContent = filteredMovies.length + ' ' + label + paramsText;
         }
 
+        // ===== ОТОБРАЖЕНИЕ С ПРАВИЛЬНЫМИ ССЫЛКАМИ =====
         function displayKinoMovies(movies) {
             var results = document.getElementById('kinoResults');
             var movieGrid = document.getElementById('kinoMovieGrid');
-            var resultsCount = document.getElementById('kinoResultsCount');
 
             results.classList.add('active');
-            var label = kinoCurrentTab === 'series' ? 'сериалов' : 'фильмов';
-            resultsCount.textContent = movies.length + ' ' + label;
             movieGrid.innerHTML = '';
 
             for (var i = 0; i < movies.length; i++) {
                 var movie = movies[i];
-                
+                var card = document.createElement('div');
+                card.className = 'kino-movie-card';
+                card.style.animationDelay = (0.03 + i * 0.03) + 's';
+
                 var movieId = movie.id;
                 var title = movie.name || movie.alternativeName || 'без названия';
                 var year = movie.year || '';
@@ -3997,11 +3956,9 @@
                 var countries = movie.countries ? movie.countries.map(function(c) { return c.name; }).slice(0, 2).join(', ') : '—';
                 var description = movie.description || movie.shortDescription || '';
                 var poster = movie.poster && movie.poster.url ? movie.poster.url : null;
-                var link = 'https://www.kinopoisk.ru/film/' + movieId + '/';
-
-                var card = document.createElement('div');
-                card.className = 'kino-movie-card';
-                card.style.animationDelay = (0.03 + i * 0.03) + 's';
+                
+                // ===== ПРАВИЛЬНАЯ ССЫЛКА С ID =====
+                var correctLink = 'https://www.kinopoisk.ru/film/' + movieId + '/';
 
                 var ratingClass = '';
                 var ratingText = '—';
@@ -4048,12 +4005,16 @@
                         '</div>' +
                     '</div>';
 
-                card.addEventListener('click', function() {
-                    tg.openLink(link);
-                });
+                // ===== КЛИК — ОТКРЫВАЕМ СТРАНИЦУ С ПРАВИЛЬНЫМ ID =====
+                (function(link, cardElement) {
+                    cardElement.addEventListener('click', function(e) {
+                        tg.openLink(link);
+                    });
+                })(correctLink, card);
 
                 movieGrid.appendChild(card);
 
+                // ===== ЗАГРУЗКА АКТЁРОВ =====
                 (function(movieId, cardElement) {
                     var cleanKey = KINOPOISK_API_KEY.replace(/[^A-Za-z0-9\-]/g, '');
                     var detailUrl = 'https://api.poiskkino.dev/v1.4/movie/' + movieId;
@@ -4297,8 +4258,8 @@
         document.body.classList.add('menu-visible');
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 2.4.0 — улучшенная фильтрация по актёру, году и стране!');
-        console.log('✦ Теперь поиск работает максимально точно');
+        console.log('✦ Версия 2.5.0 — исправлены ссылки на фильмы!');
+        console.log('✦ Каждая карточка ведёт на свой фильм');
     </script>
 </body>
 </html>
