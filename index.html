@@ -1609,6 +1609,62 @@
             border: 1px solid rgba(255,255,255,0.04);
             font-size: 9px;
         }
+
+        /* ===== СТИЛЬ ДЛЯ AI ФАКТА ===== */
+        .ai-fact-card {
+            background: rgba(255,204,0,0.08);
+            border-left: 2px solid #ffcc00;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .ai-fact-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .ai-fact-icon {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .ai-fact-label {
+            font-size: 10px;
+            color: #ffcc00;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .ai-fact-text {
+            font-size: 14px;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+        .ai-fact-refresh {
+            background: rgba(255,204,0,0.15);
+            border: 1px solid rgba(255,204,0,0.3);
+            padding: 4px 14px;
+            border-radius: 40px;
+            color: #1a1a1a;
+            font-size: 11px;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        .ai-fact-refresh:hover {
+            background: rgba(255,204,0,0.25);
+        }
+        .ai-fact-refresh:active {
+            transform: scale(0.95);
+        }
+
+        body.dark-theme .ai-fact-card {
+            background: rgba(255,204,0,0.1);
+        }
+        body.dark-theme .ai-fact-text {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -2495,7 +2551,7 @@
         };
         
         // =============================================================
-        // 7. ФАКТЫ
+        // 7. ФАКТЫ (ЦИТАТЫ О МУЗЫКАНТАХ)
         // =============================================================
         const facts = {
             "асия": ["Настоящее имя — Анастасия Алентьева", "Родилась 1 сентября 1997", "«Останься» — 100+ млн прослушиваний", "Училась в Институте современного искусства"],
@@ -2505,7 +2561,7 @@
             "земфира": ["Родилась в Уфе", "Первая женщина, собравшая «Олимпийский»", "Дебютный альбом — 700 000 копий"],
             "сектор газа": ["Основана в 1987 году в Воронеже", "Лидер — Юрий Хой (Клинских)", "Культовая группа 1990-х", "Стиль: панк-рок, шансон, фолк-рок"]
         };
-        
+
         // =============================================================
         // 8. ВЕНЬЮ
         // =============================================================
@@ -2544,6 +2600,13 @@
             }
             return `🎤 ${artist} — один из самых ярких исполнителей года!`;
         }
+
+        window.refreshFact = function(artistName) {
+            const newFact = getFact(artistName);
+            const factTextDiv = document.getElementById('aiFactText');
+            if (factTextDiv) factTextDiv.innerHTML = escapeHtml(newFact);
+            showNote('🔄 Новый факт загружен!');
+        };
 
         // =============================================================
         // 10. WIKIPEDIA
@@ -3223,7 +3286,7 @@
         }
 
         // =============================================================
-        // 20. ПОИСК МУЗЫКИ
+        // 20. ПОИСК МУЗЫКИ (С AI ФАКТАМИ)
         // =============================================================
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
@@ -3237,6 +3300,7 @@
             const wikiBio = await getWiki(q);
             const shortBio = getShortBio(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
+            const aiFact = getFact(q);
             
             let finalAvatarUrl = null;
             
@@ -3319,6 +3383,22 @@
                     </div>
                     ${renderAlbumsFromTracks(q)}
                     ${tracksPreviewHtml}
+                    <!-- ===== AI ФАКТ (ЦИТАТА О МУЗЫКАНТЕ) ===== -->
+                    <div class="ai-fact-card">
+                        <div class="ai-fact-header">
+                            <div class="ai-fact-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" stroke="#ffcc00" fill="none">
+                                    <path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 2 4l-2 2 4 2 2 4 2-4 4-2-2-2c1-1 2-2 2-4a5 5 0 0 0-5-5z"/>
+                                    <circle cx="12" cy="7" r="1.5" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div style="flex: 1;">
+                                <div class="ai-fact-label">ИИ ФАКТ</div>
+                                <div class="ai-fact-text" id="aiFactText">${escapeHtml(aiFact)}</div>
+                                <button class="ai-fact-refresh" onclick="refreshFact('${escapeHtml(q)}')">🔄 Новый факт</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="section-title">СЛУШАТЬ ПОЛНОСТЬЮ</div>
                     <div class="platform-buttons">
                         <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
@@ -4258,7 +4338,7 @@
         document.body.classList.add('menu-visible');
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 2.5.0 — исправлены ссылки на фильмы!');
+        console.log('✦ Версия 2.5.0 — с цитатами о музыкантах!');
         console.log('✦ Каждая карточка ведёт на свой фильм');
     </script>
 </body>
