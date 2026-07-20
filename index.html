@@ -1282,16 +1282,11 @@
             font-weight: 300;
         }
 
-        /* ===== НОВЫЙ СТИЛЬ ДЛЯ АКТЁРОВ ===== */
         .kino-persons {
             margin-top: 6px;
             font-size: 11px;
             color: rgba(255, 255, 255, 0.35);
             line-height: 1.6;
-        }
-
-        .kino-persons .label {
-            color: rgba(255, 255, 255, 0.3);
         }
 
         .kino-persons .value {
@@ -1303,27 +1298,6 @@
         }
         body.dark-theme .kino-persons .value {
             color: rgba(255, 255, 255, 0.55);
-        }
-
-        .kino-movie-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            margin-top: 5px;
-            padding: 3px 0;
-            color: rgba(255, 255, 255, 0.3);
-            text-decoration: none;
-            font-size: 10.5px;
-            font-weight: 300;
-            letter-spacing: 0.6px;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid transparent;
-            align-self: flex-start;
-        }
-
-        .kino-movie-link:hover {
-            color: rgba(255, 255, 255, 0.55);
-            border-bottom-color: rgba(255, 255, 255, 0.1);
         }
 
         .kino-error {
@@ -1446,7 +1420,6 @@
             color: rgba(255,255,255,0.55);
         }
 
-        /* Стиль для страницы KINO */
         body.kino-mode #kinoPage {
             background: #0a0a0f;
         }
@@ -1729,7 +1702,7 @@
         </div>
     </div>
 
-    <!-- ===== KINO PAGE (ВСТРОЕННЫЙ KINOPOISK RUS) ===== -->
+    <!-- ===== KINO PAGE ===== -->
     <div class="fullscreen-page" id="kinoPage">
         <div class="page-header">
             <button class="back-btn" id="backFromKino"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -1944,7 +1917,7 @@
         tg.expand();
 
         // =============================================================
-        // 3. DEEZER API КЭШ
+        // 3. DEEZER API КЭШ (оставляем для музыки)
         // =============================================================
         const deezerImageCache = new Map();
 
@@ -2005,7 +1978,7 @@
         loadDeezerCache();
 
         // =============================================================
-        // 4. DEEZER TRACK PREVIEW
+        // 4. DEEZER TRACK PREVIEW (оставляем для музыки)
         // =============================================================
         const trackIdCache = new Map();
 
@@ -2144,7 +2117,7 @@
         }
 
         // =============================================================
-        // 6. ТРЕКИ
+        // 6. ТРЕКИ (оставляем для музыки)
         // =============================================================
         const tracks = [
             { track: "Останься", artist: "Асия" },
@@ -3439,7 +3412,6 @@
         // =============================================================
         // 26. ИНИЦИАЛИЗАЦИЯ
         // =============================================================
-        // Навигация по кнопкам меню
         document.getElementById('goToMusicBtn').onclick = () => { showPage(pages.music, 'music'); loadPopular(); updateActiveTabInBar('search'); };
         document.getElementById('goToGameBtn').onclick = () => { showPage(pages.game, 'game'); updateActiveTabInBar('menu'); };
         document.getElementById('goToChartsBtn').onclick = () => { showPage(pages.charts, 'charts'); loadCharts(); updateActiveTabInBar('menu'); };
@@ -3454,11 +3426,9 @@
         };
         document.getElementById('goToLyricsBtn').onclick = () => { showPage(pages.lyrics, 'lyrics'); updateActiveTabInBar('menu'); };
         
-        // Кнопка KINO — открывает встроенную страницу
         document.getElementById('goToKinoBtn').onclick = function() {
             showPage(pages.kino, 'kino');
             updateActiveTabInBar('menu');
-            // Сбрасываем состояние KINO
             document.getElementById('kinoResults').classList.remove('active');
             document.getElementById('kinoError').classList.remove('active');
             document.getElementById('kinoMovieGrid').innerHTML = '';
@@ -3468,7 +3438,6 @@
             document.getElementById('kinoSearchInput').focus();
         };
 
-        // Кнопки "Назад"
         document.getElementById('geoLocationBtn').onclick = openMyLocationOnMap;
         ['Music', 'Game', 'Charts', 'Assistant', 'Randomizer', 'Mood', 'Map', 'Lyrics', 'Profile', 'Kino'].forEach(p => {
             const btn = document.getElementById(`backFrom${p}`);
@@ -3476,7 +3445,7 @@
         });
 
         // =============================================================
-        // 27. KINO — ОБРАБОТЧИКИ (С АКТЁРАМИ И РЕЖИССЁРОМ)
+        // 27. KINO — ОСНОВНАЯ ЛОГИКА (С ПРАВИЛЬНЫМИ ID)
         // =============================================================
         var kinoCurrentTab = 'movies';
         var KINOPOISK_API_KEY = 'P2RCP6B-3V24Q4W-N7RQSW3-0488PH9';
@@ -3541,15 +3510,9 @@
                 }
             })
             .then(function(response) {
-                if (response.status === 401) {
-                    throw new Error('❌ Неверный API ключ');
-                }
-                if (response.status === 429) {
-                    throw new Error('❌ Слишком много запросов');
-                }
-                if (!response.ok) {
-                    throw new Error('Ошибка ' + response.status);
-                }
+                if (response.status === 401) throw new Error('❌ Неверный API ключ');
+                if (response.status === 429) throw new Error('❌ Слишком много запросов');
+                if (!response.ok) throw new Error('Ошибка ' + response.status);
                 return response.json();
             })
             .then(function(data) {
@@ -3582,10 +3545,9 @@
 
             for (var i = 0; i < movies.length; i++) {
                 var movie = movies[i];
-                var card = document.createElement('div');
-                card.className = 'kino-movie-card';
-                card.style.animationDelay = (0.03 + i * 0.03) + 's';
-
+                
+                // ===== ГЛАВНОЕ: БЕРЁМ ID ПРЯМО ИЗ ДАННЫХ =====
+                var movieId = movie.id;
                 var title = movie.name || movie.alternativeName || 'без названия';
                 var year = movie.year || '';
                 var rating = movie.rating && movie.rating.kp ? movie.rating.kp : null;
@@ -3593,34 +3555,13 @@
                 var countries = movie.countries ? movie.countries.map(function(c) { return c.name; }).slice(0, 2).join(', ') : '—';
                 var description = movie.description || movie.shortDescription || '';
                 var poster = movie.poster && movie.poster.url ? movie.poster.url : null;
-                var link = 'https://www.kinopoisk.ru/film/' + movie.id + '/';
-
-                // ===== АКТЁРЫ И РЕЖИССЁР =====
-                var director = '—';
-                var actors = '—';
                 
-                if (movie.persons && movie.persons.length > 0) {
-                    // Режиссёр
-                    var directorPerson = movie.persons.find(function(p) { 
-                        return p.enProfession === 'director' || p.profession === 'режиссер';
-                    });
-                    if (directorPerson) {
-                        director = directorPerson.name || directorPerson.enName || '—';
-                    }
-                    
-                    // Актёры (первые 4)
-                    var actorPersons = movie.persons.filter(function(p) { 
-                        return p.enProfession === 'actor' || p.profession === 'актер';
-                    });
-                    if (actorPersons.length > 0) {
-                        actors = actorPersons.slice(0, 4).map(function(p) { 
-                            return p.name || p.enName || '—'; 
-                        }).join(', ');
-                        if (actorPersons.length > 4) {
-                            actors += '...';
-                        }
-                    }
-                }
+                // ===== ССЫЛКА С ПРАВИЛЬНЫМ ID =====
+                var link = 'https://www.kinopoisk.ru/film/' + movieId + '/';
+
+                var card = document.createElement('div');
+                card.className = 'kino-movie-card';
+                card.style.animationDelay = (0.03 + i * 0.03) + 's';
 
                 var ratingClass = '';
                 var ratingText = '—';
@@ -3646,17 +3587,11 @@
                 var yearHtml = year ? '<span class="year">' + year + '</span>' : '';
                 var descHtml = description ? '<div class="kino-movie-desc">' + description + '</div>' : '';
 
-                // ===== БЛОК С АКТЁРАМИ И РЕЖИССЁРОМ =====
-                var personsHtml = '';
-                if (director !== '—' || actors !== '—') {
-                    personsHtml = `
-                        <div class="kino-persons">
-                            ${director !== '—' ? '<span>🎬 Режиссёр: <span class="value">' + director + '</span></span>' : ''}
-                            ${director !== '—' && actors !== '—' ? '<br>' : ''}
-                            ${actors !== '—' ? '<span>🎭 В ролях: <span class="value">' + actors + '</span></span>' : ''}
-                        </div>
-                    `;
-                }
+                var personsHtml = `
+                    <div class="kino-persons" id="persons_${movieId}">
+                        <span style="color: rgba(255,255,255,0.3);">⏳ Загрузка данных...</span>
+                    </div>
+                `;
 
                 card.innerHTML =
                     posterHtml +
@@ -3673,12 +3608,81 @@
                         '</div>' +
                     '</div>';
 
-                // При клике на карточку — сразу открываем страницу фильма
+                // ===== КЛИК — ОТКРЫВАЕМ СТРАНИЦУ С ПРАВИЛЬНЫМ ID =====
                 card.addEventListener('click', function() {
                     tg.openLink(link);
                 });
 
                 movieGrid.appendChild(card);
+
+                // ===== ЗАГРУЗКА АКТЁРОВ =====
+                (function(movieId, cardElement) {
+                    var cleanKey = KINOPOISK_API_KEY.replace(/[^A-Za-z0-9\-]/g, '');
+                    var detailUrl = 'https://api.poiskkino.dev/v1.4/movie/' + movieId;
+                    
+                    fetch(detailUrl, {
+                        method: 'GET',
+                        headers: {
+                            'X-API-KEY': cleanKey,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(function(response) {
+                        if (!response.ok) throw new Error('Ошибка загрузки деталей');
+                        return response.json();
+                    })
+                    .then(function(detailData) {
+                        var director = '—';
+                        var actors = '—';
+                        
+                        if (detailData.persons && detailData.persons.length > 0) {
+                            var directorPerson = detailData.persons.find(function(p) { 
+                                return p.enProfession === 'director' || p.profession === 'режиссер';
+                            });
+                            if (directorPerson) {
+                                director = directorPerson.name || directorPerson.enName || '—';
+                            }
+                            
+                            var actorPersons = detailData.persons.filter(function(p) { 
+                                return p.enProfession === 'actor' || p.profession === 'актер';
+                            });
+                            if (actorPersons.length > 0) {
+                                actors = actorPersons.slice(0, 4).map(function(p) { 
+                                    return p.name || p.enName || '—'; 
+                                }).join(', ');
+                                if (actorPersons.length > 4) {
+                                    actors += '...';
+                                }
+                            }
+                        }
+                        
+                        var personsContainer = cardElement.querySelector('#persons_' + movieId);
+                        if (personsContainer) {
+                            var html = '';
+                            if (director !== '—' || actors !== '—') {
+                                if (director !== '—') {
+                                    html += '<span>🎬 Режиссёр: <span class="value">' + director + '</span></span>';
+                                }
+                                if (director !== '—' && actors !== '—') {
+                                    html += '<br>';
+                                }
+                                if (actors !== '—') {
+                                    html += '<span>🎭 В ролях: <span class="value">' + actors + '</span></span>';
+                                }
+                            } else {
+                                html = '<span style="color: rgba(255,255,255,0.2);">🎬 Информация отсутствует</span>';
+                            }
+                            personsContainer.innerHTML = html;
+                        }
+                    })
+                    .catch(function(err) {
+                        console.error('Ошибка загрузки деталей для фильма ' + movieId + ':', err);
+                        var personsContainer = cardElement.querySelector('#persons_' + movieId);
+                        if (personsContainer) {
+                            personsContainer.innerHTML = '<span style="color: rgba(255,255,255,0.2);">🎬 Ошибка загрузки</span>';
+                        }
+                    });
+                })(movieId, card);
             }
         }
 
@@ -3689,7 +3693,6 @@
             }
         });
 
-        // Инициализация KINO
         switchKinoTab('movies');
 
         // =============================================================
@@ -3819,8 +3822,8 @@
         document.body.classList.add('menu-visible');
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 2.1.0 — добавлены актёры и режиссёр!');
-        console.log('✦ Музыка + Фильмы + Сериалы');
+        console.log('✦ Версия 2.1.0 — исправлены ID фильмов');
+        console.log('✦ Теперь при клике открывается правильный фильм!');
     </script>
 </body>
 </html>
