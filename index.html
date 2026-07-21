@@ -166,7 +166,6 @@
             border-color: rgba(255,204,0,0.5);
         }
 
-        /* MUSIC карточка */
         .start-card-music {
             background: linear-gradient(145deg, rgba(255,204,0,0.12), rgba(255,204,0,0.04));
             border-color: rgba(255,204,0,0.2);
@@ -177,7 +176,6 @@
             box-shadow: 0 12px 40px rgba(255,204,0,0.15);
         }
 
-        /* KINOPOISK карточка */
         .start-card-kino {
             background: linear-gradient(145deg, rgba(255,107,107,0.12), rgba(255,107,107,0.04));
             border-color: rgba(255,107,107,0.2);
@@ -188,7 +186,6 @@
             box-shadow: 0 12px 40px rgba(255,107,107,0.15);
         }
 
-        /* ===== КРАСИВЫЕ ИКОНКИ ===== */
         .start-card-icon {
             width: 56px;
             height: 56px;
@@ -267,7 +264,6 @@
             color: rgba(255,107,107,0.7);
         }
 
-        /* Блики на карточках */
         .start-card::after {
             content: '';
             position: absolute;
@@ -862,6 +858,7 @@
             border-bottom: none;
         }
 
+        /* ===== НИЖНЯЯ ПАНЕЛЬ ===== */
         .bottom-tab-bar {
             position: fixed;
             bottom: 16px;
@@ -878,6 +875,15 @@
             z-index: 100;
             border: 0.5px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* Скрываем панель на стартовом экране и в кинопоиске */
+        body.start-mode .bottom-tab-bar,
+        body.kino-mode .bottom-tab-bar {
+            transform: translateY(100px);
+            opacity: 0;
+            pointer-events: none;
         }
 
         .tab-item {
@@ -920,6 +926,14 @@
 
         .fullscreen-page, .menu-container {
             padding-bottom: 80px;
+        }
+
+        /* Убираем отступ на страницах где панель скрыта */
+        body.start-mode .fullscreen-page,
+        body.kino-mode .fullscreen-page,
+        body.start-mode .menu-container,
+        body.kino-mode .menu-container {
+            padding-bottom: 20px;
         }
 
         .chart-item {
@@ -4484,7 +4498,7 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.0.0 — самые красивые иконки на стартовом экране!');
+        console.log('✦ Версия 3.0.0 — нижняя панель скрыта на стартовом экране и в Кинопоиске!');
     </script>
 </body>
 </html>
