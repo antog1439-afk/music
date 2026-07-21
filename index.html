@@ -207,6 +207,7 @@
             justify-content: center;
             transition: transform 0.4s ease;
             z-index: 5;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         }
         .menu-container.hidden-menu { transform: translateX(-100%); }
         
@@ -215,23 +216,23 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
             padding: 16px;
             animation: fadeInUp 0.6s ease;
             margin: 0 auto;
         }
         
         .menu-btn {
-            background: rgba(0,0,0,0.04);
+            background: rgba(255,255,255,0.08);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(0,0,0,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 24px;
             padding: 12px 6px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .menu-btn:active { transform: scale(0.95); background: rgba(0,0,0,0.08); }
+        .menu-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.15); }
         .menu-icon {
             width: 42px;
             height: 42px;
@@ -243,13 +244,13 @@
         .menu-icon svg {
             width: 24px;
             height: 24px;
-            stroke: #1a1a1a;
+            stroke: rgba(255,255,255,0.8);
             stroke-width: 1.5;
             fill: none;
         }
         .menu-text {
             font-size: 10px;
-            color: #1a1a1a;
+            color: rgba(255,255,255,0.8);
             font-weight: 500;
         }
 
@@ -282,6 +283,25 @@
             fill: none;
             width: 22px;
             height: 22px;
+        }
+
+        body.start-mode .menu-button svg {
+            stroke: rgba(255,255,255,0.4);
+        }
+        body.kino-mode .menu-button svg {
+            stroke: rgba(255,255,255,0.4);
+        }
+        body.charts-mode .menu-button svg {
+            stroke: rgba(255,255,255,0.4);
+        }
+        body.game-mode .menu-button svg {
+            stroke: rgba(255,255,255,0.4);
+        }
+        body.assistant-mode .menu-button svg {
+            stroke: rgba(255,255,255,0.4);
+        }
+        body.map-mode .menu-button svg {
+            stroke: rgba(255,255,255,0.4);
         }
 
         .weather-widget {
@@ -347,6 +367,18 @@
             color: #1a1a1a;
             letter-spacing: -0.5px;
             flex: 1;
+        }
+
+        body.kino-mode .page-title {
+            color: #ffffff !important;
+        }
+        body.kino-mode .back-btn {
+            color: #ffffff !important;
+            background: rgba(255,255,255,0.08) !important;
+            border-color: rgba(255,255,255,0.1) !important;
+        }
+        body.kino-mode .back-btn svg {
+            stroke: #ffffff !important;
         }
 
         .glass-card {
@@ -1710,6 +1742,16 @@
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 8h8M8 12h8M8 16h4"/><circle cx="18" cy="8" r="1" fill="currentColor" stroke="none"/></svg></div>
                 <div class="menu-text">LYRICS</div>
             </div>
+            
+            <!-- ⭐ НОВАЯ КНОПКА НАЗАД НА СТАРТОВЫЙ ЭКРАН -->
+            <div class="menu-btn" id="backToStartBtn" style="background: rgba(255,204,0,0.15); border: 2px solid #ffcc00; grid-column: span 3;">
+                <div class="menu-icon">
+                    <svg viewBox="0 0 24 24" stroke="#ffcc00" fill="none">
+                        <path d="M15 18L9 12L15 6"/>
+                    </svg>
+                </div>
+                <div class="menu-text" style="color: #ffcc00; font-weight: 700; font-size: 12px;">◀ НАЗАД НА СТАРТОВЫЙ ЭКРАН</div>
+            </div>
         </div>
     </div>
 
@@ -2231,7 +2273,6 @@
         // ===== ОБРАБОТЧИКИ СТАРТОВЫХ КНОПОК =====
         document.getElementById('startMusicBtn').addEventListener('click', function() {
             showMenu();
-            // Загружаем популярных исполнителей
             loadPopular();
             updateActiveTabInBar('menu');
         });
@@ -2239,7 +2280,6 @@
         document.getElementById('startKinoBtn').addEventListener('click', function() {
             showPage(pages.kino, 'kino');
             updateActiveTabInBar('menu');
-            // Сбрасываем состояние KINO
             document.getElementById('kinoResults').classList.remove('active');
             document.getElementById('kinoError').classList.remove('active');
             document.getElementById('kinoMovieGrid').innerHTML = '';
@@ -2247,6 +2287,11 @@
             document.getElementById('kinoWelcome').style.display = 'block';
             document.getElementById('kinoSearchInput').value = '';
             document.getElementById('kinoSearchInput').focus();
+        });
+
+        // ===== КНОПКА НАЗАД В МЕНЮ =====
+        document.getElementById('backToStartBtn').addEventListener('click', function() {
+            showStartScreen();
         });
 
         // ===== КНОПКИ НАЗАД =====
@@ -4118,7 +4163,7 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 2.0.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, чартами и играми.\n\n© 2024 LE MONDE MUSIC',
+                    message: 'Версия 3.0.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, чартами и играми.\n\n© 2025 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
@@ -4283,6 +4328,7 @@
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
         console.log('✦ Версия 3.0.0 — стартовый экран с выбором раздела!');
+        console.log('✦ Добавлена кнопка НАЗАД в главное меню!');
     </script>
 </body>
 </html>
