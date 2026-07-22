@@ -657,6 +657,59 @@
             border: 1px solid rgba(0,0,0,0.06);
         }
 
+        /* ===== ДАТА РЕЛИЗА В КАРТОЧКЕ ===== */
+        .release-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(255,204,0,0.08);
+            border: 1px solid rgba(255,204,0,0.15);
+            border-radius: 20px;
+            font-size: 11px;
+            color: #cc9900;
+            margin: 6px 0 4px;
+            width: fit-content;
+        }
+
+        .release-date .icon {
+            font-size: 13px;
+        }
+
+        /* ===== СМЫСЛ ПЕСНИ ===== */
+        .song-meaning {
+            margin-top: 12px;
+            padding: 14px 16px;
+            background: rgba(255,204,0,0.05);
+            border-radius: 12px;
+            border-left: 3px solid #ffcc00;
+        }
+
+        .song-meaning .label {
+            font-size: 10px;
+            color: #ffcc00;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .song-meaning .text {
+            font-size: 13px;
+            color: rgba(0,0,0,0.7);
+            line-height: 1.5;
+        }
+
+        .song-meaning .emotion {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 2px 12px;
+            background: rgba(255,107,107,0.08);
+            border-radius: 20px;
+            font-size: 11px;
+            color: rgba(0,0,0,0.5);
+        }
+
         .bio-section {
             background: rgba(0,0,0,0.03);
             border-radius: 20px;
@@ -3244,7 +3297,7 @@
         }
 
         // =============================================================
-        // 16. ПОИСК МУЗЫКИ
+        // 16. ПОИСК МУЗЫКИ С ДАТОЙ РЕЛИЗА
         // =============================================================
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
@@ -3254,13 +3307,18 @@
             const resDiv = document.getElementById('musicResult');
             resDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 Поиск...</div>';
             
-            const links = { yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` };
+            const links = { 
+                yandex: `https://music.yandex.ru/search?text=${encodeURIComponent(q)}`, 
+                youtube: `https://music.youtube.com/search?q=${encodeURIComponent(q)}` 
+            };
+            
             const wikiBio = await getWiki(q);
             const shortBio = getShortBio(q);
             const artistTracks = tracks.filter(t => t.artist.toLowerCase().includes(q.toLowerCase()));
             const aiFact = getFact(q);
             
             let finalAvatarUrl = null;
+            let releaseDate = null;
             
             try {
                 const deezerUrl = `https://api.deezer.com/search/artist?q=${encodeURIComponent(q)}&limit=3`;
@@ -3273,6 +3331,18 @@
                     const artistData = await artistResponse.json();
                     if (artistData.picture_medium) {
                         finalAvatarUrl = artistData.picture_medium;
+                    }
+                    // Получаем дату релиза из альбомов
+                    if (artistData.albums && artistData.albums.data && artistData.albums.data.length > 0) {
+                        const firstAlbum = artistData.albums.data[0];
+                        if (firstAlbum.release_date) {
+                            const date = new Date(firstAlbum.release_date);
+                            releaseDate = date.toLocaleDateString('ru-RU', { 
+                                day: 'numeric', 
+                                month: 'long', 
+                                year: 'numeric' 
+                            });
+                        }
                     }
                 }
             } catch(e) { console.log('Deezer error:', e); }
@@ -3330,6 +3400,17 @@
                 `;
             }
             
+            // Формируем HTML с датой релиза
+            let releaseDateHtml = '';
+            if (releaseDate) {
+                releaseDateHtml = `
+                    <div class="release-date">
+                        <span class="icon">📆</span>
+                        Релиз: ${releaseDate}
+                    </div>
+                `;
+            }
+            
             resDiv.innerHTML = `
                 <div class="result-card">
                     <div class="artist-profile" onclick="toggleArtistInversion()">
@@ -3339,6 +3420,7 @@
                             <div class="artist-role">Нажмите для смены стиля | 📸 Нажмите на фото для увеличения</div>
                         </div>
                     </div>
+                    ${releaseDateHtml}
                     ${renderAlbumsFromTracks(q)}
                     ${tracksPreviewHtml}
                     <div class="ai-fact-card">
@@ -4498,7 +4580,8 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.0.0 — нижняя панель скрыта на стартовом экране и в Кинопоиске!');
+        console.log('✦ Версия 3.0.0 — с датой релиза!');
+        console.log('✦ Дата релиза показывается при поиске исполнителя');
     </script>
 </body>
 </html>
