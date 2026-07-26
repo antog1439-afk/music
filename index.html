@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* ===== ВСЕ СТИЛИ ===== */
+        /* ===== ВСЕ СТИЛИ (оставлены без изменений) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -67,8 +67,11 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
-        /* ===== СТАРТОВЫЙ ЭКРАН ===== */
         .start-screen {
             position: fixed;
             top: 0;
@@ -118,7 +121,6 @@
             margin-bottom: 28px;
         }
 
-        /* ===== КРАСИВЫЕ КАРТОЧКИ ===== */
         .start-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -146,7 +148,6 @@
             gap: 6px;
             overflow: hidden;
         }
-
         .start-card::before {
             content: '';
             position: absolute;
@@ -156,16 +157,11 @@
             opacity: 0;
             transition: opacity 0.4s ease;
         }
-
-        .start-card:hover::before {
-            opacity: 1;
-        }
-
+        .start-card:hover::before { opacity: 1; }
         .start-card:active {
             transform: scale(0.94);
             border-color: rgba(255,204,0,0.5);
         }
-
         .start-card-music {
             background: linear-gradient(145deg, rgba(255,204,0,0.12), rgba(255,204,0,0.04));
             border-color: rgba(255,204,0,0.2);
@@ -175,7 +171,6 @@
             border-color: rgba(255,204,0,0.5);
             box-shadow: 0 12px 40px rgba(255,204,0,0.15);
         }
-
         .start-card-kino {
             background: linear-gradient(145deg, rgba(255,107,107,0.12), rgba(255,107,107,0.04));
             border-color: rgba(255,107,107,0.2);
@@ -185,7 +180,6 @@
             border-color: rgba(255,107,107,0.5);
             box-shadow: 0 12px 40px rgba(255,107,107,0.15);
         }
-
         .start-card-icon {
             width: 56px;
             height: 56px;
@@ -195,7 +189,6 @@
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
         }
-
         .start-card-icon svg {
             width: 36px;
             height: 36px;
@@ -205,26 +198,21 @@
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             filter: drop-shadow(0 4px 16px rgba(0,0,0,0.2));
         }
-
         .start-card-music .start-card-icon svg {
             stroke: #ffcc00;
             stroke-width: 2;
         }
-
         .start-card-kino .start-card-icon svg {
             stroke: #ff6b6b;
             stroke-width: 2;
         }
-
         .start-card:hover .start-card-icon svg {
             transform: scale(1.15) rotate(-5deg);
             filter: drop-shadow(0 8px 24px rgba(255,204,0,0.3));
         }
-
         .start-card-kino:hover .start-card-icon svg {
             filter: drop-shadow(0 8px 24px rgba(255,107,107,0.3));
         }
-
         .start-card-icon .icon-glow {
             position: absolute;
             inset: -8px;
@@ -233,19 +221,9 @@
             transition: opacity 0.5s ease;
             filter: blur(20px);
         }
-
-        .start-card-music .icon-glow {
-            background: rgba(255,204,0,0.2);
-        }
-
-        .start-card-kino .icon-glow {
-            background: rgba(255,107,107,0.2);
-        }
-
-        .start-card:hover .icon-glow {
-            opacity: 1;
-        }
-
+        .start-card-music .icon-glow { background: rgba(255,204,0,0.2); }
+        .start-card-kino .icon-glow { background: rgba(255,107,107,0.2); }
+        .start-card:hover .icon-glow { opacity: 1; }
         .start-card-label {
             font-size: 8px;
             color: rgba(255,255,255,0.3);
@@ -255,15 +233,8 @@
             margin-top: 2px;
             transition: color 0.3s ease;
         }
-
-        .start-card-music:hover .start-card-label {
-            color: rgba(255,204,0,0.7);
-        }
-
-        .start-card-kino:hover .start-card-label {
-            color: rgba(255,107,107,0.7);
-        }
-
+        .start-card-music:hover .start-card-label { color: rgba(255,204,0,0.7); }
+        .start-card-kino:hover .start-card-label { color: rgba(255,107,107,0.7); }
         .start-card::after {
             content: '';
             position: absolute;
@@ -276,11 +247,8 @@
             opacity: 0;
             transition: opacity 0.6s ease;
         }
-        .start-card:hover::after {
-            opacity: 1;
-        }
+        .start-card:hover::after { opacity: 1; }
 
-        /* ===== ОСТАЛЬНЫЕ СТИЛИ ===== */
         .fullscreen-page {
             position: fixed;
             top: 0;
@@ -296,7 +264,6 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* ===== ГЛАВНОЕ МЕНЮ ===== */
         .menu-container {
             position: fixed;
             top: 0;
@@ -311,7 +278,6 @@
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         }
         .menu-container.hidden-menu { transform: translateX(-100%); }
-        
         .menu-screen {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -322,7 +288,6 @@
             animation: fadeInUp 0.6s ease;
             margin: 0 auto;
         }
-        
         .menu-btn {
             background: rgba(255,255,255,0.08);
             backdrop-filter: blur(20px);
@@ -355,7 +320,6 @@
             font-weight: 500;
             letter-spacing: 0.3px;
         }
-
         .menu-back-btn {
             position: fixed;
             top: 16px;
@@ -414,22 +378,11 @@
             width: 22px;
             height: 22px;
         }
-
-        body.start-mode .menu-button svg {
-            stroke: rgba(255,255,255,0.4);
-        }
-        body.kino-mode .menu-button svg {
-            stroke: rgba(255,255,255,0.4);
-        }
-        body.charts-mode .menu-button svg {
-            stroke: rgba(255,255,255,0.4);
-        }
-        body.game-mode .menu-button svg {
-            stroke: rgba(255,255,255,0.4);
-        }
-        body.assistant-mode .menu-button svg {
-            stroke: rgba(255,255,255,0.4);
-        }
+        body.start-mode .menu-button svg,
+        body.kino-mode .menu-button svg,
+        body.charts-mode .menu-button svg,
+        body.game-mode .menu-button svg,
+        body.assistant-mode .menu-button svg,
         body.map-mode .menu-button svg {
             stroke: rgba(255,255,255,0.4);
         }
@@ -453,12 +406,8 @@
             cursor: default;
             transition: all 0.3s ease;
         }
-        .weather-widget .weather-icon {
-            font-size: 18px;
-        }
-        .weather-widget .weather-temp {
-            font-weight: 600;
-        }
+        .weather-widget .weather-icon { font-size: 18px; }
+        .weather-widget .weather-temp { font-weight: 600; }
         .weather-widget .weather-city {
             font-size: 11px;
             opacity: 0.7;
@@ -467,13 +416,8 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .weather-widget.loading {
-            opacity: 0.5;
-        }
-
-        body:not(.menu-visible) .weather-widget {
-            display: none !important;
-        }
+        .weather-widget.loading { opacity: 0.5; }
+        body:not(.menu-visible) .weather-widget { display: none !important; }
 
         .page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-top: 8px; }
         .back-btn {
@@ -498,18 +442,13 @@
             letter-spacing: -0.5px;
             flex: 1;
         }
-
-        body.kino-mode .page-title {
-            color: #ffffff !important;
-        }
+        body.kino-mode .page-title { color: #ffffff !important; }
         body.kino-mode .back-btn {
             color: #ffffff !important;
             background: rgba(255,255,255,0.08) !important;
             border-color: rgba(255,255,255,0.1) !important;
         }
-        body.kino-mode .back-btn svg {
-            stroke: #ffffff !important;
-        }
+        body.kino-mode .back-btn svg { stroke: #ffffff !important; }
 
         .glass-card {
             background: rgba(0,0,0,0.03);
@@ -581,7 +520,6 @@
             padding: 8px 4px;
             min-width: min-content;
         }
-
         .artist-card {
             display: flex;
             flex-direction: column;
@@ -638,7 +576,6 @@
         .artist-name-large { font-size: 24px; font-weight: 600; color: #1a1a1a; }
         .artist-role { font-size: 12px; color: rgba(0,0,0,0.5); }
         .invert-icon { margin-left: 8px; font-size: 14px; opacity: 0.5; }
-
         .artist-profile.inverted {
             background: linear-gradient(135deg, rgba(255,204,0,0.1), rgba(0,0,0,0.05));
         }
@@ -657,7 +594,7 @@
             border: 1px solid rgba(0,0,0,0.06);
         }
 
-        /* ===== ДАТА РЕЛИЗА В КАРТОЧКЕ ===== */
+        /* ===== ДАТА РЕЛИЗА ===== */
         .release-date {
             display: inline-flex;
             align-items: center;
@@ -671,12 +608,8 @@
             margin: 6px 0 4px;
             width: fit-content;
         }
+        .release-date .icon { font-size: 13px; }
 
-        .release-date .icon {
-            font-size: 13px;
-        }
-
-        /* ===== СМЫСЛ ПЕСНИ ===== */
         .song-meaning {
             margin-top: 12px;
             padding: 14px 16px;
@@ -684,7 +617,6 @@
             border-radius: 12px;
             border-left: 3px solid #ffcc00;
         }
-
         .song-meaning .label {
             font-size: 10px;
             color: #ffcc00;
@@ -693,13 +625,11 @@
             letter-spacing: 0.5px;
             margin-bottom: 4px;
         }
-
         .song-meaning .text {
             font-size: 13px;
             color: rgba(0,0,0,0.7);
             line-height: 1.5;
         }
-
         .song-meaning .emotion {
             display: inline-block;
             margin-top: 6px;
@@ -854,7 +784,6 @@
             border-radius: 40px;
             cursor: pointer;
         }
-
         .popular-tag {
             display: inline-block;
             background: rgba(0,0,0,0.05);
@@ -878,17 +807,9 @@
             color: white;
             margin: 0 auto;
         }
-        .stat {
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 22px;
-            font-weight: 700;
-        }
-        .stat-label {
-            font-size: 11px;
-            color: rgba(0,0,0,0.5);
-        }
+        .stat { text-align: center; }
+        .stat-number { font-size: 22px; font-weight: 700; }
+        .stat-label { font-size: 11px; color: rgba(0,0,0,0.5); }
 
         .saved-item {
             background: rgba(0,0,0,0.03);
@@ -907,11 +828,8 @@
             border-bottom: 1px solid rgba(0,0,0,0.05);
             cursor: pointer;
         }
-        .settings-item:last-child {
-            border-bottom: none;
-        }
+        .settings-item:last-child { border-bottom: none; }
 
-        /* ===== НИЖНЯЯ ПАНЕЛЬ ===== */
         .bottom-tab-bar {
             position: fixed;
             bottom: 16px;
@@ -930,15 +848,12 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
-
-        /* Скрываем панель на стартовом экране и в кинопоиске */
         body.start-mode .bottom-tab-bar,
         body.kino-mode .bottom-tab-bar {
             transform: translateY(100px);
             opacity: 0;
             pointer-events: none;
         }
-
         .tab-item {
             display: flex;
             align-items: center;
@@ -949,12 +864,10 @@
             transition: all 0.1s ease;
             border-radius: 40px;
         }
-
         .tab-item:active {
             opacity: 0.6;
             background: rgba(255, 255, 255, 0.2);
         }
-
         .tab-icon {
             width: 28px;
             height: 28px;
@@ -962,7 +875,6 @@
             align-items: center;
             justify-content: center;
         }
-
         .tab-icon svg {
             width: 24px;
             height: 24px;
@@ -972,22 +884,13 @@
             stroke-linecap: round;
             stroke-linejoin: round;
         }
+        .tab-item.active .tab-icon svg { stroke: #ffcc00; }
 
-        .tab-item.active .tab-icon svg {
-            stroke: #ffcc00;
-        }
-
-        .fullscreen-page, .menu-container {
-            padding-bottom: 80px;
-        }
-
-        /* Убираем отступ на страницах где панель скрыта */
+        .fullscreen-page, .menu-container { padding-bottom: 80px; }
         body.start-mode .fullscreen-page,
         body.kino-mode .fullscreen-page,
         body.start-mode .menu-container,
-        body.kino-mode .menu-container {
-            padding-bottom: 20px;
-        }
+        body.kino-mode .menu-container { padding-bottom: 20px; }
 
         .chart-item {
             display: flex;
@@ -1007,6 +910,37 @@
         .chart-title { font-weight: 600; color: #1a1a1a; }
         .chart-artist { font-size: 12px; opacity: 0.6; color: #1a1a1a; }
 
+        /* ===== СТИЛИ ДЛЯ DEEZER ===== */
+        .deezer-track-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .deezer-track-card:hover {
+            transform: translateX(4px);
+            background: rgba(255,204,0,0.05);
+            border-color: rgba(255,204,0,0.15);
+        }
+        .deezer-play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(255,204,0,0.4);
+        }
+        .deezer-play-btn:active {
+            transform: scale(0.92);
+        }
+        #deezerResults {
+            scroll-behavior: smooth;
+        }
+        #deezerResults::-webkit-scrollbar {
+            width: 3px;
+        }
+        #deezerResults::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+        #deezerResults::-webkit-scrollbar-thumb {
+            background: #ffcc00;
+            border-radius: 10px;
+        }
+
         /* ===== СТИЛИ ДЛЯ KINO ===== */
         .kino-container {
             max-width: 800px;
@@ -1015,13 +949,11 @@
             position: relative;
             z-index: 1;
         }
-
         .kino-header {
             text-align: center;
             padding: 10px 0 8px;
             position: relative;
         }
-
         .kino-logo {
             font-size: 28px;
             font-weight: 800;
@@ -1032,7 +964,6 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .kino-logo .highlight {
             background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6);
             -webkit-background-clip: text;
@@ -1041,7 +972,6 @@
             background-size: 300% 300%;
             animation: gradientShift 5s ease-in-out infinite;
         }
-
         .kino-subtitle {
             font-size: 11px;
             color: rgba(255, 255, 255, 0.35);
@@ -1050,7 +980,6 @@
             text-transform: uppercase;
             margin-top: 2px;
         }
-
         .kino-tabs {
             display: flex;
             gap: 16px;
@@ -1058,7 +987,6 @@
             justify-content: center;
             flex-wrap: wrap;
         }
-
         .kino-tab-btn {
             display: flex;
             align-items: center;
@@ -1077,7 +1005,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .kino-tab-btn::before {
             content: '';
             position: absolute;
@@ -1086,19 +1013,13 @@
             opacity: 0;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .kino-tab-btn:hover::before {
-            opacity: 0.6;
-        }
-
+        .kino-tab-btn:hover::before { opacity: 0.6; }
         .kino-tab-btn[data-tab="movies"]::before {
             background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(255, 107, 107, 0.05));
         }
-
         .kino-tab-btn[data-tab="series"]::before {
             background: linear-gradient(135deg, rgba(77, 150, 255, 0.3), rgba(77, 150, 255, 0.05));
         }
-
         .kino-tab-btn[data-tab="movies"].active {
             background: rgba(255, 107, 107, 0.2);
             border-color: rgba(255, 107, 107, 0.3);
@@ -1106,7 +1027,6 @@
             transform: translateY(-3px) scale(1.02);
             color: #ff6b6b;
         }
-
         .kino-tab-btn[data-tab="series"].active {
             background: rgba(77, 150, 255, 0.2);
             border-color: rgba(77, 150, 255, 0.3);
@@ -1114,15 +1034,8 @@
             transform: translateY(-3px) scale(1.02);
             color: #4d96ff;
         }
-
-        .kino-tab-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .kino-tab-btn:active {
-            transform: scale(0.95);
-        }
-
+        .kino-tab-btn:hover { transform: translateY(-2px); }
+        .kino-tab-btn:active { transform: scale(0.95); }
         .kino-tab-icon {
             width: 24px;
             height: 24px;
@@ -1135,25 +1048,16 @@
             position: relative;
             z-index: 1;
         }
-
-        .kino-tab-btn[data-tab="movies"] .kino-tab-icon {
-            stroke: rgba(255, 255, 255, 0.25);
-        }
-
-        .kino-tab-btn[data-tab="series"] .kino-tab-icon {
-            stroke: rgba(255, 255, 255, 0.25);
-        }
-
+        .kino-tab-btn[data-tab="movies"] .kino-tab-icon { stroke: rgba(255, 255, 255, 0.25); }
+        .kino-tab-btn[data-tab="series"] .kino-tab-icon { stroke: rgba(255, 255, 255, 0.25); }
         .kino-tab-btn[data-tab="movies"].active .kino-tab-icon {
             stroke: #ff6b6b;
             filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.4));
         }
-
         .kino-tab-btn[data-tab="series"].active .kino-tab-icon {
             stroke: #4d96ff;
             filter: drop-shadow(0 0 20px rgba(77, 150, 255, 0.4));
         }
-
         .kino-tab-btn.active::after {
             content: '';
             position: absolute;
@@ -1166,28 +1070,23 @@
             opacity: 0.7;
             z-index: 1;
         }
-
         .kino-tab-btn[data-tab="movies"].active::after {
             background: #ff6b6b;
             box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
         }
-
         .kino-tab-btn[data-tab="series"].active::after {
             background: #4d96ff;
             box-shadow: 0 0 15px rgba(77, 150, 255, 0.4);
         }
-
         .kino-search-wrapper {
             display: flex;
             gap: 8px;
             margin: 4px 0 10px;
         }
-
         .kino-search-input-wrap {
             flex: 1;
             position: relative;
         }
-
         .kino-search-icon {
             position: absolute;
             left: 14px;
@@ -1198,7 +1097,6 @@
             pointer-events: none;
             transition: color 0.3s ease;
         }
-
         .kino-search-input {
             width: 100%;
             padding: 13px 16px 13px 42px;
@@ -1213,19 +1111,16 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
-
         .kino-search-input::placeholder {
             color: rgba(255, 255, 255, 0.25);
             font-weight: 300;
             letter-spacing: 0.2px;
         }
-
         .kino-search-input:focus {
             border-color: rgba(255, 255, 255, 0.15);
             background: rgba(255, 255, 255, 0.08);
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
         }
-
         .kino-search-btn {
             padding: 13px 22px;
             background: rgba(255, 255, 255, 0.06);
@@ -1241,22 +1136,16 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
-
         .kino-search-btn:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.1);
             color: rgba(255, 255, 255, 0.8);
             border-color: rgba(255, 255, 255, 0.12);
         }
-
-        .kino-search-btn:active:not(:disabled) {
-            transform: scale(0.96);
-        }
-
+        .kino-search-btn:active:not(:disabled) { transform: scale(0.96); }
         .kino-search-btn:disabled {
             opacity: 0.25;
             cursor: not-allowed;
         }
-
         .kino-params-btn {
             padding: 8px 24px;
             background: rgba(255,255,255,0.06);
@@ -1276,27 +1165,21 @@
             background: rgba(255,255,255,0.1);
             color: rgba(255,255,255,0.8);
         }
-        .kino-params-btn:active {
-            transform: scale(0.95);
-        }
-
+        .kino-params-btn:active { transform: scale(0.95); }
         .kino-params-row {
             display: flex;
             justify-content: center;
             margin: 6px 0 12px;
         }
-
         .kino-loader {
             display: none;
             text-align: center;
             padding: 30px 0;
         }
-
         .kino-loader.active {
             display: block;
             animation: fadeUp 0.35s ease;
         }
-
         .kino-loader-ring {
             width: 28px;
             height: 28px;
@@ -1306,23 +1189,17 @@
             animation: spin 0.7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
             margin: 0 auto 10px;
         }
-
         .kino-loader p {
             color: rgba(255, 255, 255, 0.2);
             font-size: 12px;
             font-weight: 300;
             letter-spacing: 1.5px;
         }
-
-        .kino-results {
-            display: none;
-        }
-
+        .kino-results { display: none; }
         .kino-results.active {
             display: block;
             animation: fadeUp 0.45s ease;
         }
-
         .kino-results-count {
             font-size: 11px;
             color: rgba(255, 255, 255, 0.25);
@@ -1331,13 +1208,11 @@
             font-weight: 300;
             text-transform: uppercase;
         }
-
         .kino-movie-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
         }
-
         .kino-movie-card {
             display: flex;
             gap: 14px;
@@ -1351,7 +1226,6 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
-
         .kino-movie-card:nth-child(1) { animation-delay: 0.03s; }
         .kino-movie-card:nth-child(2) { animation-delay: 0.06s; }
         .kino-movie-card:nth-child(3) { animation-delay: 0.09s; }
@@ -1360,20 +1234,12 @@
         .kino-movie-card:nth-child(6) { animation-delay: 0.18s; }
         .kino-movie-card:nth-child(7) { animation-delay: 0.21s; }
         .kino-movie-card:nth-child(8) { animation-delay: 0.24s; }
-
         @keyframes cardIn {
             from { opacity: 0; transform: translateY(14px) scale(0.97); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
-
-        .kino-movie-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .kino-movie-card:active {
-            transform: scale(0.98);
-        }
-
+        .kino-movie-card:hover { transform: translateY(-2px); }
+        .kino-movie-card:active { transform: scale(0.98); }
         .kino-movie-poster {
             width: 64px;
             height: 96px;
@@ -1384,11 +1250,7 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
             transition: transform 0.35s ease;
         }
-
-        .kino-movie-card:hover .kino-movie-poster {
-            transform: scale(1.02);
-        }
-
+        .kino-movie-card:hover .kino-movie-poster { transform: scale(1.02); }
         .kino-movie-poster.empty {
             display: flex;
             align-items: center;
@@ -1397,7 +1259,6 @@
             color: rgba(255, 255, 255, 0.1);
             background: rgba(255, 255, 255, 0.03);
         }
-
         .kino-movie-info {
             flex: 1;
             display: flex;
@@ -1405,7 +1266,6 @@
             justify-content: space-between;
             min-width: 0;
         }
-
         .kino-movie-title {
             font-size: 15px;
             font-weight: 600;
@@ -1413,14 +1273,12 @@
             letter-spacing: -0.2px;
             line-height: 1.3;
         }
-
         .kino-movie-title .year {
             font-weight: 300;
             color: rgba(255, 255, 255, 0.4);
             font-size: 13px;
             margin-left: 5px;
         }
-
         .kino-movie-meta {
             display: flex;
             flex-wrap: wrap;
@@ -1430,11 +1288,7 @@
             color: rgba(255, 255, 255, 0.4);
             letter-spacing: 0.2px;
         }
-
-        .kino-movie-meta-item {
-            display: inline;
-        }
-
+        .kino-movie-meta-item { display: inline; }
         .kino-movie-rating {
             display: inline-flex;
             align-items: center;
@@ -1449,25 +1303,21 @@
             margin: 2px 0 4px;
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
-
         .kino-movie-rating.high {
             color: #6bcb77;
             border-color: rgba(107, 203, 119, 0.2);
             background: rgba(107, 203, 119, 0.08);
         }
-
         .kino-movie-rating.medium {
             color: #ffd93d;
             border-color: rgba(255, 217, 61, 0.2);
             background: rgba(255, 217, 61, 0.08);
         }
-
         .kino-movie-rating.low {
             color: #ff6b6b;
             border-color: rgba(255, 107, 107, 0.2);
             background: rgba(255, 107, 107, 0.08);
         }
-
         .kino-movie-desc {
             font-size: 11px;
             color: rgba(255, 255, 255, 0.35);
@@ -1478,43 +1328,28 @@
             line-height: 1.5;
             font-weight: 300;
         }
-
         .kino-persons {
             margin-top: 6px;
             font-size: 11px;
             color: rgba(255, 255, 255, 0.35);
             line-height: 1.6;
         }
-
-        .kino-persons .value {
-            color: rgba(255, 255, 255, 0.55);
-        }
-
-        body.dark-theme .kino-persons {
-            color: rgba(255, 255, 255, 0.35);
-        }
-        body.dark-theme .kino-persons .value {
-            color: rgba(255, 255, 255, 0.55);
-        }
-
+        .kino-persons .value { color: rgba(255, 255, 255, 0.55); }
+        body.dark-theme .kino-persons { color: rgba(255, 255, 255, 0.35); }
+        body.dark-theme .kino-persons .value { color: rgba(255, 255, 255, 0.55); }
         .kino-error {
             text-align: center;
             padding: 30px 20px;
             display: none;
             animation: fadeUp 0.4s ease;
         }
-
-        .kino-error.active {
-            display: block;
-        }
-
+        .kino-error.active { display: block; }
         .kino-error .icon {
             font-size: 40px;
             display: block;
             opacity: 0.2;
             margin-bottom: 10px;
         }
-
         .kino-error h3 {
             font-size: 16px;
             color: rgba(255, 255, 255, 0.4);
@@ -1522,19 +1357,16 @@
             letter-spacing: 0.5px;
             margin-bottom: 4px;
         }
-
         .kino-error p {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.15);
             font-weight: 300;
         }
-
         .kino-welcome {
             text-align: center;
             padding: 40px 20px;
             animation: fadeUp 0.6s ease;
         }
-
         .kino-welcome .icon {
             font-size: 48px;
             display: block;
@@ -1542,21 +1374,18 @@
             margin-bottom: 10px;
             animation: float 4s ease-in-out infinite;
         }
-
         .kino-welcome h2 {
             font-size: 17px;
             color: rgba(255, 255, 255, 0.2);
             font-weight: 300;
             letter-spacing: 1px;
         }
-
         .kino-welcome p {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.08);
             font-weight: 300;
             margin-top: 3px;
         }
-
         .kino-params-modal {
             position: fixed;
             top: 0;
@@ -1658,12 +1487,8 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        .kino-params-modal-content .params-search-btn:hover {
-            transform: scale(1.02);
-        }
-        .kino-params-modal-content .params-search-btn:active {
-            transform: scale(0.96);
-        }
+        .kino-params-modal-content .params-search-btn:hover { transform: scale(1.02); }
+        .kino-params-modal-content .params-search-btn:active { transform: scale(0.96); }
         .kino-params-modal-content .params-close-btn {
             padding: 14px 20px;
             background: rgba(255,255,255,0.05);
@@ -1677,11 +1502,7 @@
         .kino-params-modal-content .params-close-btn:hover {
             background: rgba(255,255,255,0.1);
         }
-
-        .kino-param-group {
-            margin-bottom: 14px;
-        }
-
+        .kino-param-group { margin-bottom: 14px; }
         .kino-search-hint {
             font-size: 10px;
             color: rgba(255,255,255,0.15);
@@ -1740,396 +1561,51 @@
             transition: all 0.2s ease;
             font-weight: 500;
         }
-        .ai-fact-refresh:hover {
-            background: rgba(255,204,0,0.25);
-        }
-        .ai-fact-refresh:active {
-            transform: scale(0.95);
-        }
-
-        body.dark-theme .ai-fact-card {
-            background: rgba(255,204,0,0.1);
-        }
-        body.dark-theme .ai-fact-text {
-            color: #ffffff;
-        }
+        .ai-fact-refresh:hover { background: rgba(255,204,0,0.25); }
+        .ai-fact-refresh:active { transform: scale(0.95); }
+        body.dark-theme .ai-fact-card { background: rgba(255,204,0,0.1); }
+        body.dark-theme .ai-fact-text { color: #ffffff; }
 
         @media (min-width: 500px) {
-            .kino-movie-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .kino-movie-grid { grid-template-columns: repeat(2, 1fr); }
         }
-
         @media (min-width: 768px) {
-            .kino-movie-poster {
-                width: 74px;
-                height: 110px;
-            }
-            .kino-movie-title {
-                font-size: 17px;
-            }
+            .kino-movie-poster { width: 74px; height: 110px; }
+            .kino-movie-title { font-size: 17px; }
         }
-
         @media (min-width: 1024px) {
-            .kino-movie-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .kino-movie-grid { grid-template-columns: repeat(2, 1fr); }
         }
-
         @media (max-width: 400px) {
-            .kino-tab-btn {
-                width: 46px;
-                height: 46px;
-            }
-            .kino-tab-icon {
-                width: 20px;
-                height: 20px;
-            }
-            .kino-search-btn {
-                padding: 13px 14px;
-                font-size: 13px;
-            }
-            .kino-params-modal-content {
-                padding: 20px;
-            }
-            .start-logo {
-                font-size: 32px;
-            }
-            .start-card {
-                padding: 12px;
-            }
-            .start-card-icon {
-                width: 44px;
-                height: 44px;
-            }
-            .start-card-icon svg {
-                width: 28px;
-                height: 28px;
-            }
-            .start-subtitle {
-                font-size: 9px;
-                margin-bottom: 20px;
-            }
+            .kino-tab-btn { width: 46px; height: 46px; }
+            .kino-tab-icon { width: 20px; height: 20px; }
+            .kino-search-btn { padding: 13px 14px; font-size: 13px; }
+            .kino-params-modal-content { padding: 20px; }
+            .start-logo { font-size: 32px; }
+            .start-card { padding: 12px; }
+            .start-card-icon { width: 44px; height: 44px; }
+            .start-card-icon svg { width: 28px; height: 28px; }
+            .start-subtitle { font-size: 9px; margin-bottom: 20px; }
         }
-
         body.dark-theme .kino-movie-card {
             background: rgba(255,255,255,0.05);
             border-color: rgba(255,255,255,0.06);
         }
-        body.dark-theme .kino-movie-title {
-            color: #ffffff;
-        }
-        body.dark-theme .kino-movie-meta {
-            color: rgba(255,255,255,0.4);
-        }
-        body.dark-theme .kino-movie-desc {
-            color: rgba(255,255,255,0.35);
-        }
+        body.dark-theme .kino-movie-title { color: #ffffff; }
+        body.dark-theme .kino-movie-meta { color: rgba(255,255,255,0.4); }
+        body.dark-theme .kino-movie-desc { color: rgba(255,255,255,0.35); }
         body.dark-theme .kino-movie-rating {
             background: rgba(255,255,255,0.06);
             color: rgba(255,255,255,0.55);
         }
-
-        body.kino-mode #kinoPage {
-            background: #0a0a0f;
-        }
-        body.kino-mode .page-title {
-            color: #ffffff !important;
-        }
+        body.kino-mode #kinoPage { background: #0a0a0f; }
+        body.kino-mode .page-title { color: #ffffff !important; }
         body.kino-mode .back-btn {
             color: #ffffff !important;
             background: rgba(255,255,255,0.08) !important;
             border-color: rgba(255,255,255,0.1) !important;
         }
-        body.kino-mode .back-btn svg {
-            stroke: #ffffff !important;
-        }
-
-        /* ===== СТИЛИ ДЛЯ DEEZER ПОИСКА ===== */
-        .deezer-search-btn {
-            background: #ffcc00;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 60px;
-            color: #1a1a1a;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            margin-top: 8px;
-            margin-bottom: 12px;
-        }
-
-        .deezer-search-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 15px rgba(255,204,0,0.3);
-        }
-
-        .deezer-search-btn:active {
-            transform: scale(0.96);
-        }
-
-        .deezer-search-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .deezer-loading {
-            text-align: center;
-            padding: 30px 20px;
-            color: rgba(0,0,0,0.4);
-        }
-
-        .deezer-loading .spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid rgba(0,0,0,0.1);
-            border-top: 3px solid #ffcc00;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 12px;
-        }
-
-        .deezer-empty {
-            text-align: center;
-            padding: 30px 20px;
-            color: rgba(0,0,0,0.3);
-        }
-
-        .deezer-empty .icon {
-            font-size: 40px;
-            margin-bottom: 8px;
-        }
-
-        .deezer-results-container {
-            margin-top: 12px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .deezer-results-container::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .deezer-results-container::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
-            border-radius: 10px;
-        }
-
-        .deezer-results-container::-webkit-scrollbar-thumb {
-            background: #ffcc00;
-            border-radius: 10px;
-        }
-
-        .deezer-track-card {
-            background: rgba(0,0,0,0.03);
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(0,0,0,0.06);
-            transition: all 0.3s ease;
-            animation: fadeInUp 0.4s ease;
-        }
-
-        .deezer-track-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-        }
-
-        .deezer-track-cover {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            object-fit: cover;
-            flex-shrink: 0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .deezer-track-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a1a;
-        }
-
-        .deezer-track-artist {
-            font-size: 14px;
-            color: rgba(0,0,0,0.6);
-        }
-
-        .deezer-track-album {
-            font-size: 12px;
-            color: rgba(0,0,0,0.4);
-        }
-
-        .deezer-track-release {
-            font-size: 11px;
-            color: #cc9900;
-        }
-
-        .deezer-track-duration {
-            font-size: 11px;
-            color: rgba(0,0,0,0.3);
-        }
-
-        .deezer-ai-fact {
-            background: rgba(255,204,0,0.08);
-            border-left: 2px solid #ffcc00;
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin: 12px 0;
-        }
-
-        .deezer-ai-fact .label {
-            font-size: 10px;
-            color: #ffcc00;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .deezer-ai-fact .text {
-            font-size: 13px;
-            color: #1a1a1a;
-            line-height: 1.5;
-        }
-
-        .deezer-song-meaning {
-            margin-top: 12px;
-            padding: 12px 16px;
-            background: rgba(255,204,0,0.05);
-            border-radius: 12px;
-            border-left: 3px solid #ffcc00;
-        }
-
-        .deezer-song-meaning .label {
-            font-size: 10px;
-            color: #ffcc00;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .deezer-song-meaning .text {
-            font-size: 13px;
-            color: rgba(0,0,0,0.7);
-            line-height: 1.5;
-        }
-
-        .deezer-song-meaning .emotion {
-            display: inline-block;
-            margin-top: 6px;
-            padding: 2px 12px;
-            background: rgba(255,107,107,0.08);
-            border-radius: 20px;
-            font-size: 11px;
-            color: rgba(0,0,0,0.5);
-        }
-
-        .deezer-platform-btn {
-            background: #ffcc00;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 12px;
-            color: #1a1a1a;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .deezer-platform-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .deezer-platform-btn-secondary {
-            background: rgba(0,0,0,0.05);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 12px;
-            color: #1a1a1a;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .deezer-platform-btn-secondary:hover {
-            background: rgba(0,0,0,0.1);
-        }
-
-        .deezer-play-btn {
-            background: #ffcc00;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 12px;
-            color: #1a1a1a;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .deezer-play-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .deezer-play-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .deezer-action-btn {
-            background: rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.06);
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-weight: 500;
-            font-size: 11px;
-            color: #1a1a1a;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .deezer-action-btn:hover {
-            background: rgba(0,0,0,0.06);
-        }
-
-        .deezer-explicit {
-            color: #e74c3c;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .deezer-result-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            background: rgba(255,204,0,0.15);
-            border-radius: 20px;
-            font-size: 9px;
-            color: #cc9900;
-            font-weight: 600;
-            margin-left: 6px;
-        }
-
-        .deezer-timer {
-            font-size: 12px;
-            font-family: monospace;
-            color: rgba(0,0,0,0.4);
-            display: inline-flex;
-            align-items: center;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        body.kino-mode .back-btn svg { stroke: #ffffff !important; }
     </style>
 </head>
 <body>
@@ -2167,9 +1643,7 @@
             LE MONDE <span class="highlight">MUSIC</span>
         </div>
         <div class="start-subtitle">выберите раздел</div>
-        
         <div class="start-grid">
-            <!-- MUSIC карточка -->
             <div class="start-card start-card-music" id="startMusicBtn">
                 <div class="start-card-icon">
                     <div class="icon-glow"></div>
@@ -2182,8 +1656,6 @@
                 </div>
                 <div class="start-card-label">music</div>
             </div>
-            
-            <!-- KINOPOISK карточка -->
             <div class="start-card start-card-kino" id="startKinoBtn">
                 <div class="start-card-icon">
                     <div class="icon-glow"></div>
@@ -2224,7 +1696,6 @@
             </svg>
             Назад
         </button>
-
         <div class="menu-screen">
             <div class="menu-btn" id="goToMusicBtn">
                 <div class="menu-icon"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="M9 18V5L21 3V16"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M9 12L21 10"/></svg></div>
@@ -2265,7 +1736,7 @@
         </div>
     </div>
 
-    <!-- ===== MUSIC PAGE (С НОВОЙ КНОПКОЙ DEEZER) ===== -->
+    <!-- ===== MUSIC PAGE ===== -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -2278,14 +1749,16 @@
                 <button id="doSearchBtn" class="search-btn">Найти</button>
             </div>
             
-            <!-- === НОВАЯ КНОПКА ПОИСКА В DEEZER === -->
-            <button id="deezerSearchBtn" class="deezer-search-btn">
-                🔍 Поиск трека через Deezer
-            </button>
-            
-            <!-- === КОНТЕЙНЕР ДЛЯ РЕЗУЛЬТАТОВ DEEZER === -->
-            <div id="deezerResults" style="margin-top: 12px;"></div>
-            
+            <!-- ===== НОВАЯ КНОПКА DEEZER ===== -->
+            <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                <button id="deezerSearchBtn" class="search-btn" style="flex: 1; background: linear-gradient(135deg, #ff6b6b, #ff4757); color: white; border: none; padding: 12px 20px; border-radius: 60px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    🔍 Поиск трека через Deezer
+                </button>
+            </div>
+
+            <!-- ===== КОНТЕЙНЕР ДЛЯ РЕЗУЛЬТАТОВ DEEZER ===== -->
+            <div id="deezerResults" style="display: none; margin-top: 16px;"></div>
+
             <div class="section-title">🔥 ПОПУЛЯРНЫЕ ИСПОЛНИТЕЛИ</div>
             <div class="artists-scroll-container">
                 <div class="artists-scroll" id="popularGrid"></div>
@@ -2362,27 +1835,21 @@
             <div class="page-title">Профиль</div>
             <div style="width: 40px;"></div>
         </div>
-        
         <div class="glass-card" style="text-align: center;">
-            <div class="profile-avatar" id="profileAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #ffcc00; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 600; color: white;">
-                👤
-            </div>
+            <div class="profile-avatar" id="profileAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #ffcc00; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 600; color: white;">👤</div>
             <div class="profile-name" id="profileName" style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">Загрузка...</div>
             <div class="profile-username" id="profileUsername" style="font-size: 14px; color: rgba(0,0,0,0.5); margin-bottom: 16px;">@username</div>
-            
             <div style="display: flex; justify-content: center; margin-bottom: 24px;">
                 <div class="stat">
                     <div class="stat-number" id="postsCount">0</div>
                     <div class="stat-label">избранных</div>
                 </div>
             </div>
-            
             <div style="display: flex; gap: 12px; margin-bottom: 20px;">
                 <button class="profile-edit-btn" id="editProfileBtn" style="flex: 1; background: rgba(0,0,0,0.05); border: none; padding: 10px; border-radius: 30px; font-weight: 600; cursor: pointer;">Редактировать профиль</button>
                 <button class="profile-share-btn" id="shareProfileBtn" style="background: rgba(0,0,0,0.05); border: none; width: 44px; border-radius: 30px; cursor: pointer;">🔗</button>
             </div>
         </div>
-        
         <div class="glass-card">
             <div class="section-title">📋 ИНФОРМАЦИЯ</div>
             <div style="margin-bottom: 16px;">
@@ -2398,10 +1865,8 @@
                 <div style="font-size: 14px;">🇷🇺 Русский</div>
             </div>
         </div>
-        
         <div class="glass-card">
             <div class="section-title">⚙️ НАСТРОЙКИ</div>
-            
             <div class="settings-item" id="openSettingsBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span style="font-size: 20px;">🎨</span>
@@ -2409,7 +1874,6 @@
                 </div>
                 <span style="color: #ffcc00;">→</span>
             </div>
-            
             <div class="settings-item" id="clearCacheBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span style="font-size: 20px;">🗑️</span>
@@ -2417,7 +1881,6 @@
                 </div>
                 <span style="color: #ffcc00;">→</span>
             </div>
-            
             <div class="settings-item" id="supportBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span style="font-size: 20px;">💬</span>
@@ -2425,7 +1888,6 @@
                 </div>
                 <span style="color: #ffcc00;">→</span>
             </div>
-            
             <div class="settings-item" id="aboutBtn" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0; cursor: pointer;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span style="font-size: 20px;">ℹ️</span>
@@ -2434,7 +1896,6 @@
                 <span style="color: #ffcc00;">→</span>
             </div>
         </div>
-        
         <div class="glass-card">
             <div class="section-title">❤️ ИЗБРАННЫЕ ИСПОЛНИТЕЛИ</div>
             <div id="favoritesList" style="text-align: center; padding: 20px; color: rgba(0,0,0,0.4);">
@@ -2451,12 +1912,9 @@
         </div>
         <div class="kino-container">
             <div class="kino-header">
-                <div class="kino-logo">
-                    KINO<span class="highlight">POISK</span> RUS
-                </div>
+                <div class="kino-logo">KINO<span class="highlight">POISK</span> RUS</div>
                 <div class="kino-subtitle">фильмы · сериалы</div>
             </div>
-
             <div class="kino-tabs">
                 <button class="kino-tab-btn active" data-tab="movies" onclick="switchKinoTab('movies')" title="Фильмы">
                     <svg class="kino-tab-icon" viewBox="0 0 24 24">
@@ -2478,7 +1936,6 @@
                     </svg>
                 </button>
             </div>
-
             <div class="kino-search-wrapper">
                 <div class="kino-search-input-wrap">
                     <span class="kino-search-icon">⌕</span>
@@ -2486,36 +1943,28 @@
                 </div>
                 <button class="kino-search-btn" id="kinoSearchBtn">найти</button>
             </div>
-
             <div class="kino-params-row">
-                <button class="kino-params-btn" id="kinoParamsBtn">
-                    ⚙️ Параметры
-                </button>
+                <button class="kino-params-btn" id="kinoParamsBtn">⚙️ Параметры</button>
             </div>
-
             <div class="kino-search-hint">
                 <span>🎬 Название</span>
                 <span>📅 Год</span>
                 <span>🎭 Актёр</span>
                 <span>🌍 Страна</span>
             </div>
-
             <div class="kino-loader" id="kinoLoader">
                 <div class="kino-loader-ring"></div>
                 <p>поиск</p>
             </div>
-
             <div class="kino-results" id="kinoResults">
                 <div class="kino-results-count" id="kinoResultsCount"></div>
                 <div class="kino-movie-grid" id="kinoMovieGrid"></div>
             </div>
-
             <div class="kino-error" id="kinoError">
                 <span class="icon">◌</span>
                 <h3>ничего не найдено</h3>
                 <p>попробуйте уточнить запрос: добавьте год, страну или имя актёра</p>
             </div>
-
             <div class="kino-welcome" id="kinoWelcome">
                 <span class="icon">◈</span>
                 <h2>введите название</h2>
@@ -2530,17 +1979,14 @@
         <div class="kino-params-modal-content">
             <div class="modal-title">🎯 Точный поиск</div>
             <div class="modal-subtitle">заполните поля для уточнения</div>
-
             <div class="kino-param-group">
                 <label>🎬 Название фильма *</label>
                 <input type="text" id="kinoParamTitle" class="param-input" placeholder="например: Ярость">
             </div>
-
             <div class="kino-param-group">
                 <label>📅 Год выпуска</label>
                 <input type="number" id="kinoParamYear" class="param-input" placeholder="например: 2014">
             </div>
-
             <div class="kino-param-group">
                 <label>🌍 Страна</label>
                 <select id="kinoParamCountry" class="param-select">
@@ -2562,12 +2008,10 @@
                     <option value="Бразилия">🇧🇷 Бразилия</option>
                 </select>
             </div>
-
             <div class="kino-param-group">
                 <label>🎭 Имя актёра</label>
                 <input type="text" id="kinoParamActor" class="param-input" placeholder="например: Брэд Питт">
             </div>
-
             <div class="kino-param-group">
                 <label>📺 Тип</label>
                 <select id="kinoParamType" class="param-select">
@@ -2576,7 +2020,6 @@
                     <option value="series">📺 Сериалы</option>
                 </select>
             </div>
-
             <div class="params-btn-row">
                 <button class="params-search-btn" id="kinoParamsSearchBtn">🔍 Найти точно</button>
                 <button class="params-close-btn" id="kinoParamsCloseBtn">✕</button>
@@ -2588,14 +2031,12 @@
     <div id="settingsModal" class="settings-modal hidden">
         <div class="modal-card">
             <div class="modal-title">Оформление</div>
-            
             <div class="settings-row" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px;">
                 <button class="appearance-btn" id="resetBgBtn">Сбросить</button>
                 <button class="appearance-btn" id="uploadBgBtn">📸 Фото</button>
                 <button class="appearance-btn" id="colorPickerBtn">🎨 Цвет</button>
                 <button class="appearance-btn" id="toggleThemeBtn">🌓 Тема</button>
             </div>
-            
             <div style="margin: 16px 0 12px 0;">
                 <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; text-align: center;">✨ СПЕЦИАЛЬНЫЕ ОБОИ</div>
                 <div class="special-wallpapers" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-height: 300px; overflow-y: auto; padding: 4px 4px 8px 4px;">
@@ -2646,14 +2087,12 @@
                     </div>
                 </div>
             </div>
-            
             <div class="gradient-row" style="margin-top: 12px;">
                 <div class="gradient-circle" style="background:linear-gradient(135deg,#ffcc00,#ffd633);"></div>
                 <div class="gradient-circle" style="background:linear-gradient(135deg,#f093fb,#f5576c);"></div>
                 <div class="gradient-circle" style="background:linear-gradient(135deg,#4facfe,#00f2fe);"></div>
                 <div class="gradient-circle" style="background:linear-gradient(135deg,#43e97b,#38f9d7);"></div>
             </div>
-            
             <button class="close-modal" id="closeSettingsBtn" style="margin-top:20px; width:100%;">Закрыть</button>
         </div>
     </div>
@@ -2740,7 +2179,6 @@
             kino: document.getElementById('kinoPage')
         };
 
-        // ===== СТАРТОВЫЙ ЭКРАН =====
         function showStartScreen() {
             startScreen.classList.remove('hidden');
             menuContainer.classList.add('hidden-menu');
@@ -2754,10 +2192,10 @@
             startScreen.classList.add('hidden');
         }
 
-        // ===== МЕНЮ =====
         function showMenu() {
             hideStartScreen();
             stopCurrentPreview();
+            stopDeezerPreview();
             menuContainer.classList.remove('hidden-menu');
             Object.values(pages).forEach(p => p && p.classList.remove('active'));
             document.body.className = '';
@@ -2769,6 +2207,7 @@
         function showPage(page, mode) {
             hideStartScreen();
             stopCurrentPreview();
+            stopDeezerPreview();
             menuContainer.classList.add('hidden-menu');
             Object.values(pages).forEach(p => p && p.classList.remove('active'));
             if (page) page.classList.add('active');
@@ -2789,7 +2228,6 @@
             });
         }
 
-        // ===== ОБРАБОТЧИКИ СТАРТОВЫХ КНОПОК =====
         document.getElementById('startMusicBtn').addEventListener('click', function() {
             showMenu();
             loadPopular();
@@ -2808,12 +2246,10 @@
             document.getElementById('kinoSearchInput').focus();
         });
 
-        // ===== КНОПКА НАЗАД В МЕНЮ =====
         document.getElementById('backToStartBtn').addEventListener('click', function() {
             showStartScreen();
         });
 
-        // ===== КНОПКИ НАЗАД =====
         document.getElementById('backFromMusic').onclick = showStartScreen;
         document.getElementById('backFromLyrics').onclick = showStartScreen;
         document.getElementById('backFromGame').onclick = showStartScreen;
@@ -3297,27 +2733,16 @@
         function getShortBio(artist) {
             const bios = {
                 "асия": "Асия (Анастасия Алентьева) — российская певица и автор песен. Родилась 1 сентября 1997 года в городе Лениногорск (Татарстан). Стала известной после выхода песни «Останься», которая набрала более 100 миллионов прослушиваний. Её музыка сочетает поп, R&B и инди-звучание. Также известна по трекам: «Твой поцелуй», «Красное платье», «Детство».",
-                
                 "кино": "«Кино» — советская рок-группа, основанная в 1981 году в Ленинграде Виктором Цоем и Алексеем Рыбиным. После ухода Рыбина в 1983 году, группа продолжила существование с Юрием Каспаряном. Считается одной из самых влиятельных рок-групп в истории русской музыки. Легендарные альбомы: «Группа крови» (1988), «Звезда по имени Солнце» (1989). После гибели Виктора Цоя в 1990 году группа распалась, но навсегда осталась в сердцах миллионов.",
-                
                 "imagine dragons": "Imagine Dragons — американская рок-группа из Лас-Вегаса, основанная в 2008 году. В состав группы входят: Дэн Рейнольдс (вокал), Уэйн Сермон (гитара), Бен Макки (бас) и Дэниел Платцман (ударные). Обладатели трёх премий Grammy. Самые известные хиты: «Radioactive», «Demons», «Believer», «Thunder». Альбом «Night Visions» (2012) стал одним из самых продаваемых в десятилетии.",
-                
                 "моргенштерн": "Моргенштерн (Алишер Тагирович Моргенштерн) — российский рэп-исполнитель, блогер и музыкант. Родился 17 февраля 1998 года в Уфе. Начал карьеру с видеоблогов, затем перешёл в музыку. Стал известен благодаря трекам «Cadillac», «El Problema», «Розовое вино». Один из самых популярных и обсуждаемых артистов современной русской музыки.",
-                
                 "земфира": "Земфира (Земфира Талгатовна Рамазанова) — российская рок-певица, музыкант и автор песен. Родилась 26 августа 1976 года в Уфе. Дебютный альбом «Земфира» вышел в 1999 году и мгновенно стал культовым. Следующие альбомы: «Прости меня моя любовь» (2000), «14 недель тишины» (2002), «Вендетта» (2005). Обладательница множества музыкальных премий, включая «Муз-ТВ» и «Золотой граммофон». Первая женщина, собравшая полный «Олимпийский» стадион.",
-                
                 "rammstein": "Rammstein — немецкая метал-группа, образованная в 1994 году в Берлине. В состав входят: Тилль Линдеманн (вокал), Рихард Круспе (гитара), Пауль Ландерс (гитара), Оливер Ридель (бас), Кристоф Шнайдер (ударные) и Кристиан Лоренц (клавишные). Известна своим уникальным стилем, театральными выступлениями и пиротехническими шоу. Самые известные хиты: «Du Hast», «Sonne», «Deutschland», «Amerika». Альбом «Mutter» (2001) стал международным прорывом.",
-                
                 "billie eilish": "Billie Eilish (Билли Айлиш) — американская певица и автор песен. Родилась 18 декабря 2001 года в Лос-Анджелесе. Стала известной после выхода дебютного сингла «Ocean Eyes» в 2015 году. Обладательница 7 премий Grammy, включая «Лучший новый исполнитель», «Альбом года» («When We All Fall Asleep, Where Do We Go?»). Её музыка сочетает поп, электронику и инди-поп.",
-                
                 "the weeknd": "The Weeknd (Эйбел Макконен Тесфайе) — канадский певец, автор песен и продюсер. Родился 16 февраля 1990 года в Торонто. Известен своими хитами: «Blinding Lights», «Starboy», «Save Your Tears», «The Hills». Обладатель 4 премий Grammy. Его альбом «After Hours» (2020) стал одним из самых успешных в карьере, а сингл «Blinding Lights» побил рекорд по неделям в чартах.",
-                
                 "eminem": "Eminem (Маршалл Брюс Мэтерс III) — американский рэпер, продюсер и актёр. Родился 17 октября 1972 года в Сент-Джозефе (Миссури). Один из самых продаваемых музыкальных артистов в истории (более 220 миллионов записей). Обладатель 15 премий Grammy. Самые известные альбомы: «The Slim Shady LP», «The Marshall Mathers LP», «The Eminem Show», «Recovery». Также известен ролью в фильме «8 Миля».",
-                
                 "ариана гранде": "Ariana Grande (Ариана Гранде) — американская певица и актриса. Родилась 26 июня 1993 года во Флориде. Начала карьеру с роли в сериале «Victorious» на канале Nickelodeon. Обладательница двух премий Grammy. Известна своим уникальным вокальным диапазоном (4 октавы). Самые известные хиты: «Problem», «Thank U, Next», «7 Rings», «Bang Bang», «No Tears Left to Cry».",
-                
                 "руки вверх": "«Руки Вверх!» — российская поп-группа, основанная в 1996 году продюсером Андреем Маликовым и солистом Сергеем Жуковым. Стала культовой в конце 1990-х и начале 2000-х. Стиль группы — энергичная танцевальная поп-музыка с запоминающимися мелодиями. Самые известные хиты: «Крошка моя», «18 мне уже», «Он тебя целует», «Студент», «Алешка». В 2016 году группа воссоединилась и продолжает выступать.",
-                
                 "сектор газа": "«Сектор Газа» — советская и российская рок-группа, основанная в 1987 году в Воронеже Юрием Клинских (известным как Юрий Хой). Стиль группы сочетает панк-рок, русский шансон, фолк-рок и блатную песню. Тексты песен часто затрагивают социальные темы, жизнь простых людей, деревню, любовь и смерть. Самые известные альбомы: «Зловещие мертвецы» (1990), «Яйцо динозавра» (1992), «Нажми на газ» (1992), «Вой на Луну» (1993), «Кащей Бессмертный» (1994). Легендарные хиты: «Лирика», «Туман», «30 лет», «Пошли на хер, колхозники!», «Бомж». 4 июля 2000 года Юрий Хой трагически погиб от сердечного приступа. После его смерти группа прекратила существование, но осталась культовой и любимой миллионами."
             };
             
@@ -3627,7 +3052,6 @@
                     if (artistData.picture_medium) {
                         finalAvatarUrl = artistData.picture_medium;
                     }
-                    // Получаем дату релиза из альбомов
                     if (artistData.albums && artistData.albums.data && artistData.albums.data.length > 0) {
                         const firstAlbum = artistData.albums.data[0];
                         if (firstAlbum.release_date) {
@@ -3695,7 +3119,6 @@
                 `;
             }
             
-            // Формируем HTML с датой релиза
             let releaseDateHtml = '';
             if (releaseDate) {
                 releaseDateHtml = `
@@ -3774,7 +3197,295 @@
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // =============================================================
-        // 17. ИГРА
+        // 17. ПОИСК ТРЕКОВ ЧЕРЕЗ DEEZER С ОБЛОЖКОЙ И 30-СЕКУНДНЫМ ПРЕВЬЮ
+        // =============================================================
+        let deezerAudio = null;
+        let deezerAudioButton = null;
+
+        function stopDeezerPreview() {
+            if (deezerAudio) {
+                deezerAudio.pause();
+                if (deezerAudioButton) {
+                    deezerAudioButton.innerHTML = '▶️';
+                }
+                deezerAudio = null;
+                deezerAudioButton = null;
+            }
+        }
+
+        async function searchDeezerTracks() {
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput.value.trim();
+            
+            if (!query) {
+                tg.showAlert('🎵 Введите название исполнителя или трека');
+                return;
+            }
+            
+            const resultsDiv = document.getElementById('deezerResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <div style="text-align: center; padding: 30px 0;">
+                    <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid rgba(255,204,0,0.1); border-top: 3px solid #ffcc00; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+                    <div style="margin-top: 12px; color: rgba(0,0,0,0.4); font-size: 14px;">Поиск треков...</div>
+                </div>
+            `;
+            
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const deezerUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10`;
+                const response = await fetch(proxyUrl + encodeURIComponent(deezerUrl));
+                
+                if (!response.ok) throw new Error('Ошибка загрузки');
+                const data = await response.json();
+                
+                if (!data.data || data.data.length === 0) {
+                    resultsDiv.innerHTML = `
+                        <div style="text-align: center; padding: 30px; background: rgba(0,0,0,0.03); border-radius: 20px;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">🔍</div>
+                            <div style="font-size: 16px; font-weight: 500; color: rgba(0,0,0,0.5);">Ничего не найдено</div>
+                            <div style="font-size: 13px; color: rgba(0,0,0,0.3); margin-top: 4px;">Попробуйте изменить запрос</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                renderDeezerResults(data.data);
+                
+            } catch(error) {
+                console.error('Deezer search error:', error);
+                try {
+                    const deezerUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10`;
+                    const response = await fetch(deezerUrl);
+                    if (!response.ok) throw new Error('Ошибка загрузки');
+                    const data = await response.json();
+                    
+                    if (!data.data || data.data.length === 0) {
+                        resultsDiv.innerHTML = `
+                            <div style="text-align: center; padding: 30px; background: rgba(0,0,0,0.03); border-radius: 20px;">
+                                <div style="font-size: 48px; margin-bottom: 12px;">🔍</div>
+                                <div style="font-size: 16px; font-weight: 500; color: rgba(0,0,0,0.5);">Ничего не найдено</div>
+                                <div style="font-size: 13px; color: rgba(0,0,0,0.3); margin-top: 4px;">Попробуйте изменить запрос</div>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    renderDeezerResults(data.data);
+                } catch(e) {
+                    resultsDiv.innerHTML = `
+                        <div style="text-align: center; padding: 30px; background: rgba(255,0,0,0.05); border-radius: 20px; border: 1px solid rgba(255,0,0,0.1);">
+                            <div style="font-size: 48px; margin-bottom: 12px;">⚠️</div>
+                            <div style="font-size: 16px; font-weight: 500; color: rgba(0,0,0,0.5);">Ошибка загрузки</div>
+                            <div style="font-size: 13px; color: rgba(0,0,0,0.3); margin-top: 4px;">Попробуйте позже или проверьте подключение</div>
+                            <button onclick="searchDeezerTracks()" style="margin-top: 12px; background: #ffcc00; border: none; padding: 8px 24px; border-radius: 30px; font-weight: 600; cursor: pointer;">🔄 Повторить</button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function renderDeezerResults(tracks) {
+            const resultsDiv = document.getElementById('deezerResults');
+            
+            let html = `
+                <div style="margin-top: 4px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 12px; color: rgba(0,0,0,0.4); font-weight: 500;">${tracks.length} треков найдено</span>
+                    <button onclick="document.getElementById('deezerResults').style.display = 'none'" style="background: none; border: none; color: rgba(0,0,0,0.3); font-size: 20px; cursor: pointer;">✕</button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px; max-height: 500px; overflow-y: auto; padding-right: 4px;">
+            `;
+            
+            tracks.forEach((track, index) => {
+                const artistName = track.artist?.name || 'Unknown';
+                const trackTitle = track.title || 'Без названия';
+                const albumCover = track.album?.cover_medium || track.album?.cover_small || '';
+                const previewUrl = track.preview || '';
+                const duration = track.duration || 0;
+                const minutes = Math.floor(duration / 60);
+                const seconds = duration % 60;
+                const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                const isMobile = window.innerWidth < 500;
+                
+                html += `
+                    <div class="deezer-track-card" style="
+                        background: rgba(0,0,0,0.03);
+                        border-radius: 16px;
+                        padding: ${isMobile ? '12px' : '16px'};
+                        display: flex;
+                        gap: ${isMobile ? '12px' : '16px'};
+                        align-items: center;
+                        border: 1px solid rgba(0,0,0,0.05);
+                        transition: all 0.3s ease;
+                        animation: fadeInScale 0.3s ease;
+                        animation-delay: ${index * 0.05}s;
+                        animation-fill-mode: backwards;
+                    ">
+                        <div style="flex-shrink: 0;">
+                            ${albumCover ? 
+                                `<img src="${albumCover}" alt="${escapeHtml(trackTitle)}" style="
+                                    width: ${isMobile ? '60px' : '72px'};
+                                    height: ${isMobile ? '60px' : '72px'};
+                                    border-radius: 12px;
+                                    object-fit: cover;
+                                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                                ">` :
+                                `<div style="
+                                    width: ${isMobile ? '60px' : '72px'};
+                                    height: ${isMobile ? '60px' : '72px'};
+                                    border-radius: 12px;
+                                    background: linear-gradient(135deg, #ffcc00, #ffd633);
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 28px;
+                                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                                ">🎵</div>`
+                            }
+                        </div>
+                        
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 600; font-size: ${isMobile ? '14px' : '16px'}; color: #1a1a1a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${escapeHtml(trackTitle)}
+                            </div>
+                            <div style="font-size: ${isMobile ? '12px' : '13px'}; color: rgba(0,0,0,0.5); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${escapeHtml(artistName)}
+                            </div>
+                            <div style="display: flex; gap: 12px; margin-top: 4px; flex-wrap: wrap;">
+                                <span style="font-size: 11px; color: rgba(0,0,0,0.3);">⏱ ${durationStr}</span>
+                                ${track.album?.title ? `<span style="font-size: 11px; color: rgba(0,0,0,0.3);">📀 ${escapeHtml(track.album.title)}</span>` : ''}
+                                ${track.rank ? `<span style="font-size: 11px; color: rgba(0,0,0,0.3);">🔥 ${track.rank}</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end;">
+                            ${previewUrl ? `
+                                <button class="deezer-play-btn" data-preview="${previewUrl}" data-track="${escapeHtml(trackTitle)}" data-artist="${escapeHtml(artistName)}" style="
+                                    background: #ffcc00;
+                                    border: none;
+                                    width: ${isMobile ? '40px' : '48px'};
+                                    height: ${isMobile ? '40px' : '48px'};
+                                    border-radius: 50%;
+                                    font-size: ${isMobile ? '16px' : '20px'};
+                                    cursor: pointer;
+                                    transition: all 0.2s ease;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    box-shadow: 0 2px 8px rgba(255,204,0,0.3);
+                                ">
+                                    ▶️
+                                </button>
+                            ` : `
+                                <button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' ' + trackTitle)}')" style="
+                                    background: rgba(0,0,0,0.05);
+                                    border: none;
+                                    padding: 8px 14px;
+                                    border-radius: 30px;
+                                    font-size: 12px;
+                                    cursor: pointer;
+                                    color: rgba(0,0,0,0.6);
+                                ">
+                                    🎵
+                                </button>
+                            `}
+                            <button onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' ' + trackTitle)}')" style="
+                                background: rgba(0,0,0,0.05);
+                                border: none;
+                                width: ${isMobile ? '40px' : '48px'};
+                                height: ${isMobile ? '40px' : '48px'};
+                                border-radius: 50%;
+                                font-size: ${isMobile ? '16px' : '20px'};
+                                cursor: pointer;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            ">
+                                🎵
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            html += `
+                <div style="margin-top: 12px; text-align: center; font-size: 11px; color: rgba(0,0,0,0.25);">
+                    ⚡ Нажмите ▶️ для 30-секундного превью | 🎵 для полной версии
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = html;
+            
+            document.querySelectorAll('.deezer-play-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const previewUrl = this.dataset.preview;
+                    const trackName = this.dataset.track;
+                    const artistName = this.dataset.artist;
+                    toggleDeezerPlayback(this, previewUrl, trackName, artistName);
+                });
+            });
+        }
+
+        function toggleDeezerPlayback(button, previewUrl, trackName, artistName) {
+            if (deezerAudio && !deezerAudio.paused) {
+                deezerAudio.pause();
+                if (deezerAudioButton) {
+                    deezerAudioButton.innerHTML = '▶️';
+                }
+                deezerAudio = null;
+                deezerAudioButton = null;
+                
+                if (deezerAudioButton === button) {
+                    return;
+                }
+            }
+            
+            if (previewUrl) {
+                button.innerHTML = '⏳';
+                
+                const audio = new Audio(previewUrl);
+                audio.volume = 0.7;
+                
+                audio.oncanplay = () => {
+                    audio.play();
+                    button.innerHTML = '⏸️';
+                    deezerAudio = audio;
+                    deezerAudioButton = button;
+                    showNote(`🎵 ${trackName} — ${artistName} (30 сек)`);
+                };
+                
+                audio.onended = () => {
+                    button.innerHTML = '▶️';
+                    deezerAudio = null;
+                    deezerAudioButton = null;
+                };
+                
+                audio.onerror = () => {
+                    button.innerHTML = '▶️';
+                    deezerAudio = null;
+                    deezerAudioButton = null;
+                    showNote('⚠️ Не удалось загрузить превью');
+                    tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(artistName + ' ' + trackName)}`);
+                };
+            }
+        }
+
+        document.getElementById('deezerSearchBtn').addEventListener('click', searchDeezerTracks);
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchDeezerTracks();
+            }
+        });
+
+        document.getElementById('backFromMusic').addEventListener('click', function() {
+            stopDeezerPreview();
+            showStartScreen();
+        });
+
+        // =============================================================
+        // 18. ИГРА
         // =============================================================
         function genQ() { 
             const t = tracks[Math.floor(Math.random() * tracks.length)]; 
@@ -3810,7 +3521,7 @@
         if (startGameBtn) startGameBtn.onclick = startGame;
 
         // =============================================================
-        // 18. АССИСТЕНТ
+        // 19. АССИСТЕНТ
         // =============================================================
         async function askBot(q) {
             const low = q.toLowerCase();
@@ -3853,7 +3564,7 @@
         if (chatInputElem) chatInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
 
         // =============================================================
-        // 19. РАНДОМАЙЗЕР
+        // 20. РАНДОМАЙЗЕР
         // =============================================================
         function parseArtists(t) { 
             if (!t.trim()) return []; 
@@ -3895,13 +3606,13 @@
         if (artistListElem) artistListElem.addEventListener('input', updateTotal);
 
         // =============================================================
-        // 20. НАСТРОЕНИЕ
+        // 21. НАСТРОЕНИЕ
         // =============================================================
         const moodTracks = { happy: ["Останься - Асия"], sad: ["Группа крови - Кино"], energetic: ["Believer - Imagine Dragons"], relax: ["Твой поцелуй - Асия"], romantic: ["Твой поцелуй - Асия"], focus: ["Lo-Fi Hip Hop"] };
         document.querySelectorAll('.mood-btn').forEach(btn => { btn.onclick = () => { const track = moodTracks[btn.dataset.mood][0]; tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(track)}`); }; });
 
         // =============================================================
-        // 21. ОФОРМЛЕНИЕ
+        // 22. ОФОРМЛЕНИЕ
         // =============================================================
         function applyBackground(bgValue, bgType) {
             document.body.style.background = '';
@@ -4073,7 +3784,7 @@
         }
 
         // =============================================================
-        // 22. KINO
+        // 23. KINO
         // =============================================================
         var kinoCurrentTab = 'movies';
         var KINOPOISK_API_KEY = 'P2RCP6B-3V24Q4W-N7RQSW3-0488PH9';
@@ -4495,7 +4206,7 @@
         });
 
         // =============================================================
-        // 23. НАВИГАЦИЯ ПО КНОПКАМ МЕНЮ
+        // 24. НАВИГАЦИЯ ПО КНОПКАМ МЕНЮ
         // =============================================================
         document.getElementById('goToMusicBtn').onclick = () => { 
             hideStartScreen();
@@ -4517,7 +4228,7 @@
         document.getElementById('goToLyricsBtn').onclick = () => { showPage(pages.lyrics, 'lyrics'); updateActiveTabInBar('menu'); };
 
         // =============================================================
-        // 24. НИЖНЯЯ ПАНЕЛЬ
+        // 25. НИЖНЯЯ ПАНЕЛЬ
         // =============================================================
         function initBottomTabBar() {
             const tabBar = document.getElementById('bottomTabBar');
@@ -4561,7 +4272,7 @@
         }
 
         // =============================================================
-        // 25. ПРОФИЛЬ
+        // 26. ПРОФИЛЬ
         // =============================================================
         let userData = {
             firstName: '',
@@ -4711,14 +4422,14 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 3.0.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, чартами и играми.\n\n© 2025 LE MONDE MUSIC',
+                    message: 'Версия 3.1.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer, чартами и играми.\n\n© 2025 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
         }
 
         // =============================================================
-        // 26. ФОТО
+        // 27. ФОТО
         // =============================================================
         window.showFullPhoto = function(photoUrl, artistName) {
             const modal = document.createElement('div');
@@ -4749,7 +4460,7 @@
         };
 
         // =============================================================
-        // 27. ПОГОДА
+        // 28. ПОГОДА
         // =============================================================
         function setDefaultWeather() {
             const iconEl = document.getElementById('weatherIcon');
@@ -4838,7 +4549,7 @@
         setInterval(updateWeather, 600000);
 
         // =============================================================
-        // 28. НАСТРОЙКИ
+        // 29. НАСТРОЙКИ
         // =============================================================
         const menuButton = document.getElementById('menuButton');
         const modalElem = document.getElementById('settingsModal');
@@ -4860,7 +4571,7 @@
         } else if (vBtn) vBtn.style.opacity = '0.5';
 
         // =============================================================
-        // 29. ЗАПУСК
+        // 30. ЗАПУСК
         // =============================================================
         loadAppearanceFixed();
         loadSavedYellowWallpaper();
@@ -4875,7 +4586,7 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.0.0 — с датой релиза!');
+        console.log('✦ Версия 3.1.0 — с Deezer поиском и 30-секундным превью!');
         console.log('✦ Дата релиза показывается при поиске исполнителя');
     </script>
 </body>
