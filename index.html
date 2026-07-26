@@ -2168,7 +2168,7 @@
         </div>
     </div>
 
-    <!-- ===== MUSIC PAGE (С КНОПКОЙ DEEZER) ===== -->
+    <!-- ===== MUSIC PAGE ===== -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -4782,14 +4782,14 @@
         console.log('✦ Дата релиза показывается при поиске исполнителя');
 
         // =============================================================
-        // 30. DEEZER ПОИСК (НОВАЯ ФУНКЦИЯ)
+        // 30. DEEZER ПОИСК (ИСПРАВЛЕННАЯ ВЕРСИЯ)
         // =============================================================
         
         // Кэш для результатов Deezer
         const deezerSearchCache = new Map();
         
         /**
-         * Поиск треков через Deezer API
+         * Поиск треков через Deezer API с обходом CORS
          */
         async function searchDeezerTrack(query) {
             if (!query || query.length < 2) {
@@ -4821,19 +4821,55 @@
             }
             
             try {
-                // Используем прокси для обхода CORS
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const deezerUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10&order=RANKING`;
+                // === ИСПОЛЬЗУЕМ НЕСКОЛЬКО ПРОКСИ ===
+                const proxyUrls = [
+                    'https://api.allorigins.win/raw?url=',
+                    'https://corsproxy.io/?',
+                    'https://cors-anywhere.herokuapp.com/'
+                ];
                 
-                const response = await fetch(proxyUrl + encodeURIComponent(deezerUrl));
+                let data = null;
+                let lastError = null;
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // Пробуем каждый прокси по очереди
+                for (const proxyUrl of proxyUrls) {
+                    try {
+                        const deezerUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10&order=RANKING`;
+                        const fullUrl = proxyUrl + encodeURIComponent(deezerUrl);
+                        
+                        const response = await fetch(fullUrl, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            data = await response.json();
+                            if (data && data.data && data.data.length > 0) {
+                                break;
+                            }
+                        }
+                    } catch (e) {
+                        lastError = e;
+                        continue;
+                    }
                 }
                 
-                const data = await response.json();
+                // Если ни один прокси не сработал, пробуем напрямую через Deezer с JSONP
+                if (!data || !data.data || data.data.length === 0) {
+                    try {
+                        const jsonpData = await searchDeezerJsonp(query);
+                        if (jsonpData && jsonpData.data && jsonpData.data.length > 0) {
+                            data = jsonpData;
+                        }
+                    } catch (e) {
+                        lastError = e;
+                    }
+                }
                 
-                if (!data.data || data.data.length === 0) {
+                if (!data || !data.data || data.data.length === 0) {
                     resultsContainer.innerHTML = `
                         <div class="deezer-empty">
                             <div class="icon">🎵</div>
@@ -4857,38 +4893,53 @@
             } catch (error) {
                 console.error('Ошибка поиска в Deezer:', error);
                 
-                // Пробуем прямой запрос без прокси
-                try {
-                    const directUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10`;
-                    const directResponse = await fetch(directUrl);
-                    
-                    if (directResponse.ok) {
-                        const directData = await directResponse.json();
-                        
-                        if (directData.data && directData.data.length > 0) {
-                            deezerSearchCache.set(cacheKey, directData.data);
-                            displayDeezerResults(directData.data, resultsContainer);
-                            showNote(`✅ Найдено ${directData.data.length} треков`);
-                            searchBtn.disabled = false;
-                            searchBtn.textContent = '🔍 Поиск трека через Deezer';
-                            return;
-                        }
-                    }
-                } catch (directError) {
-                    console.error('Прямой запрос тоже не удался:', directError);
-                }
-                
+                // Показываем сообщение об ошибке с кнопкой повторной попытки
                 resultsContainer.innerHTML = `
                     <div class="deezer-empty">
                         <div class="icon">❌</div>
                         <div>Ошибка при поиске</div>
                         <div style="font-size: 12px; margin-top: 4px; opacity: 0.6;">Попробуйте позже</div>
+                        <button onclick="searchDeezerTrack('${query}')" style="margin-top: 12px; background: #ffcc00; border: none; padding: 8px 20px; border-radius: 30px; font-weight: 600; cursor: pointer;">🔄 Повторить</button>
                     </div>
                 `;
             }
             
             searchBtn.disabled = false;
             searchBtn.textContent = '🔍 Поиск трека через Deezer';
+        }
+        
+        /**
+         * Альтернативный поиск через JSONP
+         */
+        function searchDeezerJsonp(query) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                const callbackName = 'deezerCallback_' + Date.now();
+                
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    resolve(data);
+                };
+                
+                script.src = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10&callback=${callbackName}`;
+                script.onerror = function() {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    reject(new Error('JSONP request failed'));
+                };
+                
+                document.body.appendChild(script);
+                
+                // Таймаут на случай, если запрос завис
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                        reject(new Error('JSONP timeout'));
+                    }
+                }, 10000);
+            });
         }
         
         /**
