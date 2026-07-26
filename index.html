@@ -1846,94 +1846,34 @@
         }
 
         /* ===== СТИЛИ ДЛЯ DEEZER ПОИСКА ===== */
-        .deezer-result-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            background: rgba(0,0,0,0.03);
-            border-radius: 16px;
-            margin-bottom: 8px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .deezer-result-item:hover {
-            background: rgba(0,0,0,0.06);
-            transform: translateX(4px);
-        }
-
-        .deezer-result-cover {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-
-        .deezer-result-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .deezer-result-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1a1a1a;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .deezer-result-artist {
-            font-size: 12px;
-            color: rgba(0,0,0,0.5);
-        }
-
-        .deezer-result-duration {
-            font-size: 11px;
-            color: rgba(0,0,0,0.3);
-            font-family: monospace;
-        }
-
-        .deezer-result-actions {
-            display: flex;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-
-        .deezer-btn-play {
+        .deezer-search-btn {
             background: #ffcc00;
             border: none;
-            width: 34px;
-            height: 34px;
-            border-radius: 34px;
-            font-size: 16px;
+            padding: 12px 24px;
+            border-radius: 60px;
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 12px;
         }
 
-        .deezer-btn-play:hover {
-            transform: scale(1.1);
+        .deezer-search-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(255,204,0,0.3);
         }
 
-        .deezer-btn-play:active {
-            transform: scale(0.95);
+        .deezer-search-btn:active {
+            transform: scale(0.96);
         }
 
-        .deezer-btn-link {
-            background: rgba(0,0,0,0.05);
-            border: none;
-            width: 34px;
-            height: 34px;
-            border-radius: 34px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .deezer-btn-link:hover {
-            background: rgba(0,0,0,0.1);
+        .deezer-search-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .deezer-loading {
@@ -1964,38 +1904,9 @@
             margin-bottom: 8px;
         }
 
-        .deezer-search-btn {
-            background: #ffcc00;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 60px;
-            color: #1a1a1a;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            margin-top: 12px;
-        }
-
-        .deezer-search-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 15px rgba(255,204,0,0.3);
-        }
-
-        .deezer-search-btn:active {
-            transform: scale(0.96);
-        }
-
-        .deezer-search-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .deezer-results-container {
             margin-top: 12px;
-            max-height: 400px;
+            max-height: 600px;
             overflow-y: auto;
         }
 
@@ -2013,6 +1924,190 @@
             border-radius: 10px;
         }
 
+        .deezer-track-card {
+            background: rgba(0,0,0,0.03);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .deezer-track-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .deezer-track-cover {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            object-fit: cover;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .deezer-track-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .deezer-track-artist {
+            font-size: 14px;
+            color: rgba(0,0,0,0.6);
+        }
+
+        .deezer-track-album {
+            font-size: 12px;
+            color: rgba(0,0,0,0.4);
+        }
+
+        .deezer-track-release {
+            font-size: 11px;
+            color: #cc9900;
+        }
+
+        .deezer-track-duration {
+            font-size: 11px;
+            color: rgba(0,0,0,0.3);
+        }
+
+        .deezer-ai-fact {
+            background: rgba(255,204,0,0.08);
+            border-left: 2px solid #ffcc00;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .deezer-ai-fact .label {
+            font-size: 10px;
+            color: #ffcc00;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .deezer-ai-fact .text {
+            font-size: 13px;
+            color: #1a1a1a;
+            line-height: 1.5;
+        }
+
+        .deezer-song-meaning {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: rgba(255,204,0,0.05);
+            border-radius: 12px;
+            border-left: 3px solid #ffcc00;
+        }
+
+        .deezer-song-meaning .label {
+            font-size: 10px;
+            color: #ffcc00;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .deezer-song-meaning .text {
+            font-size: 13px;
+            color: rgba(0,0,0,0.7);
+            line-height: 1.5;
+        }
+
+        .deezer-song-meaning .emotion {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 2px 12px;
+            background: rgba(255,107,107,0.08);
+            border-radius: 20px;
+            font-size: 11px;
+            color: rgba(0,0,0,0.5);
+        }
+
+        .deezer-platform-btn {
+            background: #ffcc00;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .deezer-platform-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .deezer-platform-btn-secondary {
+            background: rgba(0,0,0,0.05);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .deezer-platform-btn-secondary:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .deezer-play-btn {
+            background: #ffcc00;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #1a1a1a;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .deezer-play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .deezer-play-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .deezer-action-btn {
+            background: rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.06);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 11px;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .deezer-action-btn:hover {
+            background: rgba(0,0,0,0.06);
+        }
+
+        .deezer-explicit {
+            color: #e74c3c;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
         .deezer-result-badge {
             display: inline-block;
             padding: 2px 10px;
@@ -2024,10 +2119,12 @@
             margin-left: 6px;
         }
 
-        .deezer-explicit {
-            color: #e74c3c;
-            font-size: 11px;
-            font-weight: 600;
+        .deezer-timer {
+            font-size: 12px;
+            font-family: monospace;
+            color: rgba(0,0,0,0.4);
+            display: inline-flex;
+            align-items: center;
         }
 
         @keyframes spin {
@@ -2168,7 +2265,7 @@
         </div>
     </div>
 
-    <!-- ===== MUSIC PAGE ===== -->
+    <!-- ===== MUSIC PAGE (С НОВОЙ КНОПКОЙ DEEZER) ===== -->
     <div class="fullscreen-page" id="musicPage">
         <div class="page-header">
             <button class="back-btn" id="backFromMusic"><svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2"><path d="M15 18L9 12L15 6"/></svg> Назад</button>
@@ -4780,321 +4877,6 @@
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
         console.log('✦ Версия 3.0.0 — с датой релиза!');
         console.log('✦ Дата релиза показывается при поиске исполнителя');
-
-        // =============================================================
-        // 30. DEEZER ПОИСК (ИСПРАВЛЕННАЯ ВЕРСИЯ)
-        // =============================================================
-        
-        // Кэш для результатов Deezer
-        const deezerSearchCache = new Map();
-        
-        /**
-         * Поиск треков через Deezer API с обходом CORS
-         */
-        async function searchDeezerTrack(query) {
-            if (!query || query.length < 2) {
-                showNote('❌ Введите минимум 2 символа');
-                return;
-            }
-            
-            const resultsContainer = document.getElementById('deezerResults');
-            const searchBtn = document.getElementById('deezerSearchBtn');
-            
-            // Показываем загрузку
-            resultsContainer.innerHTML = `
-                <div class="deezer-loading">
-                    <div class="spinner"></div>
-                    <div>🔍 Поиск треков...</div>
-                </div>
-            `;
-            searchBtn.disabled = true;
-            searchBtn.textContent = '⏳ Поиск...';
-            
-            // Проверяем кэш
-            const cacheKey = query.toLowerCase().trim();
-            if (deezerSearchCache.has(cacheKey)) {
-                const cached = deezerSearchCache.get(cacheKey);
-                displayDeezerResults(cached, resultsContainer);
-                searchBtn.disabled = false;
-                searchBtn.textContent = '🔍 Поиск трека через Deezer';
-                return;
-            }
-            
-            try {
-                // === ИСПОЛЬЗУЕМ НЕСКОЛЬКО ПРОКСИ ===
-                const proxyUrls = [
-                    'https://api.allorigins.win/raw?url=',
-                    'https://corsproxy.io/?',
-                    'https://cors-anywhere.herokuapp.com/'
-                ];
-                
-                let data = null;
-                let lastError = null;
-                
-                // Пробуем каждый прокси по очереди
-                for (const proxyUrl of proxyUrls) {
-                    try {
-                        const deezerUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10&order=RANKING`;
-                        const fullUrl = proxyUrl + encodeURIComponent(deezerUrl);
-                        
-                        const response = await fetch(fullUrl, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            }
-                        });
-                        
-                        if (response.ok) {
-                            data = await response.json();
-                            if (data && data.data && data.data.length > 0) {
-                                break;
-                            }
-                        }
-                    } catch (e) {
-                        lastError = e;
-                        continue;
-                    }
-                }
-                
-                // Если ни один прокси не сработал, пробуем напрямую через Deezer с JSONP
-                if (!data || !data.data || data.data.length === 0) {
-                    try {
-                        const jsonpData = await searchDeezerJsonp(query);
-                        if (jsonpData && jsonpData.data && jsonpData.data.length > 0) {
-                            data = jsonpData;
-                        }
-                    } catch (e) {
-                        lastError = e;
-                    }
-                }
-                
-                if (!data || !data.data || data.data.length === 0) {
-                    resultsContainer.innerHTML = `
-                        <div class="deezer-empty">
-                            <div class="icon">🎵</div>
-                            <div>По вашему запросу ничего не найдено</div>
-                            <div style="font-size: 12px; margin-top: 4px; opacity: 0.6;">Попробуйте изменить запрос</div>
-                        </div>
-                    `;
-                    searchBtn.disabled = false;
-                    searchBtn.textContent = '🔍 Поиск трека через Deezer';
-                    return;
-                }
-                
-                // Сохраняем в кэш
-                deezerSearchCache.set(cacheKey, data.data);
-                
-                // Отображаем результаты
-                displayDeezerResults(data.data, resultsContainer);
-                
-                showNote(`✅ Найдено ${data.data.length} треков`);
-                
-            } catch (error) {
-                console.error('Ошибка поиска в Deezer:', error);
-                
-                // Показываем сообщение об ошибке с кнопкой повторной попытки
-                resultsContainer.innerHTML = `
-                    <div class="deezer-empty">
-                        <div class="icon">❌</div>
-                        <div>Ошибка при поиске</div>
-                        <div style="font-size: 12px; margin-top: 4px; opacity: 0.6;">Попробуйте позже</div>
-                        <button onclick="searchDeezerTrack('${query}')" style="margin-top: 12px; background: #ffcc00; border: none; padding: 8px 20px; border-radius: 30px; font-weight: 600; cursor: pointer;">🔄 Повторить</button>
-                    </div>
-                `;
-            }
-            
-            searchBtn.disabled = false;
-            searchBtn.textContent = '🔍 Поиск трека через Deezer';
-        }
-        
-        /**
-         * Альтернативный поиск через JSONP
-         */
-        function searchDeezerJsonp(query) {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                const callbackName = 'deezerCallback_' + Date.now();
-                
-                window[callbackName] = function(data) {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    resolve(data);
-                };
-                
-                script.src = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10&callback=${callbackName}`;
-                script.onerror = function() {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    reject(new Error('JSONP request failed'));
-                };
-                
-                document.body.appendChild(script);
-                
-                // Таймаут на случай, если запрос завис
-                setTimeout(() => {
-                    if (window[callbackName]) {
-                        delete window[callbackName];
-                        document.body.removeChild(script);
-                        reject(new Error('JSONP timeout'));
-                    }
-                }, 10000);
-            });
-        }
-        
-        /**
-         * Отображение результатов поиска Deezer
-         */
-        function displayDeezerResults(tracks, container) {
-            let html = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div style="font-size: 13px; font-weight: 600; color: rgba(0,0,0,0.6);">
-                        🎵 Найдено: ${tracks.length} треков
-                    </div>
-                    <button onclick="document.getElementById('deezerResults').innerHTML = ''" style="background: none; border: none; color: rgba(0,0,0,0.3); cursor: pointer; font-size: 18px;">✕</button>
-                </div>
-                <div class="deezer-results-container">
-            `;
-            
-            tracks.forEach((track, index) => {
-                const duration = track.duration || 0;
-                const minutes = Math.floor(duration / 60);
-                const seconds = duration % 60;
-                const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                const coverUrl = track.album?.cover_medium || '';
-                const title = track.title || 'Без названия';
-                const artist = track.artist?.name || 'Неизвестный исполнитель';
-                const trackId = track.id;
-                const link = track.link || `https://www.deezer.com/track/${trackId}`;
-                const explicit = track.explicit_lyrics || false;
-                
-                html += `
-                    <div class="deezer-result-item" data-track-id="${trackId}">
-                        ${coverUrl ? `<img class="deezer-result-cover" src="${coverUrl}" alt="${title}" loading="lazy" onerror="this.style.display='none'">` : ''}
-                        <div class="deezer-result-info">
-                            <div class="deezer-result-title">
-                                ${escapeHtml(title)}
-                                ${explicit ? '<span class="deezer-explicit">🔞</span>' : ''}
-                                <span class="deezer-result-badge">Deezer</span>
-                            </div>
-                            <div class="deezer-result-artist">${escapeHtml(artist)}</div>
-                            <div class="deezer-result-duration">⏱ ${durationStr}</div>
-                        </div>
-                        <div class="deezer-result-actions">
-                            <button class="deezer-btn-play" onclick="playDeezerPreview(${trackId}, this)" title="Слушать 30 сек">▶️</button>
-                            <button class="deezer-btn-link" onclick="tg.openLink('${link}')" title="Открыть в Deezer">🎵</button>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            html += `
-                    </div>
-                    <div style="text-align: center; margin-top: 12px; font-size: 11px; color: rgba(0,0,0,0.3);">
-                        🔗 Источник: Deezer · 
-                        <a href="https://www.deezer.com/search/${encodeURIComponent(document.getElementById('searchInput').value)}" 
-                           target="_blank" 
-                           style="color: #ffcc00; text-decoration: none; font-weight: 500;"
-                           onclick="tg.openLink(this.href); return false;">
-                            Открыть в Deezer
-                        </a>
-                    </div>
-                </div>
-            `;
-            
-            container.innerHTML = html;
-        }
-        
-        /**
-         * Воспроизведение превью трека из Deezer
-         */
-        async function playDeezerPreview(trackId, button) {
-            if (currentAudio && currentAudioButton === button && !currentAudio.paused) {
-                currentAudio.pause();
-                button.innerHTML = '▶️';
-                currentAudio = null;
-                currentAudioButton = null;
-                return;
-            }
-            
-            stopCurrentPreview();
-            
-            button.innerHTML = '⏳';
-            
-            try {
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const trackUrl = `https://api.deezer.com/track/${trackId}`;
-                
-                const response = await fetch(proxyUrl + encodeURIComponent(trackUrl));
-                
-                if (!response.ok) {
-                    throw new Error('Ошибка загрузки');
-                }
-                
-                const data = await response.json();
-                const previewUrl = data.preview;
-                
-                if (!previewUrl) {
-                    button.innerHTML = '❌';
-                    setTimeout(() => { button.innerHTML = '▶️'; }, 1500);
-                    showNote('❌ Превью недоступно');
-                    return;
-                }
-                
-                const audio = new Audio(previewUrl);
-                audio.volume = 0.7;
-                
-                audio.oncanplay = () => {
-                    audio.play();
-                    button.innerHTML = '⏸️';
-                    currentAudio = audio;
-                    currentAudioButton = button;
-                    
-                    audio.onended = () => {
-                        button.innerHTML = '▶️';
-                        currentAudio = null;
-                        currentAudioButton = null;
-                    };
-                };
-                
-                audio.onerror = () => {
-                    button.innerHTML = '❌';
-                    setTimeout(() => { button.innerHTML = '▶️'; }, 1500);
-                    showNote('❌ Ошибка воспроизведения');
-                };
-                
-            } catch (error) {
-                console.error('Ошибка воспроизведения превью:', error);
-                button.innerHTML = '❌';
-                setTimeout(() => { button.innerHTML = '▶️'; }, 1500);
-                showNote('❌ Не удалось загрузить превью');
-            }
-        }
-        
-        // =============================================================
-        // 31. ОБРАБОТЧИК КНОПКИ DEEZER
-        // =============================================================
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const deezerBtn = document.getElementById('deezerSearchBtn');
-            const searchInput = document.getElementById('searchInput');
-            
-            if (deezerBtn) {
-                deezerBtn.addEventListener('click', function() {
-                    const query = searchInput ? searchInput.value.trim() : '';
-                    if (query) {
-                        searchDeezerTrack(query);
-                    } else {
-                        showNote('❌ Введите название трека или исполнителя');
-                        if (searchInput) searchInput.focus();
-                    }
-                });
-            }
-        });
-        
-        console.log('✦ LE MONDE MUSIC + DEEZER SEARCH ✦');
-        console.log('✦ Версия 3.1.0 — с Deezer поиском!');
     </script>
 </body>
 </html>
