@@ -936,10 +936,11 @@
             border-bottom: none;
         }
 
+        /* ===== DEEZER СТИЛИ С БОЛЬШОЙ ОБЛОЖКОЙ ===== */
         .deezer-track-card {
             display: flex;
-            gap: 14px;
-            padding: 12px;
+            gap: 16px;
+            padding: 14px;
             background: rgba(0,0,0,0.03);
             border-radius: 16px;
             border: 1px solid rgba(0,0,0,0.06);
@@ -955,13 +956,15 @@
         .deezer-track-card:active {
             transform: scale(0.98);
         }
+
         .deezer-track-cover {
-            width: 56px;
-            height: 56px;
+            width: 80px;
+            height: 80px;
             flex-shrink: 0;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             background: #f0f0f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         .deezer-track-cover img {
             width: 100%;
@@ -974,14 +977,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
+            background: #f5f5f5;
         }
+
         .deezer-track-info {
             flex: 1;
             min-width: 0;
         }
         .deezer-track-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             color: #1a1a1a;
             white-space: nowrap;
@@ -989,24 +994,25 @@
             text-overflow: ellipsis;
         }
         .deezer-track-artist {
-            font-size: 13px;
+            font-size: 14px;
             color: rgba(0,0,0,0.6);
+            margin-top: 2px;
         }
         .deezer-track-meta {
-            font-size: 11px;
+            font-size: 12px;
             color: rgba(0,0,0,0.4);
             display: flex;
-            gap: 10px;
-            margin-top: 2px;
+            gap: 12px;
+            margin-top: 4px;
             flex-wrap: wrap;
         }
         .deezer-play-btn {
             background: #6bcb77;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -1917,15 +1923,12 @@
                 font-size: 9px;
                 margin-bottom: 20px;
             }
-            .deezer-track-card {
-                flex-wrap: wrap;
-            }
             .deezer-track-cover {
-                width: 44px;
-                height: 44px;
+                width: 60px;
+                height: 60px;
             }
             .deezer-track-title {
-                font-size: 13px;
+                font-size: 14px;
             }
             .deezer-track-artist {
                 font-size: 12px;
@@ -1935,9 +1938,13 @@
                 gap: 6px;
             }
             .deezer-play-btn {
-                width: 34px;
-                height: 34px;
-                font-size: 14px;
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+            .deezer-track-card {
+                gap: 12px;
+                padding: 10px;
             }
         }
 
@@ -3660,13 +3667,12 @@
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // =============================================================
-        // 30. DEEZER ПОИСК С НЕСКОЛЬКИМИ ПРОКСИ (FIX CORS + TIMEOUT)
+        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (80x80px)
         // =============================================================
         const deezerSearchInput = document.getElementById('deezerSearchInput');
         const deezerSearchBtn = document.getElementById('doDeezerSearchBtn');
         const deezerResultDiv = document.getElementById('deezerSearchResult');
 
-        // Список прокси для обхода CORS
         const CORS_PROXIES = [
             'https://api.allorigins.win/raw?url=',
             'https://corsproxy.io/?',
@@ -3680,8 +3686,6 @@
             for (const proxy of CORS_PROXIES) {
                 try {
                     const proxyUrl = proxy + encodeURIComponent(url);
-                    console.log(`Пытаемся через прокси: ${proxy}`);
-                    
                     const response = await fetch(proxyUrl, { 
                         signal: controller.signal,
                         headers: { 'Accept': 'application/json' }
@@ -3689,17 +3693,15 @@
                     
                     if (response.ok) {
                         clearTimeout(timeoutId);
-                        console.log(`✅ Прокси ${proxy} сработал`);
                         return response;
                     }
-                    console.log(`❌ Прокси ${proxy} вернул ${response.status}`);
                 } catch(e) {
-                    console.log(`⚠️ Прокси ${proxy} ошибка:`, e.message);
+                    console.log('Прокси ошибка:', e.message);
                 }
             }
             
             clearTimeout(timeoutId);
-            throw new Error('Все прокси недоступны или истекло время ожидания');
+            throw new Error('Все прокси недоступны');
         }
 
         async function searchDeezerTrack(query) {
@@ -3746,6 +3748,7 @@
             }
         }
 
+        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (80x80px)
         function renderDeezerResults(tracks) {
             let html = `
                 <div style="margin-bottom: 16px;">
@@ -3766,9 +3769,10 @@
                 const seconds = duration % 60;
                 const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
-                const coverUrl = track.album?.cover_medium || 
+                // БОЛЬШАЯ обложка: сначала XL, потом BIG, потом MEDIUM
+                const coverUrl = track.album?.cover_xl || 
                                 track.album?.cover_big || 
-                                track.album?.cover_xl || 
+                                track.album?.cover_medium || 
                                 track.album?.cover_small || 
                                 '';
                 
@@ -4948,7 +4952,7 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.1.0 — с Deezer поиском через несколько прокси!');
+        console.log('✦ Версия 3.1.0 — с большой обложкой в Deezer (80×80px)!');
         console.log('✦ Дата релиза показывается при поиске исполнителя');
     </script>
 </body>
