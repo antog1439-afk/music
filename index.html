@@ -68,6 +68,15 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
         .start-screen {
             position: fixed;
@@ -1013,6 +1022,7 @@
             justify-content: center;
         }
 
+        /* ===== ОБНОВЛЕННЫЙ СТИЛЬ КНОПКИ DEEZER ===== */
         .deezer-play-btn {
             background: #6bcb77;
             border: none;
@@ -1024,11 +1034,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             flex-shrink: 0;
             color: white;
             box-shadow: 0 2px 16px rgba(107,203,119,0.35);
             margin-top: 8px;
+            position: relative;
         }
         .deezer-play-btn:hover {
             transform: scale(1.08);
@@ -1036,9 +1047,49 @@
         .deezer-play-btn:active {
             transform: scale(0.92);
         }
+
+        /* Состояния кнопки */
         .deezer-play-btn.loading {
             background: #f0ad4e;
             animation: spin 1s linear infinite;
+        }
+
+        .deezer-play-btn.playing {
+            background: #ff6b6b;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .deezer-play-btn.ended {
+            background: #4d96ff;
+            box-shadow: 0 2px 16px rgba(77, 150, 255, 0.35);
+        }
+
+        .deezer-play-btn.ended::after {
+            content: '🎵';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            font-size: 14px;
+            animation: bounceIn 0.3s ease;
+        }
+
+        /* Прогресс-бар Deezer */
+        .deezer-progress {
+            margin-top: 8px;
+            height: 3px;
+            background: rgba(0,0,0,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .deezer-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #6bcb77;
+            border-radius: 2px;
+            transition: width 0.3s ease;
         }
 
         .bottom-tab-bar {
@@ -2032,7 +2083,6 @@
         <div class="start-subtitle">выберите раздел</div>
         
         <div class="start-grid">
-            <!-- MUSIC карточка -->
             <div class="start-card start-card-music" id="startMusicBtn">
                 <div class="start-card-icon">
                     <div class="icon-glow"></div>
@@ -2046,7 +2096,6 @@
                 <div class="start-card-label">music</div>
             </div>
             
-            <!-- KINOPOISK карточка -->
             <div class="start-card start-card-kino" id="startKinoBtn">
                 <div class="start-card-icon">
                     <div class="icon-glow"></div>
@@ -2061,7 +2110,6 @@
                 <div class="start-card-label">kinopoisk</div>
             </div>
 
-            <!-- DEEZER карточка -->
             <div class="start-card start-card-deezer" id="startDeezerBtn">
                 <div class="start-card-icon">
                     <div class="icon-glow"></div>
@@ -2181,7 +2229,7 @@
                 </div>
             </div>
         </div>
-        <div class="user-info" style="color: rgba(0,0,0,0.3);">🎧 Поиск треков через Deezer API</div>
+        <div class="user-info" style="color: rgba(0,0,0,0.3);">🎧 Нажмите ▶️ для 30-секундного превью, после окончания — кнопка откроет трек в Deezer</div>
     </div>
 
     <!-- ===== LYRICS PAGE ===== -->
@@ -3721,7 +3769,15 @@
                 }
                 if (player.btn) {
                     player.btn.textContent = '▶️';
-                    player.btn.classList.remove('loading');
+                    player.btn.classList.remove('loading', 'playing', 'ended');
+                }
+                if (player.progressInterval) {
+                    clearInterval(player.progressInterval);
+                    player.progressInterval = null;
+                }
+                const progressEl = document.getElementById(`progress_${trackId}`);
+                if (progressEl) {
+                    progressEl.style.width = '0%';
                 }
             }
             deezerPlayers.clear();
@@ -3816,9 +3872,14 @@
                                 ${year ? `<span>📅 ${year}</span>` : ''}
                                 <span>⏱ ${durationStr}</span>
                             </div>
-                            <button onclick="event.stopPropagation(); playDeezerPreview(${trackId}, '${escapeHtml(title)}', '${escapeHtml(artist)}', this)" class="deezer-play-btn">
-                                ▶️
-                            </button>
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <button onclick="event.stopPropagation(); playDeezerPreview(${trackId}, '${escapeHtml(title)}', '${escapeHtml(artist)}', this)" class="deezer-play-btn" title="▶️ Прослушать 30 секунд">
+                                    ▶️
+                                </button>
+                                <div class="deezer-progress">
+                                    <div class="deezer-progress-fill" id="progress_${trackId}"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -3834,13 +3895,30 @@
         }
 
         async function playDeezerPreview(trackId, title, artist, btnElement) {
-            // Если этот трек уже играет — останавливаем
+            // Если кнопка в состоянии "ended" — открываем Deezer
+            if (btnElement.classList.contains('ended')) {
+                tg.openLink(`https://www.deezer.com/track/${trackId}`);
+                showNote(`🎵 Открываем "${title}" в Deezer`);
+                btnElement.classList.remove('ended');
+                btnElement.textContent = '▶️';
+                return;
+            }
+            
+            // Если трек уже играет — останавливаем
             if (deezerPlayers.has(trackId)) {
                 const player = deezerPlayers.get(trackId);
                 if (player.audio && !player.audio.paused) {
                     player.audio.pause();
                     player.btn.textContent = '▶️';
-                    player.btn.classList.remove('loading');
+                    player.btn.classList.remove('loading', 'playing', 'ended');
+                    if (player.progressInterval) {
+                        clearInterval(player.progressInterval);
+                        player.progressInterval = null;
+                    }
+                    const progressEl = document.getElementById(`progress_${trackId}`);
+                    if (progressEl) {
+                        progressEl.style.width = '0%';
+                    }
                     deezerPlayers.delete(trackId);
                     return;
                 }
@@ -3852,6 +3930,7 @@
             // Показываем загрузку
             btnElement.textContent = '⏳';
             btnElement.classList.add('loading');
+            btnElement.classList.remove('playing', 'ended');
             
             try {
                 const trackUrl = `https://api.deezer.com/track/${trackId}`;
@@ -3863,28 +3942,71 @@
                     const audio = new Audio(previewUrl);
                     audio.volume = 0.7;
                     
-                    // Сохраняем ссылку на кнопку в плеере
-                    const playerData = { audio: audio, btn: btnElement };
+                    const progressId = `progress_${trackId}`;
+                    let progressInterval = null;
+                    
+                    const playerData = { 
+                        audio: audio, 
+                        btn: btnElement, 
+                        ended: false,
+                        progressInterval: null
+                    };
                     deezerPlayers.set(trackId, playerData);
                     
                     audio.oncanplay = () => {
                         audio.play();
                         btnElement.textContent = '⏸️';
                         btnElement.classList.remove('loading');
-                        showNote(`🎧 "${title}" - ${artist} (30 сек)`);
+                        btnElement.classList.add('playing');
+                        showNote(`🎧 Превью 30 сек: "${title}" - ${artist}`);
+                        
+                        // Обновляем прогресс
+                        const progressEl = document.getElementById(progressId);
+                        if (progressEl) {
+                            progressInterval = setInterval(() => {
+                                if (audio.currentTime > 0 && audio.duration > 0) {
+                                    const percent = (audio.currentTime / Math.min(audio.duration, 30)) * 100;
+                                    progressEl.style.width = Math.min(percent, 100) + '%';
+                                }
+                            }, 200);
+                            playerData.progressInterval = progressInterval;
+                        }
                     };
                     
                     audio.onended = () => {
+                        // Останавливаем плеер
+                        if (progressInterval) {
+                            clearInterval(progressInterval);
+                            progressInterval = null;
+                        }
+                        
                         btnElement.textContent = '▶️';
-                        btnElement.classList.remove('loading');
+                        btnElement.classList.remove('loading', 'playing');
+                        btnElement.classList.add('ended');
+                        btnElement.title = `🎵 Открыть "${title}" в Deezer`;
                         deezerPlayers.delete(trackId);
+                        
+                        // Сбрасываем прогресс
+                        const progressEl = document.getElementById(progressId);
+                        if (progressEl) {
+                            setTimeout(() => {
+                                progressEl.style.width = '0%';
+                            }, 1000);
+                        }
+                        
+                        showNote(`⏹️ Превью "${title}" завершено! Нажмите ▶️ ещё раз, чтобы открыть в Deezer`);
                     };
                     
                     audio.onerror = () => {
+                        if (progressInterval) {
+                            clearInterval(progressInterval);
+                            progressInterval = null;
+                        }
                         btnElement.textContent = '▶️';
-                        btnElement.classList.remove('loading');
+                        btnElement.classList.remove('loading', 'playing', 'ended');
                         deezerPlayers.delete(trackId);
-                        showNote(`❌ Ошибка воспроизведения "${title}"`);
+                        tg.openLink(`https://www.deezer.com/track/${trackId}`);
+                        showNote(`🎵 Открыто в Deezer`);
                     };
                     
                     // Автоматическая остановка через 30 секунд
@@ -3893,26 +4015,41 @@
                             const player = deezerPlayers.get(trackId);
                             if (player.audio && !player.audio.paused) {
                                 player.audio.pause();
+                                
+                                if (player.progressInterval) {
+                                    clearInterval(player.progressInterval);
+                                    player.progressInterval = null;
+                                }
+                                
                                 player.btn.textContent = '▶️';
-                                player.btn.classList.remove('loading');
+                                player.btn.classList.remove('loading', 'playing');
+                                player.btn.classList.add('ended');
+                                player.btn.title = `🎵 Открыть "${title}" в Deezer`;
                                 deezerPlayers.delete(trackId);
+                                
+                                const progressEl = document.getElementById(`progress_${trackId}`);
+                                if (progressEl) {
+                                    progressEl.style.width = '0%';
+                                }
+                                
+                                showNote(`⏹️ Превью "${title}" завершено! Нажмите ▶️ для Deezer`);
                             }
                         }
                     }, 30000);
                     
                 } else {
-                    // Если превью нет — открываем на Deezer
+                    // Если нет превью — открываем Deezer
                     btnElement.textContent = '▶️';
                     btnElement.classList.remove('loading');
                     tg.openLink(`https://www.deezer.com/track/${trackId}`);
-                    showNote(`🎵 Открыто на Deezer`);
+                    showNote(`🎵 Открыто в Deezer`);
                 }
             } catch (error) {
                 console.error('Error loading preview:', error);
                 btnElement.textContent = '▶️';
                 btnElement.classList.remove('loading');
                 tg.openLink(`https://www.deezer.com/track/${trackId}`);
-                showNote(`🎵 Открыто на Deezer`);
+                showNote(`🎵 Открыто в Deezer`);
             }
         }
 
