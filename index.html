@@ -69,7 +69,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ===== СТАРТОВЫЙ ЭКРАН ===== */
         .start-screen {
             position: fixed;
             top: 0;
@@ -119,7 +118,6 @@
             margin-bottom: 28px;
         }
 
-        /* ===== КРАСИВЫЕ КАРТОЧКИ ===== */
         .start-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -311,7 +309,6 @@
             opacity: 1;
         }
 
-        /* ===== ОСТАЛЬНЫЕ СТИЛИ ===== */
         .fullscreen-page {
             position: fixed;
             top: 0;
@@ -327,7 +324,6 @@
         }
         .fullscreen-page.active { transform: translateX(0); }
 
-        /* ===== ГЛАВНОЕ МЕНЮ ===== */
         .menu-container {
             position: fixed;
             top: 0;
@@ -688,7 +684,6 @@
             border: 1px solid rgba(0,0,0,0.06);
         }
 
-        /* ===== ДАТА РЕЛИЗА В КАРТОЧКЕ ===== */
         .release-date {
             display: inline-flex;
             align-items: center;
@@ -707,7 +702,6 @@
             font-size: 13px;
         }
 
-        /* ===== СМЫСЛ ПЕСНИ ===== */
         .song-meaning {
             margin-top: 12px;
             padding: 14px 16px;
@@ -942,7 +936,6 @@
             border-bottom: none;
         }
 
-        /* ===== DEEZER СТИЛИ ===== */
         .deezer-track-card {
             display: flex;
             gap: 14px;
@@ -1029,7 +1022,6 @@
             transform: scale(0.95);
         }
 
-        /* ===== НИЖНЯЯ ПАНЕЛЬ ===== */
         .bottom-tab-bar {
             position: fixed;
             bottom: 16px;
@@ -1123,7 +1115,6 @@
         .chart-title { font-weight: 600; color: #1a1a1a; }
         .chart-artist { font-size: 12px; opacity: 0.6; color: #1a1a1a; }
 
-        /* ===== СТИЛИ ДЛЯ KINO ===== */
         .kino-container {
             max-width: 800px;
             margin: 0 auto;
@@ -1983,7 +1974,6 @@
             stroke: #ffffff !important;
         }
 
-        /* ===== DEEZER MODE ===== */
         body.deezer-mode #deezerPage {
             background: #ffffff;
         }
@@ -2627,7 +2617,6 @@
             kino: document.getElementById('kinoPage')
         };
 
-        // ===== СТАРТОВЫЙ ЭКРАН =====
         function showStartScreen() {
             startScreen.classList.remove('hidden');
             menuContainer.classList.add('hidden-menu');
@@ -2641,7 +2630,6 @@
             startScreen.classList.add('hidden');
         }
 
-        // ===== МЕНЮ =====
         function showMenu() {
             hideStartScreen();
             stopCurrentPreview();
@@ -2709,12 +2697,10 @@
             `;
         });
 
-        // ===== КНОПКА НАЗАД В МЕНЮ =====
         document.getElementById('backToStartBtn').addEventListener('click', function() {
             showStartScreen();
         });
 
-        // ===== КНОПКИ НАЗАД =====
         document.getElementById('backFromMusic').onclick = showStartScreen;
         document.getElementById('backFromDeezer').onclick = showStartScreen;
         document.getElementById('backFromLyrics').onclick = showStartScreen;
@@ -2728,7 +2714,7 @@
         document.getElementById('backFromKino').onclick = showStartScreen;
 
         // =============================================================
-        // 4. DEEZER API КЭШ (для музыки)
+        // 4. DEEZER API КЭШ
         // =============================================================
         const deezerImageCache = new Map();
 
@@ -3674,11 +3660,14 @@
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // =============================================================
-        // 30. DEEZER ПОИСК
+        // 30. DEEZER ПОИСК С ПРОКСИ (FIX CORS)
         // =============================================================
         const deezerSearchInput = document.getElementById('deezerSearchInput');
         const deezerSearchBtn = document.getElementById('doDeezerSearchBtn');
         const deezerResultDiv = document.getElementById('deezerSearchResult');
+
+        // Прокси для обхода CORS
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
 
         async function searchDeezerTrack(query) {
             if (!query || query.length < 2) {
@@ -3694,8 +3683,16 @@
             `;
             
             try {
+                // Используем прокси для запроса
                 const searchUrl = `https://api.deezer.com/search/track?q=${encodeURIComponent(query)}&limit=10`;
-                const response = await fetch(searchUrl);
+                const proxyUrl = CORS_PROXY + encodeURIComponent(searchUrl);
+                
+                const response = await fetch(proxyUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
                 const data = await response.json();
                 
                 if (!data.data || data.data.length === 0) {
@@ -3709,57 +3706,7 @@
                     return;
                 }
                 
-                let html = `
-                    <div style="margin-bottom: 16px;">
-                        <div style="font-size: 13px; color: rgba(0,0,0,0.5);">
-                            🎵 Найдено: ${data.data.length} треков
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 12px; max-height: 500px; overflow-y: auto; padding-right: 4px;">
-                `;
-                
-                data.data.slice(0, 10).forEach((track, index) => {
-                    const trackId = track.id;
-                    const title = track.title || 'Без названия';
-                    const artist = track.artist?.name || 'Неизвестный исполнитель';
-                    const album = track.album?.title || 'Неизвестный альбом';
-                    const duration = track.duration || 0;
-                    const minutes = Math.floor(duration / 60);
-                    const seconds = duration % 60;
-                    const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                    
-                    const coverUrl = track.album?.cover_medium || 
-                                    track.album?.cover_big || 
-                                    track.album?.cover_xl || 
-                                    track.album?.cover_small || 
-                                    '';
-                    
-                    const releaseDate = track.album?.release_date || '';
-                    const year = releaseDate ? releaseDate.split('-')[0] : '';
-                    
-                    html += `
-                        <div class="deezer-track-card" onclick="openDeezerTrack(${trackId})">
-                            <div class="deezer-track-cover">
-                                ${coverUrl ? `<img src="${coverUrl}" alt="cover" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'>🎵</div>'">` : '<div class="placeholder">🎵</div>'}
-                            </div>
-                            <div class="deezer-track-info">
-                                <div class="deezer-track-title">${escapeHtml(title)}</div>
-                                <div class="deezer-track-artist">${escapeHtml(artist)}</div>
-                                <div class="deezer-track-meta">
-                                    <span>💿 ${escapeHtml(album)}</span>
-                                    ${year ? `<span>📅 ${year}</span>` : ''}
-                                    <span>⏱ ${durationStr}</span>
-                                </div>
-                            </div>
-                            <button onclick="event.stopPropagation(); playDeezerPreview(${trackId}, '${escapeHtml(title)}', '${escapeHtml(artist)}')" class="deezer-play-btn">
-                                ▶️
-                            </button>
-                        </div>
-                    `;
-                });
-                
-                html += `</div>`;
-                deezerResultDiv.innerHTML = html;
+                renderDeezerResults(data.data);
                 
             } catch (error) {
                 console.error('Deezer search error:', error);
@@ -3768,9 +3715,64 @@
                         <div style="font-size: 48px; margin-bottom: 16px;">❌</div>
                         <div style="font-size: 16px; font-weight: 500; color: #1a1a1a;">Ошибка при поиске</div>
                         <div style="font-size: 13px; color: rgba(0,0,0,0.4); margin-top: 8px;">${escapeHtml(error.message)}</div>
+                        <button onclick="searchDeezerTrack('${escapeHtml(query)}')" style="margin-top: 16px; background: #6bcb77; border: none; padding: 10px 24px; border-radius: 30px; color: white; font-weight: 600; cursor: pointer;">🔄 Повторить</button>
                     </div>
                 `;
             }
+        }
+
+        function renderDeezerResults(tracks) {
+            let html = `
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 13px; color: rgba(0,0,0,0.5);">
+                        🎵 Найдено: ${tracks.length} треков
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 12px; max-height: 500px; overflow-y: auto; padding-right: 4px;">
+            `;
+            
+            tracks.slice(0, 10).forEach((track) => {
+                const trackId = track.id;
+                const title = track.title || 'Без названия';
+                const artist = track.artist?.name || 'Неизвестный исполнитель';
+                const album = track.album?.title || 'Неизвестный альбом';
+                const duration = track.duration || 0;
+                const minutes = Math.floor(duration / 60);
+                const seconds = duration % 60;
+                const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                const coverUrl = track.album?.cover_medium || 
+                                track.album?.cover_big || 
+                                track.album?.cover_xl || 
+                                track.album?.cover_small || 
+                                '';
+                
+                const releaseDate = track.album?.release_date || '';
+                const year = releaseDate ? releaseDate.split('-')[0] : '';
+                
+                html += `
+                    <div class="deezer-track-card" onclick="openDeezerTrack(${trackId})">
+                        <div class="deezer-track-cover">
+                            ${coverUrl ? `<img src="${coverUrl}" alt="cover" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'>🎵</div>'">` : '<div class="placeholder">🎵</div>'}
+                        </div>
+                        <div class="deezer-track-info">
+                            <div class="deezer-track-title">${escapeHtml(title)}</div>
+                            <div class="deezer-track-artist">${escapeHtml(artist)}</div>
+                            <div class="deezer-track-meta">
+                                <span>💿 ${escapeHtml(album)}</span>
+                                ${year ? `<span>📅 ${year}</span>` : ''}
+                                <span>⏱ ${durationStr}</span>
+                            </div>
+                        </div>
+                        <button onclick="event.stopPropagation(); playDeezerPreview(${trackId}, '${escapeHtml(title)}', '${escapeHtml(artist)}')" class="deezer-play-btn">
+                            ▶️
+                        </button>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            deezerResultDiv.innerHTML = html;
         }
 
         function openDeezerTrack(trackId) {
@@ -4921,7 +4923,7 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.1.0 — с Deezer поиском!');
+        console.log('✦ Версия 3.1.0 — с Deezer поиском через прокси!');
         console.log('✦ Дата релиза показывается при поиске исполнителя');
     </script>
 </body>
