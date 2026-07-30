@@ -3660,14 +3660,47 @@
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // =============================================================
-        // 30. DEEZER ПОИСК С ПРОКСИ (FIX CORS)
+        // 30. DEEZER ПОИСК С НЕСКОЛЬКИМИ ПРОКСИ (FIX CORS + TIMEOUT)
         // =============================================================
         const deezerSearchInput = document.getElementById('deezerSearchInput');
         const deezerSearchBtn = document.getElementById('doDeezerSearchBtn');
         const deezerResultDiv = document.getElementById('deezerSearchResult');
 
-        // Прокси для обхода CORS
-        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+        // Список прокси для обхода CORS
+        const CORS_PROXIES = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest='
+        ];
+
+        async function fetchWithProxy(url, timeout = 15000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            
+            for (const proxy of CORS_PROXIES) {
+                try {
+                    const proxyUrl = proxy + encodeURIComponent(url);
+                    console.log(`Пытаемся через прокси: ${proxy}`);
+                    
+                    const response = await fetch(proxyUrl, { 
+                        signal: controller.signal,
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    
+                    if (response.ok) {
+                        clearTimeout(timeoutId);
+                        console.log(`✅ Прокси ${proxy} сработал`);
+                        return response;
+                    }
+                    console.log(`❌ Прокси ${proxy} вернул ${response.status}`);
+                } catch(e) {
+                    console.log(`⚠️ Прокси ${proxy} ошибка:`, e.message);
+                }
+            }
+            
+            clearTimeout(timeoutId);
+            throw new Error('Все прокси недоступны или истекло время ожидания');
+        }
 
         async function searchDeezerTrack(query) {
             if (!query || query.length < 2) {
@@ -3683,16 +3716,8 @@
             `;
             
             try {
-                // Используем прокси для запроса
                 const searchUrl = `https://api.deezer.com/search/track?q=${encodeURIComponent(query)}&limit=10`;
-                const proxyUrl = CORS_PROXY + encodeURIComponent(searchUrl);
-                
-                const response = await fetch(proxyUrl);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
+                const response = await fetchWithProxy(searchUrl, 15000);
                 const data = await response.json();
                 
                 if (!data.data || data.data.length === 0) {
@@ -4923,7 +4948,7 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.1.0 — с Deezer поиском через прокси!');
+        console.log('✦ Версия 3.1.0 — с Deezer поиском через несколько прокси!');
         console.log('✦ Дата релиза показывается при поиске исполнителя');
     </script>
 </body>
