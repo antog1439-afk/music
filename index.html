@@ -1022,6 +1022,41 @@
             justify-content: center;
         }
 
+        /* ===== КНОПКА СЛУШАТЬ В ЯНДЕКС.МУЗЫКЕ ===== */
+        .deezer-yandex-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #ffcc00;
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+            text-decoration: none;
+            width: 100%;
+            max-width: 200px;
+        }
+        .deezer-yandex-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 16px rgba(255,204,0,0.35);
+        }
+        .deezer-yandex-btn:active {
+            transform: scale(0.95);
+        }
+        .deezer-yandex-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: #1a1a1a;
+            stroke-width: 2;
+        }
+
         /* ===== ОБНОВЛЕННЫЙ СТИЛЬ КНОПКИ DEEZER ===== */
         .deezer-play-btn {
             background: #6bcb77;
@@ -1090,6 +1125,16 @@
             background: #6bcb77;
             border-radius: 2px;
             transition: width 0.3s ease;
+        }
+
+        /* Блок с кнопками в Deezer */
+        .deezer-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            width: 100%;
         }
 
         .bottom-tab-bar {
@@ -1955,6 +2000,11 @@
                 gap: 12px;
                 padding: 12px;
             }
+            .deezer-yandex-btn {
+                font-size: 11px;
+                padding: 6px 14px;
+                max-width: 160px;
+            }
             .kino-tab-btn {
                 width: 46px;
                 height: 46px;
@@ -2229,7 +2279,7 @@
                 </div>
             </div>
         </div>
-        <div class="user-info" style="color: rgba(0,0,0,0.3);">🎧 Нажмите ▶️ для 30-секундного превью, после окончания — кнопка откроет трек в Deezer</div>
+        <div class="user-info" style="color: rgba(0,0,0,0.3);">🎧 Нажмите ▶️ для 30-секундного превью | 🎵 Слушайте полные треки в Яндекс.Музыке</div>
     </div>
 
     <!-- ===== LYRICS PAGE ===== -->
@@ -3721,7 +3771,7 @@
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // =============================================================
-        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px) И ПРЕВЬЮ 30 СЕКУНД (БЕЗ ДАТЫ РЕЛИЗА)
+        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px) И ПРЕВЬЮ 30 СЕКУНД + КНОПКА В ЯНДЕКС.МУЗЫКУ
         // =============================================================
         const deezerSearchInput = document.getElementById('deezerSearchInput');
         const deezerSearchBtn = document.getElementById('doDeezerSearchBtn');
@@ -3732,6 +3782,14 @@
             'https://corsproxy.io/?',
             'https://api.codetabs.com/v1/proxy?quest='
         ];
+
+        // Функция для открытия в Яндекс.Музыке
+        function openInYandexMusic(artist, title) {
+            const query = `${artist} ${title}`.trim();
+            const url = `https://music.yandex.ru/search?text=${encodeURIComponent(query)}`;
+            tg.openLink(url);
+            showNote(`🎵 Открываем "${title}" в Яндекс.Музыке`);
+        }
 
         async function fetchWithProxy(url, timeout = 15000) {
             const controller = new AbortController();
@@ -3829,7 +3887,7 @@
             }
         }
 
-        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px) И ПРЕВЬЮ 30 СЕКУНД (БЕЗ ДАТЫ РЕЛИЗА)
+        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px), ПРЕВЬЮ 30 СЕКУНД И КНОПКОЙ В ЯНДЕКС.МУЗЫКУ
         function renderDeezerResults(tracks) {
             let html = `
                 <div style="margin-bottom: 16px;">
@@ -3850,7 +3908,6 @@
                 const seconds = duration % 60;
                 const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
-                // Приоритет: cover_xl — 800×800, затем cover_big — 600×600
                 const coverUrl = track.album?.cover_xl || 
                                 track.album?.cover_big || 
                                 track.album?.cover_medium || 
@@ -3869,10 +3926,21 @@
                                 <span>💿 ${escapeHtml(album)}</span>
                                 <span>⏱ ${durationStr}</span>
                             </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <button onclick="event.stopPropagation(); playDeezerPreview(${trackId}, '${escapeHtml(title)}', '${escapeHtml(artist)}', this)" class="deezer-play-btn" title="▶️ Прослушать 30 секунд">
-                                    ▶️
-                                </button>
+                            <div class="deezer-actions">
+                                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                                    <button onclick="event.stopPropagation(); playDeezerPreview(${trackId}, '${escapeHtml(title)}', '${escapeHtml(artist)}', this)" class="deezer-play-btn" title="▶️ Прослушать 30 секунд">
+                                        ▶️
+                                    </button>
+                                    <button onclick="event.stopPropagation(); openInYandexMusic('${escapeHtml(artist)}', '${escapeHtml(title)}')" class="deezer-yandex-btn" title="Слушать в Яндекс.Музыке">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 18V5L21 3V16"/>
+                                            <circle cx="6" cy="18" r="3"/>
+                                            <circle cx="18" cy="16" r="3"/>
+                                            <path d="M9 12L21 10"/>
+                                        </svg>
+                                        Яндекс.Музыка
+                                    </button>
+                                </div>
                                 <div class="deezer-progress">
                                     <div class="deezer-progress-fill" id="progress_${trackId}"></div>
                                 </div>
@@ -4999,7 +5067,7 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 3.4.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд и обложками 800x800), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
+                    message: 'Версия 3.5.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, обложками 800x800 и кнопкой "Слушать в Яндекс.Музыке"), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
@@ -5163,8 +5231,9 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.4.0 — с обложками 800x800 на Deezer!');
+        console.log('✦ Версия 3.5.0 — с кнопкой "Слушать в Яндекс.Музыке" на Deezer!');
         console.log('✦ Превью 30 секунд с прогресс-баром');
+        console.log('✦ Обложки 800x800');
     </script>
 </body>
 </html>
