@@ -945,7 +945,7 @@
             border-bottom: none;
         }
 
-        /* ===== DEEZER СТИЛИ С БОЛЬШОЙ ОБЛОЖКОЙ 660x660 ===== */
+        /* ===== DEEZER СТИЛИ С БОЛЬШОЙ ОБЛОЖКОЙ 800x800 ===== */
         .deezer-track-card {
             display: flex;
             flex-direction: column;
@@ -969,7 +969,7 @@
 
         .deezer-track-cover {
             width: 100%;
-            max-width: 660px;
+            max-width: 800px;
             aspect-ratio: 1;
             flex-shrink: 0;
             border-radius: 18px;
@@ -2026,7 +2026,7 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             .deezer-track-cover {
-                max-width: 660px;
+                max-width: 800px;
             }
         }
 
@@ -3733,7 +3733,7 @@
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // =============================================================
-        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (660x660px) И ПРЕВЬЮ 30 СЕКУНД + ДАТА РЕЛИЗА
+        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px) И ПРЕВЬЮ 30 СЕКУНД + ДАТА РЕЛИЗА
         // =============================================================
         const deezerSearchInput = document.getElementById('deezerSearchInput');
         const deezerSearchBtn = document.getElementById('doDeezerSearchBtn');
@@ -3857,7 +3857,7 @@
             }
         }
 
-        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (660x660px), ПРЕВЬЮ 30 СЕКУНД И ДАТОЙ РЕЛИЗА
+        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px), ПРЕВЬЮ 30 СЕКУНД И ДАТОЙ РЕЛИЗА
         function renderDeezerResults(tracks) {
             let html = `
                 <div style="margin-bottom: 16px;">
@@ -3878,6 +3878,7 @@
                 const seconds = duration % 60;
                 const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
+                // ПРИОРИТЕТ: cover_xl — 800×800, затем cover_big — 600×600
                 const coverUrl = track.album?.cover_xl || 
                                 track.album?.cover_big || 
                                 track.album?.cover_medium || 
@@ -5035,7 +5036,7 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 3.3.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд и датой релиза), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
+                    message: 'Версия 3.4.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, датой релиза и обложками 800x800), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
@@ -5199,8 +5200,9 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.3.0 — с превью 30 секунд и датой релиза на Deezer!');
+        console.log('✦ Версия 3.4.0 — с обложками 800x800 на Deezer!');
         console.log('✦ Дата релиза показывается при поиске исполнителя');
+        console.log('✦ Превью 30 секунд с прогресс-баром');
     </script>
 </body>
 </html>
