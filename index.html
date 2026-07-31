@@ -1137,6 +1137,164 @@
             width: 100%;
         }
 
+        /* ===== ОБНОВЛЕННЫЙ СТИЛЬ ДЛЯ ПРЕВЬЮ ТРЕКОВ С ОБЛОЖКАМИ ===== */
+        .preview-track-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 16px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+        .preview-track-item:hover {
+            background: rgba(0,0,0,0.06);
+        }
+        .preview-track-cover {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f0f0f0;
+        }
+        .preview-track-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .preview-track-cover .placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .preview-track-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .preview-track-title {
+            font-weight: 600;
+            font-size: 15px;
+            color: #1a1a1a;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .preview-track-artist {
+            font-size: 12px;
+            opacity: 0.5;
+            margin-top: 2px;
+        }
+        .preview-track-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .preview-track-timer {
+            font-size: 12px;
+            font-family: monospace;
+            opacity: 0.6;
+            min-width: 32px;
+        }
+        .preview-track-play {
+            background: #ffcc00;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .preview-track-play:hover {
+            transform: scale(1.05);
+        }
+        .preview-track-play:active {
+            transform: scale(0.92);
+        }
+        .preview-track-lyrics {
+            background: rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .preview-track-lyrics:hover {
+            background: rgba(0,0,0,0.1);
+        }
+        .preview-track-lyrics:active {
+            transform: scale(0.92);
+        }
+
+        /* ===== ОБНОВЛЕННЫЙ СТИЛЬ ДЛЯ АЛЬБОМОВ С ОБЛОЖКАМИ ===== */
+        .album-card-with-cover {
+            background: rgba(0,0,0,0.03);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            display: inline-block;
+            width: calc(33% - 8px);
+            min-width: 100px;
+            margin-right: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .album-card-with-cover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .album-card-with-cover:active {
+            transform: scale(0.96);
+        }
+        .album-cover-image {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f0f0f0;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .album-cover-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .album-cover-image .placeholder {
+            font-size: 44px;
+        }
+        .album-title-text {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1a1a1a;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .album-year-text {
+            font-size: 10px;
+            opacity: 0.5;
+            margin-top: 4px;
+        }
+
         .bottom-tab-bar {
             position: fixed;
             bottom: 16px;
@@ -2004,6 +2162,31 @@
                 font-size: 11px;
                 padding: 6px 14px;
                 max-width: 160px;
+            }
+            .preview-track-item {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+            .preview-track-cover {
+                width: 40px;
+                height: 40px;
+            }
+            .preview-track-title {
+                font-size: 13px;
+            }
+            .preview-track-play {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+            .preview-track-lyrics {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+            .album-card-with-cover {
+                width: calc(50% - 8px);
+                min-width: 80px;
             }
             .kino-tab-btn {
                 width: 46px;
@@ -3061,98 +3244,137 @@
             { track: "Бомж", artist: "Сектор Газа" }
         ];
         
-        function getAlbumsFromTracks(artistName) {
-            const artistTracks = tracks.filter(t => t.artist.toLowerCase() === artistName.toLowerCase());
-            if (artistTracks.length === 0) return [];
-            const albums = [];
+        // =============================================================
+        // 7.1. КЭШ И ФУНКЦИЯ ДЛЯ ПОЛУЧЕНИЯ ОБЛОЖЕК ТРЕКОВ
+        // =============================================================
+        const trackCoverCache = new Map();
+
+        async function getTrackCover(artist, title) {
+            const cacheKey = `${artist.toLowerCase()}_${title.toLowerCase()}`;
             
-            if (artistName.toLowerCase() === "асия") {
-                albums.push({
-                    title: "Популярное",
-                    year: 2024,
-                    cover: "🎤",
-                    tracks: artistTracks
-                });
-            }
-            else if (artistName.toLowerCase() === "imagine dragons") {
-                albums.push({ title: "Evolve / Night Visions", year: 2017, cover: "🌙", tracks: artistTracks });
-            }
-            else if (artistName.toLowerCase() === "кино") {
-                albums.push({ title: "Группа крови", year: 1988, cover: "🩸", tracks: artistTracks.filter(t => t.track === "Группа крови") });
-                albums.push({ title: "Звезда по имени Солнце", year: 1989, cover: "⭐", tracks: artistTracks.filter(t => t.track === "Звезда по имени Солнце") });
-            }
-            else if (artistName.toLowerCase() === "моргенштерн") {
-                albums.push({ title: "Millennium", year: 2021, cover: "💎", tracks: artistTracks });
-            }
-            else if (artistName.toLowerCase() === "земфира") {
-                albums.push({ title: "Земфира", year: 1999, cover: "🎸", tracks: artistTracks });
-            }
-            else if (artistName.toLowerCase() === "сектор газа") {
-                albums.push({ title: "Зловещие мертвецы", year: 1990, cover: "💀", tracks: artistTracks.slice(0, 2) });
-                albums.push({ title: "Нажми на газ", year: 1992, cover: "⛽", tracks: artistTracks.slice(2, 4) });
-            }
-            else {
-                albums.push({ title: "Популярное", year: new Date().getFullYear(), cover: "🔥", tracks: artistTracks });
+            if (trackCoverCache.has(cacheKey)) {
+                return trackCoverCache.get(cacheKey);
             }
             
-            return albums.filter(album => album.tracks.length > 0);
+            try {
+                const searchUrl = `https://api.deezer.com/search?q=${encodeURIComponent(artist + ' ' + title)}&limit=1`;
+                const response = await fetch(searchUrl);
+                const data = await response.json();
+                
+                if (data.data && data.data.length > 0) {
+                    const coverUrl = data.data[0].album?.cover_xl || 
+                                   data.data[0].album?.cover_big || 
+                                   data.data[0].album?.cover_medium || 
+                                   data.data[0].album?.cover_small || 
+                                   null;
+                    
+                    if (coverUrl) {
+                        trackCoverCache.set(cacheKey, coverUrl);
+                        return coverUrl;
+                    }
+                }
+                return null;
+            } catch(e) {
+                console.log('Ошибка получения обложки для трека:', e);
+                return null;
+            }
         }
 
-        function renderAlbumsFromTracks(artistName) {
+        // =============================================================
+        // 7.2. ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ АЛЬБОМОВ С ОБЛОЖКАМИ
+        // =============================================================
+        window.renderAlbumsFromTracks = async function(artistName) {
             const albums = getAlbumsFromTracks(artistName);
             if (albums.length === 0) return '';
             
-            return `
+            let html = `
                 <div class="albums-section" style="margin: 20px 0 16px;">
                     <div class="section-title">📀 АЛЬБОМЫ</div>
                     <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-                        ${albums.map(album => `
-                            <div class="album-card" onclick="showAlbumTracks('${escapeHtml(artistName)}', '${escapeHtml(album.title)}')">
-                                <div style="font-size: 44px; margin-bottom: 8px;">${album.cover}</div>
-                                <div style="font-size: 13px; font-weight: 500;">${escapeHtml(album.title)}</div>
-                                <div style="font-size: 10px; opacity: 0.5; margin-top: 4px;">${album.year} • ${album.tracks.length} треков</div>
-                            </div>
-                        `).join('')}
+            `;
+            
+            for (const album of albums) {
+                const firstTrack = album.tracks[0];
+                let coverUrl = null;
+                
+                if (firstTrack) {
+                    coverUrl = await getTrackCover(firstTrack.artist, firstTrack.track);
+                }
+                
+                const coverHtml = coverUrl 
+                    ? `<img src="${coverUrl}" alt="${escapeHtml(album.title)}">` 
+                    : `<div class="placeholder">${album.cover}</div>`;
+                
+                html += `
+                    <div class="album-card-with-cover" onclick="showAlbumTracks('${escapeHtml(artistName)}', '${escapeHtml(album.title)}')">
+                        <div class="album-cover-image">
+                            ${coverHtml}
+                        </div>
+                        <div class="album-title-text">${escapeHtml(album.title)}</div>
+                        <div class="album-year-text">${album.year} • ${album.tracks.length} треков</div>
+                    </div>
+                `;
+            }
+            
+            html += `
                     </div>
                 </div>
             `;
-        }
-
-        window.showAlbumTracks = function(artistName, albumTitle) {
-            const albums = getAlbumsFromTracks(artistName);
-            const album = albums.find(a => a.title === albumTitle);
-            if (!album) return;
             
-            let tracksList = '<div style="max-height: 400px; overflow-y: auto;">';
-            album.tracks.forEach((track, idx) => {
-                tracksList += `
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.08);">
-                        <div style="flex: 1;">
-                            <div style="font-size: 14px; font-weight: 500;">${idx + 1}. ${escapeHtml(track.track)}</div>
-                            <div style="font-size: 11px; opacity: 0.6;">${escapeHtml(track.artist)}</div>
+            return html;
+        };
+
+        // =============================================================
+        // 7.3. ФУНКЦИЯ ДЛЯ ПРЕВЬЮ ТРЕКОВ С ОБЛОЖКАМИ
+        // =============================================================
+        async function renderTracksWithCovers(artistTracks) {
+            let html = `
+                <div style="margin: 20px 0 16px;">
+                    <div class="section-title" style="text-align: center;">🎧 ПРЕВЬЮ ТРЕКОВ</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+            `;
+            
+            const tracksToShow = artistTracks.slice(0, 10);
+            
+            for (let idx = 0; idx < tracksToShow.length; idx++) {
+                const t = tracksToShow[idx];
+                const coverUrl = await getTrackCover(t.artist, t.track);
+                const trackId = `track_${idx}_${Date.now()}`;
+                
+                const coverHtml = coverUrl 
+                    ? `<img src="${coverUrl}" alt="${escapeHtml(t.track)}">` 
+                    : `<div class="placeholder">🎵</div>`;
+                
+                html += `
+                    <div class="preview-track-item">
+                        <div class="preview-track-cover">
+                            ${coverHtml}
                         </div>
-                        <button onclick="playTrackFromAlbum('${escapeHtml(track.artist)}', '${escapeHtml(track.track)}')" style="background: #ffcc00; border: none; width: 36px; height: 36px; border-radius: 36px; font-size: 18px; cursor: pointer;">▶️</button>
+                        <div class="preview-track-info">
+                            <div class="preview-track-title">${escapeHtml(t.track)}</div>
+                            <div class="preview-track-artist">${escapeHtml(t.artist)}</div>
+                        </div>
+                        <div class="preview-track-actions">
+                            <span class="preview-track-timer" id="timer_${trackId}">0:00</span>
+                            <button class="preview-track-play" onclick="playPreview('${escapeHtml(t.artist)}', '${escapeHtml(t.track)}', this, document.getElementById('timer_${trackId}'))">
+                                ▶️
+                            </button>
+                            <button class="preview-track-lyrics" onclick="showLyrics('${escapeHtml(t.artist)}', '${escapeHtml(t.track)}')">
+                                📝
+                            </button>
+                        </div>
                     </div>
                 `;
-            });
-            tracksList += '</div>';
-            
-            tg.showPopup({ title: `📀 ${album.title}`, message: tracksList, buttons: [{ type: "close", text: "Закрыть" }] });
-        };
-
-        window.playTrackFromAlbum = function(artist, track) {
-            tg.closePopup();
-            const trackButtons = document.querySelectorAll('.preview-track-item');
-            for (let btn of trackButtons) {
-                const trackNameElement = btn.querySelector('div > div:first-child');
-                if (trackNameElement && trackNameElement.innerText === track) {
-                    const playButton = btn.querySelector('button');
-                    if (playButton) { playButton.click(); return; }
-                }
             }
-            tg.openLink(`https://music.yandex.ru/search?text=${encodeURIComponent(`${artist} ${track}`)}`);
-        };
-        
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            return html;
+        }
+
         // =============================================================
         // 8. ФАКТЫ
         // =============================================================
@@ -3591,7 +3813,7 @@
         }
 
         // =============================================================
-        // 16. ПОИСК МУЗЫКИ С ДАТОЙ РЕЛИЗА
+        // 16. ПОИСК МУЗЫКИ С ОБЛОЖКАМИ (ОБНОВЛЕННАЯ ВЕРСИЯ)
         // =============================================================
         async function search() {
             const q = document.getElementById('searchInput').value.trim();
@@ -3669,28 +3891,16 @@
                 `;
             }
             
+            // === НОВАЯ ЧАСТЬ: рендерим треки с обложками ===
             let tracksPreviewHtml = '';
             if (artistTracks.length > 0) {
-                tracksPreviewHtml = `
-                    <div style="margin: 20px 0 16px;">
-                        <div class="section-title" style="text-align: center;">🎧 ПРЕВЬЮ ТРЕКОВ</div>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            ${artistTracks.slice(0, 10).map((t, idx) => `
-                                <div class="preview-track-item">
-                                    <div style="margin-bottom: 10px;">
-                                        <div style="font-weight: 600; font-size: 16px; color: #1a1a1a;">${escapeHtml(t.track)}</div>
-                                        <div style="font-size: 12px; opacity: 0.5; margin-top: 4px;">${escapeHtml(t.artist)}</div>
-                                    </div>
-                                    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                                        <span id="timer_${idx}_${Date.now()}" style="font-size: 13px; font-family: monospace; opacity: 0.7;">0:00</span>
-                                        <button class="preview-btn-${idx}" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: #ffcc00; border: none; width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">▶️</button>
-                                        <button class="lyrics-btn" data-artist="${escapeHtml(t.artist)}" data-track="${escapeHtml(t.track)}" style="background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); width: 44px; height: 44px; border-radius: 44px; font-size: 20px; cursor: pointer;">📝</button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
+                tracksPreviewHtml = await renderTracksWithCovers(artistTracks);
+            }
+            
+            // === НОВАЯ ЧАСТЬ: рендерим альбомы с обложками ===
+            let albumsHtml = '';
+            if (artistTracks.length > 0) {
+                albumsHtml = await renderAlbumsFromTracks(q);
             }
             
             let releaseDateHtml = '';
@@ -3713,7 +3923,7 @@
                         </div>
                     </div>
                     ${releaseDateHtml}
-                    ${renderAlbumsFromTracks(q)}
+                    ${albumsHtml}
                     ${tracksPreviewHtml}
                     <div class="ai-fact-card">
                         <div class="ai-fact-header">
@@ -3731,36 +3941,22 @@
                         </div>
                     </div>
                     <div class="section-title">СЛУШАТЬ ПОЛНОСТЬЮ</div>
-                    <div class="platform-buttons">
-                        <button onclick="tg.openLink('${links.yandex}')" class="platform-btn yandex-btn">🎵 Яндекс.Музыка</button>
-                        <button onclick="tg.openLink('${links.youtube}')" class="platform-btn youtube-btn">▶️ YouTube Music</button>
+                    <div class="platform-buttons" style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="tg.openLink('${links.yandex}')" style="flex: 1; background: #ffcc00; border: none; padding: 12px; border-radius: 60px; color: #1a1a1a; font-weight: 600; cursor: pointer;">🎵 Яндекс.Музыка</button>
+                        <button onclick="tg.openLink('${links.youtube}')" style="flex: 1; background: #ff0000; border: none; padding: 12px; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;">▶️ YouTube Music</button>
                     </div>
                     ${bioHtml}
-                    <button class="search-btn" style="margin-top: 16px;" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
+                    <button class="search-btn" style="margin-top: 16px; width: 100%;" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты на концерт</button>
                     
                     <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
                         <button class="search-btn" style="flex: 1; background: #ff6b6b; padding: 12px 16px; border: none; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;" onclick="tg.openLink('https://music.yandex.ru/search?text=${encodeURIComponent(q)}&type=artists')">🆕 Новинки</button>
                         <button class="search-btn" style="flex: 1; background: #4a6cf7; padding: 12px 16px; border: none; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;" onclick="tg.openLink('https://www.google.com/search?q=${encodeURIComponent(q + ' новый альбом дата выхода')}')">🔍 Альбомы</button>
                         <button class="search-btn" style="flex: 1; background: #28a745; padding: 12px 16px; border: none; border-radius: 60px; color: white; font-weight: 600; cursor: pointer;" onclick="tg.openLink('https://afisha.yandex.ru/search?text=${encodeURIComponent(q)}')">🎫 Билеты</button>
                     </div>
+                    
+                    <button class="search-btn" style="margin-top: 16px; width: 100%; background: #6bcb77;" onclick="addToFavorites('${escapeHtml(q)}')">⭐ Добавить в избранное</button>
                 </div>
             `;
-            
-            if (artistTracks.length > 0) {
-                artistTracks.slice(0, 10).forEach((t, idx) => {
-                    const btn = resDiv.querySelector(`.preview-btn-${idx}`);
-                    const timerSpan = resDiv.querySelector(`#timer_${idx}_${Date.now()}`);
-                    if (btn) {
-                        const artist = btn.dataset.artist;
-                        const track = btn.dataset.track;
-                        btn.onclick = () => playPreview(artist, track, btn, timerSpan);
-                    }
-                });
-            }
-            
-            document.querySelectorAll('.lyrics-btn').forEach(btn => {
-                btn.onclick = () => showLyrics(btn.dataset.artist, btn.dataset.track);
-            });
             
             loadInvertedState(q);
         }
@@ -5067,7 +5263,7 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 3.5.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, обложками 800x800 и кнопкой "Слушать в Яндекс.Музыке"), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
+                    message: 'Версия 3.6.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, обложками 800x800 и кнопкой "Слушать в Яндекс.Музыке"), чартами и играми.\n\n✨ Теперь базовые треки отображаются с реальными обложками из Deezer!\n\n© 2025 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
@@ -5231,7 +5427,7 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.5.0 — с кнопкой "Слушать в Яндекс.Музыке" на Deezer!');
+        console.log('✦ Версия 3.6.0 — с обложками для базовых треков!');
         console.log('✦ Превью 30 секунд с прогресс-баром');
         console.log('✦ Обложки 800x800');
     </script>
