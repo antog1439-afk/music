@@ -1021,18 +1021,6 @@
             flex-wrap: wrap;
             justify-content: center;
         }
-        .deezer-track-release {
-            font-size: 12px;
-            color: rgba(0,0,0,0.35);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            justify-content: center;
-            margin-top: 2px;
-        }
-        .deezer-track-release .date-icon {
-            font-size: 13px;
-        }
 
         /* ===== ОБНОВЛЕННЫЙ СТИЛЬ КНОПКИ DEEZER ===== */
         .deezer-play-btn {
@@ -3733,7 +3721,7 @@
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // =============================================================
-        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px) И ПРЕВЬЮ 30 СЕКУНД + ДАТА РЕЛИЗА
+        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px) И ПРЕВЬЮ 30 СЕКУНД (БЕЗ ДАТЫ РЕЛИЗА)
         // =============================================================
         const deezerSearchInput = document.getElementById('deezerSearchInput');
         const deezerSearchBtn = document.getElementById('doDeezerSearchBtn');
@@ -3795,22 +3783,6 @@
             deezerPlayers.clear();
         }
 
-        function formatReleaseDate(dateString) {
-            if (!dateString) return null;
-            try {
-                const date = new Date(dateString);
-                if (isNaN(date.getTime())) return null;
-                const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 
-                               'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-                const day = date.getDate();
-                const month = months[date.getMonth()];
-                const year = date.getFullYear();
-                return `${day} ${month} ${year}`;
-            } catch(e) {
-                return null;
-            }
-        }
-
         async function searchDeezerTrack(query) {
             if (!query || query.length < 2) {
                 showNote('⚠️ Введите минимум 2 символа');
@@ -3857,7 +3829,7 @@
             }
         }
 
-        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px), ПРЕВЬЮ 30 СЕКУНД И ДАТОЙ РЕЛИЗА
+        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px) И ПРЕВЬЮ 30 СЕКУНД (БЕЗ ДАТЫ РЕЛИЗА)
         function renderDeezerResults(tracks) {
             let html = `
                 <div style="margin-bottom: 16px;">
@@ -3878,15 +3850,12 @@
                 const seconds = duration % 60;
                 const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
-                // ПРИОРИТЕТ: cover_xl — 800×800, затем cover_big — 600×600
+                // Приоритет: cover_xl — 800×800, затем cover_big — 600×600
                 const coverUrl = track.album?.cover_xl || 
                                 track.album?.cover_big || 
                                 track.album?.cover_medium || 
                                 track.album?.cover_small || 
                                 '';
-                
-                const releaseDate = track.album?.release_date || '';
-                const formattedDate = formatReleaseDate(releaseDate);
                 
                 html += `
                     <div class="deezer-track-card" onclick="openDeezerTrack(${trackId})">
@@ -3900,12 +3869,6 @@
                                 <span>💿 ${escapeHtml(album)}</span>
                                 <span>⏱ ${durationStr}</span>
                             </div>
-                            ${formattedDate ? `
-                                <div class="deezer-track-release">
-                                    <span class="date-icon">📅</span>
-                                    Релиз: ${formattedDate}
-                                </div>
-                            ` : ''}
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <button onclick="event.stopPropagation(); playDeezerPreview(${trackId}, '${escapeHtml(title)}', '${escapeHtml(artist)}', this)" class="deezer-play-btn" title="▶️ Прослушать 30 секунд">
                                     ▶️
@@ -5036,7 +4999,7 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 3.4.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, датой релиза и обложками 800x800), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
+                    message: 'Версия 3.4.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд и обложками 800x800), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
@@ -5201,7 +5164,6 @@
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
         console.log('✦ Версия 3.4.0 — с обложками 800x800 на Deezer!');
-        console.log('✦ Дата релиза показывается при поиске исполнителя');
         console.log('✦ Превью 30 секунд с прогресс-баром');
     </script>
 </body>
