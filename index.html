@@ -945,7 +945,7 @@
             border-bottom: none;
         }
 
-        /* ===== DEEZER СТИЛИ С БОЛЬШОЙ ОБЛОЖКОЙ 800x800 ===== */
+        /* ===== DEEZER СТИЛИ С БОЛЬШОЙ ОБЛОЖКОЙ 860x860 ===== */
         .deezer-track-card {
             display: flex;
             flex-direction: column;
@@ -969,7 +969,7 @@
 
         .deezer-track-cover {
             width: 100%;
-            max-width: 800px;
+            max-width: 860px;
             aspect-ratio: 1;
             flex-shrink: 0;
             border-radius: 18px;
@@ -2064,7 +2064,7 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             .deezer-track-cover {
-                max-width: 800px;
+                max-width: 860px;
             }
         }
 
@@ -3771,7 +3771,7 @@
         if (searchInputElem) searchInputElem.addEventListener('keypress', e => { if (e.key === 'Enter') search(); });
 
         // =============================================================
-        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px) И ПРЕВЬЮ 30 СЕКУНД + КНОПКА В ЯНДЕКС.МУЗЫКУ
+        // 30. DEEZER ПОИСК С БОЛЬШОЙ ОБЛОЖКОЙ (860x860px) И ПРЕВЬЮ 30 СЕКУНД + КНОПКА В ЯНДЕКС.МУЗЫКУ
         // =============================================================
         const deezerSearchInput = document.getElementById('deezerSearchInput');
         const deezerSearchBtn = document.getElementById('doDeezerSearchBtn');
@@ -3887,7 +3887,7 @@
             }
         }
 
-        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (800x800px), ПРЕВЬЮ 30 СЕКУНД И КНОПКОЙ В ЯНДЕКС.МУЗЫКУ
+        // ОБНОВЛЁННАЯ ФУНКЦИЯ С БОЛЬШОЙ ОБЛОЖКОЙ (860x860px), ПРЕВЬЮ 30 СЕКУНД И КНОПКОЙ В ЯНДЕКС.МУЗЫКУ
         function renderDeezerResults(tracks) {
             let html = `
                 <div style="margin-bottom: 16px;">
@@ -3908,6 +3908,7 @@
                 const seconds = duration % 60;
                 const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
+                // Приоритет: cover_xl — 860x860 (максимальный размер), затем cover_big
                 const coverUrl = track.album?.cover_xl || 
                                 track.album?.cover_big || 
                                 track.album?.cover_medium || 
@@ -5067,7 +5068,7 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 3.5.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, обложками 800x800 и кнопкой "Слушать в Яндекс.Музыке"), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
+                    message: 'Версия 3.5.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, обложками 860x860 и кнопкой "Слушать в Яндекс.Музыке"), чартами и играми.\n\n© 2025 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
@@ -5231,9 +5232,9 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.5.0 — с кнопкой "Слушать в Яндекс.Музыке" на Deezer!');
+        console.log('✦ Версия 3.5.0 — с обложками 860x860 на Deezer!');
         console.log('✦ Превью 30 секунд с прогресс-баром');
-        console.log('✦ Обложки 800x800');
+        console.log('✦ Кнопка "Слушать в Яндекс.Музыке"');
     </script>
 </body>
 </html>
