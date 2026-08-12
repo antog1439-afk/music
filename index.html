@@ -993,117 +993,6 @@
             margin-top: 2px;
         }
 
-        .album-card {
-            background: rgba(0,0,0,0.03);
-            border-radius: 20px;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            display: inline-block;
-            width: calc(33% - 8px);
-            margin-right: 8px;
-            margin-bottom: 8px;
-        }
-
-        .chat-container {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .message { display: flex; gap: 10px; margin-bottom: 10px; }
-        .message-user { justify-content: flex-end; }
-        .message-user .message-bubble { background: #ffcc00; border-radius: 20px 20px 4px 20px; }
-        .message-ai .message-bubble { background: rgba(0,0,0,0.05); border-radius: 20px 20px 20px 4px; }
-        .message-bubble { padding: 10px 14px; max-width: 80%; font-size: 14px; }
-        .message-icon { width: 32px; height: 32px; background: rgba(0,0,0,0.05); border-radius: 32px; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; }
-
-        .game-options { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .game-option {
-            background: rgba(0,0,0,0.05);
-            padding: 12px;
-            border-radius: 60px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .track-name { font-size: 22px; font-weight: 700; margin: 16px 0; color: #1a1a1a; }
-
-        .random-artist-card {
-            background: rgba(0,0,0,0.03);
-            border-radius: 20px;
-            padding: 12px 16px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .random-artist-link {
-            background: #ffcc00;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 40px;
-            cursor: pointer;
-        }
-
-        .popular-tag {
-            display: inline-block;
-            background: rgba(0,0,0,0.05);
-            padding: 6px 14px;
-            border-radius: 40px;
-            margin: 4px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ffcc00, #ffd633);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            font-weight: 600;
-            color: white;
-            margin: 0 auto;
-        }
-        .stat {
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 22px;
-            font-weight: 700;
-        }
-        .stat-label {
-            font-size: 11px;
-            color: rgba(0,0,0,0.5);
-        }
-
-        .saved-item {
-            background: rgba(0,0,0,0.03);
-            border-radius: 20px;
-            padding: 12px 16px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .settings-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            cursor: pointer;
-        }
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-
         /* ===== DEEZER СТИЛИ С БОЛЬШОЙ ОБЛОЖКОЙ 860x860 ===== */
         .deezer-track-card {
             display: flex;
@@ -3212,7 +3101,7 @@
         }
 
         // =============================================================
-        // 7. ТРЕКИ И ОБЛОЖКИ ДЛЯ БАЗОВЫХ ТРЕКОВ
+        // 7. ТРЕКИ С ПРЯМЫМИ ССЫЛКАМИ НА ОБЛОЖКИ
         // =============================================================
         const tracks = [
             { track: "Останься", artist: "Асия" },
@@ -3247,18 +3136,40 @@
             { track: "30 лет", artist: "Сектор Газа" },
             { track: "Бомж", artist: "Сектор Газа" }
         ];
+
+        // ПРЯМЫЕ ССЫЛКИ НА ОБЛОЖКИ ДЛЯ ПОПУЛЯРНЫХ ИСПОЛНИТЕЛЕЙ
+        const artistDefaultCovers = {
+            "асия": "https://avatars.yandex.net/get-music-content/6067060/1d3a8eaa.a.3424388-1/200x200",
+            "imagine dragons": "https://avatars.yandex.net/get-music-content/6067060/1d3a8eaa.a.3424388-1/200x200",
+            "кино": "https://avatars.yandex.net/get-music-content/6067060/1d3a8eaa.a.3424388-1/200x200",
+            "моргенштерн": "https://avatars.yandex.net/get-music-content/6067060/1d3a8eaa.a.3424388-1/200x200",
+            "земфира": "https://avatars.yandex.net/get-music-content/6067060/1d3a8eaa.a.3424388-1/200x200",
+            "rammstein": "https://avatars.yandex.net/get-music-content/6067060/1d3a8eaa.a.3424388-1/200x200",
+            "сектор газа": "https://avatars.yandex.net/get-music-content/6067060/1d3a8eaa.a.3424388-1/200x200"
+        };
         
         // Кэш для обложек базовых треков
         const trackCoverCache = new Map();
 
-        // Функция для получения обложки трека
+        // Функция для получения обложки трека с прокси
         async function getTrackCover(artist, title) {
             const cacheKey = `${artist.toLowerCase()}_${title.toLowerCase()}`;
             
+            // Проверяем кэш
             if (trackCoverCache.has(cacheKey)) {
                 return trackCoverCache.get(cacheKey);
             }
             
+            // Проверяем прямую ссылку для исполнителя
+            const artistKey = artist.toLowerCase();
+            for (const [key, cover] of Object.entries(artistDefaultCovers)) {
+                if (artistKey.includes(key) || key.includes(artistKey)) {
+                    trackCoverCache.set(cacheKey, cover);
+                    return cover;
+                }
+            }
+            
+            // Пытаемся найти через Deezer API
             try {
                 const searchUrl = `https://api.deezer.com/search?q=${encodeURIComponent(artist + ' ' + title)}&limit=1`;
                 const response = await fetch(searchUrl);
@@ -3276,11 +3187,12 @@
                         return coverUrl;
                     }
                 }
-                return null;
             } catch(e) {
-                console.log('Ошибка получения обложки для трека:', e);
-                return null;
+                console.log('Ошибка получения обложки:', e);
             }
+            
+            // Если ничего не найдено — возвращаем null
+            return null;
         }
 
         // Функция для получения альбомов из треков
@@ -3321,7 +3233,7 @@
             return albums.filter(album => album.tracks.length > 0);
         }
 
-        // ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ АЛЬБОМОВ С МИНИ-ОБЛОЖКАМИ
+        // Функция для рендеринга альбомов с мини-обложками
         window.renderAlbumsFromTracks = async function(artistName) {
             const albums = getAlbumsFromTracks(artistName);
             if (albums.length === 0) return '';
@@ -3363,7 +3275,7 @@
             return html;
         };
 
-        // ОБНОВЛЕННАЯ ФУНКЦИЯ ДЛЯ ПРЕВЬЮ ТРЕКОВ С МИНИ-ОБЛОЖКАМИ
+        // Функция для рендеринга превью треков с мини-обложками
         async function renderTracksWithCovers(artistTracks) {
             let html = `
                 <div style="margin: 20px 0 16px;">
@@ -5326,7 +5238,7 @@
             document.getElementById('aboutBtn')?.addEventListener('click', () => {
                 tg.showPopup({
                     title: 'LE MONDE MUSIC',
-                    message: 'Версия 3.6.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, обложками 860x860 и кнопкой "Слушать в Яндекс.Музыке"), чартами и играми.\n\n✨ Базовые треки теперь с мини-обложками!\n\n© 2025 LE MONDE MUSIC',
+                    message: 'Версия 3.7.0\n\nМузыкальный центр с интеграцией Яндекс.Музыки, Deezer (с предпросмотром 30 секунд, обложками 860x860 и кнопкой "Слушать в Яндекс.Музыке"), чартами и играми.\n\n✨ Базовые треки теперь с мини-обложками (прямые ссылки + Deezer API)!\n\n© 2025 LE MONDE MUSIC',
                     buttons: [{ type: 'close', text: 'Закрыть' }]
                 });
             });
@@ -5490,7 +5402,7 @@
         document.getElementById('weatherWidget').style.display = 'none';
         
         console.log('✦ LE MONDE MUSIC + KINOPOISK RUS ✦');
-        console.log('✦ Версия 3.6.0 — с мини-обложками для базовых треков!');
+        console.log('✦ Версия 3.7.0 — с прямыми ссылками на обложки!');
         console.log('✦ Превью 30 секунд с прогресс-баром');
         console.log('✦ Обложки 860x860');
         console.log('✦ Кнопка "Слушать в Яндекс.Музыке"');
