@@ -47,7 +47,6 @@
             50% { transform: scale(1.05); }
         }
 
-        /* ===== ЗАСТАВКА ===== */
         #splashScreen {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: #ffffff; z-index: 10000;
@@ -55,7 +54,6 @@
             transition: opacity 0.8s ease;
         }
 
-        /* ===== СТАРТОВЫЙ ЭКРАН ===== */
         .start-screen {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -178,7 +176,6 @@
             color: rgba(255,204,0,0.7);
         }
 
-        /* ===== СТРАНИЦА MUSIC ===== */
         .fullscreen-page {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -261,7 +258,6 @@
         }
         .search-btn:active { transform: scale(0.96); background: #e6b800; }
 
-        /* ===== РЕЗУЛЬТАТ ===== */
         .track-result {
             display: flex;
             flex-direction: column;
@@ -344,7 +340,6 @@
             font-size: 14px;
         }
 
-        /* ===== КНОПКИ ===== */
         .btn-row {
             display: flex;
             gap: 10px;
@@ -420,6 +415,17 @@
             transform: scale(0.96);
         }
 
+        .fulltrack-btn.sent {
+            background: linear-gradient(135deg, #4d96ff, #3a7ddd);
+            color: white;
+        }
+
+        .fulltrack-btn.loading {
+            background: linear-gradient(135deg, #f0ad4e, #f5b95a);
+            color: white;
+            pointer-events: none;
+        }
+
         .preview-btn .btn-icon,
         .fulltrack-btn .btn-icon {
             font-size: 18px;
@@ -448,14 +454,13 @@
             transition: width 0.1s linear;
         }
 
-        /* ===== СТАТУС "ОТПРАВЛЕНО БОТУ" ===== */
         .sent-status {
             text-align: center;
             padding: 16px;
-            background: rgba(107,203,119,0.1);
-            border: 1px solid rgba(107,203,119,0.25);
+            background: rgba(77,150,255,0.1);
+            border: 1px solid rgba(77,150,255,0.25);
             border-radius: 16px;
-            color: #4a9f56;
+            color: #3a7ddd;
             font-size: 14px;
             font-weight: 500;
             width: 100%;
@@ -714,10 +719,13 @@
         // ЗАПРОС ПОЛНОГО ТРЕКА У БОТА
         // =============================================================
         window.requestFullTrack = function(artist, title, btnElement) {
-            // Меняем кнопку
+            const iconEl = btnElement.querySelector('.btn-icon');
+            const textEl = btnElement.querySelector('.btn-text');
+            
             btnElement.classList.add('loading');
-            btnElement.querySelector('.btn-icon').textContent = '⏳';
-            btnElement.querySelector('.btn-text').textContent = 'Отправка...';
+            btnElement.classList.remove('sent');
+            iconEl.textContent = '⏳';
+            textEl.textContent = 'Отправка...';
             
             try {
                 // Отправляем данные боту
@@ -727,30 +735,33 @@
                     title: title
                 }));
                 
-                // Показываем статус
-                btnElement.querySelector('.btn-icon').textContent = '✅';
-                btnElement.querySelector('.btn-text').textContent = 'Отправлено боту';
-                btnElement.style.background = 'linear-gradient(135deg, #4d96ff, #3a7ddd)';
+                // Показываем что отправлено
+                btnElement.classList.remove('loading');
+                btnElement.classList.add('sent');
+                iconEl.textContent = '✅';
+                textEl.textContent = 'Отправлено боту';
                 
-                // Показываем сообщение что делать
+                // Показываем сообщение
                 const statusDiv = document.getElementById('sentStatus');
                 if (statusDiv) {
                     statusDiv.style.display = 'block';
+                    statusDiv.innerHTML = `
+                        ✅ <b>Запрос отправлен боту!</b><br>
+                        <span style="font-size: 12px; opacity: 0.8;">
+                            Сверни Mini App и открой чат с ботом — там появится полный трек
+                        </span>
+                    `;
                 }
-                
-                // Закрываем Mini App через 1.5 секунды, чтобы юзер увидел чат
-                setTimeout(() => {
-                    tg.close();
-                }, 1500);
                 
             } catch(e) {
                 console.error('Ошибка sendData:', e);
-                btnElement.querySelector('.btn-icon').textContent = '❌';
-                btnElement.querySelector('.btn-text').textContent = 'Ошибка';
+                btnElement.classList.remove('loading');
+                iconEl.textContent = '❌';
+                textEl.textContent = 'Ошибка';
+                
                 setTimeout(() => {
-                    btnElement.querySelector('.btn-icon').textContent = '🎵';
-                    btnElement.querySelector('.btn-text').textContent = 'Полный трек';
-                    btnElement.style.background = '';
+                    iconEl.textContent = '🎵';
+                    textEl.textContent = 'Полный трек';
                 }, 2000);
             }
         };
@@ -801,6 +812,7 @@
                 const title = track.trackName || 'Без названия';
                 const artist = track.artistName || 'Неизвестный исполнитель';
                 
+                // Обложка — 600x600
                 let cover = track.artworkUrl100 || '';
                 if (cover) {
                     cover = cover.replace('100x100', '600x600');
@@ -835,7 +847,7 @@
                 
                 const previewUrl = track.previewUrl || '';
                 
-                // Экранируем кавычки для передачи в onclick
+                // Экранируем кавычки для onclick
                 const safeArtist = artist.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 
@@ -883,10 +895,7 @@
                             <div class="preview-progress-fill" id="previewProgressFill"></div>
                         </div>
                         
-                        <div class="sent-status" id="sentStatus" style="display: none;">
-                            ✅ Запрос отправлен боту!<br>
-                            <span style="font-size: 12px; opacity: 0.8;">Бот пришлёт полный трек в чат через 5-15 сек</span>
-                        </div>
+                        <div class="sent-status" id="sentStatus" style="display: none;"></div>
                     </div>
                 `;
                 
@@ -932,9 +941,9 @@
         // =============================================================
         showStartScreen();
         
-        console.log('✦ LE MONDE MUSIC — v1.3');
+        console.log('✦ LE MONDE MUSIC — v1.4');
         console.log('✦ Поиск: iTunes API');
-        console.log('✦ + Полный трек через бота (sendData)');
+        console.log('✦ Полный трек: sendData → бот');
     </script>
 </body>
 </html>
