@@ -137,7 +137,6 @@
         }
         .start-card:active {
             transform: scale(0.94);
-            border-color: rgba(255,204,0,0.5);
         }
 
         .start-card-icon {
@@ -336,21 +335,17 @@
             opacity: 0.5;
         }
 
-        .notification-toast {
-            position: fixed;
-            bottom: 30px;
-            left: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(20px);
-            border-radius: 60px;
-            padding: 14px 20px;
-            text-align: center;
-            color: white;
-            z-index: 150;
-            animation: slideUp 0.3s ease;
-            font-size: 14px;
-            font-weight: 500;
+        .debug-box {
+            font-size: 10px;
+            margin-top: 12px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            text-align: left;
+            word-break: break-all;
+            color: #666;
+            max-height: 150px;
+            overflow-y: auto;
         }
 
         @media (max-width: 400px) {
@@ -472,8 +467,63 @@
         document.getElementById('backFromMusic').addEventListener('click', showStartScreen);
 
         // =============================================================
-        // ПОИСК ТРЕКА
+        // ПОИСК ТРЕКА — с несколькими CORS-прокси
         // =============================================================
+        const CORS_PROXIES = [
+            { name: 'allorigins', url: 'https://api.allorigins.win/raw?url=' },
+            { name: 'codetabs',   url: 'https://api.codetabs.com/v1/proxy?quest=' },
+            { name: 'corsproxy',  url: 'https://corsproxy.io/?' },
+            { name: 'thingproxy', url: 'https://thingproxy.freeboard.io/fetch/' }
+        ];
+
+        async function fetchDeezer(path) {
+            const targetUrl = `https://api.deezer.com${path}`;
+            const errors = [];
+
+            for (const proxy of CORS_PROXIES) {
+                try {
+                    const proxyUrl = proxy.url + encodeURIComponent(targetUrl);
+                    console.log(`🔍 Пробуем ${proxy.name}:`, proxyUrl);
+
+                    const response = await fetch(proxyUrl, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' }
+                    });
+
+                    if (!response.ok) {
+                        errors.push(`${proxy.name}: HTTP ${response.status}`);
+                        continue;
+                    }
+
+                    const text = await response.text();
+
+                    // Проверяем, что это JSON
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch(e) {
+                        errors.push(`${proxy.name}: не JSON (${text.slice(0, 50)})`);
+                        continue;
+                    }
+
+                    // Проверяем, что Deezer вернул ошибку
+                    if (data.error) {
+                        errors.push(`${proxy.name}: Deezer error ${data.error.code || ''} ${data.error.message || ''}`);
+                        continue;
+                    }
+
+                    console.log(`✅ ${proxy.name} сработал`);
+                    return { data, error: null };
+
+                } catch(e) {
+                    errors.push(`${proxy.name}: ${e.message}`);
+                    console.log(`❌ ${proxy.name}:`, e.message);
+                }
+            }
+
+            return { data: null, error: errors.join(' | ') };
+        }
+
         async function searchTrack() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
@@ -487,50 +537,26 @@
                 </div>
             `;
             
-            // ===== CORS-ПРОКСИ =====
-            const CORS_PROXIES = [
-                'https://api.allorigins.win/raw?url=',
-                'https://corsproxy.io/?',
-                'https://api.codetabs.com/v1/proxy?quest='
-            ];
+            const result = await fetchDeezer(`/search?q=${encodeURIComponent(query)}&limit=1`);
             
-            let data = null;
-            
-            // Пробуем сначала напрямую
-            try {
-                const directUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`;
-                const response = await fetch(directUrl);
-                if (response.ok) {
-                    data = await response.json();
-                }
-            } catch(e) {
-                console.log('Прямой запрос не сработал, пробуем прокси...');
+            // Если все прокси упали — показываем ошибку с деталями
+            if (!result.data) {
+                resDiv.innerHTML = `
+                    <div class="empty-state">
+                        <span class="icon">❌</span>
+                        <div>Ошибка при поиске</div>
+                        <div class="debug-box">
+                            <b>Все прокси не сработали:</b><br>
+                            ${escapeHtml(result.error || 'unknown')}
+                        </div>
+                    </div>
+                `;
+                return;
             }
             
-            // Если напрямую не получилось — через прокси
-            if (!data || !data.data) {
-                for (const proxy of CORS_PROXIES) {
-                    try {
-                        const targetUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`;
-                        const proxyUrl = proxy + encodeURIComponent(targetUrl);
-                        const response = await fetch(proxyUrl);
-                        
-                        if (response.ok) {
-                            const proxyData = await response.json();
-                            if (proxyData && proxyData.data) {
-                                data = proxyData;
-                                console.log('✅ Сработал прокси:', proxy);
-                                break;
-                            }
-                        }
-                    } catch(e) {
-                        console.log('Прокси не сработал:', proxy, e.message);
-                    }
-                }
-            }
+            const data = result.data;
             
-            // Если ничего не сработало
-            if (!data || !data.data || data.data.length === 0) {
+            if (!data.data || data.data.length === 0) {
                 resDiv.innerHTML = `
                     <div class="empty-state">
                         <span class="icon">😕</span>
@@ -562,6 +588,7 @@
                 </div>
             `;
         }
+
         // =============================================================
         // УТИЛИТЫ
         // =============================================================
@@ -574,14 +601,6 @@
                 '"': '&quot;',
                 "'": '&#39;'
             }[m]));
-        }
-
-        function showNote(msg) {
-            const t = document.createElement('div');
-            t.className = 'notification-toast';
-            t.textContent = msg;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 2000);
         }
 
         // =============================================================
@@ -597,7 +616,8 @@
         // =============================================================
         showStartScreen();
         
-        console.log('✦ LE MONDE MUSIC — минимальная версия');
+        console.log('✦ LE MONDE MUSIC — v1.0');
+        console.log('✦ Поиск через Deezer + CORS-прокси');
     </script>
 </body>
 </html>
