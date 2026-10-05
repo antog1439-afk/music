@@ -42,9 +42,9 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        @keyframes slideUp {
-            from { transform: translateY(100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         /* ===== ЗАСТАВКА ===== */
@@ -266,7 +266,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
             padding: 24px;
             background: rgba(0,0,0,0.03);
             border-radius: 28px;
@@ -303,7 +303,15 @@
             font-size: 18px;
             color: rgba(0,0,0,0.6);
             text-align: center;
-            margin-top: -8px;
+            margin-top: -4px;
+        }
+
+        .track-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .track-release-date {
@@ -317,11 +325,90 @@
             font-size: 13px;
             color: #cc9900;
             font-weight: 500;
-            margin-top: -4px;
         }
 
-        .track-release-date .icon {
+        .track-duration {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            background: rgba(107,203,119,0.1);
+            border: 1px solid rgba(107,203,119,0.25);
+            border-radius: 20px;
+            font-size: 13px;
+            color: #4a9f56;
+            font-weight: 500;
+        }
+
+        .track-meta .icon {
             font-size: 14px;
+        }
+
+        /* ===== КНОПКА ПРЕВЬЮ ===== */
+        .preview-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #ffcc00, #ffd633);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 60px;
+            color: #1a1a1a;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(255,204,0,0.35);
+            margin-top: 8px;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .preview-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255,204,0,0.45);
+        }
+        .preview-btn:active {
+            transform: scale(0.96);
+        }
+
+        .preview-btn.playing {
+            background: linear-gradient(135deg, #ff6b6b, #ff8787);
+            color: white;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .preview-btn.loading {
+            background: linear-gradient(135deg, #f0ad4e, #f5b95a);
+            color: white;
+            pointer-events: none;
+        }
+
+        .preview-btn .btn-icon {
+            font-size: 18px;
+        }
+
+        .preview-progress {
+            width: 100%;
+            max-width: 280px;
+            height: 4px;
+            background: rgba(0,0,0,0.08);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .preview-progress.active {
+            display: block;
+        }
+
+        .preview-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ffcc00, #6bcb77);
+            border-radius: 2px;
+            transition: width 0.1s linear;
         }
 
         .loading-state {
@@ -373,6 +460,9 @@
             .start-card-icon svg { width: 40px; height: 40px; }
             .track-title { font-size: 20px; }
             .track-artist { font-size: 16px; }
+            .track-release-date,
+            .track-duration { font-size: 11px; padding: 5px 12px; }
+            .preview-btn { font-size: 14px; padding: 12px 24px; min-width: 180px; }
         }
     </style>
 </head>
@@ -473,6 +563,7 @@
             startScreen.classList.remove('hidden');
             musicPage.classList.remove('active');
             document.body.className = 'start-mode';
+            stopPreview();
         }
 
         function showMusicPage() {
@@ -485,9 +576,101 @@
         document.getElementById('backFromMusic').addEventListener('click', showStartScreen);
 
         // =============================================================
+        // ПЛЕЕР ПРЕВЬЮ
+        // =============================================================
+        let currentAudio = null;
+        let currentBtn = null;
+        let progressInterval = null;
+
+        function stopPreview() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+            if (currentBtn) {
+                currentBtn.classList.remove('playing', 'loading');
+                currentBtn.querySelector('.btn-icon').textContent = '▶️';
+                currentBtn.querySelector('.btn-text').textContent = 'Слушать 30 сек';
+                currentBtn = null;
+            }
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+            const progress = document.getElementById('previewProgress');
+            const fill = document.getElementById('previewProgressFill');
+            if (progress) progress.classList.remove('active');
+            if (fill) fill.style.width = '0%';
+        }
+
+        window.playPreview = function(previewUrl, btnElement) {
+            // Если уже играет — пауза
+            if (currentAudio && currentBtn === btnElement && !currentAudio.paused) {
+                stopPreview();
+                return;
+            }
+            
+            // Останавливаем предыдущее
+            stopPreview();
+            
+            if (!previewUrl) {
+                console.log('❌ Нет previewUrl');
+                return;
+            }
+            
+            const iconEl = btnElement.querySelector('.btn-icon');
+            const textEl = btnElement.querySelector('.btn-text');
+            const progress = document.getElementById('previewProgress');
+            const fill = document.getElementById('previewProgressFill');
+            
+            btnElement.classList.add('loading');
+            iconEl.textContent = '⏳';
+            textEl.textContent = 'Загрузка...';
+            
+            const audio = new Audio(previewUrl);
+            audio.volume = 0.8;
+            
+            audio.oncanplay = () => {
+                audio.play();
+                btnElement.classList.remove('loading');
+                btnElement.classList.add('playing');
+                iconEl.textContent = '⏸️';
+                textEl.textContent = 'Пауза';
+                
+                if (progress) progress.classList.add('active');
+                
+                currentAudio = audio;
+                currentBtn = btnElement;
+                
+                // Прогресс-бар
+                progressInterval = setInterval(() => {
+                    if (currentAudio && currentAudio.duration) {
+                        const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
+                        if (fill) fill.style.width = Math.min(percent, 100) + '%';
+                    }
+                }, 100);
+            };
+            
+            audio.onended = () => {
+                stopPreview();
+            };
+            
+            audio.onerror = (e) => {
+                console.error('Ошибка воспроизведения:', e);
+                btnElement.classList.remove('loading');
+                iconEl.textContent = '▶️';
+                textEl.textContent = 'Слушать 30 сек';
+            };
+        };
+
+        // =============================================================
         // ПОИСК ТРЕКА — iTunes API
         // =============================================================
         async function searchTrack() {
+            // Останавливаем текущее превью
+            stopPreview();
+            
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
             
@@ -534,7 +717,14 @@
                     cover = cover.replace('100x100', '600x600');
                 }
                 
-                // Форматируем дату релиза
+                // ===== ДЛИТЕЛЬНОСТЬ =====
+                const durationMs = track.trackTimeMillis || 0;
+                const totalSec = Math.floor(durationMs / 1000);
+                const minutes = Math.floor(totalSec / 60);
+                const seconds = totalSec % 60;
+                const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // ===== ДАТА РЕЛИЗА =====
                 const releaseDateRaw = track.releaseDate || '';
                 let releaseDateFormatted = '';
                 
@@ -554,6 +744,9 @@
                     }
                 }
                 
+                // ===== PREVIEW =====
+                const previewUrl = track.previewUrl || '';
+                
                 resDiv.innerHTML = `
                     <div class="track-result">
                         <div class="track-cover">
@@ -564,12 +757,31 @@
                         </div>
                         <div class="track-title">${escapeHtml(title)}</div>
                         <div class="track-artist">${escapeHtml(artist)}</div>
-                        ${releaseDateFormatted ? `
-                            <div class="track-release-date">
-                                <span class="icon">📆</span>
-                                ${escapeHtml(releaseDateFormatted)}
-                            </div>
+                        <div class="track-meta">
+                            ${releaseDateFormatted ? `
+                                <div class="track-release-date">
+                                    <span class="icon">📆</span>
+                                    ${escapeHtml(releaseDateFormatted)}
+                                </div>
+                            ` : ''}
+                            ${durationStr ? `
+                                <div class="track-duration">
+                                    <span class="icon">⏱</span>
+                                    ${escapeHtml(durationStr)}
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        ${previewUrl ? `
+                            <button class="preview-btn" onclick="playPreview('${escapeHtml(previewUrl)}', this)">
+                                <span class="btn-icon">▶️</span>
+                                <span class="btn-text">Слушать 30 сек</span>
+                            </button>
                         ` : ''}
+                        
+                        <div class="preview-progress" id="previewProgress">
+                            <div class="preview-progress-fill" id="previewProgressFill"></div>
+                        </div>
                     </div>
                 `;
                 
@@ -615,9 +827,9 @@
         // =============================================================
         showStartScreen();
         
-        console.log('✦ LE MONDE MUSIC — v1.1');
+        console.log('✦ LE MONDE MUSIC — v1.2');
         console.log('✦ Поиск через iTunes API');
-        console.log('✦ + Дата релиза');
+        console.log('✦ + Дата релиза + Длительность + Превью 30 сек');
     </script>
 </body>
 </html>
