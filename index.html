@@ -411,6 +411,67 @@
             transition: width 0.1s linear;
         }
 
+        /* ===== ПЛАТФОРМЫ ===== */
+        .platforms-section {
+            width: 100%;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .platforms-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(0,0,0,0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .platform-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: rgba(0,0,0,0.03);
+        }
+
+        .platform-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .platform-btn:active {
+            transform: scale(0.96);
+        }
+
+        .platform-btn svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .platform-btn.yandex { background: rgba(255,204,0,0.15); border-color: rgba(255,204,0,0.3); }
+        .platform-btn.youtube-music { background: rgba(255,0,0,0.08); border-color: rgba(255,0,0,0.15); }
+        .platform-btn.youtube { background: rgba(255,0,0,0.08); border-color: rgba(255,0,0,0.15); }
+        .platform-btn.deezer { background: rgba(107,203,119,0.1); border-color: rgba(107,203,119,0.2); }
+
         .loading-state {
             text-align: center;
             padding: 40px 20px;
@@ -463,6 +524,8 @@
             .track-release-date,
             .track-duration { font-size: 11px; padding: 5px 12px; }
             .preview-btn { font-size: 14px; padding: 12px 24px; min-width: 180px; }
+            .platform-btn { font-size: 12px; padding: 10px 12px; }
+            .platform-btn svg { width: 16px; height: 16px; }
         }
     </style>
 </head>
@@ -605,19 +668,14 @@
         }
 
         window.playPreview = function(previewUrl, btnElement) {
-            // Если уже играет — пауза
             if (currentAudio && currentBtn === btnElement && !currentAudio.paused) {
                 stopPreview();
                 return;
             }
             
-            // Останавливаем предыдущее
             stopPreview();
             
-            if (!previewUrl) {
-                console.log('❌ Нет previewUrl');
-                return;
-            }
+            if (!previewUrl) return;
             
             const iconEl = btnElement.querySelector('.btn-icon');
             const textEl = btnElement.querySelector('.btn-text');
@@ -643,7 +701,6 @@
                 currentAudio = audio;
                 currentBtn = btnElement;
                 
-                // Прогресс-бар
                 progressInterval = setInterval(() => {
                     if (currentAudio && currentAudio.duration) {
                         const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
@@ -668,7 +725,6 @@
         // ПОИСК ТРЕКА — iTunes API
         // =============================================================
         async function searchTrack() {
-            // Останавливаем текущее превью
             stopPreview();
             
             const query = document.getElementById('searchInput').value.trim();
@@ -711,20 +767,20 @@
                 const title = track.trackName || 'Без названия';
                 const artist = track.artistName || 'Неизвестный исполнитель';
                 
-                // Обложка — из 100x100 делаем 600x600
+                // Обложка
                 let cover = track.artworkUrl100 || '';
                 if (cover) {
                     cover = cover.replace('100x100', '600x600');
                 }
                 
-                // ===== ДЛИТЕЛЬНОСТЬ =====
+                // Длительность
                 const durationMs = track.trackTimeMillis || 0;
                 const totalSec = Math.floor(durationMs / 1000);
                 const minutes = Math.floor(totalSec / 60);
                 const seconds = totalSec % 60;
                 const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
-                // ===== ДАТА РЕЛИЗА =====
+                // Дата релиза
                 const releaseDateRaw = track.releaseDate || '';
                 let releaseDateFormatted = '';
                 
@@ -744,8 +800,19 @@
                     }
                 }
                 
-                // ===== PREVIEW =====
+                // Превью
                 const previewUrl = track.previewUrl || '';
+                
+                // ===== ССЫЛКИ НА ПЛАТФОРМЫ =====
+                const searchQuery = `${artist} ${title}`;
+                const encodedQuery = encodeURIComponent(searchQuery);
+                
+                const platformUrls = {
+                    yandex: `https://music.yandex.ru/search?text=${encodedQuery}`,
+                    youtubeMusic: `https://music.youtube.com/search?q=${encodedQuery}`,
+                    youtube: `https://www.youtube.com/results?search_query=${encodedQuery}`,
+                    deezer: `https://www.deezer.com/search/${encodedQuery}`
+                };
                 
                 resDiv.innerHTML = `
                     <div class="track-result">
@@ -777,10 +844,43 @@
                                 <span class="btn-icon">▶️</span>
                                 <span class="btn-text">Слушать 30 сек</span>
                             </button>
+                            
+                            <div class="preview-progress" id="previewProgress">
+                                <div class="preview-progress-fill" id="previewProgressFill"></div>
+                            </div>
                         ` : ''}
                         
-                        <div class="preview-progress" id="previewProgress">
-                            <div class="preview-progress-fill" id="previewProgressFill"></div>
+                        <div class="platforms-section">
+                            <div class="platforms-title">🎧 Слушать на платформах</div>
+                            <div class="platforms-grid">
+                                <a href="${platformUrls.yandex}" target="_blank" class="platform-btn yandex" onclick="tg.openLink('${platformUrls.yandex}'); return false;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 18V5L21 3V16"/>
+                                        <circle cx="6" cy="18" r="3"/>
+                                        <circle cx="18" cy="16" r="3"/>
+                                        <path d="M9 12L21 10"/>
+                                    </svg>
+                                    Яндекс.Музыка
+                                </a>
+                                <a href="${platformUrls.youtubeMusic}" target="_blank" class="platform-btn youtube-music" onclick="tg.openLink('${platformUrls.youtubeMusic}'); return false;">
+                                    <svg viewBox="0 0 24 24" fill="#ff0000" stroke="none">
+                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                    </svg>
+                                    YouTube Music
+                                </a>
+                                <a href="${platformUrls.youtube}" target="_blank" class="platform-btn youtube" onclick="tg.openLink('${platformUrls.youtube}'); return false;">
+                                    <svg viewBox="0 0 24 24" fill="#ff0000" stroke="none">
+                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                    </svg>
+                                    YouTube
+                                </a>
+                                <a href="${platformUrls.deezer}" target="_blank" class="platform-btn deezer" onclick="tg.openLink('${platformUrls.deezer}'); return false;">
+                                    <svg viewBox="0 0 24 24" fill="#6bcb77" stroke="none">
+                                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1 6h2v2h-2V6zm-4 3h2v2H7V9zm4 0h2v2h-2V9zm4 0h2v2h-2V9zm-8 3h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 3h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z"/>
+                                    </svg>
+                                    Deezer
+                                </a>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -827,9 +927,9 @@
         // =============================================================
         showStartScreen();
         
-        console.log('✦ LE MONDE MUSIC — v1.2');
+        console.log('✦ LE MONDE MUSIC — v1.3');
         console.log('✦ Поиск через iTunes API');
-        console.log('✦ + Дата релиза + Длительность + Превью 30 сек');
+        console.log('✦ + Дата + Длительность + Превью + Платформы');
     </script>
 </body>
 </html>
