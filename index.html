@@ -467,63 +467,8 @@
         document.getElementById('backFromMusic').addEventListener('click', showStartScreen);
 
         // =============================================================
-        // ПОИСК ТРЕКА — с несколькими CORS-прокси
+        // ПОИСК ТРЕКА — iTunes API (без CORS-прокси)
         // =============================================================
-        const CORS_PROXIES = [
-            { name: 'allorigins', url: 'https://api.allorigins.win/raw?url=' },
-            { name: 'codetabs',   url: 'https://api.codetabs.com/v1/proxy?quest=' },
-            { name: 'corsproxy',  url: 'https://corsproxy.io/?' },
-            { name: 'thingproxy', url: 'https://thingproxy.freeboard.io/fetch/' }
-        ];
-
-        async function fetchDeezer(path) {
-            const targetUrl = `https://api.deezer.com${path}`;
-            const errors = [];
-
-            for (const proxy of CORS_PROXIES) {
-                try {
-                    const proxyUrl = proxy.url + encodeURIComponent(targetUrl);
-                    console.log(`🔍 Пробуем ${proxy.name}:`, proxyUrl);
-
-                    const response = await fetch(proxyUrl, {
-                        method: 'GET',
-                        headers: { 'Accept': 'application/json' }
-                    });
-
-                    if (!response.ok) {
-                        errors.push(`${proxy.name}: HTTP ${response.status}`);
-                        continue;
-                    }
-
-                    const text = await response.text();
-
-                    // Проверяем, что это JSON
-                    let data;
-                    try {
-                        data = JSON.parse(text);
-                    } catch(e) {
-                        errors.push(`${proxy.name}: не JSON (${text.slice(0, 50)})`);
-                        continue;
-                    }
-
-                    // Проверяем, что Deezer вернул ошибку
-                    if (data.error) {
-                        errors.push(`${proxy.name}: Deezer error ${data.error.code || ''} ${data.error.message || ''}`);
-                        continue;
-                    }
-
-                    console.log(`✅ ${proxy.name} сработал`);
-                    return { data, error: null };
-
-                } catch(e) {
-                    errors.push(`${proxy.name}: ${e.message}`);
-                    console.log(`❌ ${proxy.name}:`, e.message);
-                }
-            }
-
-            return { data: null, error: errors.join(' | ') };
-        }
-
         async function searchTrack() {
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
@@ -537,56 +482,67 @@
                 </div>
             `;
             
-            const result = await fetchDeezer(`/search?q=${encodeURIComponent(query)}&limit=1`);
-            
-            // Если все прокси упали — показываем ошибку с деталями
-            if (!result.data) {
+            try {
+                // iTunes Search API — открытый, без CORS
+                const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1&country=RU`;
+                console.log('🔍 iTunes:', url);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('📦 Ответ iTunes:', data);
+                
+                if (!data.results || data.results.length === 0) {
+                    resDiv.innerHTML = `
+                        <div class="empty-state">
+                            <span class="icon">😕</span>
+                            <div>Ничего не найдено</div>
+                            <div style="font-size: 13px; margin-top: 8px; opacity: 0.7;">Попробуйте другой запрос</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const track = data.results[0];
+                const title = track.trackName || 'Без названия';
+                const artist = track.artistName || 'Неизвестный исполнитель';
+                
+                // iTunes отдаёт 100x100, меняем на 600x600
+                let cover = track.artworkUrl100 || '';
+                if (cover) {
+                    cover = cover.replace('100x100', '600x600');
+                }
+                
+                resDiv.innerHTML = `
+                    <div class="track-result">
+                        <div class="track-cover">
+                            ${cover 
+                                ? `<img src="${cover}" alt="${escapeHtml(title)}" onerror="this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;\\'>🎵</div>'">` 
+                                : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;">🎵</div>`
+                            }
+                        </div>
+                        <div class="track-title">${escapeHtml(title)}</div>
+                        <div class="track-artist">${escapeHtml(artist)}</div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('❌ Ошибка:', error);
                 resDiv.innerHTML = `
                     <div class="empty-state">
                         <span class="icon">❌</span>
                         <div>Ошибка при поиске</div>
                         <div class="debug-box">
-                            <b>Все прокси не сработали:</b><br>
-                            ${escapeHtml(result.error || 'unknown')}
+                            <b>DEBUG:</b><br>
+                            ${escapeHtml(error.message)}
                         </div>
                     </div>
                 `;
-                return;
             }
-            
-            const data = result.data;
-            
-            if (!data.data || data.data.length === 0) {
-                resDiv.innerHTML = `
-                    <div class="empty-state">
-                        <span class="icon">😕</span>
-                        <div>Ничего не найдено</div>
-                        <div style="font-size: 13px; margin-top: 8px; opacity: 0.7;">Попробуйте другой запрос</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            const track = data.data[0];
-            const title = track.title || 'Без названия';
-            const artist = track.artist?.name || 'Неизвестный исполнитель';
-            const cover = track.album?.cover_xl || 
-                          track.album?.cover_big || 
-                          track.album?.cover_medium || 
-                          track.album?.cover_small || '';
-            
-            resDiv.innerHTML = `
-                <div class="track-result">
-                    <div class="track-cover">
-                        ${cover 
-                            ? `<img src="${cover}" alt="${escapeHtml(title)}" onerror="this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;\\'>🎵</div>'">` 
-                            : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;">🎵</div>`
-                        }
-                    </div>
-                    <div class="track-title">${escapeHtml(title)}</div>
-                    <div class="track-artist">${escapeHtml(artist)}</div>
-                </div>
-            `;
         }
 
         // =============================================================
@@ -617,7 +573,7 @@
         showStartScreen();
         
         console.log('✦ LE MONDE MUSIC — v1.0');
-        console.log('✦ Поиск через Deezer + CORS-прокси');
+        console.log('✦ Поиск через iTunes API (без прокси)');
     </script>
 </body>
 </html>
