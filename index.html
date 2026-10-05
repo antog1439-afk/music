@@ -426,8 +426,42 @@
             pointer-events: none;
         }
 
+        .concert-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #a855f7, #9333ea);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(168,85,247,0.35);
+            justify-content: center;
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .concert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(168,85,247,0.45);
+        }
+        .concert-btn:active {
+            transform: scale(0.96);
+        }
+
+        .concert-btn.loading {
+            background: linear-gradient(135deg, #f0ad4e, #f5b95a);
+            color: white;
+            pointer-events: none;
+        }
+
         .preview-btn .btn-icon,
-        .fulltrack-btn .btn-icon {
+        .fulltrack-btn .btn-icon,
+        .concert-btn .btn-icon {
             font-size: 18px;
         }
 
@@ -466,6 +500,58 @@
             width: 100%;
             margin-top: 8px;
             animation: fadeInUp 0.4s ease;
+        }
+
+        /* ===== КОНТЕЙНЕР КОНЦЕРТОВ ===== */
+        .concerts-container {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(168,85,247,0.05);
+            border: 1px solid rgba(168,85,247,0.2);
+            border-radius: 20px;
+            animation: fadeInUp 0.4s ease;
+            width: 100%;
+        }
+
+        .concerts-title {
+            font-size: 13px;
+            color: #9333ea;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .concerts-iframe {
+            width: 100%;
+            height: 550px;
+            border: none;
+            border-radius: 16px;
+            background: white;
+            display: block;
+        }
+
+        .concerts-open-btn {
+            width: 100%;
+            margin-top: 12px;
+            background: linear-gradient(135deg, #a855f7, #9333ea);
+            border: none;
+            padding: 14px;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(168,85,247,0.35);
+        }
+
+        .concerts-open-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(168,85,247,0.45);
+        }
+        .concerts-open-btn:active {
+            transform: scale(0.96);
         }
 
         .loading-state {
@@ -520,7 +606,9 @@
             .track-release-date,
             .track-duration { font-size: 11px; padding: 5px 12px; }
             .preview-btn,
-            .fulltrack-btn { font-size: 13px; padding: 12px 18px; min-width: 140px; }
+            .fulltrack-btn,
+            .concert-btn { font-size: 13px; padding: 12px 18px; min-width: 140px; }
+            .concerts-iframe { height: 450px; }
         }
     </style>
 </head>
@@ -728,20 +816,17 @@
             textEl.textContent = 'Отправка...';
             
             try {
-                // Отправляем данные боту
                 tg.sendData(JSON.stringify({
                     action: 'full_track',
                     artist: artist,
                     title: title
                 }));
                 
-                // Показываем что отправлено
                 btnElement.classList.remove('loading');
                 btnElement.classList.add('sent');
                 iconEl.textContent = '✅';
                 textEl.textContent = 'Отправлено боту';
                 
-                // Показываем сообщение
                 const statusDiv = document.getElementById('sentStatus');
                 if (statusDiv) {
                     statusDiv.style.display = 'block';
@@ -767,10 +852,71 @@
         };
 
         // =============================================================
+        // ЗАПРОС КОНЦЕРТОВ — IFRAME ЯНДЕКС.АФИШИ ВНУТРИ MINI APP
+        // =============================================================
+        window.requestConcerts = function(artist, btnElement) {
+            const iconEl = btnElement.querySelector('.btn-icon');
+            const textEl = btnElement.querySelector('.btn-text');
+            
+            // Убираем старый iframe, если был
+            const oldContainer = document.getElementById('concertsContainer');
+            if (oldContainer) oldContainer.remove();
+            
+            // Создаём контейнер
+            const container = document.createElement('div');
+            container.className = 'concerts-container';
+            container.id = 'concertsContainer';
+            
+            const afishaUrl = `https://afisha.yandex.ru/search?text=${encodeURIComponent(artist)}`;
+            
+            container.innerHTML = `
+                <div class="concerts-title">🎤 КОНЦЕРТЫ: ${escapeHtml(artist.toUpperCase())}</div>
+                <iframe 
+                    class="concerts-iframe"
+                    src="${afishaUrl}"
+                    allowfullscreen>
+                </iframe>
+                <button class="concerts-open-btn" onclick="openAfishaInBrowser('${artist.replace(/'/g, "\\'")}')">
+                    🔗 Открыть все концерты в Яндекс.Афише
+                </button>
+            `;
+            
+            // Вставляем после карточки трека
+            const trackResult = document.querySelector('.track-result');
+            if (trackResult) {
+                trackResult.appendChild(container);
+            }
+            
+            // Скроллим к iframe
+            setTimeout(() => {
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 200);
+            
+            // Меняем кнопку (визуальный фидбек)
+            btnElement.classList.remove('loading');
+            iconEl.textContent = '🎤';
+            textEl.textContent = 'Концерты';
+        };
+
+        // Открыть Афишу в браузере Telegram
+        window.openAfishaInBrowser = function(artist) {
+            const url = `https://afisha.yandex.ru/search?text=${encodeURIComponent(artist)}`;
+            try {
+                tg.openLink(url);
+            } catch(e) {
+                window.open(url, '_blank');
+            }
+        };
+
+        // =============================================================
         // ПОИСК ТРЕКА — iTunes API
         // =============================================================
         async function searchTrack() {
             stopPreview();
+            
+            // Убираем старый блок концертов при новом поиске
+            const oldContainer = document.getElementById('concertsContainer');
+            if (oldContainer) oldContainer.remove();
             
             const query = document.getElementById('searchInput').value.trim();
             if (!query) return;
@@ -812,20 +958,17 @@
                 const title = track.trackName || 'Без названия';
                 const artist = track.artistName || 'Неизвестный исполнитель';
                 
-                // Обложка — 600x600
                 let cover = track.artworkUrl100 || '';
                 if (cover) {
                     cover = cover.replace('100x100', '600x600');
                 }
                 
-                // Длительность
                 const durationMs = track.trackTimeMillis || 0;
                 const totalSec = Math.floor(durationMs / 1000);
                 const minutes = Math.floor(totalSec / 60);
                 const seconds = totalSec % 60;
                 const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
-                // Дата релиза
                 const releaseDateRaw = track.releaseDate || '';
                 let releaseDateFormatted = '';
                 
@@ -847,7 +990,6 @@
                 
                 const previewUrl = track.previewUrl || '';
                 
-                // Экранируем кавычки для onclick
                 const safeArtist = artist.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 
@@ -888,6 +1030,11 @@
                             <button class="fulltrack-btn" onclick="requestFullTrack('${safeArtist}', '${safeTitle}', this)">
                                 <span class="btn-icon">🎵</span>
                                 <span class="btn-text">Полный трек</span>
+                            </button>
+                            
+                            <button class="concert-btn" onclick="requestConcerts('${safeArtist}', this)">
+                                <span class="btn-icon">🎤</span>
+                                <span class="btn-text">Концерты</span>
                             </button>
                         </div>
                         
@@ -941,9 +1088,10 @@
         // =============================================================
         showStartScreen();
         
-        console.log('✦ LE MONDE MUSIC — v1.4');
+        console.log('✦ LE MONDE MUSIC — v1.6');
         console.log('✦ Поиск: iTunes API');
         console.log('✦ Полный трек: sendData → бот');
+        console.log('✦ Концерты: iframe Яндекс.Афиши прямо в Mini App');
     </script>
 </body>
 </html>
