@@ -344,14 +344,23 @@
             font-size: 14px;
         }
 
-        /* ===== КНОПКА ПРЕВЬЮ ===== */
+        /* ===== КНОПКИ ===== */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            margin-top: 8px;
+        }
+
         .preview-btn {
             display: inline-flex;
             align-items: center;
             gap: 10px;
             background: linear-gradient(135deg, #ffcc00, #ffd633);
             border: none;
-            padding: 14px 32px;
+            padding: 14px 28px;
             border-radius: 60px;
             color: #1a1a1a;
             font-weight: 600;
@@ -359,9 +368,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 16px rgba(255,204,0,0.35);
-            margin-top: 8px;
-            min-width: 200px;
             justify-content: center;
+            flex: 1;
+            min-width: 160px;
         }
 
         .preview-btn:hover {
@@ -384,75 +393,37 @@
             pointer-events: none;
         }
 
-        .preview-btn .btn-icon {
-            font-size: 18px;
-        }
-
-         /* ===== БЛОК КНОПОК 30 СЕК + ПОЛНЫЙ ТРЕК ===== */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            max-width: 420px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .action-btn {
-            flex: 1;
-            min-width: 140px;
+        .fulltrack-btn {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
+            background: linear-gradient(135deg, #6bcb77, #5cb869);
             border: none;
-            padding: 14px 20px;
+            padding: 14px 28px;
             border-radius: 60px;
+            color: white;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
-            color: #1a1a1a;
+            box-shadow: 0 4px 16px rgba(107,203,119,0.35);
+            justify-content: center;
+            flex: 1;
+            min-width: 160px;
         }
 
-        .action-btn:active { transform: scale(0.96); }
-
-        .action-btn.preview-btn-style {
-            background: linear-gradient(135deg, #ffcc00, #ffd633);
-            box-shadow: 0 4px 16px rgba(255,204,0,0.35);
-        }
-
-        .action-btn.preview-btn-style:hover {
+        .fulltrack-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(255,204,0,0.45);
+            box-shadow: 0 8px 24px rgba(107,203,119,0.45);
+        }
+        .fulltrack-btn:active {
+            transform: scale(0.96);
         }
 
-        .action-btn.preview-btn-style.playing {
-            background: linear-gradient(135deg, #ff6b6b, #ff8787);
-            color: white;
-            animation: pulse 1.5s ease-in-out infinite;
+        .preview-btn .btn-icon,
+        .fulltrack-btn .btn-icon {
+            font-size: 18px;
         }
-
-        .action-btn.preview-btn-style.loading {
-            background: linear-gradient(135deg, #f0ad4e, #f5b95a);
-            color: white;
-            pointer-events: none;
-        }
-
-        .action-btn.fulltrack-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 4px 16px rgba(102,126,234,0.35);
-        }
-
-        .action-btn.fulltrack-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(102,126,234,0.45);
-        }       
-
-
-        
 
         .preview-progress {
             width: 100%;
@@ -477,66 +448,20 @@
             transition: width 0.1s linear;
         }
 
-        /* ===== ПЛАТФОРМЫ ===== */
-        .platforms-section {
-            width: 100%;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(0,0,0,0.06);
-        }
-
-        .platforms-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: rgba(0,0,0,0.5);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        /* ===== СТАТУС "ОТПРАВЛЕНО БОТУ" ===== */
+        .sent-status {
             text-align: center;
-            margin-bottom: 12px;
-        }
-
-        .platforms-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .platform-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 16px;
-            border: 1px solid rgba(0,0,0,0.06);
+            padding: 16px;
+            background: rgba(107,203,119,0.1);
+            border: 1px solid rgba(107,203,119,0.25);
             border-radius: 16px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #1a1a1a;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            background: rgba(0,0,0,0.03);
+            color: #4a9f56;
+            font-size: 14px;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 8px;
+            animation: fadeInUp 0.4s ease;
         }
-
-        .platform-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .platform-btn:active {
-            transform: scale(0.96);
-        }
-
-        .platform-btn svg {
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-        }
-
-        .platform-btn.yandex { background: rgba(255,204,0,0.15); border-color: rgba(255,204,0,0.3); }
-        .platform-btn.youtube-music { background: rgba(255,0,0,0.08); border-color: rgba(255,0,0,0.15); }
-        .platform-btn.youtube { background: rgba(255,0,0,0.08); border-color: rgba(255,0,0,0.15); }
-        .platform-btn.deezer { background: rgba(107,203,119,0.1); border-color: rgba(107,203,119,0.2); }
 
         .loading-state {
             text-align: center;
@@ -589,9 +514,8 @@
             .track-artist { font-size: 16px; }
             .track-release-date,
             .track-duration { font-size: 11px; padding: 5px 12px; }
-            .preview-btn { font-size: 14px; padding: 12px 24px; min-width: 180px; }
-            .platform-btn { font-size: 12px; padding: 10px 12px; }
-            .platform-btn svg { width: 16px; height: 16px; }
+            .preview-btn,
+            .fulltrack-btn { font-size: 13px; padding: 12px 18px; min-width: 140px; }
         }
     </style>
 </head>
@@ -719,8 +643,10 @@
             }
             if (currentBtn) {
                 currentBtn.classList.remove('playing', 'loading');
-                currentBtn.querySelector('.btn-icon').textContent = '▶️';
-                currentBtn.querySelector('.btn-text').textContent = 'Слушать 30 сек';
+                const icon = currentBtn.querySelector('.btn-icon');
+                const text = currentBtn.querySelector('.btn-text');
+                if (icon) icon.textContent = '▶️';
+                if (text) text.textContent = 'Слушать 30 сек';
                 currentBtn = null;
             }
             if (progressInterval) {
@@ -733,13 +659,14 @@
             if (fill) fill.style.width = '0%';
         }
 
-            window.playPreview = function(previewUrl, btnElement) {
+        window.playPreview = function(previewUrl, btnElement) {
             if (currentAudio && currentBtn === btnElement && !currentAudio.paused) {
                 stopPreview();
                 return;
             }
             
             stopPreview();
+            
             if (!previewUrl) return;
             
             const iconEl = btnElement.querySelector('.btn-icon');
@@ -779,24 +706,55 @@
             audio.onerror = () => {
                 btnElement.classList.remove('loading');
                 iconEl.textContent = '▶️';
-                textEl.textContent = '30 сек';
+                textEl.textContent = 'Слушать 30 сек';
             };
         };
 
-        // ===== ПОЛНЫЙ ТРЕК ЧЕРЕЗ БОТА =====
-        window.requestFullTrack = function(artist, title) {
-            stopPreview();
+        // =============================================================
+        // ЗАПРОС ПОЛНОГО ТРЕКА У БОТА
+        // =============================================================
+        window.requestFullTrack = function(artist, title, btnElement) {
+            // Меняем кнопку
+            btnElement.classList.add('loading');
+            btnElement.querySelector('.btn-icon').textContent = '⏳';
+            btnElement.querySelector('.btn-text').textContent = 'Отправка...';
             
-            tg.sendData(JSON.stringify({
-                action: 'full_track',
-                artist: artist,
-                title: title
-            }));
-            
-            setTimeout(() => tg.close(), 300);
+            try {
+                // Отправляем данные боту
+                tg.sendData(JSON.stringify({
+                    action: 'full_track',
+                    artist: artist,
+                    title: title
+                }));
+                
+                // Показываем статус
+                btnElement.querySelector('.btn-icon').textContent = '✅';
+                btnElement.querySelector('.btn-text').textContent = 'Отправлено боту';
+                btnElement.style.background = 'linear-gradient(135deg, #4d96ff, #3a7ddd)';
+                
+                // Показываем сообщение что делать
+                const statusDiv = document.getElementById('sentStatus');
+                if (statusDiv) {
+                    statusDiv.style.display = 'block';
+                }
+                
+                // Закрываем Mini App через 1.5 секунды, чтобы юзер увидел чат
+                setTimeout(() => {
+                    tg.close();
+                }, 1500);
+                
+            } catch(e) {
+                console.error('Ошибка sendData:', e);
+                btnElement.querySelector('.btn-icon').textContent = '❌';
+                btnElement.querySelector('.btn-text').textContent = 'Ошибка';
+                setTimeout(() => {
+                    btnElement.querySelector('.btn-icon').textContent = '🎵';
+                    btnElement.querySelector('.btn-text').textContent = 'Полный трек';
+                    btnElement.style.background = '';
+                }, 2000);
+            }
         };
 
-        
         // =============================================================
         // ПОИСК ТРЕКА — iTunes API
         // =============================================================
@@ -843,7 +801,6 @@
                 const title = track.trackName || 'Без названия';
                 const artist = track.artistName || 'Неизвестный исполнитель';
                 
-                // Обложка
                 let cover = track.artworkUrl100 || '';
                 if (cover) {
                     cover = cover.replace('100x100', '600x600');
@@ -876,25 +833,11 @@
                     }
                 }
                 
-                // Превью
                 const previewUrl = track.previewUrl || '';
                 
-                // ===== ССЫЛКИ НА ПЛАТФОРМЫ =====
-                const searchQuery = `${artist} ${title}`;
-                const encodedQuery = encodeURIComponent(searchQuery);
-                
-                const platformUrls = {
-                    yandex: `https://music.yandex.ru/search?text=${encodedQuery}`,
-                    youtubeMusic: `https://music.youtube.com/search?q=${encodedQuery}`,
-                    youtube: `https://www.youtube.com/results?search_query=${encodedQuery}`,
-                    deezer: `https://www.deezer.com/search/${encodedQuery}`
-                };
-                  
-                
-                // Экранируем artist и title для JS (чтобы не сломались от апострофов)
-                const safeArtist = artist.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                const safeTitle = title.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                
+                // Экранируем кавычки для передачи в onclick
+                const safeArtist = artist.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 
                 resDiv.innerHTML = `
                     <div class="track-result">
@@ -906,6 +849,7 @@
                         </div>
                         <div class="track-title">${escapeHtml(title)}</div>
                         <div class="track-artist">${escapeHtml(artist)}</div>
+                        
                         <div class="track-meta">
                             ${releaseDateFormatted ? `
                                 <div class="track-release-date">
@@ -920,16 +864,18 @@
                                 </div>
                             ` : ''}
                         </div>
-                        <div class="action-buttons">
+                        
+                        <div class="btn-row">
                             ${previewUrl ? `
-                                <button class="action-btn preview-btn-style" onclick="playPreview('${escapeHtml(previewUrl)}', this)">
+                                <button class="preview-btn" onclick="playPreview('${escapeHtml(previewUrl)}', this)">
                                     <span class="btn-icon">▶️</span>
-                                    <span class="btn-text">30 сек</span>
+                                    <span class="btn-text">Слушать 30 сек</span>
                                 </button>
                             ` : ''}
-                            <button class="action-btn fulltrack-btn" onclick="requestFullTrack('${safeArtist}', '${safeTitle}')">
-                                <span>🎵</span>
-                                <span>Полный трек</span>
+                            
+                            <button class="fulltrack-btn" onclick="requestFullTrack('${safeArtist}', '${safeTitle}', this)">
+                                <span class="btn-icon">🎵</span>
+                                <span class="btn-text">Полный трек</span>
                             </button>
                         </div>
                         
@@ -937,38 +883,9 @@
                             <div class="preview-progress-fill" id="previewProgressFill"></div>
                         </div>
                         
-                        
-                        <div class="platforms-section">
-                            <div class="platforms-title">🎧 Слушать на платформах</div>
-                            <div class="platforms-grid">
-                                <a href="${platformUrls.yandex}" target="_blank" class="platform-btn yandex" onclick="tg.openLink('${platformUrls.yandex}'); return false;">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M9 18V5L21 3V16"/>
-                                        <circle cx="6" cy="18" r="3"/>
-                                        <circle cx="18" cy="16" r="3"/>
-                                        <path d="M9 12L21 10"/>
-                                    </svg>
-                                    Яндекс.Музыка
-                                </a>
-                                <a href="${platformUrls.youtubeMusic}" target="_blank" class="platform-btn youtube-music" onclick="tg.openLink('${platformUrls.youtubeMusic}'); return false;">
-                                    <svg viewBox="0 0 24 24" fill="#ff0000" stroke="none">
-                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                    </svg>
-                                    YouTube Music
-                                </a>
-                                <a href="${platformUrls.youtube}" target="_blank" class="platform-btn youtube" onclick="tg.openLink('${platformUrls.youtube}'); return false;">
-                                    <svg viewBox="0 0 24 24" fill="#ff0000" stroke="none">
-                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                    </svg>
-                                    YouTube
-                                </a>
-                                <a href="${platformUrls.deezer}" target="_blank" class="platform-btn deezer" onclick="tg.openLink('${platformUrls.deezer}'); return false;">
-                                    <svg viewBox="0 0 24 24" fill="#6bcb77" stroke="none">
-                                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-1 6h2v2h-2V6zm-4 3h2v2H7V9zm4 0h2v2h-2V9zm4 0h2v2h-2V9zm-8 3h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-8 3h2v2H7v-2zm4 0h2v2h-2v-2zm4 0h2v2h-2v-2z"/>
-                                    </svg>
-                                    Deezer
-                                </a>
-                            </div>
+                        <div class="sent-status" id="sentStatus" style="display: none;">
+                            ✅ Запрос отправлен боту!<br>
+                            <span style="font-size: 12px; opacity: 0.8;">Бот пришлёт полный трек в чат через 5-15 сек</span>
                         </div>
                     </div>
                 `;
@@ -1016,8 +933,8 @@
         showStartScreen();
         
         console.log('✦ LE MONDE MUSIC — v1.3');
-        console.log('✦ Поиск через iTunes API');
-        console.log('✦ + Дата + Длительность + Превью + Платформы');
+        console.log('✦ Поиск: iTunes API');
+        console.log('✦ + Полный трек через бота (sendData)');
     </script>
 </body>
 </html>
