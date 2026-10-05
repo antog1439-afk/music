@@ -306,6 +306,24 @@
             margin-top: -8px;
         }
 
+        .track-release-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            background: rgba(255,204,0,0.1);
+            border: 1px solid rgba(255,204,0,0.25);
+            border-radius: 20px;
+            font-size: 13px;
+            color: #cc9900;
+            font-weight: 500;
+            margin-top: -4px;
+        }
+
+        .track-release-date .icon {
+            font-size: 14px;
+        }
+
         .loading-state {
             text-align: center;
             padding: 40px 20px;
@@ -467,7 +485,7 @@
         document.getElementById('backFromMusic').addEventListener('click', showStartScreen);
 
         // =============================================================
-        // ПОИСК ТРЕКА — iTunes API (без CORS-прокси)
+        // ПОИСК ТРЕКА — iTunes API
         // =============================================================
         async function searchTrack() {
             const query = document.getElementById('searchInput').value.trim();
@@ -483,7 +501,6 @@
             `;
             
             try {
-                // iTunes Search API — открытый, без CORS
                 const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1&country=RU`;
                 console.log('🔍 iTunes:', url);
                 
@@ -511,10 +528,30 @@
                 const title = track.trackName || 'Без названия';
                 const artist = track.artistName || 'Неизвестный исполнитель';
                 
-                // iTunes отдаёт 100x100, меняем на 600x600
+                // Обложка — из 100x100 делаем 600x600
                 let cover = track.artworkUrl100 || '';
                 if (cover) {
                     cover = cover.replace('100x100', '600x600');
+                }
+                
+                // Форматируем дату релиза
+                const releaseDateRaw = track.releaseDate || '';
+                let releaseDateFormatted = '';
+                
+                if (releaseDateRaw) {
+                    try {
+                        const date = new Date(releaseDateRaw);
+                        const months = [
+                            'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+                            'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+                        ];
+                        const day = date.getDate();
+                        const month = months[date.getMonth()];
+                        const year = date.getFullYear();
+                        releaseDateFormatted = `${day} ${month} ${year}`;
+                    } catch(e) {
+                        releaseDateFormatted = releaseDateRaw.slice(0, 10);
+                    }
                 }
                 
                 resDiv.innerHTML = `
@@ -527,6 +564,12 @@
                         </div>
                         <div class="track-title">${escapeHtml(title)}</div>
                         <div class="track-artist">${escapeHtml(artist)}</div>
+                        ${releaseDateFormatted ? `
+                            <div class="track-release-date">
+                                <span class="icon">📆</span>
+                                ${escapeHtml(releaseDateFormatted)}
+                            </div>
+                        ` : ''}
                     </div>
                 `;
                 
@@ -572,8 +615,9 @@
         // =============================================================
         showStartScreen();
         
-        console.log('✦ LE MONDE MUSIC — v1.0');
-        console.log('✦ Поиск через iTunes API (без прокси)');
+        console.log('✦ LE MONDE MUSIC — v1.1');
+        console.log('✦ Поиск через iTunes API');
+        console.log('✦ + Дата релиза');
     </script>
 </body>
 </html>
