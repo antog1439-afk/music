@@ -480,7 +480,6 @@
             
             const resDiv = document.getElementById('musicResult');
             
-            // Показываем загрузку
             resDiv.innerHTML = `
                 <div class="loading-state">
                     <div class="loading-spinner"></div>
@@ -488,55 +487,81 @@
                 </div>
             `;
             
+            // ===== CORS-ПРОКСИ =====
+            const CORS_PROXIES = [
+                'https://api.allorigins.win/raw?url=',
+                'https://corsproxy.io/?',
+                'https://api.codetabs.com/v1/proxy?quest='
+            ];
+            
+            let data = null;
+            
+            // Пробуем сначала напрямую
             try {
-                const url = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`;
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                if (!data.data || data.data.length === 0) {
-                    resDiv.innerHTML = `
-                        <div class="empty-state">
-                            <span class="icon">😕</span>
-                            <div>Ничего не найдено</div>
-                            <div style="font-size: 13px; margin-top: 8px; opacity: 0.7;">Попробуйте другой запрос</div>
-                        </div>
-                    `;
-                    return;
+                const directUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`;
+                const response = await fetch(directUrl);
+                if (response.ok) {
+                    data = await response.json();
                 }
-                
-                const track = data.data[0];
-                const title = track.title || 'Без названия';
-                const artist = track.artist?.name || 'Неизвестный исполнитель';
-                const cover = track.album?.cover_xl || 
-                              track.album?.cover_big || 
-                              track.album?.cover_medium || 
-                              track.album?.cover_small || '';
-                
-                resDiv.innerHTML = `
-                    <div class="track-result">
-                        <div class="track-cover">
-                            ${cover 
-                                ? `<img src="${cover}" alt="${escapeHtml(title)}" onerror="this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;\\'>🎵</div>'">` 
-                                : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;">🎵</div>`
+            } catch(e) {
+                console.log('Прямой запрос не сработал, пробуем прокси...');
+            }
+            
+            // Если напрямую не получилось — через прокси
+            if (!data || !data.data) {
+                for (const proxy of CORS_PROXIES) {
+                    try {
+                        const targetUrl = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=1`;
+                        const proxyUrl = proxy + encodeURIComponent(targetUrl);
+                        const response = await fetch(proxyUrl);
+                        
+                        if (response.ok) {
+                            const proxyData = await response.json();
+                            if (proxyData && proxyData.data) {
+                                data = proxyData;
+                                console.log('✅ Сработал прокси:', proxy);
+                                break;
                             }
-                        </div>
-                        <div class="track-title">${escapeHtml(title)}</div>
-                        <div class="track-artist">${escapeHtml(artist)}</div>
-                    </div>
-                `;
-                
-            } catch (error) {
-                console.error('Ошибка поиска:', error);
+                        }
+                    } catch(e) {
+                        console.log('Прокси не сработал:', proxy, e.message);
+                    }
+                }
+            }
+            
+            // Если ничего не сработало
+            if (!data || !data.data || data.data.length === 0) {
                 resDiv.innerHTML = `
                     <div class="empty-state">
-                        <span class="icon">❌</span>
-                        <div>Ошибка при поиске</div>
-                        <div style="font-size: 13px; margin-top: 8px; opacity: 0.7;">Проверьте подключение</div>
+                        <span class="icon">😕</span>
+                        <div>Ничего не найдено</div>
+                        <div style="font-size: 13px; margin-top: 8px; opacity: 0.7;">Попробуйте другой запрос</div>
                     </div>
                 `;
+                return;
             }
+            
+            const track = data.data[0];
+            const title = track.title || 'Без названия';
+            const artist = track.artist?.name || 'Неизвестный исполнитель';
+            const cover = track.album?.cover_xl || 
+                          track.album?.cover_big || 
+                          track.album?.cover_medium || 
+                          track.album?.cover_small || '';
+            
+            resDiv.innerHTML = `
+                <div class="track-result">
+                    <div class="track-cover">
+                        ${cover 
+                            ? `<img src="${cover}" alt="${escapeHtml(title)}" onerror="this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;\\'>🎵</div>'">` 
+                            : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;">🎵</div>`
+                        }
+                    </div>
+                    <div class="track-title">${escapeHtml(title)}</div>
+                    <div class="track-artist">${escapeHtml(artist)}</div>
+                </div>
+            `;
         }
-
         // =============================================================
         // УТИЛИТЫ
         // =============================================================
