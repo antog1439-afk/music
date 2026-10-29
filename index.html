@@ -2,945 +2,224 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LE MONDE MUSIC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Музыкальный Тест</title>
+    <!-- Подключаем скрипт Telegram -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', system-ui, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            background: #ffffff;
-            transition: background 0.3s ease;
         }
-
-        body.start-mode { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
-        body.music-mode { background: #ffffff; }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #ffcc00; border-radius: 10px; }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        #splashScreen {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: #ffffff; z-index: 10000;
-            display: flex; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease;
-        }
-
-        .start-screen {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-            padding: 20px;
-        }
-        .start-screen.hidden {
-            opacity: 0;
-            transform: scale(1.05);
-            pointer-events: none;
-        }
-        .start-logo {
-            font-size: 42px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            line-height: 1.2;
-            background: linear-gradient(135deg, #ffffff 30%, rgba(255, 255, 255, 0.6));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 4px;
+        .container {
+            background-color: #16213e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
             text-align: center;
         }
-        .start-logo .highlight {
-            background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #9b59b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 300% 300%;
-            animation: gradientShift 5s ease-in-out infinite;
+        h1 {
+            color: #2ecc71;
+            margin-bottom: 20px;
         }
-        .start-subtitle {
-            font-size: 10px;
-            color: rgba(255,255,255,0.2);
-            letter-spacing: 3px;
-            font-weight: 300;
-            text-transform: uppercase;
-            margin-bottom: 28px;
-        }
-
-        .start-grid {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            max-width: 280px;
-        }
-
-        .start-card {
-            position: relative;
-            background: linear-gradient(145deg, rgba(255,204,0,0.12), rgba(255,204,0,0.04));
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,204,0,0.2);
-            border-radius: 24px;
-            padding: 28px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            width: 180px;
-            height: 180px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            overflow: hidden;
-        }
-
-        .start-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            border-color: rgba(255,204,0,0.5);
-            box-shadow: 0 12px 40px rgba(255,204,0,0.15);
-        }
-        .start-card:active {
-            transform: scale(0.94);
-        }
-
-        .start-card-icon {
-            width: 72px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-        }
-
-        .start-card-icon svg {
-            width: 48px;
-            height: 48px;
-            fill: none;
-            stroke: #ffcc00;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            filter: drop-shadow(0 4px 16px rgba(255,204,0,0.3));
-        }
-
-        .start-card:hover .start-card-icon svg {
-            transform: scale(1.15) rotate(-5deg);
-        }
-
-        .start-card-label {
-            font-size: 11px;
-            color: rgba(255,255,255,0.3);
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            transition: color 0.3s ease;
-        }
-
-        .start-card:hover .start-card-label {
-            color: rgba(255,204,0,0.7);
-        }
-
-        .fullscreen-page {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            overflow-y: auto;
-            padding: 20px;
-            transform: translateX(100%);
-            transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            z-index: 10;
-            background: #ffffff;
-        }
-        .fullscreen-page.active { transform: translateX(0); }
-
-        .page-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding-top: 8px;
-        }
-
-        .back-btn {
-            background: rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.06);
-            padding: 10px 18px;
-            border-radius: 40px;
-            color: #1a1a1a;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .back-btn:active { transform: scale(0.96); background: rgba(0,0,0,0.1); }
-
-        .page-title {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1a1a1a;
-            letter-spacing: -0.5px;
-            flex: 1;
-        }
-
-        .glass-card {
-            background: rgba(0,0,0,0.03);
-            backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 24px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(0,0,0,0.06);
-        }
-
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 14px 20px;
-            border-radius: 60px;
-            border: none;
-            font-size: 15px;
-            background: rgba(0,0,0,0.05);
-            font-weight: 500;
-            color: #1a1a1a;
-        }
-        .search-input:focus { outline: none; background: rgba(0,0,0,0.08); }
-
-        .search-btn {
-            background: #ffcc00;
-            border: none;
-            padding: 0 28px;
-            border-radius: 60px;
-            color: #1a1a1a;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 15px;
-        }
-        .search-btn:active { transform: scale(0.96); background: #e6b800; }
-
-        .track-result {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            padding: 24px;
-            background: rgba(0,0,0,0.03);
-            border-radius: 28px;
-            border: 1px solid rgba(0,0,0,0.06);
-            animation: fadeInUp 0.5s ease;
-        }
-
-        .track-cover {
-            width: 100%;
-            max-width: 320px;
-            aspect-ratio: 1;
-            border-radius: 24px;
-            overflow: hidden;
-            background: #f0f0f0;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-        }
-
-        .track-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .track-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a1a1a;
-            text-align: center;
-            line-height: 1.3;
-            word-break: break-word;
-        }
-
-        .track-artist {
+        .question {
             font-size: 18px;
-            color: rgba(0,0,0,0.6);
-            text-align: center;
-            margin-top: -4px;
+            margin-bottom: 20px;
+            line-height: 1.5;
         }
-
-        .track-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .track-release-date {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 16px;
-            background: rgba(255,204,0,0.1);
-            border: 1px solid rgba(255,204,0,0.25);
-            border-radius: 20px;
-            font-size: 13px;
-            color: #cc9900;
-            font-weight: 500;
-        }
-
-        .track-duration {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 16px;
-            background: rgba(107,203,119,0.1);
-            border: 1px solid rgba(107,203,119,0.25);
-            border-radius: 20px;
-            font-size: 13px;
-            color: #4a9f56;
-            font-weight: 500;
-        }
-
-        .track-meta .icon { font-size: 14px; }
-
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            width: 100%;
-            margin-top: 8px;
-        }
-
-        .preview-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #ffcc00, #ffd633);
-            border: none;
-            padding: 14px 28px;
-            border-radius: 60px;
-            color: #1a1a1a;
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(255,204,0,0.35);
-            justify-content: center;
-            flex: 1;
-            min-width: 160px;
-        }
-        .preview-btn:active { transform: scale(0.96); }
-        .preview-btn.playing { background: linear-gradient(135deg, #ff6b6b, #ff8787); color: white; animation: pulse 1.5s ease-in-out infinite; }
-        .preview-btn.loading { background: linear-gradient(135deg, #f0ad4e, #f5b95a); color: white; pointer-events: none; }
-
-        .fulltrack-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #6bcb77, #5cb869);
-            border: none;
-            padding: 14px 28px;
-            border-radius: 60px;
+        .option {
+            background-color: #0f3460;
             color: white;
-            font-weight: 600;
-            font-size: 15px;
+            border: 2px solid #2ecc71;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(107,203,119,0.35);
-            justify-content: center;
-            flex: 1;
-            min-width: 160px;
+            transition: 0.3s;
+            font-size: 16px;
         }
-        .fulltrack-btn:active { transform: scale(0.96); }
-        .fulltrack-btn.sent { background: linear-gradient(135deg, #4d96ff, #3a7ddd); color: white; }
-        .fulltrack-btn.loading { background: linear-gradient(135deg, #f0ad4e, #f5b95a); color: white; pointer-events: none; }
-
-        .preview-btn .btn-icon,
-        .fulltrack-btn .btn-icon { font-size: 18px; }
-
-        .preview-progress {
+        .option:hover {
+            background-color: #2ecc71;
+            color: #1a1a2e;
+        }
+        .option.correct {
+            background-color: #2ecc71;
+            color: #1a1a2e;
+        }
+        .option.wrong {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        #next-btn, #finish-btn {
+            background-color: #2ecc71;
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
             width: 100%;
-            max-width: 280px;
-            height: 4px;
-            background: rgba(0,0,0,0.08);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 4px;
+        }
+        #next-btn:hover, #finish-btn:hover {
+            background-color: #27ae60;
+        }
+        .hidden {
             display: none;
         }
-        .preview-progress.active { display: block; }
-        .preview-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ffcc00, #6bcb77);
-            border-radius: 2px;
-            transition: width 0.1s linear;
-        }
-
-        .sent-status {
-            text-align: center;
-            padding: 16px;
-            background: rgba(77,150,255,0.1);
-            border: 1px solid rgba(77,150,255,0.25);
-            border-radius: 16px;
-            color: #3a7ddd;
-            font-size: 14px;
-            font-weight: 500;
-            width: 100%;
-            margin-top: 8px;
-            animation: fadeInUp 0.4s ease;
-        }
-
-        /* ===== КНОПКИ ПЛАТФОРМ ===== */
-        .section-title-small {
-            font-size: 11px;
-            font-weight: 600;
-            margin: 20px 0 12px;
-            color: rgba(0,0,0,0.5);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .platforms-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .platform-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 14px 16px;
-            border-radius: 16px;
-            border: none;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: white;
-            min-height: 52px;
-        }
-
-        .platform-btn:active {
-            transform: scale(0.96);
-        }
-
-        .platform-btn.yandex {
-            background: linear-gradient(135deg, #ffcc00, #e6b800);
-            color: #1a1a1a;
-        }
-        .platform-btn.youtube-music {
-            background: linear-gradient(135deg, #ff0000, #cc0000);
-        }
-        .platform-btn.youtube {
-            background: linear-gradient(135deg, #ff0000, #990000);
-        }
-        .platform-btn.deezer {
-            background: linear-gradient(135deg, #a238ff, #7d2dbf);
-        }
-
-        .platform-btn .btn-icon {
-            font-size: 18px;
-        }
-
-        .loading-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(0,0,0,0.4);
-        }
-
-        .loading-spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(0,0,0,0.1);
-            border-top-color: #ffcc00;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: rgba(0,0,0,0.4);
-        }
-
-        .empty-state .icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            display: block;
-            opacity: 0.5;
-        }
-
-        .debug-box {
-            font-size: 10px;
-            margin-top: 12px;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 10px;
-            text-align: left;
-            word-break: break-all;
-            color: #666;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-
-        @media (max-width: 400px) {
-            .start-logo { font-size: 32px; }
-            .start-card { width: 160px; height: 160px; padding: 20px; }
-            .start-card-icon { width: 60px; height: 60px; }
-            .start-card-icon svg { width: 40px; height: 40px; }
-            .track-title { font-size: 20px; }
-            .track-artist { font-size: 16px; }
-            .track-release-date,
-            .track-duration { font-size: 11px; padding: 5px 12px; }
-            .preview-btn,
-            .fulltrack-btn { font-size: 13px; padding: 12px 18px; min-width: 140px; }
-            .platform-btn { font-size: 12px; padding: 12px 10px; }
+        .result {
+            font-size: 20px;
+            margin-top: 20px;
+            color: #2ecc71;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div id="splashScreen">
-        <div style="text-align: center;">
-            <div style="margin-bottom: 20px;">
-                <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
-                    <text x="50" y="68" text-anchor="middle" fill="#6bcb77" font-size="64" font-family="'Playfair Display', serif" font-weight="700" letter-spacing="3">LM</text>
-                </svg>
-            </div>
-            <div style="font-family: 'Playfair Display', serif; font-size: 34px; font-weight: 700; color: #1a1a1a; letter-spacing: 2px; margin-bottom: 10px;">LE MONDE MUSIC</div>
-            <div style="width: 60px; height: 2px; background: #6bcb77; margin: 0 auto 14px auto;"></div>
-            <div style="font-family: 'Montserrat', sans-serif; font-size: 9px; color: #888; letter-spacing: 2px;">PLATFORM OF YANDEX MUSIC</div>
-        </div>
-    </div>
-
-    <div class="start-screen" id="startScreen">
-        <div class="start-logo">
-            LE MONDE <span class="highlight">MUSIC</span>
-        </div>
-        <div class="start-subtitle">выберите раздел</div>
+    <div class="container">
+        <h1>🎵 Музыкальный Тест</h1>
         
-        <div class="start-grid">
-            <div class="start-card" id="startMusicBtn">
-                <div class="start-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 18V5L21 3V16"/>
-                        <circle cx="6" cy="18" r="3"/>
-                        <circle cx="18" cy="16" r="3"/>
-                        <path d="M9 12L21 10"/>
-                    </svg>
-                </div>
-                <div class="start-card-label">music</div>
-            </div>
+        <div id="quiz-container">
+            <div id="question-text" class="question">Загрузка вопроса...</div>
+            <div id="options-container"></div>
+            <button id="next-btn">Следующий вопрос ➡️</button>
         </div>
-    </div>
 
-    <div class="fullscreen-page" id="musicPage">
-        <div class="page-header">
-            <button class="back-btn" id="backFromMusic">
-                <svg width="16" height="16" viewBox="0 0 24 24" stroke="#1a1a1a" stroke-width="2" fill="none">
-                    <path d="M15 18L9 12L15 6"/>
-                </svg>
-                Назад
-            </button>
-            <div class="page-title">МУЗЫКА</div>
-        </div>
-        
-        <div class="glass-card">
-            <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Название трека или исполнитель...">
-                <button id="doSearchBtn" class="search-btn">Найти</button>
-            </div>
-            
-            <div id="musicResult">
-                <div class="empty-state">
-                    <span class="icon">🎵</span>
-                    <div>Введите название трека</div>
-                    <div style="font-size: 13px; margin-top: 8px; opacity: 0.7;">Например: 911, Believer, Группа крови</div>
-                </div>
-            </div>
+        <div id="result-container" class="hidden">
+            <div id="result-text" class="result"></div>
+            <button id="finish-btn">Завершить тест ✅</button>
         </div>
     </div>
 
     <script>
-        setTimeout(function() {
-            var splash = document.getElementById('splashScreen');
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(function() { splash.style.display = 'none'; }, 800);
-            }
-        }, 3000);
-
+        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+        tg.expand(); // Развернуть на весь экран
 
-        const startScreen = document.getElementById('startScreen');
-        const musicPage = document.getElementById('musicPage');
+        // Вопросы для теста
+        const questions = [
+            {
+                question: "Кто написал трек «Останься»?",
+                options: ["Асия", "Баста", "Скриптонит", "Zivert"],
+                correct: 0
+            },
+            {
+                question: "Какой трек принадлежит группе «Кино»?",
+                options: ["Группа крови", "Сансара", "911", "Мало половин"],
+                correct: 0
+            },
+            {
+                question: "Кто исполняет трек «Сансара»?",
+                options: ["Баста", "Оксимирон", "Моргенштерн", "Тимати"],
+                correct: 0
+            },
+            {
+                question: "Какой артист известен треком «Cadillac»?",
+                options: ["Моргенштерн", "Big Baby Tape", "FACE", "Кизару"],
+                correct: 0
+            },
+            {
+                question: "Кто поёт песню «Пятница»?",
+                options: ["Zivert", "Асия", "Мари Краймбрери", "Клава Кока"],
+                correct: 1
+            }
+        ];
 
-        function showStartScreen() {
-            startScreen.classList.remove('hidden');
-            musicPage.classList.remove('active');
-            document.body.className = 'start-mode';
-            stopPreview();
+        let currentQuestion = 0;
+        let score = 0;
+
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultContainer = document.getElementById('result-container');
+        const resultText = document.getElementById('result-text');
+        const finishBtn = document.getElementById('finish-btn');
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            questionText.textContent = `${currentQuestion + 1}. ${q.question}`;
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('div');
+                btn.classList.add('option');
+                btn.textContent = option;
+                btn.onclick = () => selectAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            nextBtn.style.display = 'none';
         }
 
-        function showMusicPage() {
-            startScreen.classList.add('hidden');
-            musicPage.classList.add('active');
-            document.body.className = 'music-mode';
+        function selectAnswer(index, btn) {
+            // Блокируем все кнопки после ответа
+            const allOptions = document.querySelectorAll('.option');
+            allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+
+            const correctIndex = questions[currentQuestion].correct;
+
+            if (index === correctIndex) {
+                btn.classList.add('correct');
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                allOptions[correctIndex].classList.add('correct'); // Показать правильный
+            }
+
+            nextBtn.style.display = 'block';
         }
 
-        document.getElementById('startMusicBtn').addEventListener('click', showMusicPage);
-        document.getElementById('backFromMusic').addEventListener('click', showStartScreen);
-
-        let currentAudio = null;
-        let currentBtn = null;
-        let progressInterval = null;
-
-        function stopPreview() {
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                currentAudio = null;
-            }
-            if (currentBtn) {
-                currentBtn.classList.remove('playing', 'loading');
-                const icon = currentBtn.querySelector('.btn-icon');
-                const text = currentBtn.querySelector('.btn-text');
-                if (icon) icon.textContent = '▶️';
-                if (text) text.textContent = 'Слушать 30 сек';
-                currentBtn = null;
-            }
-            if (progressInterval) {
-                clearInterval(progressInterval);
-                progressInterval = null;
-            }
-            const progress = document.getElementById('previewProgress');
-            const fill = document.getElementById('previewProgressFill');
-            if (progress) progress.classList.remove('active');
-            if (fill) fill.style.width = '0%';
-        }
-
-        window.playPreview = function(previewUrl, btnElement) {
-            if (currentAudio && currentBtn === btnElement && !currentAudio.paused) {
-                stopPreview();
-                return;
-            }
-            stopPreview();
-            if (!previewUrl) return;
-            
-            const iconEl = btnElement.querySelector('.btn-icon');
-            const textEl = btnElement.querySelector('.btn-text');
-            const progress = document.getElementById('previewProgress');
-            const fill = document.getElementById('previewProgressFill');
-            
-            btnElement.classList.add('loading');
-            iconEl.textContent = '⏳';
-            textEl.textContent = 'Загрузка...';
-            
-            const audio = new Audio(previewUrl);
-            audio.volume = 0.8;
-            
-            audio.oncanplay = () => {
-                audio.play();
-                btnElement.classList.remove('loading');
-                btnElement.classList.add('playing');
-                iconEl.textContent = '⏸️';
-                textEl.textContent = 'Пауза';
-                if (progress) progress.classList.add('active');
-                currentAudio = audio;
-                currentBtn = btnElement;
-                progressInterval = setInterval(() => {
-                    if (currentAudio && currentAudio.duration) {
-                        const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
-                        if (fill) fill.style.width = Math.min(percent, 100) + '%';
-                    }
-                }, 100);
-            };
-            
-            audio.onended = () => stopPreview();
-            audio.onerror = () => {
-                btnElement.classList.remove('loading');
-                iconEl.textContent = '▶️';
-                textEl.textContent = 'Слушать 30 сек';
-            };
-        };
-
-        window.requestFullTrack = function(artist, title, btnElement) {
-            const iconEl = btnElement.querySelector('.btn-icon');
-            const textEl = btnElement.querySelector('.btn-text');
-            
-            btnElement.classList.add('loading');
-            btnElement.classList.remove('sent');
-            iconEl.textContent = '⏳';
-            textEl.textContent = 'Отправка...';
-            
-            try {
-                tg.sendData(JSON.stringify({
-                    action: 'full_track',
-                    artist: artist,
-                    title: title
-                }));
-                
-                btnElement.classList.remove('loading');
-                btnElement.classList.add('sent');
-                iconEl.textContent = '✅';
-                textEl.textContent = 'Отправлено боту';
-                
-                const statusDiv = document.getElementById('sentStatus');
-                if (statusDiv) {
-                    statusDiv.style.display = 'block';
-                    statusDiv.innerHTML = `
-                        ✅ <b>Запрос отправлен боту!</b><br>
-                        <span style="font-size: 12px; opacity: 0.8;">
-                            Сверни Mini App и открой чат с ботом — там появится полный трек
-                        </span>
-                    `;
-                }
-            } catch(e) {
-                console.error('Ошибка sendData:', e);
-                btnElement.classList.remove('loading');
-                iconEl.textContent = '❌';
-                textEl.textContent = 'Ошибка';
-                setTimeout(() => {
-                    iconEl.textContent = '🎵';
-                    textEl.textContent = 'Полный трек';
-                }, 2000);
+        nextBtn.onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
             }
         };
 
-        // =============================================================
-        // ОТКРЫТИЕ ПЛАТФОРМ
-        // =============================================================
-        window.openPlatform = function(url) {
-            if (!url) return;
-            tg.openLink(url);
-        };
-
-        async function searchTrack() {
-            stopPreview();
+        function showResult() {
+            quizContainer.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            resultText.textContent = `Вы ответили правильно на ${score} из ${questions.length} вопросов!`;
             
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) return;
-            
-            const resDiv = document.getElementById('musicResult');
-            
-            resDiv.innerHTML = `
-                <div class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <div>Ищем "${escapeHtml(query)}"...</div>
-                </div>
-            `;
-            
-            try {
-                const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=1&country=RU`;
-                const response = await fetch(url);
-                
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                const data = await response.json();
-                
-                if (!data.results || data.results.length === 0) {
-                    resDiv.innerHTML = `
-                        <div class="empty-state">
-                            <span class="icon">😕</span>
-                            <div>Ничего не найдено</div>
-                            <div style="font-size: 13px; margin-top: 8px; opacity: 0.7;">Попробуйте другой запрос</div>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                const track = data.results[0];
-                const title = track.trackName || 'Без названия';
-                const artist = track.artistName || 'Неизвестный исполнитель';
-                
-                let cover = track.artworkUrl100 || '';
-                if (cover) cover = cover.replace('100x100', '600x600');
-                
-                const durationMs = track.trackTimeMillis || 0;
-                const totalSec = Math.floor(durationMs / 1000);
-                const minutes = Math.floor(totalSec / 60);
-                const seconds = totalSec % 60;
-                const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                const releaseDateRaw = track.releaseDate || '';
-                let releaseDateFormatted = '';
-                
-                if (releaseDateRaw) {
-                    try {
-                        const date = new Date(releaseDateRaw);
-                        const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
-                        releaseDateFormatted = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-                    } catch(e) {
-                        releaseDateFormatted = releaseDateRaw.slice(0, 10);
-                    }
-                }
-                
-                const previewUrl = track.previewUrl || '';
-                
-                // Ссылки на платформы
-                const searchQuery = encodeURIComponent(`${artist} ${title}`);
-                const yandexUrl = `https://music.yandex.ru/search?text=${searchQuery}`;
-                const youtubeMusicUrl = `https://music.youtube.com/search?q=${searchQuery}`;
-                const youtubeUrl = `https://www.youtube.com/results?search_query=${searchQuery}+music`;
-                const deezerUrl = `https://www.deezer.com/search/${searchQuery}`;
-                
-                // Экранируем кавычки
-                const safeArtist = artist.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                const safeTitle = title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                const safeYandex = yandexUrl.replace(/'/g, "\\'");
-                const safeYouTubeMusic = youtubeMusicUrl.replace(/'/g, "\\'");
-                const safeYouTube = youtubeUrl.replace(/'/g, "\\'");
-                const safeDeezer = deezerUrl.replace(/'/g, "\\'");
-                
-                resDiv.innerHTML = `
-                    <div class="track-result">
-                        <div class="track-cover">
-                            ${cover 
-                                ? `<img src="${cover}" alt="${escapeHtml(title)}" onerror="this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;\\'>🎵</div>'">` 
-                                : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:80px;">🎵</div>`
-                            }
-                        </div>
-                        <div class="track-title">${escapeHtml(title)}</div>
-                        <div class="track-artist">${escapeHtml(artist)}</div>
-                        
-                        <div class="track-meta">
-                            ${releaseDateFormatted ? `
-                                <div class="track-release-date">
-                                    <span class="icon">📆</span>
-                                    ${escapeHtml(releaseDateFormatted)}
-                                </div>
-                            ` : ''}
-                            ${durationStr ? `
-                                <div class="track-duration">
-                                    <span class="icon">⏱</span>
-                                    ${escapeHtml(durationStr)}
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="btn-row">
-                            ${previewUrl ? `
-                                <button class="preview-btn" onclick="playPreview('${escapeHtml(previewUrl)}', this)">
-                                    <span class="btn-icon">▶️</span>
-                                    <span class="btn-text">Слушать 30 сек</span>
-                                </button>
-                            ` : ''}
-                            
-                            <button class="fulltrack-btn" onclick="requestFullTrack('${safeArtist}', '${safeTitle}', this)">
-                                <span class="btn-icon">🎵</span>
-                                <span class="btn-text">Полный трек</span>
-                            </button>
-                        </div>
-                        
-                        <div class="preview-progress" id="previewProgress">
-                            <div class="preview-progress-fill" id="previewProgressFill"></div>
-                        </div>
-                        
-                        <div class="sent-status" id="sentStatus" style="display: none;"></div>
-                        
-                        <div class="section-title-small">🎧 Слушать на платформах</div>
-                        
-                        <div class="platforms-grid">
-                            <button class="platform-btn yandex" onclick="openPlatform('${safeYandex}')">
-                                <span class="btn-icon">🎵</span>
-                                <span>Яндекс.Музыка</span>
-                            </button>
-                            
-                            <button class="platform-btn youtube-music" onclick="openPlatform('${safeYouTubeMusic}')">
-                                <span class="btn-icon">▶️</span>
-                                <span>YouTube Music</span>
-                            </button>
-                            
-                            <button class="platform-btn youtube" onclick="openPlatform('${safeYouTube}')">
-                                <span class="btn-icon">📺</span>
-                                <span>YouTube</span>
-                            </button>
-                            
-                            <button class="platform-btn deezer" onclick="openPlatform('${safeDeezer}')">
-                                <span class="btn-icon">🎧</span>
-                                <span>Deezer</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-            } catch (error) {
-                console.error('❌ Ошибка:', error);
-                resDiv.innerHTML = `
-                    <div class="empty-state">
-                        <span class="icon">❌</span>
-                        <div>Ошибка при поиске</div>
-                        <div class="debug-box">
-                            <b>DEBUG:</b><br>
-                            ${escapeHtml(error.message)}
-                        </div>
-                    </div>
-                `;
+            // Показываем кнопку "Завершить" только если набрано больше половины
+            if (score >= 3) {
+                finishBtn.style.display = 'block';
+                finishBtn.textContent = "✅ Отправить результат и разблокировать";
+            } else {
+                finishBtn.style.display = 'block';
+                finishBtn.textContent = "🔄 Попробовать снова";
+                finishBtn.onclick = () => location.reload(); // Перезагрузка страницы
             }
         }
 
-        function escapeHtml(s) {
-            if (!s) return '';
-            return String(s).replace(/[&<>"']/g, m => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-            }[m]));
-        }
+        // Действие при нажатии "Завершить"
+        finishBtn.onclick = () => {
+            if (score >= 3) {
+                // ОТПРАВЛЯЕМ СИГНАЛ БОТУ, ЧТО ТЕСТ ПРОЙДЕН
+                tg.sendData(JSON.stringify({ action: "test_passed" }));
+                tg.close(); // Закрываем Mini App
+            }
+        };
 
-        document.getElementById('doSearchBtn').addEventListener('click', searchTrack);
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') searchTrack();
-        });
-
-        showStartScreen();
-        
-        console.log('✦ LE MONDE MUSIC — v1.5');
-        console.log('✦ + Кнопки платформ');
+        // Запуск
+        loadQuestion();
     </script>
 </body>
 </html>
