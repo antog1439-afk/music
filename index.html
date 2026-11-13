@@ -68,7 +68,6 @@
             margin: 0;
         }
 
-        /* Блок с названием трека */
         .track-title-container {
             width: 100%;
             min-height: 150px;
@@ -98,7 +97,6 @@
             margin-bottom: 10px;
         }
 
-        /* Кнопки вариантов */
         .options {
             display: flex;
             flex-direction: column;
@@ -141,7 +139,6 @@
             opacity: 0.9;
         }
 
-        /* Экран результатов */
         .result-screen {
             display: none;
             flex-direction: column;
@@ -218,7 +215,6 @@
 
             <div class="question-text">Кто поет этот трек?</div>
 
-            <!-- Блок с названием трека -->
             <div class="track-title-container">
                 <div class="track-title" id="track-title">Название трека</div>
             </div>
@@ -254,7 +250,7 @@
             document.getElementById('greeting').innerText = `Привет, ${user.first_name}! Проверим твои знания?`;
         }
 
-        // ===== БАЗА ВОПРОСОВ (30 СОВРЕМЕННЫХ ТРЕКОВ) =====
+        // ===== БАЗА ВОПРОСОВ (30 УНИКАЛЬНЫХ СОВРЕМЕННЫХ ТРЕКОВ) =====
         const TRACKS = [
             { track: "Дом", correct: "Асия", options: ["Асия", "Zivert", "Мари Краймбрери", "ANNA ASTI"] },
             { track: "Останься", correct: "Асия", options: ["Асия", "Клава Кока", "Zivert", "NЮ"] },
@@ -277,15 +273,15 @@
             { track: "Малиновая Лада", correct: "Мот", options: ["Мот", "Тимати", "Дима Билан", "Артур Пирожков"] },
             { track: "Ты не моя пара", correct: "Дима Билан", options: ["Дима Билан", "Мот", "Тимати", "Николай Басков"] },
             { track: "Пчеловод", correct: "Лолита", options: ["Лолита", "Ольга Бузова", "Нюша", "Ёлка"] },
-            { track: "Останься", correct: "Макан", options: ["Макан", "Асия", "Big Baby Tape", "Miyagi"] },
-            { track: "Дом", correct: "Асия", options: ["Асия", "Zivert", "Мари Краймбрери", "ANNA ASTI"] },
-            { track: "Life", correct: "Zivert", options: ["Zivert", "Асия", "Полина Гагарина", "Ёлка"] },
-            { track: "Gimme the Loot", correct: "Big Baby Tape", options: ["Big Baby Tape", "Макан", "Кизару", "Моргенштерн"] },
+            { track: "Не твой", correct: "ENTYPE", options: ["ENTYPE", "Макан", "Big Baby Tape", "Скриптонит"] },
+            { track: "Кап Кап", correct: "ENTYPE", options: ["ENTYPE", "Кизару", "Моргенштерн", "ЛСП"] },
+            { track: "Музыка звучит", correct: "NЮ", options: ["NЮ", "Zivert", "Асия", "Баста"] },
             { track: "Пряталась в ванной", correct: "Мари Краймбрери", options: ["Мари Краймбрери", "ANNA ASTI", "Ёлка", "Нюша"] },
-            { track: "Феникс", correct: "ANNA ASTI", options: ["ANNA ASTI", "Zivert", "Мари Краймбрери", "Клава Кока"] },
             { track: "Пьяная", correct: "Клава Кока", options: ["Клава Кока", "Ольга Бузова", "Нюша", "Ёлка"] },
             { track: "Сансара", correct: "Баста", options: ["Баста", "Кино", "Макан", "Miyagi"] },
-            { track: "Кино", correct: "Макан", options: ["Макан", "Кино", "Скриптонит", "Баста"] }
+            { track: "Кино", correct: "Макан", options: ["Макан", "Кино", "Скриптонит", "Баста"] },
+            { track: "Феникс", correct: "ANNA ASTI", options: ["ANNA ASTI", "Zivert", "Мари Краймбрери", "Клава Кока"] },
+            { track: "Gimme the Loot", correct: "Big Baby Tape", options: ["Big Baby Tape", "Макан", "Кизару", "Моргенштерн"] }
         ];
 
         let currentQuestion = 0;
@@ -293,7 +289,7 @@
         const totalQuestions = 30;
         let shuffledTracks = [];
 
-        // 1. Функция перемешивания (Fisher-Yates)
+        // Надежное перемешивание (Fisher-Yates)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -319,26 +315,22 @@
 
             const track = shuffledTracks[currentQuestion];
             
-            // Показываем название трека
             document.getElementById('track-title').innerText = `«${track.track}»`;
 
-            // Обновляем прогресс-бар
             const progressPercent = ((currentQuestion) / totalQuestions) * 100;
             document.getElementById('progress-fill').style.width = `${progressPercent}%`;
 
             const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = ''; 
 
-            // 2. Перемешиваем варианты
+            // Перемешиваем варианты
             let shuffledOptions = shuffleArray([...track.options]);
 
-            // 3. ГАРАНТИРУЕМ, что правильный ответ НЕ на первом месте
+            // ГАРАНТИРУЕМ, что правильный ответ НЕ на первом месте
             if (shuffledOptions[0] === track.correct) {
-                // Если правильный ответ оказался первым, меняем его местами со вторым
                 [shuffledOptions[0], shuffledOptions[1]] = [shuffledOptions[1], shuffledOptions[0]];
             }
 
-            // 4. Отрисовываем кнопки
             shuffledOptions.forEach(option => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
