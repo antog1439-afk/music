@@ -250,38 +250,57 @@
             document.getElementById('greeting').innerText = `Привет, ${user.first_name}! Проверим твои знания?`;
         }
 
-        // ===== БАЗА ВОПРОСОВ (30 УНИКАЛЬНЫХ СОВРЕМЕННЫХ ТРЕКОВ) =====
+        // ===== БАЗА ВОПРОСОВ (30 УНИКАЛЬНЫХ СОВРЕМЕННЫХ ТРЕКОВ ИЗ ЯНДЕКС МУЗЫКИ) =====
         const TRACKS = [
+            // Асия
             { track: "Дом", correct: "Асия", options: ["Асия", "Zivert", "Мари Краймбрери", "ANNA ASTI"] },
             { track: "Останься", correct: "Асия", options: ["Асия", "Клава Кока", "Zivert", "NЮ"] },
             { track: "911", correct: "Асия", options: ["Асия", "Мот", "Дима Билан", "Лолита"] },
+            { track: "Твой поцелуй", correct: "Асия", options: ["Асия", "Мари Краймбрери", "Ёлка", "Нюша"] },
+            
+            // Zivert
             { track: "Life", correct: "Zivert", options: ["Zivert", "Асия", "Полина Гагарина", "Ёлка"] },
             { track: "Credo", correct: "Zivert", options: ["Zivert", "Мари Краймбрери", "Клава Кока", "Нюша"] },
             { track: "Beverly Hills", correct: "Zivert", options: ["Zivert", "ANNA ASTI", "Баста", "Тимати"] },
+            
+            // Макан
             { track: "Кино", correct: "Макан", options: ["Макан", "Кино", "Баста", "Скриптонит"] },
+            { track: "Останься", correct: "Макан", options: ["Макан", "Асия", "Big Baby Tape", "Miyagi"] },
+            { track: "Навечно", correct: "Макан", options: ["Макан", "ЛСП", "Кизару", "Моргенштерн"] },
+            
+            // Big Baby Tape
             { track: "Gimme the Loot", correct: "Big Baby Tape", options: ["Big Baby Tape", "Макан", "Кизару", "Моргенштерн"] },
+            { track: "Marlboro", correct: "Big Baby Tape", options: ["Big Baby Tape", "ЛСП", "Скриптонит", "Кизару"] },
+            
+            // Мари Краймбрери
             { track: "Пряталась в ванной", correct: "Мари Краймбрери", options: ["Мари Краймбрери", "Клава Кока", "Асия", "Zivert"] },
+            { track: "Океан", correct: "Мари Краймбрери", options: ["Мари Краймбрери", "ANNA ASTI", "Полина Гагарина", "Ёлка"] },
+            
+            // ANNA ASTI
             { track: "Феникс", correct: "ANNA ASTI", options: ["ANNA ASTI", "Zivert", "Мари Краймбрери", "Полина Гагарина"] },
+            { track: "Плакала", correct: "ANNA ASTI", options: ["ANNA ASTI", "Клава Кока", "Ольга Бузова", "Нюша"] },
+            
+            // Клава Кока
             { track: "Пьяная", correct: "Клава Кока", options: ["Клава Кока", "Ольга Бузова", "Асия", "Zivert"] },
+            { track: "Покинула чат", correct: "Клава Кока", options: ["Клава Кока", "Ёлка", "Нюша", "Лолита"] },
+            
+            // Баста
             { track: "Сансара", correct: "Баста", options: ["Баста", "Кино", "Макан", "Miyagi"] },
             { track: "Выпускной", correct: "Баста", options: ["Баста", "Тимати", "Мот", "Артур Пирожков"] },
             { track: "Медлячок", correct: "Баста", options: ["Баста", "Кино", "Макан", "Дима Билан"] },
-            { track: "Captain", correct: "Miyagi", options: ["Miyagi", "Баста", "Big Baby Tape", "Макан"] },
+            
+            // Кино
             { track: "Группа крови", correct: "Кино", options: ["Кино", "Баста", "Макан", "Скриптонит"] },
             { track: "Перемен", correct: "Кино", options: ["Кино", "Баста", "Макан", "Miyagi"] },
             { track: "Звезда по имени Солнце", correct: "Кино", options: ["Кино", "Баста", "Макан", "Асия"] },
+            
+            // Другие
             { track: "Малиновая Лада", correct: "Мот", options: ["Мот", "Тимати", "Дима Билан", "Артур Пирожков"] },
             { track: "Ты не моя пара", correct: "Дима Билан", options: ["Дима Билан", "Мот", "Тимати", "Николай Басков"] },
             { track: "Пчеловод", correct: "Лолита", options: ["Лолита", "Ольга Бузова", "Нюша", "Ёлка"] },
             { track: "Не твой", correct: "ENTYPE", options: ["ENTYPE", "Макан", "Big Baby Tape", "Скриптонит"] },
-            { track: "Кап Кап", correct: "ENTYPE", options: ["ENTYPE", "Кизару", "Моргенштерн", "ЛСП"] },
             { track: "Музыка звучит", correct: "NЮ", options: ["NЮ", "Zivert", "Асия", "Баста"] },
-            { track: "Пряталась в ванной", correct: "Мари Краймбрери", options: ["Мари Краймбрери", "ANNA ASTI", "Ёлка", "Нюша"] },
-            { track: "Пьяная", correct: "Клава Кока", options: ["Клава Кока", "Ольга Бузова", "Нюша", "Ёлка"] },
-            { track: "Сансара", correct: "Баста", options: ["Баста", "Кино", "Макан", "Miyagi"] },
-            { track: "Кино", correct: "Макан", options: ["Макан", "Кино", "Скриптонит", "Баста"] },
-            { track: "Феникс", correct: "ANNA ASTI", options: ["ANNA ASTI", "Zivert", "Мари Краймбрери", "Клава Кока"] },
-            { track: "Gimme the Loot", correct: "Big Baby Tape", options: ["Big Baby Tape", "Макан", "Кизару", "Моргенштерн"] }
+            { track: "Captain", correct: "Miyagi", options: ["Miyagi", "Баста", "Big Baby Tape", "Макан"] }
         ];
 
         let currentQuestion = 0;
@@ -289,7 +308,6 @@
         const totalQuestions = 30;
         let shuffledTracks = [];
 
-        // Надежное перемешивание (Fisher-Yates)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -323,10 +341,9 @@
             const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = ''; 
 
-            // Перемешиваем варианты
             let shuffledOptions = shuffleArray([...track.options]);
 
-            // ГАРАНТИРУЕМ, что правильный ответ НЕ на первом месте
+            // Гарантируем, что правильный ответ НЕ на первом месте
             if (shuffledOptions[0] === track.correct) {
                 [shuffledOptions[0], shuffledOptions[1]] = [shuffledOptions[1], shuffledOptions[0]];
             }
@@ -376,7 +393,7 @@
             } else if (score >= 20) {
                 finalText.innerText = "Отличный результат! Ты знаешь толк в музыке. 🎵";
             } else if (score >= 10) {
-                finalText.innerText = "Неплохо! Но есть куда расти. 🎶";
+                finalText.innerText = "Неплошо! Но есть куда расти. 🎶";
             } else {
                 finalText.innerText = "Нужно больше слушать музыку! 📻";
             }
