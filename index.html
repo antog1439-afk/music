@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Угадай трек</title>
+    <title>Угадай исполнителя</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -56,7 +56,7 @@
         }
 
         .header h1 {
-            font-size: 26px;
+            font-size: 24px;
             margin: 0 0 8px 0;
             font-weight: 800;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -68,29 +68,34 @@
             margin: 0;
         }
 
-        /* Обложка, сгенерированная через CSS */
-        .cover-container {
+        /* Блок с названием трека */
+        .track-title-container {
             width: 100%;
-            aspect-ratio: 1 / 1;
+            min-height: 150px;
             border-radius: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
             padding: 20px;
             box-sizing: border-box;
             text-align: center;
         }
 
-        .cover-text {
-            font-size: 24px;
+        .track-title {
+            font-size: 28px;
             font-weight: 800;
             color: #fff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
             line-height: 1.2;
-            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .question-text {
+            text-align: center;
+            font-size: 16px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 10px;
         }
 
         /* Кнопки вариантов */
@@ -207,13 +212,15 @@
     <div class="container" id="game-screen">
         <div class="glass-panel">
             <div class="header">
-                <h1>🎵 Угадай трек</h1>
-                <p id="greeting">Проверь свой музыкальный вкус!</p>
+                <h1>🎵 Угадай исполнителя</h1>
+                <p id="greeting">Проверь, насколько хорошо ты знаешь современную музыку!</p>
             </div>
 
-            <!-- Тут будет CSS-обложка -->
-            <div class="cover-container" id="cover-container">
-                <div class="cover-text" id="cover-text">Текст</div>
+            <div class="question-text">Кто поет этот трек?</div>
+
+            <!-- Блок с названием трека -->
+            <div class="track-title-container">
+                <div class="track-title" id="track-title">Название трека</div>
             </div>
 
             <div class="options" id="options-container">
@@ -221,7 +228,7 @@
             </div>
             
             <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill" style="width: 10%;"></div>
+                <div class="progress-fill" id="progress-fill" style="width: 3%;"></div>
             </div>
         </div>
     </div>
@@ -229,7 +236,7 @@
     <div class="container result-screen" id="result-screen">
         <div class="glass-panel" style="width: 100%;">
             <h1>Игра окончена!</h1>
-            <div class="result-score" id="final-score">0/10</div>
+            <div class="result-score" id="final-score">0/30</div>
             <p class="result-text" id="final-text">Неплохо!</p>
             
             <button class="main-btn" onclick="restartGame()">Играть снова</button>
@@ -247,65 +254,46 @@
             document.getElementById('greeting').innerText = `Привет, ${user.first_name}! Проверим твои знания?`;
         }
 
-        // ===== БАЗА ТРЕКОВ (с цветами для градиента вместо картинок) =====
+        // ===== БАЗА ВОПРОСОВ (30 СОВРЕМЕННЫХ ТРЕКОВ) =====
         const TRACKS = [
-            {
-                gradient: "linear-gradient(135deg, #FF6B6B, #556270)", // Красный/Серый
-                correct: "Асия — Дом",
-                options: ["Асия — Дом", "Zivert — Life", "Баста — Сансара", "Кино — Группа крови"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #11998e, #38ef7d)", // Зеленый
-                correct: "Асия — Останься",
-                options: ["Асия — Останься", "Баста — Выпускной", "Макан — Кино", "Big Baby Tape — Gimme the Loot"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #7F00FF, #E100FF)", // Фиолетовый
-                correct: "Кино — Группа крови",
-                options: ["Кино — Группа крови", "Асия — 911", "Zivert — Credo", "Miyagi — Captain"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #f12711, #f5af19)", // Оранжевый
-                correct: "Кино — Звезда по имени Солнце",
-                options: ["Кино — Звезда по имени Солнце", "Баста — Медлячок", "ANNA ASTI — Феникс", "Клава Кока — Пьяная"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #2193b0, #6dd5ed)", // Голубой
-                correct: "Zivert — Life",
-                options: ["Zivert — Life", "Асия — Дом", "Мари Краймбрери — Пряталась в ванной", "Баста — Мама"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #ee9ca7, #ffdde1)", // Розовый
-                correct: "Баста — Сансара",
-                options: ["Баста — Сансара", "Кино — Перемен", "Асия — Останься", "Zivert — Beverly Hills"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #000000, #434343)", // Черный
-                correct: "Кино — Перемен",
-                options: ["Кино — Перемен", "Макан — Кино", "Big Baby Tape — Gimme the Loot", "Асия — 911"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #fc4a1a, #f7b733)", // Огонь
-                correct: "Мари Краймбрери — Пряталась в ванной",
-                options: ["Мари Краймбрери — Пряталась в ванной", "Баста — Выпускной", "Zivert — Credo", "Кино — Звезда по имени Солнце"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #00b09b, #96c93d)", // Лайм
-                correct: "Big Baby Tape — Gimme the Loot",
-                options: ["Big Baby Tape — Gimme the Loot", "Асия — Дом", "Кино — Группа крови", "Баста — Медлячок"]
-            },
-            {
-                gradient: "linear-gradient(135deg, #8E2DE2, #4A00E0)", // Неон
-                correct: "ANNA ASTI — Феникс",
-                options: ["ANNA ASTI — Феникс", "Zivert — Life", "Мари Краймбрери — Пряталась в ванной", "Асия — Останься"]
-            }
+            { track: "Дом", correct: "Асия", options: ["Асия", "Zivert", "Мари Краймбрери", "ANNA ASTI"] },
+            { track: "Останься", correct: "Асия", options: ["Асия", "Клава Кока", "Zivert", "NЮ"] },
+            { track: "911", correct: "Асия", options: ["Асия", "Мот", "Дима Билан", "Лолита"] },
+            { track: "Life", correct: "Zivert", options: ["Zivert", "Асия", "Полина Гагарина", "Ёлка"] },
+            { track: "Credo", correct: "Zivert", options: ["Zivert", "Мари Краймбрери", "Клава Кока", "Нюша"] },
+            { track: "Beverly Hills", correct: "Zivert", options: ["Zivert", "ANNA ASTI", "Баста", "Тимати"] },
+            { track: "Кино", correct: "Макан", options: ["Макан", "Кино", "Баста", "Скриптонит"] },
+            { track: "Gimme the Loot", correct: "Big Baby Tape", options: ["Big Baby Tape", "Макан", "Кизару", "Моргенштерн"] },
+            { track: "Пряталась в ванной", correct: "Мари Краймбрери", options: ["Мари Краймбрери", "Клава Кока", "Асия", "Zivert"] },
+            { track: "Феникс", correct: "ANNA ASTI", options: ["ANNA ASTI", "Zivert", "Мари Краймбрери", "Полина Гагарина"] },
+            { track: "Пьяная", correct: "Клава Кока", options: ["Клава Кока", "Ольга Бузова", "Асия", "Zivert"] },
+            { track: "Сансара", correct: "Баста", options: ["Баста", "Кино", "Макан", "Miyagi"] },
+            { track: "Выпускной", correct: "Баста", options: ["Баста", "Тимати", "Мот", "Артур Пирожков"] },
+            { track: "Медлячок", correct: "Баста", options: ["Баста", "Кино", "Макан", "Дима Билан"] },
+            { track: "Captain", correct: "Miyagi", options: ["Miyagi", "Баста", "Big Baby Tape", "Макан"] },
+            { track: "Группа крови", correct: "Кино", options: ["Кино", "Баста", "Макан", "Скриптонит"] },
+            { track: "Перемен", correct: "Кино", options: ["Кино", "Баста", "Макан", "Miyagi"] },
+            { track: "Звезда по имени Солнце", correct: "Кино", options: ["Кино", "Баста", "Макан", "Асия"] },
+            { track: "Малиновая Лада", correct: "Мот", options: ["Мот", "Тимати", "Дима Билан", "Артур Пирожков"] },
+            { track: "Ты не моя пара", correct: "Дима Билан", options: ["Дима Билан", "Мот", "Тимати", "Николай Басков"] },
+            { track: "Пчеловод", correct: "Лолита", options: ["Лолита", "Ольга Бузова", "Нюша", "Ёлка"] },
+            { track: "Останься", correct: "Макан", options: ["Макан", "Асия", "Big Baby Tape", "Miyagi"] },
+            { track: "Дом", correct: "Асия", options: ["Асия", "Zivert", "Мари Краймбрери", "ANNA ASTI"] },
+            { track: "Life", correct: "Zivert", options: ["Zivert", "Асия", "Полина Гагарина", "Ёлка"] },
+            { track: "Gimme the Loot", correct: "Big Baby Tape", options: ["Big Baby Tape", "Макан", "Кизару", "Моргенштерн"] },
+            { track: "Пряталась в ванной", correct: "Мари Краймбрери", options: ["Мари Краймбрери", "ANNA ASTI", "Ёлка", "Нюша"] },
+            { track: "Феникс", correct: "ANNA ASTI", options: ["ANNA ASTI", "Zivert", "Мари Краймбрери", "Клава Кока"] },
+            { track: "Пьяная", correct: "Клава Кока", options: ["Клава Кока", "Ольга Бузова", "Нюша", "Ёлка"] },
+            { track: "Сансара", correct: "Баста", options: ["Баста", "Кино", "Макан", "Miyagi"] },
+            { track: "Кино", correct: "Макан", options: ["Макан", "Кино", "Скриптонит", "Баста"] }
         ];
 
         let currentQuestion = 0;
         let score = 0;
-        const totalQuestions = 10;
+        const totalQuestions = 30;
         let shuffledTracks = [];
 
+        // 1. Функция перемешивания (Fisher-Yates)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -331,24 +319,26 @@
 
             const track = shuffledTracks[currentQuestion];
             
-            // Устанавливаем градиент вместо картинки
-            const coverContainer = document.getElementById('cover-container');
-            coverContainer.style.background = track.gradient;
-            
-            // Убираем текст с обложки (чтобы не было подсказки)
-            document.getElementById('cover-text').innerText = "";
-            
-            // Добавляем иконку ноты для красоты
-            document.getElementById('cover-text').innerHTML = "<span style='font-size: 64px;'>🎵</span>";
+            // Показываем название трека
+            document.getElementById('track-title').innerText = `«${track.track}»`;
 
+            // Обновляем прогресс-бар
             const progressPercent = ((currentQuestion) / totalQuestions) * 100;
             document.getElementById('progress-fill').style.width = `${progressPercent}%`;
 
             const optionsContainer = document.getElementById('options-container');
             optionsContainer.innerHTML = ''; 
 
-            const shuffledOptions = shuffleArray([...track.options]);
+            // 2. Перемешиваем варианты
+            let shuffledOptions = shuffleArray([...track.options]);
 
+            // 3. ГАРАНТИРУЕМ, что правильный ответ НЕ на первом месте
+            if (shuffledOptions[0] === track.correct) {
+                // Если правильный ответ оказался первым, меняем его местами со вторым
+                [shuffledOptions[0], shuffledOptions[1]] = [shuffledOptions[1], shuffledOptions[0]];
+            }
+
+            // 4. Отрисовываем кнопки
             shuffledOptions.forEach(option => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
@@ -391,9 +381,9 @@
             const finalText = document.getElementById('final-text');
             if (score === totalQuestions) {
                 finalText.innerText = "Вау! Ты настоящий меломан! 🎧";
-            } else if (score >= 7) {
+            } else if (score >= 20) {
                 finalText.innerText = "Отличный результат! Ты знаешь толк в музыке. 🎵";
-            } else if (score >= 4) {
+            } else if (score >= 10) {
                 finalText.innerText = "Неплохо! Но есть куда расти. 🎶";
             } else {
                 finalText.innerText = "Нужно больше слушать музыку! 📻";
@@ -405,7 +395,7 @@
         }
 
         function shareResult() {
-            const text = `Я угадал ${score} из ${totalQuestions} треков в игре "Угадай трек"! А ты сможешь?`;
+            const text = `Я угадал ${score} из ${totalQuestions} треков в игре "Угадай исполнителя"! А ты сможешь?`;
             const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/Inmizic_bot')}&text=${encodeURIComponent(text)}`;
             tg.openTelegramLink(url);
         }
